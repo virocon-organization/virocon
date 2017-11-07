@@ -1,5 +1,5 @@
 import pandas as pd
-from enviro.models import MeasureFileManager
+from enviro.models import MeasureFileModel
 from ..models import ParameterModel, DistributionModel, ProbabilisticModel
 from .distributions import *
 from .contours import *
@@ -9,7 +9,7 @@ import warnings
 
 class ComputeInterface:
     @staticmethod
-    def fit_curves(mfm_item: MeasureFileManager, fit_settings, var_number):
+    def fit_curves(mfm_item: MeasureFileModel, fit_settings, var_number):
         """
         The method represents the interface to compute to fit measure files.
         :param mfm_item:        measure file item form the MeasureFileModel. 
