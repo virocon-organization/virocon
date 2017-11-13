@@ -477,6 +477,9 @@ class Fit():
         elif name == 'Normal':
             return NormalDistribution(*params), dependency, dist_points, param_points
 
+    def __str__(self):
+        return "fit"
+
 
 if __name__ == "__main__":
     import doctest
