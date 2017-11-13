@@ -304,7 +304,7 @@ class Fit():
                 param_values[i].append(current_params[i])
 
     @staticmethod
-    def _get_fitting_values(sample, samples, name, dependency, number_of_steps, index):
+    def _get_fitting_values(sample, samples, name, dependency, number_of_intervals, index):
         """
         Returns values for fitting.
 
@@ -326,7 +326,7 @@ class Fit():
                 None -> no dependency
                 int -> depends on particular dimension
 
-        number_of_steps : int,
+        number_of_intervals : int,
             number of distributions used to fit shape, loc, scale
 
         index : int,
@@ -335,10 +335,10 @@ class Fit():
         """
         MIN_DATA_POINTS_FOR_FIT = 10
 
-        # compute steps
-        steps, step_size = np.linspace(min(samples[dependency[index]]), max(samples[dependency[index]]),
-                                       num=number_of_steps, endpoint=False, retstep=True)
-        steps += 0.5 * step_size
+        # compute intervals
+        interval_centers, interval_width = np.linspace(min(samples[dependency[index]]), max(samples[dependency[index]]),
+                                                  num=number_of_intervals, endpoint=False, retstep=True)
+        interval_centers += 0.5 * interval_width
         # sort samples
         samples = np.stack((sample, samples[dependency[index]])).T
         sort_indice = np.argsort(samples[:, 1])
@@ -347,8 +347,8 @@ class Fit():
         param_values = [[], [], []]
         dist_values = []
         # look for data that is fitting to each step
-        for i, step in enumerate(steps):
-            mask = ((sorted_samples[:, 1] >= step - 0.5 * step_size) & (sorted_samples[:, 1] < step + 0.5 * step_size))
+        for i, step in enumerate(interval_centers):
+            mask = ((sorted_samples[:, 1] >= step - 0.5 * interval_width) & (sorted_samples[:, 1] < step + 0.5 * interval_width))
             fitting_values = sorted_samples[mask, 0]
             if len(fitting_values) >= MIN_DATA_POINTS_FOR_FIT:
                 try:
@@ -357,20 +357,20 @@ class Fit():
                     dist_values.append(fitting_values)
                 except ValueError:
                     # for case that no fitting data for the step has been found -> step is deleted
-                    steps = np.delete(steps,i)
+                    interval_centers = np.delete(interval_centers,i)
                     warnings.warn(
                         "There is not enough data for step '{}' in dimension '{}'. This step is skipped. "
                         "Maybe you should ckeck your data or reduce the number of steps".format(step, dependency[index]),
                         RuntimeWarning, stacklevel=2)
             else:
                 # for case that to few fitting data for the step has been found -> step is deleted
-                steps = np.delete(steps,i)
+                interval_centers = np.delete(interval_centers,i)
                 warnings.warn(
-                    "'Due to the restriction of MIN_DATA_POINTS_FOR_FIT='{}' there is not enough data (n='{}') for step '{}' in"
+                    "'Due to the restriction of MIN_DATA_POINTS_FOR_FIT='{}' there is not enough data (n='{}') for the interval centered at '{}' in"
                     " dimension '{}'. This step is skipped. Maybe you should ckeck your data or reduce the number "
                     "of steps".format(MIN_DATA_POINTS_FOR_FIT, len(fitting_values), step, dependency[index]),
                     RuntimeWarning, stacklevel=2)
-        return steps, dist_values, param_values
+        return interval_centers, dist_values, param_values
 
     @staticmethod
     def _get_distribution(dimension, samples, **kwargs):
