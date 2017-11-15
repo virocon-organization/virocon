@@ -6,7 +6,7 @@ Created on Tue Sep 19 12:22:42 2017
 @author: nb
 """
 import unittest
-from compute.params import ConstantParam, FunctionParam, Wrapper
+from enviro.compute.params import ConstantParam, FunctionParam, Wrapper
 import numpy as np
 
 class ParamsTest(unittest.TestCase):

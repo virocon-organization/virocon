@@ -10,14 +10,11 @@ import unittest
 
 
 import numpy as np
-import pandas as pd
 
-from compute import fitting
-from compute.params import ConstantParam, FunctionParam
-from compute.distributions import (WeibullDistribution, LognormalDistribution, NormalDistribution,
+from enviro.compute.params import ConstantParam, FunctionParam
+from enviro.compute.distributions import (WeibullDistribution, LognormalDistribution, NormalDistribution,
                                    KernelDensityDistribution,
                                    MultivariateDistribution)
-from compute.contours import IFormContour, HighestDensityContour
 
 class MultivariateDistributionTest(unittest.TestCase):
     """

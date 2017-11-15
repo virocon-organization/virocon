@@ -8,20 +8,26 @@ Created on Fri Sep 15 14:49:33 2017
 
 import unittest
 
+import os
+
+print('current folder:')
+print(os.getcwd())
+
 import numpy as np
 import pandas as pd
 #import csv
-from compute.params import ConstantParam, FunctionParam 
+from enviro.compute.params import ConstantParam, FunctionParam
 
-from compute.distributions import (WeibullDistribution, LognormalDistribution,
+from enviro.compute.distributions import (WeibullDistribution, LognormalDistribution,
                                     NormalDistribution, MultivariateDistribution)
-from compute.contours import IFormContour, HighestDensityContour
+from enviro.compute.contours import IFormContour, HighestDensityContour
 #from skimage.measure import structural_similarity as ssim
 #from mpl_toolkits.mplot3d import Axes3D
 #import cv2
 #import matplotlib as mpl
 #mpl.use("Agg")
 import matplotlib.pyplot as plt
+
 
 
 class HDCCreationTest(unittest.TestCase):
@@ -67,9 +73,10 @@ class HDCCreationTest(unittest.TestCase):
         
         finaldt0 = pd.DataFrame({'x' : test_contour_HDC.coordinates[0][0], 
                                 'y' : test_contour_HDC.coordinates[0][1]})
-        
-        result0 = pd.read_csv("testfiles/HDC2dWL_coordinates.csv")
-        #matlab = pd.read_csv("testfiles/hdc25.csv")
+
+
+        result0 = pd.read_csv("enviro/compute_testfiles/HDC2dWL_coordinates.csv")
+        #matlab = pd.read_csv("enviro/compute_testfiles/hdc25.csv")
         
         for g,h in [(g, h) for g in result0.index for h in result0.columns]:
             self.assertAlmostEqual(result0.ix[g, h], finaldt0.ix[g, h], places=8)
@@ -131,7 +138,7 @@ class HDCCreationTest(unittest.TestCase):
                                 'z' : test_contour_HDC.coordinates[0][2]})  
     
 
-        result = pd.read_csv("testfiles/HDC3dWLL_coordinates.csv")
+        result = pd.read_csv("enviro/compute_testfiles/HDC3dWLL_coordinates.csv")
         for i,j in [(i, j) for i in result.index for j in result.columns]:
             self.assertAlmostEqual(result.ix[i,j], finaldt.ix[i,j], places=8)
        
@@ -223,8 +230,8 @@ class HDCCreationTest(unittest.TestCase):
         finaldt2 = pd.DataFrame({'x' : test_contour_HDC.coordinates[0][0], 
                                  'y' : test_contour_HDC.coordinates[0][1]})
     
-        result2 = pd.read_csv("testfiles/HDC2dWN_coordinates.csv")
-        matlab2 = pd.read_csv("testfiles/hdc2d_wn.csv", names=['x', 'y'])
+        result2 = pd.read_csv("enviro/compute_testfiles/HDC2dWN_coordinates.csv")
+        matlab2 = pd.read_csv("enviro/compute_testfiles/hdc2d_wn.csv", names=['x', 'y'])
 
         for k,l in [(k, l) for k in result2.index for l in result2.columns]:
             self.assertAlmostEqual(result2.ix[k,l], finaldt2.ix[k,l], places=8)
@@ -278,9 +285,9 @@ class HDCCreationTest(unittest.TestCase):
                                  'y' : test_contour_HDC.coordinates[0][1], 
                                  'z' : test_contour_HDC.coordinates[0][2]})
     
-        matlab3 = pd.read_csv("testfiles/hdc3d_wln.csv", names=['x', 'y', 'z'])
+        matlab3 = pd.read_csv("enviro/compute_testfiles/hdc3d_wln.csv", names=['x', 'y', 'z'])
         
-        result3 = pd.read_csv("testfiles/HDC3dWLN_coordinates.csv")
+        result3 = pd.read_csv("enviro/compute_testfiles/HDC3dWLN_coordinates.csv")
         for m,n in [(m, n) for m in result3.index for n in result3.columns]:
             self.assertAlmostEqual(result3.ix[m, n], finaldt3.ix[m, n], places=8)
             
@@ -326,12 +333,12 @@ class HDCCreationTest(unittest.TestCase):
         
         finaldt4 = pd.DataFrame({'x' : test_contour_IForm.coordinates[0][0], 
                                  'y' : test_contour_IForm.coordinates[0][1]})
-        
-        result4 = pd.read_csv("testfiles/IForm2dWL_coordinates.csv")
+
+        result4 = pd.read_csv("enviro/compute_testfiles/IForm2dWL_coordinates.csv")
         for o,p in [(o, p) for o in result4.index for p in result4.columns]:
             self.assertAlmostEqual(result4.ix[o, p], finaldt4.ix[o, p], places=8)
-            
-        matlab4 = pd.read_csv("testfiles/iform2d_wl.csv", names=['x', 'y'])
+
+        matlab4 = pd.read_csv("enviro/compute_testfiles/iform2d_wl.csv", names=['x', 'y'])
         
 #        plt.scatter(matlab4['x'], matlab4['y'], label="matlab data plotted")
 #        plt.scatter(result4['x'], result4['y'], label="our contour")
@@ -376,8 +383,8 @@ class HDCCreationTest(unittest.TestCase):
         finaldt5 = pd.DataFrame({'x' : test_contour_IForm.coordinates[0][0], 
                                  'y' : test_contour_IForm.coordinates[0][1]})
 
-        result5 = pd.read_csv("testfiles/IForm2dWN_coordinates.csv")
-        matlab5 = pd.read_csv("testfiles/iform2d_wn.csv", names=['x', 'y'])
+        result5 = pd.read_csv("enviro/compute_testfiles/IForm2dWN_coordinates.csv")
+        matlab5 = pd.read_csv("enviro/compute_testfiles/iform2d_wn.csv", names=['x', 'y'])
         
         for r,s in [(r, s) for r in result5.index for s in result5.columns]:
           self.assertAlmostEqual(result5.ix[r, s], finaldt5.ix[r, s], places=8)
@@ -456,8 +463,7 @@ class HDCTest(unittest.TestCase):
         mul_dist = MultivariateDistribution(distributions, dependencies)
     
         #calc contour
-        test_contour_HDC = HighestDensityContour(mul_dist, n_years, 3, 
-             
+        test_contour_HDC = HighestDensityContour(mul_dist, n_years, 3,
                                                  limits, deltas)
         return test_contour_HDC
     

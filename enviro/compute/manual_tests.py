@@ -25,7 +25,7 @@ if __name__ == "__main__":
 #    import pandas as pd
 #
 #    test_data = pd.read_csv(
-#        os.path.realpath(os.path.join(os.path.dirname(__file__), "..")) + "/testfiles/1yeardata_vanem2012pdf.csv",
+#        os.path.realpath(os.path.join(os.path.dirname(__file__), "..")) + "/compute_testfiles/1yeardata_vanem2012pdf.csv",
 #        sep=';',
 #        header=None).as_matrix()
 #    p = test_data[:, 0].tolist()
@@ -174,7 +174,7 @@ if __name__ == "__main__":
     plt.scatter(contour.coordinates[0][0], contour.coordinates[0][1], label="my solution")
 
     import pandas as pd
-    result = pd.read_csv("testfiles/hdc25.csv")
+    result = pd.read_csv("compute_testfiles/hdc25.csv")
     plt.scatter(result["Hs"], result["Tz"], label="Andreas solution")
     plt.legend()
     plt.show()
@@ -257,7 +257,7 @@ if __name__ == "__main__":
 # test_contour_HDC_2 = HighestDensityContour(mul_dist, return_period, state_duration, limits, deltas)
 #
 #
-# result_andi = pd.read_csv("testfiles/hdc50_3dModel.csv")
+# result_andi = pd.read_csv("compute_testfiles/hdc50_3dModel.csv")
 # fig1 = plt.figure()
 # ax2 = fig1.add_subplot(111, projection='3d')
 #
