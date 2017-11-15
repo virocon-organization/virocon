@@ -12,35 +12,35 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
 import os
-from compute.params import ConstantParam, FunctionParam
-from compute.distributions import (WeibullDistribution, LognormalDistribution, NormalDistribution,
+from .params import ConstantParam, FunctionParam
+from .distributions import (WeibullDistribution, LognormalDistribution, NormalDistribution,
                                    KernelDensityDistribution,
                                    MultivariateDistribution)
-from compute.contours import IFormContour, HighestDensityContour
-from compute.fitting import Fit
+from .contours import IFormContour, HighestDensityContour
+from .fitting import Fit
 
 if __name__ == "__main__":
     #    # %% try fit
-    mul_dist = MultivariateDistribution()
-    import pandas as pd
-
-    test_data = pd.read_csv(
-        os.path.realpath(os.path.join(os.path.dirname(__file__), "..")) + "/testfiles/1yeardata_vanem2012pdf.csv",
-        sep=';',
-        header=None).as_matrix()
-    p = test_data[:, 0].tolist()
-    q = test_data[:, 1].tolist()
-    dist_0 = {'name': 'Weibull', 'dependency': (None, None, None)}
-    dist_1 = {'name': 'Lognormal_2', 'dependency': (0, None, 0), 'functions': ('f2', None, 'f1')}
-    fit = Fit((p, q), (dist_0, dist_1), 10)
-    # calc contour
-    #    beta = 4.35
-    #    n_angles = 40
-    contour = IFormContour(fit.mul_var_dist)
-    # plot contour
-
-    plt.scatter(contour.coordinates[0][0], contour.coordinates[0][1], label="my solution")
-    plt.show()
+#    mul_dist = MultivariateDistribution()
+#    import pandas as pd
+#
+#    test_data = pd.read_csv(
+#        os.path.realpath(os.path.join(os.path.dirname(__file__), "..")) + "/testfiles/1yeardata_vanem2012pdf.csv",
+#        sep=';',
+#        header=None).as_matrix()
+#    p = test_data[:, 0].tolist()
+#    q = test_data[:, 1].tolist()
+#    dist_0 = {'name': 'Weibull', 'dependency': (None, None, None)}
+#    dist_1 = {'name': 'Lognormal_2', 'dependency': (0, None, 0), 'functions': ('f2', None, 'f1')}
+#    fit = Fit((p, q), (dist_0, dist_1), 10)
+#    # calc contour
+#    #    beta = 4.35
+#    #    n_angles = 40
+#    contour = IFormContour(fit.mul_var_dist)
+#    # plot contour
+#
+#    plt.scatter(contour.coordinates[0][0], contour.coordinates[0][1], label="my solution")
+#    plt.show()
 
     # %% try 2d Iform
 #
@@ -134,50 +134,50 @@ if __name__ == "__main__":
 
 # %% try 2d HDC
 
-#    #define dependency tuple
-#    dep1 = (None, None, None)
-#    dep2 = (0, None, 0)
-#
-#    #define parameters
-#    shape = ConstantParam(1.471)
-#    loc = ConstantParam(0.8888)
-#    scale = ConstantParam(2.776)
-#    par1 = (shape, loc, scale)
-#
-#    shape = FunctionParam(0.0400, 0.1748, -0.2243, "f2")
-#    loc = None
-#    scale = FunctionParam(0.1, 1.489, 0.1901, "f1")
-#    par2 = (shape, loc, scale)
-#
-##    del shape, loc, scale
-#
-#    #create distributions
-#    dist1 = WeibullDistribution(*par1)
-#    dist2 = LognormalDistribution(sigma=shape, mu=scale)
-#
-#    distributions = [dist1, dist2]
-#    dependencies = [dep1, dep2]
-#
-#    mul_dist = MultivariateDistribution(distributions, dependencies)
-#
-#    del dist1, dist2, par1, par2, dep1, dep2, dependencies, distributions
-#    #calc contour
-#    return_period = 50
-#    state_duration = 3
-#    limits = [(0, 20), (0, 20)]
-#    deltas = [0.05, 0.05]
-#
-#    contour = HighestDensityContour(mul_dist, return_period, state_duration, limits, deltas,)
-#
-#    #plot contour
-#    import matplotlib.pyplot as plt
-#    plt.scatter(contour.coordinates[0][0], contour.coordinates[0][1], label="my solution")
-#
-#    import pandas as pd
-#    result = pd.read_csv("testfiles/hdc25.csv")
-#    plt.scatter(result["Hs"], result["Tz"], label="Andreas solution")
-#    plt.legend()
-#    plt.show()
+    #define dependency tuple
+    dep1 = (None, None, None)
+    dep2 = (0, None, 0)
+
+    #define parameters
+    shape = ConstantParam(1.471)
+    loc = ConstantParam(0.8888)
+    scale = ConstantParam(2.776)
+    par1 = (shape, loc, scale)
+
+    shape = FunctionParam(0.0400, 0.1748, -0.2243, "f2")
+    loc = None
+    scale = FunctionParam(0.1, 1.489, 0.1901, "f1")
+    par2 = (shape, loc, scale)
+
+#    del shape, loc, scale
+
+    #create distributions
+    dist1 = WeibullDistribution(*par1)
+    dist2 = LognormalDistribution(sigma=shape, mu=scale)
+
+    distributions = [dist1, dist2]
+    dependencies = [dep1, dep2]
+
+    mul_dist = MultivariateDistribution(distributions, dependencies)
+
+    del dist1, dist2, par1, par2, dep1, dep2, dependencies, distributions
+    #calc contour
+    return_period = 50
+    state_duration = 3
+    limits = [(0, 20), (0, 20)]
+    deltas = [0.05, 0.05]
+
+    contour = HighestDensityContour(mul_dist, return_period, state_duration, limits, deltas,)
+
+    #plot contour
+    import matplotlib.pyplot as plt
+    plt.scatter(contour.coordinates[0][0], contour.coordinates[0][1], label="my solution")
+
+    import pandas as pd
+    result = pd.read_csv("testfiles/hdc25.csv")
+    plt.scatter(result["Hs"], result["Tz"], label="Andreas solution")
+    plt.legend()
+    plt.show()
 
 # %% try 3d HDC
 

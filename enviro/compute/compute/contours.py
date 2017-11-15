@@ -68,22 +68,22 @@ class IFormContour(Contour):
             Defaults to 3.
         n_points : int, optional
             Number of points on the contour. Defaults to 20.
-            
+
         example
         -------
-        
+
         >>> from compute.distributions import (WeibullDistribution,\
                                                LognormalDistribution,\
                                                MultivariateDistribution)
         >>> from compute.params import ConstantParam, FunctionParam
         >>> #define dependency tuple
         >>> dep1 = (None, None, None)
-        >>> dep2 = (0, None, 0)  
+        >>> dep2 = (0, None, 0)
         >>> #define parameters
         >>> shape = ConstantParam(1.471)
         >>> loc = ConstantParam(0.8888)
         >>> scale = ConstantParam(2.776)
-        >>> par1 = (shape, loc, scale)  
+        >>> par1 = (shape, loc, scale)
         >>> mu = FunctionParam(0.1000, 1.489, 0.1901, "f1")
         >>> sigma = FunctionParam(0.0400, 0.1748, -0.2243, "f2")
         >>> #create distributions
@@ -93,7 +93,7 @@ class IFormContour(Contour):
         >>> dependencies = [dep1, dep2]
         >>> mul_dist = MultivariateDistribution(distributions, dependencies)
         >>> test_contour_IForm = IFormContour(mul_dist, 50, 3, 400)
-        
+
         """
         # TODO docuent state_duration
         # calls _setup
@@ -165,13 +165,13 @@ class HighestDensityContour(Contour):
             If a list of float is supplied it has to be of the same length
             as there are dimensions in mul_var_dist.
             Defaults to 0.5.
-            
+
         example
         -------
-        
-        Creating Contour example for 2-d HDC with Weibull and Lognormal 
+
+        Creating Contour example for 2-d HDC with Weibull and Lognormal
         distribution
-    
+
         >>> from compute.distributions import (WeibullDistribution,\
                                                LognormalDistribution,\
                                                MultivariateDistribution)
@@ -185,7 +185,7 @@ class HighestDensityContour(Contour):
         >>> scale = ConstantParam(2.776)
         >>> par1 = (shape, loc, scale)
         >>> mu = FunctionParam(0.1000, 1.489, 0.1901, 'f1')
-        >>> sigma = FunctionParam(0.0400, 0.1748, -0.2243, 'f2')  
+        >>> sigma = FunctionParam(0.0400, 0.1748, -0.2243, 'f2')
         >>> #create distributions
         >>> dist1 = WeibullDistribution(*par1)
         >>> dist2 = LognormalDistribution(mu=mu, sigma=sigma)
@@ -197,8 +197,8 @@ class HighestDensityContour(Contour):
         >>> limits = [(0, 20), (0, 18)]
         >>> deltas = [0.1, 0.1]
         >>> test_contour_HDC = HighestDensityContour(mul_dist, n_years, 3,\
-                                                     limits, deltas)   
-        
+                                                     limits, deltas)
+
         """
         # TODO document sampling
         # TODO document alpha
@@ -296,6 +296,8 @@ class HighestDensityContour(Contour):
         for delta in self.deltas:
             fm /= delta
 
+        self.fm = fm
+
         structure = np.ones(tuple([3] * self.distribution.n_dim), dtype=bool)
         HDC = HDR - ndi.binary_erosion(HDR, structure=structure)
 
@@ -369,9 +371,9 @@ class HighestDensityContour(Contour):
 
 
         return summed_fields, last_summed
-    
+
 
 if __name__ == "__main__":
     import doctest
     doctest.testmod()
-    
+
