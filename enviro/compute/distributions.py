@@ -582,6 +582,18 @@ class MultivariateDistribution():
         fbar = fbar.reshape(n_dim_shape)
         return fbar / dx
 
+    def getPdfAsLatexString(self):
+        """
+        Returns the joint probabilty density function in latex format.
+
+        Returns
+        -------
+        latex_string : String,
+            The joint pdf in latex format (without $)
+            E.g. f(h_s,t_p)=f_{H_s](h_s)=.
+        """
+        latex_string = "f(h_s,t_p)=f_{H_s](h_s)=TEST"
+        return latex_string
 
 class KernelDensityDistribution(Distribution):
     """
