@@ -582,17 +582,65 @@ class MultivariateDistribution():
         fbar = fbar.reshape(n_dim_shape)
         return fbar / dx
 
-    def getPdfAsLatexString(self):
+    def getPdfAsLatexString(self, var_symbols=None):
         """
         Returns the joint probabilty density function in latex format.
+
+        Parameters
+        ----------
+        var_symbols : list,
+            List of the random variable symbols, the first letter should be
+             capitalized and further characters will be converged to subscripts,
+             an example would be  ['Hs', 'Tp', 'V']
 
         Returns
         -------
         latex_string : String,
             The joint pdf in latex format (without $)
-            E.g. f(h_s,t_p)=f_{H_s](h_s)=.
+            E.g. f(h_s,t_p)=f_{H_s}(h_s)=
         """
-        latex_string = "f(h_s,t_p)=f_{H_s}(h_s)=TEST"
+        if not var_symbols:
+            var_symbols=[]
+            for i in range(self.n_dim):
+                var_symbols.append("X_{" + str(i) + "}")
+        else:
+            for i in range(self.n_dim):
+                var_symbols[i] = var_symbols[i][0] + "_{" + var_symbols[i][1:] + "}"
+
+        # realization symbols are not capitalized, e.g. hs for the realization of Hs
+        downcase_first_char = lambda s: s[:1].lower() + s[1:] if s else '' # thanks to: https://stackoverflow.com/questions/3840843/how-to-downcase-the-first-character-of-a-string
+        realization_symbols = []
+        for i in range(self.n_dim):
+            realization_symbols.append(downcase_first_char(var_symbols[i]))
+
+        joint_pdf_all_symbols_w_commas = ""
+        for i in range(self.n_dim):
+            joint_pdf_all_symbols_w_commas += realization_symbols[i] + ","
+        joint_pdf_all_symbols_w_commas = joint_pdf_all_symbols_w_commas[:-1]
+
+        latex_string = "f(" + joint_pdf_all_symbols_w_commas + ")="
+        left_side_pdfs = ["" for x in range(self.n_dim)]
+        for i in range(self.n_dim):
+            left_side_pdfs[i] += "f_{" + var_symbols[i]
+            if not all(x is None for x in self.dependencies[i]): # if there is at least one depedent paramter
+                left_side_pdfs[i] += "|"
+                for j in range(self.n_dim):
+                    if  j in self.dependencies[i]:
+                        left_side_pdfs[i] += var_symbols[j] + ','
+                left_side_pdfs[i] = left_side_pdfs[i][:-1]
+            left_side_pdfs[i] += "}(" + realization_symbols[i]
+            if not all(x is None for x in self.dependencies[i]): # if there is at least one depedent paramter
+                left_side_pdfs[i] += "|"
+                for j in range(self.n_dim):
+                    if  j in self.dependencies[i]:
+                        left_side_pdfs[i] += realization_symbols[j] + ','
+                left_side_pdfs[i] = left_side_pdfs[i][:-1]
+            left_side_pdfs[i] += ")"
+            latex_string += left_side_pdfs[i]
+        #latex_string += r"\\"
+        latex_string += r"\text{ with }"
+        latex_string += r"\dfrac{a}{b}"
+        print(latex_string)
         return latex_string
 
 class KernelDensityDistribution(Distribution):
