@@ -592,7 +592,7 @@ class MultivariateDistribution():
             The joint pdf in latex format (without $)
             E.g. f(h_s,t_p)=f_{H_s](h_s)=.
         """
-        latex_string = "f(h_s,t_p)=f_{H_s](h_s)=TEST"
+        latex_string = "f(h_s,t_p)=f_{H_s}(h_s)=TEST"
         return latex_string
 
 class KernelDensityDistribution(Distribution):
