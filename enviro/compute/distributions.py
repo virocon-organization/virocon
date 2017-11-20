@@ -643,7 +643,7 @@ class MultivariateDistribution():
         latex_string_list.append(latex_string)
 
         for i in range(self.n_dim):
-            latex_string_list.append(str(i+1) + r"\text{. variable , }" + str(var_symbols[i]) + ": ")
+            latex_string_list.append(str(i+1) + r"\text{. variable, }" + str(var_symbols[i]) + ": ")
             latex_string = left_side_pdfs[i] + "="
             scale_name = None
             shape_name = None
@@ -673,21 +673,34 @@ class MultivariateDistribution():
             latex_string = ""
             if scale_name:
                 latex_string = r"\text{ with }"
-                latex_string += scale_name + "=" + str(self.distributions[i].scale) + ","
+                scale_value = str(self.distributions[i].scale)
+                for j in range(self.n_dim):
+                    if  j in self.dependencies[i]:
+                        scale_value = scale_value.replace('x', realization_symbols[j])
+                latex_string += scale_name + "=" + scale_value + ","
                 latex_string_list.append(latex_string)
             if shape_name:
                 if latex_string == "":
                     latex_string = r"\text{ with }"
                 else:
                     latex_string = ""
-                latex_string += shape_name + "=" + str(self.distributions[i].shape)
+
+                shape_value = str(self.distributions[i].shape)
+                for j in range(self.n_dim):
+                    if  j in self.dependencies[i]:
+                        shape_value = shape_value.replace('x', realization_symbols[j])
+                latex_string += shape_name + "=" + shape_value
                 if loc_name:
                     latex_string += ","
                 else:
                     latex_string += "."
                 latex_string_list.append(latex_string)
             if loc_name:
-                latex_string = loc_name + "=" + str(self.distributions[i].loc) + "."
+                loc_value = str(self.distributions[i].loc)
+                for j in range(self.n_dim):
+                    if  j in self.dependencies[i]:
+                        loc_value = loc_value.replace('x', realization_symbols[j])
+                latex_string += loc_name + "=" + loc_value + "."
                 latex_string_list.append(latex_string)
         return latex_string_list
 
