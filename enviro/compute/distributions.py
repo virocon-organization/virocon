@@ -619,6 +619,8 @@ class MultivariateDistribution():
         joint_pdf_all_symbols_w_commas = joint_pdf_all_symbols_w_commas[:-1]
 
         latex_string_list = []
+        latex_string = r"\text{ joint PDF: }"
+        latex_string_list.append(latex_string)
         latex_string = "f(" + joint_pdf_all_symbols_w_commas + ")="
         left_side_pdfs = ["" for x in range(self.n_dim)]
         for i in range(self.n_dim):
@@ -641,6 +643,7 @@ class MultivariateDistribution():
         latex_string_list.append(latex_string)
 
         for i in range(self.n_dim):
+            latex_string_list.append(str(i+1) + r"\text{. variable , }" + str(var_symbols[i]) + ": ")
             latex_string = left_side_pdfs[i] + "="
             scale_name = None
             shape_name = None
@@ -662,20 +665,29 @@ class MultivariateDistribution():
                         + realization_symbols[i] + r"}\sqrt{2\pi}}e^{-\dfrac{(\ln " + realization_symbols[i] \
                                 + r"-\tilde{\mu}_{" + realization_symbols[i] + r"})^2}{2\tilde{\sigma}_{" \
                         + realization_symbols[i] + r"}^2}}"
-                scale_name = r"\tilde{\sigma}_{" + realization_symbols[i] + "}"
-                loc_name = r"\tilde{\mu}_{" + realization_symbols[i] + "}"
+                # this is not inuitive, check if this is correct
+                # inuitive would be as with the Normal pdf --> sigma = scale, mu = location
+                shape_name = r"\tilde{\sigma}_{" + realization_symbols[i] + "}"
+                scale_name = r"\tilde{\mu}_{" + realization_symbols[i] + "}"
             latex_string_list.append(latex_string)
-            latex_string = r"\text{ with }"
+            latex_string = ""
             if scale_name:
-                latex_string += scale_name + "=" + str(self.distributions[i].scale)
+                latex_string = r"\text{ with }"
+                latex_string += scale_name + "=" + str(self.distributions[i].scale) + ","
                 latex_string_list.append(latex_string)
-                latex_string = ""
             if shape_name:
+                if latex_string == "":
+                    latex_string = r"\text{ with }"
+                else:
+                    latex_string = ""
                 latex_string += shape_name + "=" + str(self.distributions[i].shape)
+                if loc_name:
+                    latex_string += ","
+                else:
+                    latex_string += "."
                 latex_string_list.append(latex_string)
-                latex_string = ""
             if loc_name:
-                latex_string += loc_name + "=" + str(self.distributions[i].loc)
+                latex_string = loc_name + "=" + str(self.distributions[i].loc) + "."
                 latex_string_list.append(latex_string)
         return latex_string_list
 
