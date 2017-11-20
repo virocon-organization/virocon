@@ -62,6 +62,9 @@ class ConstantParam(Param):
     def _value(self, _):
         return self._constant
 
+    def __str__(self):
+        return str(self._constant)
+
 
 
 class FunctionParam(Param):
@@ -119,6 +122,12 @@ class FunctionParam(Param):
     def _value(self, x):
         return self._wrapper(self._func(x))
 
+    def __str__(self):
+        if self.func_name == "f1":
+            function_string = "" + str(self.a) + "+" + str(self.b) + "x" + "^{" + str(self.c) + "}"
+        elif self.func_name == "f2":
+            function_string = "" + str(self.a) + "+" + str(self.b) + "e^{" + str(self.c) + "x}"
+        return function_string
 
 class Wrapper():
 

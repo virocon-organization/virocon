@@ -618,6 +618,7 @@ class MultivariateDistribution():
             joint_pdf_all_symbols_w_commas += realization_symbols[i] + ","
         joint_pdf_all_symbols_w_commas = joint_pdf_all_symbols_w_commas[:-1]
 
+        latex_string_list = []
         latex_string = "f(" + joint_pdf_all_symbols_w_commas + ")="
         left_side_pdfs = ["" for x in range(self.n_dim)]
         for i in range(self.n_dim):
@@ -637,11 +638,46 @@ class MultivariateDistribution():
                 left_side_pdfs[i] = left_side_pdfs[i][:-1]
             left_side_pdfs[i] += ")"
             latex_string += left_side_pdfs[i]
-        #latex_string += r"\\"
-        latex_string += r"\text{ with }"
-        latex_string += r"\dfrac{a}{b}"
-        print(latex_string)
-        return latex_string
+        latex_string_list.append(latex_string)
+
+        for i in range(self.n_dim):
+            latex_string = left_side_pdfs[i] + "="
+            scale_name = None
+            shape_name = None
+            loc_name = None
+            if self.distributions[i].name=="Weibull":
+                latex_string += r"\dfrac{k_{" + realization_symbols[i] + r"}}{\lambda_{" + realization_symbols[i] \
+                        + "}}\left(\dfrac{" + realization_symbols[i] + r"}{\lambda_{" + realization_symbols[i] \
+                        + r"}}\right)^{k_{" + realization_symbols[i] + r"}-1}e^{-(" + realization_symbols[i] \
+                        + r"/\lambda_{" + realization_symbols[i] + r"})^{k_{" + realization_symbols[i] + r"}}}"
+                scale_name = r"\lambda_{" + realization_symbols[i] + "}"
+                shape_name = r"k_{" + realization_symbols[i] + "}"
+            elif self.distributions[i].name=="Normal":
+                latex_string += r"\dfrac{1}{\sqrt{2\pi\sigma^2}}e^{-\dfrac{(" + realization_symbols[i] \
+                        + r"-\mu)^2}{2\sigma^2}"
+                scale_name = r"\sigma}_{" + realization_symbols[i] + "}"
+                loc_name = r"\mu}_{" + realization_symbols[i] + "}"
+            elif self.distributions[i].name=="Lognormal":
+                latex_string += r"\dfrac{1}{" + realization_symbols[i] + r"\tilde{\sigma}_{" \
+                        + realization_symbols[i] + r"}\sqrt{2\pi}}e^{-\dfrac{(\ln " + realization_symbols[i] \
+                                + r"-\tilde{\mu}_{" + realization_symbols[i] + r"})^2}{2\tilde{\sigma}_{" \
+                        + realization_symbols[i] + r"}^2}}"
+                scale_name = r"\tilde{\sigma}_{" + realization_symbols[i] + "}"
+                loc_name = r"\tilde{\mu}_{" + realization_symbols[i] + "}"
+            latex_string_list.append(latex_string)
+            latex_string = r"\text{ with }"
+            if scale_name:
+                latex_string += scale_name + "=" + str(self.distributions[i].scale)
+                latex_string_list.append(latex_string)
+                latex_string = ""
+            if shape_name:
+                latex_string += shape_name + "=" + str(self.distributions[i].shape)
+                latex_string_list.append(latex_string)
+                latex_string = ""
+            if loc_name:
+                latex_string += loc_name + "=" + str(self.distributions[i].loc)
+                latex_string_list.append(latex_string)
+        return latex_string_list
 
 class KernelDensityDistribution(Distribution):
     """
