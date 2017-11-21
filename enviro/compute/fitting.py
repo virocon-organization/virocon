@@ -137,7 +137,7 @@ class Fit():
 
     """
 
-    def __init__(self, samples, dist_descriptions, n_steps):
+    def __init__(self, samples, dist_descriptions):
         """
         Creates a Fit, by computing the distribution that describes the samples 'best'.
 
@@ -149,8 +149,6 @@ class Fit():
                                                    ...
         dist_descriptions : list,
             contains dictionary for each parameter. See note for further information.
-        n_steps : int
-            number of distributions used to fit shape, loc, scale
 
         Note
         ----
@@ -177,8 +175,18 @@ class Fit():
             - :f1: :math:`a + b * x^c`
             - :f2: :math:`a + b * e^{x * c}`
             - remark : in case of Lognormal_2 it is (sigma, loc=0, mu)
+
+        and either number_of_bins or width_of_bins:
+
+        number_of_bins : int
+            Number of bins the data of this variable should be seperated for fits which depend upon it. If the number of
+                bins is given, the width of the bins is determined automatically.
+
+        width_of_bins : float
+            Width of the bins. When the width of the bins is given, the number of bins is determined automatically.
+
         """
-        self.n_steps = n_steps  # added by ux
+        self.input_dist_descriptions = dist_descriptions # added by Andreas
 
         # multiprocessing for more performance
         pool = Pool()
@@ -187,8 +195,6 @@ class Fit():
         # distribute work on cores
         for dimension in range(len(samples)):
             dist_description = dist_descriptions[dimension]
-
-            dist_description['n_steps'] = n_steps
             multiple_results.append(
                 pool.apply_async(self._get_distribution, (dimension, samples), dist_description))
 
@@ -304,7 +310,7 @@ class Fit():
                 param_values[i].append(current_params[i])
 
     @staticmethod
-    def _get_fitting_values(sample, samples, name, dependency, number_of_intervals, index):
+    def _get_fitting_values(sample, samples, name, dependency, index, number_of_intervals=None, bin_width=None):
         """
         Returns values for fitting.
 
@@ -326,19 +332,30 @@ class Fit():
                 None -> no dependency
                 int -> depends on particular dimension
 
+        index : int,
+            order : (shape, loc, scale) (i.e. 0 -> shape)
+
         number_of_intervals : int,
             number of distributions used to fit shape, loc, scale
 
-        index : int,
-            order : (shape, loc, scale) (i.e. 0 -> shape)
+
 
         """
         MIN_DATA_POINTS_FOR_FIT = 10
 
         # compute intervals
-        interval_centers, interval_width = np.linspace(min(samples[dependency[index]]), max(samples[dependency[index]]),
-                                                  num=number_of_intervals, endpoint=False, retstep=True)
-        interval_centers += 0.5 * interval_width
+        if number_of_intervals:
+            interval_centers, interval_width = np.linspace(0, max(samples[dependency[index]]),
+                                                      num=number_of_intervals, endpoint=False, retstep=True)
+            interval_centers += 0.5 * interval_width
+        elif bin_width:
+            interval_width = bin_width
+            interval_centers = np.arange(0.5*interval_width, max(samples[dependency[index]]), interval_width)
+        else:
+            raise RuntimeError(
+                "Either the parameters number_of_intervals or bin_width has to be specified, otherwise the intervals"
+                " are not specified. Exiting."
+            )
         # sort samples
         samples = np.stack((sample, samples[dependency[index]])).T
         sort_indice = np.argsort(samples[:, 1])
@@ -394,7 +411,8 @@ class Fit():
         name = kwargs.get('name', 'Weibull')
         dependency = kwargs.get('dependency', (None, None, None))
         functions = kwargs.get('functions', ('polynomial', 'polynomial', 'polynomial'))
-        number_of_steps = kwargs.get('n_steps')
+        number_of_steps = kwargs.get('number_of_bins')
+        width_of_bins = kwargs.get('width_of_bins')
 
         # handle KernelDensity separated
         if name == 'KernelDensity':
@@ -429,9 +447,12 @@ class Fit():
                         dist_points[i] = [sample]
             else:
                 # case that there is a dependency
-                steps, dist_values, param_values = Fit._get_fitting_values(
-                    sample, samples, name, dependency, number_of_steps, index)
-
+                if number_of_steps:
+                    steps, dist_values, param_values = Fit._get_fitting_values(
+                        sample, samples, name, dependency, index, number_of_intervals=number_of_steps)
+                elif width_of_bins:
+                    steps, dist_values, param_values = Fit._get_fitting_values(
+                        sample, samples, name, dependency, index, bin_width=width_of_bins)
                 for i in range(index, len(functions)):
                     # check if the other parameters have the same dependency
                     if dependency[i] is not None and dependency[i] == dependency[index]:
