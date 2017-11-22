@@ -178,15 +178,28 @@ class Fit():
 
         and either number_of_bins or width_of_bins:
 
-        number_of_bins : int
-            Number of bins the data of this variable should be seperated for fits which depend upon it. If the number of
-                bins is given, the width of the bins is determined automatically.
+        number_of_intervals : int,
+            Number of bins the data of this variable should be seperated for fits which depend
+                upon it. If the number of bins is given, the width of the bins is determined automatically.
 
-        width_of_bins : float
-            Width of the bins. When the width of the bins is given, the number of bins is determined automatically.
+        width_of_bins : floats,
+            Width of the bins. When the width of the bins is given, the number of bins is
+            determined automatically.
 
         """
-        self.input_dist_descriptions = dist_descriptions # added by Andreas
+        self.dist_descriptions = dist_descriptions # compute references this attribute at plot.py
+
+        list_number_of_intervals = []
+        list_width_of_intervals = []
+        for i in range(len(samples)):
+            list_number_of_intervals.append(dist_descriptions[i]['number_of_intervals'])
+            list_width_of_intervals.append(dist_descriptions[i]['width_of_intervals'])
+        for i in range(len(samples)):
+            dist_descriptions[i]['list_number_of_intervals']  = list_number_of_intervals
+            dist_descriptions[i]['list_width_of_intervals'] = list_width_of_intervals
+
+        print('list_number_of_intervals: ' + str(list_number_of_intervals))
+        print('list_width_of_intervals: ' + str(list_width_of_intervals))
 
         # multiprocessing for more performance
         pool = Pool()
@@ -197,6 +210,7 @@ class Fit():
             dist_description = dist_descriptions[dimension]
             multiple_results.append(
                 pool.apply_async(self._get_distribution, (dimension, samples), dist_description))
+            #multiple_results.append(self._get_distribution(dimension, samples, dist_description=dist_description))
 
         # initialize parameters for multivariate distribution
         distributions = []
@@ -207,8 +221,9 @@ class Fit():
         self.mul_dist_points = []
 
         # get distributions
+        i = 0
         for res in multiple_results:
-            distribution, dependency, dist_points, param_points = res.get(timeout=1e6)
+            distribution, dependency, dist_points, param_points, used_number_of_intervals = res.get(timeout=1e6)
 
             # saves distribution and dependency for particular dimension
             distributions.append(distribution)
@@ -217,6 +232,9 @@ class Fit():
             # save fitting points for particular dimension
             self.mul_dist_points.append(dist_points)
             self.mul_param_points.append(param_points)
+
+            self.dist_descriptions[i]['used_number_of_intervals'] = used_number_of_intervals
+            i += 1
 
         # save multivariate distribution
         self.mul_var_dist = MultivariateDistribution(distributions, dependencies)
@@ -256,7 +274,7 @@ class Fit():
     def _get_function(function_name):
         """
         Returns the function.
-
+^
         Parameters
         ----------
         function_name : str,
@@ -338,6 +356,14 @@ class Fit():
         number_of_intervals : int,
             number of distributions used to fit shape, loc, scale
 
+        Returns
+        -------
+        interval_centers :
+
+        dist_values :
+
+        param_values :
+
 
 
         """
@@ -351,6 +377,7 @@ class Fit():
         elif bin_width:
             interval_width = bin_width
             interval_centers = np.arange(0.5*interval_width, max(samples[dependency[index]]), interval_width)
+            print('interval_centers: ' + str(interval_centers))
         else:
             raise RuntimeError(
                 "Either the parameters number_of_intervals or bin_width has to be specified, otherwise the intervals"
@@ -389,20 +416,32 @@ class Fit():
                     RuntimeWarning, stacklevel=2)
         return interval_centers, dist_values, param_values
 
-    @staticmethod
-    def _get_distribution(dimension, samples, **kwargs):
+    def _get_distribution(self, dimension, samples, **kwargs):
         """
         Returns the fitted distribution, the dependency and the points for plotting the fits.
 
         Parameters
         ----------
-        sample : list,
-            entry in samples for the particular dimension (i.e. samples[0])
+        dimension : int,
+            Number of the variable, e.g. 0 --> first variable (for exmaple sig. wave height)
 
         samples : list,
-            List that contains data to be fitted : samples[0] -> first variable (i.e. wave height)
+            List that contains data to be fitted : samples[0] -> first variable (for example sig. wave height)
                                                    samples[1] -> second variable
                                                    ...
+
+        Returns
+        -------
+        distribution : ParametricDistribution instance,
+            the fitted distribution instance
+
+        dependency : ?
+
+        dist_points: ?
+
+        param_points: ?
+
+        used_number_of_intervals: ?
 
         """
 
@@ -411,8 +450,8 @@ class Fit():
         name = kwargs.get('name', 'Weibull')
         dependency = kwargs.get('dependency', (None, None, None))
         functions = kwargs.get('functions', ('polynomial', 'polynomial', 'polynomial'))
-        number_of_steps = kwargs.get('number_of_bins')
-        width_of_bins = kwargs.get('width_of_bins')
+        list_number_of_intervals = kwargs.get('list_number_of_intervals')
+        list_width_of_intervals = kwargs.get('list_width_of_intervals')
 
         # handle KernelDensity separated
         if name == 'KernelDensity':
@@ -428,6 +467,7 @@ class Fit():
         # initialize params (shape, loc, scale)
         params = [None, None, None]
 
+        used_number_of_intervals = 1
         for index in range(len(dependency)):
 
             # continue if params is yet computed
@@ -447,12 +487,14 @@ class Fit():
                         dist_points[i] = [sample]
             else:
                 # case that there is a dependency
-                if number_of_steps:
-                    steps, dist_values, param_values = Fit._get_fitting_values(
-                        sample, samples, name, dependency, index, number_of_intervals=number_of_steps)
-                elif width_of_bins:
-                    steps, dist_values, param_values = Fit._get_fitting_values(
-                        sample, samples, name, dependency, index, bin_width=width_of_bins)
+                if list_number_of_intervals[dependency[index]]:
+                    interval_centers, dist_values, param_values = Fit._get_fitting_values(
+                        sample, samples, name, dependency, index, number_of_intervals=list_number_of_intervals[dependency[index]])
+                elif list_width_of_intervals[dependency[index]]:
+                    interval_centers, dist_values, param_values = Fit._get_fitting_values(
+                        sample, samples, name, dependency, index, bin_width=list_width_of_intervals[dependency[index]])
+                if used_number_of_intervals == 1:
+                    used_number_of_intervals = len(interval_centers)
                 for i in range(index, len(functions)):
                     # check if the other parameters have the same dependency
                     if dependency[i] is not None and dependency[i] == dependency[index]:
@@ -464,7 +506,7 @@ class Fit():
                         try:
                             param_popt, param_pcov = curve_fit(
                                 Fit._get_function(functions[i]),
-                                steps, fit_points)
+                                interval_centers, fit_points)
                         except RuntimeError:
                             # case that optimal parameters not found
                             if i == 0 and name == 'Lognormal_2':
@@ -487,29 +529,31 @@ class Fit():
                             try:
                                 param_popt, param_pcov = curve_fit(
                                     Fit._get_function(functions[i]),
-                                    steps, fit_points, maxfev=int(1e6))
+                                    interval_centers, fit_points, maxfev=int(1e6))
                             except RuntimeError:
                                 raise RuntimeError(
                                     "Can't fit curve for parameter '{}' in dimension '{}'. "
                                     "Number of iterations exceeded.".format(param_name, dimension))
                         # save fitting points
-                        param_points[i] = (steps, fit_points)
+                        param_points[i] = (interval_centers, fit_points)
                         dist_points[i] = dist_values
                         # save param
                         params[i] = FunctionParam(*param_popt, functions[i])
 
         # return particular distribution
+        distribution = None
         if name == 'Weibull':
-            return WeibullDistribution(*params), dependency, dist_points, param_points
+            distribution = WeibullDistribution(*params)
         elif name == 'Lognormal_2':
-            return LognormalDistribution(sigma=params[0], mu=params[2]), dependency, dist_points, param_points
+            distribution = LognormalDistribution(sigma=params[0], mu=params[2])
         elif name == 'Lognormal_1':
-            return LognormalDistribution(*params), dependency, dist_points, param_points
+            distribution = LognormalDistribution(*params)
         elif name == 'Normal':
-            return NormalDistribution(*params), dependency, dist_points, param_points
+            distribution = NormalDistribution(*params),
+        return distribution, dependency, dist_points, param_points, used_number_of_intervals
 
     def __str__(self):
-        return "fit"
+        return "Fit() instance with dist_dscriptions: " + "".join([str(d) for d in self.dist_descriptions])
 
 
 if __name__ == "__main__":
