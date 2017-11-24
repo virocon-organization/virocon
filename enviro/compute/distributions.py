@@ -45,7 +45,7 @@ class ParametricDistribution(Distribution, ABC):
     scale : Param,
         The scale parameter.
     name : str,
-        The name of the distribution. ("Weibull", "LogNormal", Normal)
+        The name of the distribution. ("Weibull", "LogNormal", "Normal")
     _scipy_cdf : function,
         The cumulative distribution function from scipy. (sts.weibull_min.cdf, ...)
     _scipy_i_cdf : function,
@@ -327,6 +327,9 @@ class LognormalDistribution(ParametricDistribution):
     """
 
     def __init__(self, shape=None, loc=None, scale=None, **kwargs):
+        saved_args = locals()
+        print('Called __init__ of Lognormaldistribution with: ', saved_args)
+        print('The value of mu is: ', kwargs["mu"](0))
 
         loc = None
         if "sigma" in kwargs and "mu" in kwargs:
@@ -355,6 +358,8 @@ class LognormalDistribution(ParametricDistribution):
                              "max" : np.inf, "strict_less" : True }
         self._valid_scale = {"min" : 0, "strict_greater" : True,
                              "max" : np.inf, "strict_less" : True }
+
+        print('Initialized a Lognormaldistribution with mu=' + str(self.mu))
 
 
     def _scipy_cdf(self, x, shape, _, scale):
@@ -648,32 +653,35 @@ class MultivariateDistribution():
             scale_name = None
             shape_name = None
             loc_name = None
-            if self.distributions[i].name=="Weibull":
+            if self.distributions[i].name == "Weibull":
                 latex_string += r"\dfrac{k_{" + realization_symbols[i] + r"}}{\lambda_{" + realization_symbols[i] \
                         + "}}\left(\dfrac{" + realization_symbols[i] + r"}{\lambda_{" + realization_symbols[i] \
                         + r"}}\right)^{k_{" + realization_symbols[i] + r"}-1}e^{-(" + realization_symbols[i] \
                         + r"/\lambda_{" + realization_symbols[i] + r"})^{k_{" + realization_symbols[i] + r"}}}"
                 scale_name = r"\lambda_{" + realization_symbols[i] + "}"
                 shape_name = r"k_{" + realization_symbols[i] + "}"
-            elif self.distributions[i].name=="Normal":
+            elif self.distributions[i].name == "Normal":
                 latex_string += r"\dfrac{1}{\sqrt{2\pi\sigma^2}}e^{-\dfrac{(" + realization_symbols[i] \
-                        + r"-\mu)^2}{2\sigma^2}"
-                scale_name = r"\sigma}_{" + realization_symbols[i] + "}"
-                loc_name = r"\mu}_{" + realization_symbols[i] + "}"
-            elif self.distributions[i].name=="Lognormal":
+                        + r"-\mu)^2}{2\sigma^2}}"
+                scale_name = r"\sigma_{" + realization_symbols[i] + "}"
+                loc_name = r"\mu_{" + realization_symbols[i] + "}"
+            elif self.distributions[i].name == "Lognormal":
                 latex_string += r"\dfrac{1}{" + realization_symbols[i] + r"\tilde{\sigma}_{" \
                         + realization_symbols[i] + r"}\sqrt{2\pi}}e^{-\dfrac{(\ln " + realization_symbols[i] \
                                 + r"-\tilde{\mu}_{" + realization_symbols[i] + r"})^2}{2\tilde{\sigma}_{" \
                         + realization_symbols[i] + r"}^2}}"
                 # this is not inuitive, check if this is correct
-                # inuitive would be as with the Normal pdf --> sigma = scale, mu = location
+                # intuitive would be as with the Normal pdf --> sigma = scale, mu = location
                 shape_name = r"\tilde{\sigma}_{" + realization_symbols[i] + "}"
-                scale_name = r"\tilde{\mu}_{" + realization_symbols[i] + "}"
+                scale_name = r"\tilde{\mu}_{" + realization_symbols[i] + "}" # scale could also be interpeted as exp^(mu), but here for simplicity we use the same variable name
             latex_string_list.append(latex_string)
             latex_string = ""
             if scale_name:
                 latex_string = r"\text{ with }"
-                scale_value = str(self.distributions[i].scale)
+                if self.distributions[i].name == "Lognormal":
+                    scale_value = str(self.distributions[i].mu)
+                else:
+                    scale_value = str(self.distributions[i].scale)
                 for j in range(self.n_dim):
                     if  j in self.dependencies[i]:
                         scale_value = scale_value.replace('x', realization_symbols[j])

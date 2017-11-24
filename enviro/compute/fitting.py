@@ -14,6 +14,7 @@ from .distributions import (WeibullDistribution, LognormalDistribution, NormalDi
                                    KernelDensityDistribution,
                                    MultivariateDistribution)
 import warnings
+from pprint import pprint
 
 __all__ = ["Fit"]
 
@@ -238,6 +239,7 @@ class Fit():
 
         # save multivariate distribution
         self.mul_var_dist = MultivariateDistribution(distributions, dependencies)
+        print(self.mul_var_dist.getPdfAsLatexString())
 
     @staticmethod
     def _fit_distribution(sample, name):
@@ -414,6 +416,9 @@ class Fit():
                     " dimension '{}'. This step is skipped. Maybe you should ckeck your data or reduce the number "
                     "of steps".format(MIN_DATA_POINTS_FOR_FIT, len(fitting_values), step, dependency[index]),
                     RuntimeWarning, stacklevel=2)
+        if len(interval_centers) < 3:
+            raise RuntimeError("Your settings resulted in " + str(len(interval_centers)) + " intervals. However, "
+                               "at least 3 intervals are required. Consider changing the interval width setting.")
         return interval_centers, dist_values, param_values
 
     def _get_distribution(self, dimension, samples, **kwargs):
@@ -481,7 +486,9 @@ class Fit():
                     # check if the other parameters have also no dependency
                     if dependency[i] is None:
                         if i == 2 and name == 'Lognormal_2':
-                            params[i] = np.log(current_params[i])
+                            print('before np.log, current_params[i] = ' + str(current_params[i]))
+                            params[i] = ConstantParam(np.log(current_params[i](0)))
+                            print('after np.log, params[i] = ' + str(params[i]))
                         else:
                             params[i] = current_params[i]
                         dist_points[i] = [sample]
@@ -546,10 +553,11 @@ class Fit():
             distribution = WeibullDistribution(*params)
         elif name == 'Lognormal_2':
             distribution = LognormalDistribution(sigma=params[0], mu=params[2])
+            print('Lognormal_2 distribution in fitting: mu = ' + str(distribution.mu) + ', scale = ' + str(distribution.scale))
         elif name == 'Lognormal_1':
             distribution = LognormalDistribution(*params)
         elif name == 'Normal':
-            distribution = NormalDistribution(*params),
+            distribution = NormalDistribution(*params)
         return distribution, dependency, dist_points, param_points, used_number_of_intervals
 
     def __str__(self):
