@@ -239,7 +239,6 @@ class Fit():
 
         # save multivariate distribution
         self.mul_var_dist = MultivariateDistribution(distributions, dependencies)
-        print(self.mul_var_dist.getPdfAsLatexString())
 
     @staticmethod
     def _fit_distribution(sample, name):
@@ -486,9 +485,7 @@ class Fit():
                     # check if the other parameters have also no dependency
                     if dependency[i] is None:
                         if i == 2 and name == 'Lognormal_2':
-                            print('before np.log, current_params[i] = ' + str(current_params[i]))
                             params[i] = ConstantParam(np.log(current_params[i](0)))
-                            print('after np.log, params[i] = ' + str(params[i]))
                         else:
                             params[i] = current_params[i]
                         dist_points[i] = [sample]
@@ -553,7 +550,6 @@ class Fit():
             distribution = WeibullDistribution(*params)
         elif name == 'Lognormal_2':
             distribution = LognormalDistribution(sigma=params[0], mu=params[2])
-            print('Lognormal_2 distribution in fitting: mu = ' + str(distribution.mu) + ', scale = ' + str(distribution.scale))
         elif name == 'Lognormal_1':
             distribution = LognormalDistribution(*params)
         elif name == 'Normal':
