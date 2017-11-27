@@ -540,6 +540,7 @@ class Fit():
                                     "Number of iterations exceeded.".format(param_name, dimension))
                         # save fitting points
                         param_points[i] = (interval_centers, fit_points)
+                        print('param points: ' + str(param_points[i]))
                         dist_points[i] = dist_values
                         # save param
                         params[i] = FunctionParam(*param_popt, functions[i])
