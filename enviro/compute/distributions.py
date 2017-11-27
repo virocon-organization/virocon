@@ -328,8 +328,6 @@ class LognormalDistribution(ParametricDistribution):
 
     def __init__(self, shape=None, loc=None, scale=None, **kwargs):
         saved_args = locals()
-        print('Called __init__ of Lognormaldistribution with: ', saved_args)
-        print('The value of mu is: ', kwargs["mu"](0))
 
         loc = None
         if "sigma" in kwargs and "mu" in kwargs:
@@ -359,7 +357,6 @@ class LognormalDistribution(ParametricDistribution):
         self._valid_scale = {"min" : 0, "strict_greater" : True,
                              "max" : np.inf, "strict_less" : True }
 
-        print('Initialized a Lognormaldistribution with mu=' + str(self.mu))
 
 
     def _scipy_cdf(self, x, shape, _, scale):
