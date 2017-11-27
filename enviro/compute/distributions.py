@@ -370,6 +370,8 @@ class NormalDistribution(ParametricDistribution):
     """
     A Normal distribution.
 
+    The location (loc) keyword specifies the mean. The scale (scale) keyword specifies the standard deviation.
+
     Examples
     --------
     Create a NormalDistribution and plot the cumulative distribution function:

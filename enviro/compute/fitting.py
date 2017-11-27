@@ -378,7 +378,6 @@ class Fit():
         elif bin_width:
             interval_width = bin_width
             interval_centers = np.arange(0.5*interval_width, max(samples[dependency[index]]), interval_width)
-            print('interval_centers: ' + str(interval_centers))
         else:
             raise RuntimeError(
                 "Either the parameters number_of_intervals or bin_width has to be specified, otherwise the intervals"
@@ -540,7 +539,6 @@ class Fit():
                                     "Number of iterations exceeded.".format(param_name, dimension))
                         # save fitting points
                         param_points[i] = (interval_centers, fit_points)
-                        print('param points: ' + str(param_points[i]))
                         dist_points[i] = dist_values
                         # save param
                         params[i] = FunctionParam(*param_popt, functions[i])
