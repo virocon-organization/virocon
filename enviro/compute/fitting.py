@@ -30,6 +30,10 @@ def _f1(x, a, b, c):
     return a + b * x ** c
 
 # bounds for function parameters
+# 0 < a < inf
+# 0 < b < inf
+# -inf < c < inf
+
 _bounds = ([np.finfo(np.float64).tiny, np.finfo(np.float64).tiny, -np.inf],
           [np.inf, np.inf, np.inf])
 # ----------------------------
