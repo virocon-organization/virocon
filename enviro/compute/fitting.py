@@ -29,6 +29,13 @@ def _f2(x, a, b, c):
 def _f1(x, a, b, c):
     return a + b * x ** c
 
+# bounds for function parameters
+# 0 < a < inf
+# 0 < b < inf
+# -inf < c < inf
+
+_bounds = ([np.finfo(np.float64).tiny, np.finfo(np.float64).tiny, -np.inf],
+          [np.inf, np.inf, np.inf])
 # ----------------------------
 
 
@@ -504,7 +511,7 @@ class Fit():
                         try:
                             param_popt, param_pcov = curve_fit(
                                 Fit._get_function(functions[i]),
-                                interval_centers, fit_points)
+                                interval_centers, fit_points, bounds=_bounds)
                         except RuntimeError:
                             # case that optimal parameters not found
                             if i == 0 and name == 'Lognormal_2':
@@ -527,7 +534,7 @@ class Fit():
                             try:
                                 param_popt, param_pcov = curve_fit(
                                     Fit._get_function(functions[i]),
-                                    interval_centers, fit_points, maxfev=int(1e6))
+                                    interval_centers, fit_points, bounds=_bounds, maxfev=int(1e6))
                             except RuntimeError:
                                 raise RuntimeError(
                                     "Can't fit curve for parameter '{}' in dimension '{}'. "
