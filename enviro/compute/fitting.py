@@ -192,15 +192,12 @@ class Fit():
 
         list_number_of_intervals = []
         list_width_of_intervals = []
-        for i in range(len(samples)):
-            list_number_of_intervals.append(dist_descriptions[i]['number_of_intervals'])
-            list_width_of_intervals.append(dist_descriptions[i]['width_of_intervals'])
-        for i in range(len(samples)):
-            dist_descriptions[i]['list_number_of_intervals']  = list_number_of_intervals
-            dist_descriptions[i]['list_width_of_intervals'] = list_width_of_intervals
-
-        print('list_number_of_intervals: ' + str(list_number_of_intervals))
-        print('list_width_of_intervals: ' + str(list_width_of_intervals))
+        for dist_description in dist_descriptions:
+            list_number_of_intervals.append(dist_description.get('number_of_intervals'))
+            list_width_of_intervals.append(dist_description.get('width_of_intervals'))
+        for dist_description in dist_descriptions:
+            dist_description['list_number_of_intervals'] = list_number_of_intervals
+            dist_description['list_width_of_intervals'] = list_width_of_intervals
 
         # multiprocessing for more performance
         pool = Pool()
@@ -222,8 +219,7 @@ class Fit():
         self.mul_dist_points = []
 
         # get distributions
-        i = 0
-        for res in multiple_results:
+        for i, res in enumerate(multiple_results):
             distribution, dependency, dist_points, param_points, used_number_of_intervals = res.get(timeout=1e6)
 
             # saves distribution and dependency for particular dimension
@@ -235,7 +231,6 @@ class Fit():
             self.mul_param_points.append(param_points)
 
             self.dist_descriptions[i]['used_number_of_intervals'] = used_number_of_intervals
-            i += 1
 
         # save multivariate distribution
         self.mul_var_dist = MultivariateDistribution(distributions, dependencies)
