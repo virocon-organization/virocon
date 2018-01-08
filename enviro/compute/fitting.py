@@ -234,7 +234,14 @@ class Fit():
             self.mul_dist_points.append(dist_points)
             self.mul_param_points.append(param_points)
 
-            self.dist_descriptions[i]['used_number_of_intervals'] = used_number_of_intervals
+            # save the used number of intervals
+            for n, dep in enumerate(dependency):
+                if dep is not None:
+                    self.dist_descriptions[dep]['used_number_of_intervals'] = used_number_of_intervals[n]
+
+        for dist_description in self.dist_descriptions:
+            if not dist_description.get('used_number_of_intervals'):
+                dist_description['used_number_of_intervals'] = 1
 
         # save multivariate distribution
         self.mul_var_dist = MultivariateDistribution(distributions, dependencies)
@@ -279,6 +286,12 @@ class Fit():
         ----------
         function_name : str,
             options are 'f1', 'f2'
+
+
+        Returns
+        -------
+        function : func,
+            The current function to the given function name.
         """
         
         if function_name == 'f1':
@@ -354,18 +367,27 @@ class Fit():
             order : (shape, loc, scale) (i.e. 0 -> shape)
 
         number_of_intervals : int,
-            number of distributions used to fit shape, loc, scale
+            Number of bins the data of this variable should be seperated for fits which depend
+            upon it. If the number of bins is given, the width of the bins is determined automatically.
+
+        bin_width : float,
+            Width of the bins. When the width of the bins is given, the number of bins is
+            determined automatically.
+
+
 
         Returns
         -------
-        interval_centers :
+        interval_centers : ndarray,
+            Array with length of the number of intervals that contains the centers of the calculated intervals.
 
-        dist_values :
+        dist_values : list,
+            List with length of the number of intervals that contains for each interval center the used samples
+            for the current fit.
 
-        param_values :
-
-
-
+        param_values : list,
+            List with length of three that contains for each parameter (shape, loc, scale)
+            a list with length of the number of intervals that contains the calculated parameters.
         """
         MIN_DATA_POINTS_FOR_FIT = 10
 
@@ -432,18 +454,25 @@ class Fit():
                                                    samples[1] -> second variable
                                                    ...
 
+
         Returns
         -------
-        distribution : ParametricDistribution instance,
-            the fitted distribution instance
+        distribution : Distribution,
+            The fitted distribution instance.
 
-        dependency : ?
+        dependency : list,
+            List that contains the used dependencies for fitting.
 
-        dist_points: ?
+        dist_points: list,
+            List with length of three that contains for each parameter (shape, loc, scale) a list with
+            the used samples for each interval center.
 
-        param_points: ?
+        param_points: list,
+            List with length of three that contains for each parameter (shape, loc, scale) a list with
+            the calculated parameter for each interval center.
 
-        used_number_of_intervals: ?
+        used_number_of_intervals: list,
+            List with length of three that contains the used number of intervals for each parameter (shape, loc, scale).
 
         """
 
@@ -469,7 +498,9 @@ class Fit():
         # initialize params (shape, loc, scale)
         params = [None, None, None]
 
-        used_number_of_intervals = 1
+        # used number of intervals for each parameter
+        used_number_of_intervals = [None, None, None]
+
         for index in range(len(dependency)):
 
             # continue if params is yet computed
@@ -495,11 +526,11 @@ class Fit():
                 elif list_width_of_intervals[dependency[index]]:
                     interval_centers, dist_values, param_values = Fit._get_fitting_values(
                         sample, samples, name, dependency, index, bin_width=list_width_of_intervals[dependency[index]])
-                if used_number_of_intervals == 1:
-                    used_number_of_intervals = len(interval_centers)
+
                 for i in range(index, len(functions)):
                     # check if the other parameters have the same dependency
                     if dependency[i] is not None and dependency[i] == dependency[index]:
+                        used_number_of_intervals[i] = len(interval_centers)
                         if i == 2 and name == 'Lognormal_2':
                             fit_points = [np.log(p(None)) for p in param_values[i]]
                         else:
