@@ -84,8 +84,9 @@ class Fit():
     >>> sample_1 = prng.normal(10, 1, 500)
     >>> sample_2 = [point + prng.uniform(-5, 5) for point in sample_1]
     >>> dist_description_1 = {'name': 'KernelDensity', 'dependency': (None, None, None)}
-    >>> dist_description_2 = {'name': 'Normal', 'dependency': (None, 0, None), 'functions':(None, 'f1', None)}
-    >>> my_fit = Fit((sample_1, sample_2), (dist_description_1, dist_description_2), 5)
+    >>> dist_description_2 = {'name': 'Normal', 'dependency': (None, 0, None), 'functions': (None, 'f1', None),
+    >>> 'number_of_intervals': 5}
+    >>> my_fit = Fit((sample_1, sample_2), (dist_description_1, dist_description_2))
     >>> my_contour = IFormContour(my_fit.mul_var_dist)
     >>> #example_plot = plt.scatter(my_contour.coordinates[0][0], my_contour.coordinates[0][1], label="IForm")
 
@@ -96,8 +97,8 @@ class Fit():
     >>> sample_1 = prng.weibull(2, 500) + 15
     >>> sample_2 = [point + prng.uniform(-1, 1) for point in sample_1]
     >>> dist_description_1 = {'name': 'Weibull', 'dependency': (None, None, None)}
-    >>> dist_description_2 = {'name': 'Normal', 'dependency': (None, None, None)}
-    >>> my_fit = Fit((sample_1, sample_2), (dist_description_1, dist_description_2), 5)
+    >>> dist_description_2 = {'name': 'Normal', 'dependency': (None, None, None), 'number_of_intervals': 5}
+    >>> my_fit = Fit((sample_1, sample_2), (dist_description_1, dist_description_2))
     >>> return_period = 50
     >>> state_duration = 3
     >>> limits = [(0, 20), (0, 20)]
@@ -109,8 +110,9 @@ class Fit():
     An Example how to use the attributes mul_param_points and mul_dist_points to visualize how good your fit is:
 
     >>> dist_description_0 = {'name': 'Weibull', 'dependency': (None, None, None)}
-    >>> dist_description_1 = {'name': 'Lognormal_1', 'dependency': (None, None, 0), 'functions': (None, None, 'f2')}
-    >>> my_fit = Fit((sample_1, sample_2), (dist_description_0, dist_description_1), 3)
+    >>> dist_description_1 = {'name': 'Lognormal_1', 'dependency': (None, None, 0), 'functions': (None, None, 'f2'),
+    >>> 'number_of_intervals': 3}
+    >>> my_fit = Fit((sample_1, sample_2), (dist_description_0, dist_description_1))
     >>>
     >>> #fig = plt.figure(figsize=(10, 8))
     >>> #example_text = fig.suptitle("Dependence of 'scale'")
