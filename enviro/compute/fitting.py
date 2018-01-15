@@ -14,7 +14,6 @@ from .distributions import (WeibullDistribution, LognormalDistribution, NormalDi
                                    KernelDensityDistribution,
                                    MultivariateDistribution)
 import warnings
-from pprint import pprint
 
 __all__ = ["Fit"]
 
@@ -66,20 +65,19 @@ class Fit():
     Examples
     --------
     Create a Fit and visualize the result in a IForm contour:
-
     >>> from multiprocessing import Pool
     >>> import numpy as np
     >>> import matplotlib.pyplot as plt
     >>> import statsmodels.api as sm
     >>> import scipy.stats as sts
     >>> from scipy.optimize import curve_fit
-    >>> from compute.params import ConstantParam, FunctionParam
-    >>> from compute.distributions import (WeibullDistribution,\
+    >>> from params import ConstantParam, FunctionParam
+    >>> from distributions import (WeibullDistribution,\
                                            LognormalDistribution,\
                                            NormalDistribution,\
                                            KernelDensityDistribution,\
                                            MultivariateDistribution)
-    >>> from compute.contours import IFormContour
+    >>> from contours import IFormContour
     >>> prng = np.random.RandomState(42)
     >>> sample_1 = prng.normal(10, 1, 500)
     >>> sample_2 = [point + prng.uniform(-5, 5) for point in sample_1]
@@ -92,7 +90,7 @@ class Fit():
 
     Create a Fit and visualize the result in a HDC contour:
 
-    >>> from compute.contours import HighestDensityContour
+    >>> from contours import HighestDensityContour
     >>> sample_1 = prng.weibull(2, 500) + 15
     >>> sample_2 = [point + prng.uniform(-1, 1) for point in sample_1]
     >>> dist_description_1 = {'name': 'Weibull', 'dependency': (None, None, None), 'number_of_intervals': 5}
@@ -107,11 +105,11 @@ class Fit():
 
 
     An Example how to use the attributes mul_param_points and mul_dist_points to visualize how good your fit is:
-
-    >>> dist_description_0 = {'name': 'Weibull', 'dependency': (None, None, None), 'number_of_intervals': 3}
-    >>> dist_description_1 = {'name': 'Lognormal_1', 'dependency': (None, None, 0), 'functions': (None, None, 'f2')}
-    >>> my_fit = Fit((sample_1, sample_2), (dist_description_0, dist_description_1))
-    >>>
+    >>> sample_1 = prng.normal(10, 1, 500)
+    >>> sample_2 = [point + prng.uniform(-5, 5) for point in sample_1]
+    >>> dist_description_1 = {'name': 'Lognormal_1', 'dependency': (None, None, None), 'number_of_intervals': 5}
+    >>> dist_description_2 = {'name': 'Normal', 'dependency': (None, None, 0), 'functions': (None, None, 'f2')}
+    >>> my_fit = Fit((sample_1, sample_2), (dist_description_1, dist_description_2))
     >>> #fig = plt.figure(figsize=(10, 8))
     >>> #example_text = fig.suptitle("Dependence of 'scale'")
     >>>
@@ -121,28 +119,24 @@ class Fit():
     >>> x_1 = np.linspace(5, 15, 100)
     >>> #ax1_plot = ax_1.plot(param_grid, my_fit.mul_param_points[1][2][1], 'x')
     >>> #example_plot1 = ax_1.plot(x_1, my_fit.mul_var_dist.distributions[1].scale(x_1))
-    >>>
     >>> #ax_2 = fig.add_subplot(222)
     >>> #title2 = ax_2.set_title("Distribution '1'")
     >>> #ax2_hist = ax_2.hist(my_fit.mul_dist_points[1][2][0], normed=1)
     >>> shape = my_fit.mul_var_dist.distributions[1].shape(None)
     >>> scale = my_fit.mul_var_dist.distributions[1].scale(param_grid[0])
     >>> #ax2_plot = ax_2.plot(np.linspace(0, 20, 100), sts.lognorm.pdf(np.linspace(0, 20, 100), s=shape, scale=scale))
-    >>>
     >>> #ax_3 = fig.add_subplot(223)
     >>> #title3 = ax_3.set_title("Distribution '2'")
     >>> #ax3_hist = ax_3.hist(my_fit.mul_dist_points[1][2][1], normed=1)
     >>> shape = my_fit.mul_var_dist.distributions[1].shape(None)
     >>> scale = my_fit.mul_var_dist.distributions[1].scale(param_grid[1])
     >>> #ax3_plot = ax_3.plot(np.linspace(0, 20, 100), sts.lognorm.pdf(np.linspace(0, 20, 100), s=shape, scale=scale))
-    >>>
     >>> #ax_4 = fig.add_subplot(224)
     >>> #title4 = ax_4.set_title("Distribution '3'")
     >>> #ax4_hist = ax_4.hist(my_fit.mul_dist_points[1][2][2], normed=1)
     >>> shape = my_fit.mul_var_dist.distributions[1].shape(None)
     >>> scale = my_fit.mul_var_dist.distributions[1].scale(param_grid[2])
     >>> #ax4_plot = ax_4.plot(np.linspace(0, 20, 100), sts.lognorm.pdf(np.linspace(0, 20, 100), s=shape, scale=scale))
-
     """
 
     def __init__(self, samples, dist_descriptions):
@@ -489,7 +483,7 @@ class Fit():
             if dependency != (None, None, None):
                 raise NotImplementedError("KernelDensity can not be conditional.")
             return KernelDensityDistribution(Fit._fit_distribution(sample, name)), dependency, [
-                [sample], [sample], [sample]], [None, None, None]
+                [sample], [sample], [sample]], [None, None, None], [1, 1, 1]
 
         # points for plotting the fits
         param_points = [None, None, None]
@@ -583,6 +577,7 @@ class Fit():
             distribution = LognormalDistribution(*params)
         elif name == 'Normal':
             distribution = NormalDistribution(*params)
+
         return distribution, dependency, dist_points, param_points, used_number_of_intervals
 
     def __str__(self):
