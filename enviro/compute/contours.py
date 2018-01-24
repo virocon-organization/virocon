@@ -61,9 +61,9 @@ class IFormContour(Contour):
         ----------
         mul_var_distribution : MultivariateDistribution,
             The distribution to be used to calculate the contour.
-        return_period : int, optional
+        return_period : float, optional
             The years to consider for calculation. Defaults to 25.
-        state_duration : int, optional
+        state_duration : float, optional
             Time period for which a (environmental) state is measured, expressed in hours.
             Defaults to 3.
         n_points : int, optional
@@ -150,9 +150,9 @@ class HighestDensityContour(Contour):
         ----------
         mul_var_distribution : MultivariateDistribution,
             The distribution to be used to calculate the contour.
-        return_period : int, optional
+        return_period : float, optional
             The years to consider for calculation. Defaults to 25.
-        state_duration : int, optional
+        state_duration : float, optional
             Time period for which a (environmental) state is measured, expressed in hours.
             Defaults to 3.
         limits : list of tuples, optional

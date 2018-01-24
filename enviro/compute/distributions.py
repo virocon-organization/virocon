@@ -586,7 +586,7 @@ class MultivariateDistribution():
         fbar = fbar.reshape(n_dim_shape)
         return fbar / dx
 
-    def getPdfAsLatexString(self, var_symbols=None):
+    def latex_repr(self, var_symbols=None):
         """
         Returns the joint probabilty density function in latex format.
 
