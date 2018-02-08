@@ -662,18 +662,20 @@ class MultivariateDistribution():
             shape_name = None
             loc_name = None
             if self.distributions[i].name == "Weibull":
-                latex_string += r"\dfrac{k_{" + realization_symbols[i] + \
-                                r"}}{\lambda_{" + realization_symbols[i] \
-                        + "}}\left(\dfrac{" + realization_symbols[i] + \
-                                r"}{\lambda_{" + realization_symbols[i] \
-                        + r"}}\right)^{k_{" + realization_symbols[i] + \
-                                r"}-1}e^{-(" + realization_symbols[i] \
-                        + r"/\lambda_{" + realization_symbols[i] + \
-                                r"})^{k_{" + realization_symbols[i] +\
-                                r"}}}"
                 scale_name = r"\lambda_{" + realization_symbols[i] + "}"
                 shape_name = r"k_{" + realization_symbols[i] + "}"
                 loc_name = r"\gamma_{" + realization_symbols[i] + "}"
+                latex_string += r"\dfrac{k_{" + realization_symbols[i] + \
+                                r"}}{\lambda_{" + realization_symbols[i] \
+                        + "}}\left(\dfrac{" + realization_symbols[i] + \
+                                r"-" +  loc_name + r"}{\lambda_{" + \
+                                realization_symbols[i] \
+                        + r"}}\right)^{k_{" + realization_symbols[i] + \
+                                r"}-1}\exp\left[-\left(\dfrac{" + realization_symbols[i] \
+                        + r"-" + loc_name + r"}{\lambda_{" + \
+                                realization_symbols[i] + \
+                                r"}}\right)^{k_{" + realization_symbols[i] +\
+                                r"}}\right]"
             elif self.distributions[i].name == "Normal":
                 latex_string += r"\dfrac{1}{\sqrt{2\pi\sigma^2}}e^{-\dfrac{(" +\
                                 realization_symbols[i] \
