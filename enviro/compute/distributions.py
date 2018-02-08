@@ -647,6 +647,8 @@ class MultivariateDistribution():
         latex_string_list.append(latex_string)
 
         for i in range(self.n_dim):
+            latex_string = ""
+            latex_string_list.append(latex_string) # add a blank line
             latex_string_list.append(str(i+1) + r"\text{. variable, }" + str(var_symbols[i]) + ": ")
             latex_string = left_side_pdfs[i] + "="
             scale_name = None
@@ -659,6 +661,7 @@ class MultivariateDistribution():
                         + r"/\lambda_{" + realization_symbols[i] + r"})^{k_{" + realization_symbols[i] + r"}}}"
                 scale_name = r"\lambda_{" + realization_symbols[i] + "}"
                 shape_name = r"k_{" + realization_symbols[i] + "}"
+                loc_name = r"\gamma_{" + realization_symbols[i] + "}"
             elif self.distributions[i].name == "Normal":
                 latex_string += r"\dfrac{1}{\sqrt{2\pi\sigma^2}}e^{-\dfrac{(" + realization_symbols[i] \
                         + r"-\mu)^2}{2\sigma^2}}"
@@ -674,9 +677,8 @@ class MultivariateDistribution():
                 shape_name = r"\tilde{\sigma}_{" + realization_symbols[i] + "}"
                 scale_name = r"\tilde{\mu}_{" + realization_symbols[i] + "}" # scale could also be interpeted as exp^(mu), but here for simplicity we use the same variable name
             latex_string_list.append(latex_string)
-            latex_string = ""
             if scale_name:
-                latex_string = r"\text{ with }"
+                latex_string = r"\quad\text{ with }"
                 if self.distributions[i].name == "Lognormal":
                     scale_value = str(self.distributions[i].mu)
                 else:
@@ -687,10 +689,10 @@ class MultivariateDistribution():
                 latex_string += scale_name + "=" + scale_value + ","
                 latex_string_list.append(latex_string)
             if shape_name:
-                if latex_string == "":
-                    latex_string = r"\text{ with }"
+                if scale_name:
+                    latex_string = r"\quad\qquad\;\; "
                 else:
-                    latex_string = ""
+                    latex_string = r"\quad\text{ with }"
 
                 shape_value = str(self.distributions[i].shape)
                 for j in range(self.n_dim):
@@ -703,6 +705,7 @@ class MultivariateDistribution():
                     latex_string += "."
                 latex_string_list.append(latex_string)
             if loc_name:
+                latex_string = r"\quad\qquad\;\; "
                 loc_value = str(self.distributions[i].loc)
                 for j in range(self.n_dim):
                     if  j in self.dependencies[i]:
