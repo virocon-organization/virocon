@@ -686,11 +686,11 @@ class MultivariateDistribution():
                 latex_string += r"\dfrac{1}{" + realization_symbols[i] + \
                                 r"\tilde{\sigma}_{" \
                         + realization_symbols[i] + \
-                                r"}\sqrt{2\pi}}e^{-\dfrac{(\ln " + \
+                                r"}\sqrt{2\pi}}\exp\left[-\dfrac{(\ln " + \
                                 realization_symbols[i] \
                                 + r"-\tilde{\mu}_{" + realization_symbols[i] + \
                                 r"})^2}{2\tilde{\sigma}_{" \
-                        + realization_symbols[i] + r"}^2}}"
+                        + realization_symbols[i] + r"}^2}\right]"
                 # The shape and scale naming for sigma and mu is not inuitive.
                 # Intuitive would be as with the Normal pdf --> sigma = scale,
                 # mu = location. This should be checked
