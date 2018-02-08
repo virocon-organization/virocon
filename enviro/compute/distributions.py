@@ -609,10 +609,14 @@ class MultivariateDistribution():
                 var_symbols.append("X_{" + str(i) + "}")
         else:
             for i in range(self.n_dim):
-                var_symbols[i] = var_symbols[i][0] + "_{" + var_symbols[i][1:] + "}"
+                var_symbols[i] = var_symbols[i][0] + "_{" + \
+                                 var_symbols[i][1:] + "}"
 
-        # realization symbols are not capitalized, e.g. hs for the realization of Hs
-        downcase_first_char = lambda s: s[:1].lower() + s[1:] if s else '' # thanks to: https://stackoverflow.com/questions/3840843/how-to-downcase-the-first-character-of-a-string
+        # Realization symbols are not capitalized, e.g. hs for the
+        # realization of Hs
+        # Next line, thanks to: https://stackoverflow.com/questions/3840843/
+        # how-to-downcase-the-first-character-of-a-string
+        downcase_first_char = lambda s: s[:1].lower() + s[1:] if s else ''
         realization_symbols = []
         for i in range(self.n_dim):
             realization_symbols.append(downcase_first_char(var_symbols[i]))
@@ -629,14 +633,16 @@ class MultivariateDistribution():
         left_side_pdfs = ["" for x in range(self.n_dim)]
         for i in range(self.n_dim):
             left_side_pdfs[i] += "f_{" + var_symbols[i]
-            if not all(x is None for x in self.dependencies[i]): # if there is at least one depedent paramter
+            # if there is at least one depedent paramter
+            if not all(x is None for x in self.dependencies[i]):
                 left_side_pdfs[i] += "|"
                 for j in range(self.n_dim):
                     if  j in self.dependencies[i]:
                         left_side_pdfs[i] += var_symbols[j] + ','
                 left_side_pdfs[i] = left_side_pdfs[i][:-1]
             left_side_pdfs[i] += "}(" + realization_symbols[i]
-            if not all(x is None for x in self.dependencies[i]): # if there is at least one depedent paramter
+            # if there is at least one depedent paramter
+            if not all(x is None for x in self.dependencies[i]):
                 left_side_pdfs[i] += "|"
                 for j in range(self.n_dim):
                     if  j in self.dependencies[i]:
@@ -649,33 +655,47 @@ class MultivariateDistribution():
         for i in range(self.n_dim):
             latex_string = ""
             latex_string_list.append(latex_string) # add a blank line
-            latex_string_list.append(str(i+1) + r"\text{. variable, }" + str(var_symbols[i]) + ": ")
+            latex_string_list.append(str(i+1) + r"\text{. variable, }" +
+                                     str(var_symbols[i]) + ": ")
             latex_string = left_side_pdfs[i] + "="
             scale_name = None
             shape_name = None
             loc_name = None
             if self.distributions[i].name == "Weibull":
-                latex_string += r"\dfrac{k_{" + realization_symbols[i] + r"}}{\lambda_{" + realization_symbols[i] \
-                        + "}}\left(\dfrac{" + realization_symbols[i] + r"}{\lambda_{" + realization_symbols[i] \
-                        + r"}}\right)^{k_{" + realization_symbols[i] + r"}-1}e^{-(" + realization_symbols[i] \
-                        + r"/\lambda_{" + realization_symbols[i] + r"})^{k_{" + realization_symbols[i] + r"}}}"
+                latex_string += r"\dfrac{k_{" + realization_symbols[i] + \
+                                r"}}{\lambda_{" + realization_symbols[i] \
+                        + "}}\left(\dfrac{" + realization_symbols[i] + \
+                                r"}{\lambda_{" + realization_symbols[i] \
+                        + r"}}\right)^{k_{" + realization_symbols[i] + \
+                                r"}-1}e^{-(" + realization_symbols[i] \
+                        + r"/\lambda_{" + realization_symbols[i] + \
+                                r"})^{k_{" + realization_symbols[i] +\
+                                r"}}}"
                 scale_name = r"\lambda_{" + realization_symbols[i] + "}"
                 shape_name = r"k_{" + realization_symbols[i] + "}"
                 loc_name = r"\gamma_{" + realization_symbols[i] + "}"
             elif self.distributions[i].name == "Normal":
-                latex_string += r"\dfrac{1}{\sqrt{2\pi\sigma^2}}e^{-\dfrac{(" + realization_symbols[i] \
+                latex_string += r"\dfrac{1}{\sqrt{2\pi\sigma^2}}e^{-\dfrac{(" +\
+                                realization_symbols[i] \
                         + r"-\mu)^2}{2\sigma^2}}"
                 scale_name = r"\sigma_{" + realization_symbols[i] + "}"
                 loc_name = r"\mu_{" + realization_symbols[i] + "}"
             elif self.distributions[i].name == "Lognormal":
-                latex_string += r"\dfrac{1}{" + realization_symbols[i] + r"\tilde{\sigma}_{" \
-                        + realization_symbols[i] + r"}\sqrt{2\pi}}e^{-\dfrac{(\ln " + realization_symbols[i] \
-                                + r"-\tilde{\mu}_{" + realization_symbols[i] + r"})^2}{2\tilde{\sigma}_{" \
+                latex_string += r"\dfrac{1}{" + realization_symbols[i] + \
+                                r"\tilde{\sigma}_{" \
+                        + realization_symbols[i] + \
+                                r"}\sqrt{2\pi}}e^{-\dfrac{(\ln " + \
+                                realization_symbols[i] \
+                                + r"-\tilde{\mu}_{" + realization_symbols[i] + \
+                                r"})^2}{2\tilde{\sigma}_{" \
                         + realization_symbols[i] + r"}^2}}"
-                # this is not inuitive, check if this is correct
-                # intuitive would be as with the Normal pdf --> sigma = scale, mu = location
+                # The shape and scale naming for sigma and mu is not inuitive.
+                # Intuitive would be as with the Normal pdf --> sigma = scale,
+                # mu = location. This should be checked
                 shape_name = r"\tilde{\sigma}_{" + realization_symbols[i] + "}"
-                scale_name = r"\tilde{\mu}_{" + realization_symbols[i] + "}" # scale could also be interpeted as exp^(mu), but here for simplicity we use the same variable name
+                # Scale could also be interpeted as exp^(mu), but here for
+                # simplicity we use the same variable name
+                scale_name = r"\tilde{\mu}_{" + realization_symbols[i] + "}"
             latex_string_list.append(latex_string)
             if scale_name:
                 latex_string = r"\quad\text{ with }"
@@ -685,7 +705,8 @@ class MultivariateDistribution():
                     scale_value = str(self.distributions[i].scale)
                 for j in range(self.n_dim):
                     if  j in self.dependencies[i]:
-                        scale_value = scale_value.replace('x', realization_symbols[j])
+                        scale_value = scale_value.replace(
+                            'x', realization_symbols[j])
                 latex_string += scale_name + "=" + scale_value + ","
                 latex_string_list.append(latex_string)
             if shape_name:
@@ -697,7 +718,8 @@ class MultivariateDistribution():
                 shape_value = str(self.distributions[i].shape)
                 for j in range(self.n_dim):
                     if  j in self.dependencies[i]:
-                        shape_value = shape_value.replace('x', realization_symbols[j])
+                        shape_value = shape_value.replace(
+                            'x', realization_symbols[j])
                 latex_string += shape_name + "=" + shape_value
                 if loc_name:
                     latex_string += ","
@@ -709,7 +731,8 @@ class MultivariateDistribution():
                 loc_value = str(self.distributions[i].loc)
                 for j in range(self.n_dim):
                     if  j in self.dependencies[i]:
-                        loc_value = loc_value.replace('x', realization_symbols[j])
+                        loc_value = loc_value.replace(
+                            'x', realization_symbols[j])
                 latex_string += loc_name + "=" + loc_value + "."
                 latex_string_list.append(latex_string)
         return latex_string_list
