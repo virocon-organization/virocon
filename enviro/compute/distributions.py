@@ -671,17 +671,19 @@ class MultivariateDistribution():
                                 r"-" +  loc_name + r"}{\lambda_{" + \
                                 realization_symbols[i] \
                         + r"}}\right)^{k_{" + realization_symbols[i] + \
-                                r"}-1}\exp\left[-\left(\dfrac{" + realization_symbols[i] \
+                                r"}-1}\exp\left[-\left(\dfrac{" + \
+                                realization_symbols[i] \
                         + r"-" + loc_name + r"}{\lambda_{" + \
                                 realization_symbols[i] + \
                                 r"}}\right)^{k_{" + realization_symbols[i] +\
                                 r"}}\right]"
             elif self.distributions[i].name == "Normal":
-                latex_string += r"\dfrac{1}{\sqrt{2\pi\sigma^2}}e^{-\dfrac{(" +\
-                                realization_symbols[i] \
-                        + r"-\mu)^2}{2\sigma^2}}"
                 scale_name = r"\sigma_{" + realization_symbols[i] + "}"
                 loc_name = r"\mu_{" + realization_symbols[i] + "}"
+                latex_string += r"\dfrac{1}{\sqrt{2\pi" + scale_name + r"^2}}"\
+                                + r"\exp\left[-\dfrac{(" + \
+                                realization_symbols[i] + r"-" + loc_name + \
+                                r")^2}{2" + scale_name + r"^2}\right]"
             elif self.distributions[i].name == "Lognormal":
                 latex_string += r"\dfrac{1}{" + realization_symbols[i] + \
                                 r"\tilde{\sigma}_{" \
