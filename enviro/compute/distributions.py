@@ -685,6 +685,13 @@ class MultivariateDistribution():
                                 realization_symbols[i] + r"-" + loc_name + \
                                 r")^2}{2" + scale_name + r"^2}\right]"
             elif self.distributions[i].name == "Lognormal":
+                # The shape and scale naming for sigma and mu is not inuitive.
+                # Intuitive would be as with the Normal pdf --> sigma = scale,
+                # mu = location. This should be checked
+                shape_name = r"\tilde{\sigma}_{" + realization_symbols[i] + "}"
+                # Scale could also be interpeted as exp^(mu), but here for
+                # simplicity we use the same variable name
+                scale_name = r"\tilde{\mu}_{" + realization_symbols[i] + "}"
                 latex_string += r"\dfrac{1}{" + realization_symbols[i] + \
                                 r"\tilde{\sigma}_{" \
                         + realization_symbols[i] + \
@@ -693,13 +700,6 @@ class MultivariateDistribution():
                                 + r"-\tilde{\mu}_{" + realization_symbols[i] + \
                                 r"})^2}{2\tilde{\sigma}_{" \
                         + realization_symbols[i] + r"}^2}\right]"
-                # The shape and scale naming for sigma and mu is not inuitive.
-                # Intuitive would be as with the Normal pdf --> sigma = scale,
-                # mu = location. This should be checked
-                shape_name = r"\tilde{\sigma}_{" + realization_symbols[i] + "}"
-                # Scale could also be interpeted as exp^(mu), but here for
-                # simplicity we use the same variable name
-                scale_name = r"\tilde{\mu}_{" + realization_symbols[i] + "}"
             latex_string_list.append(latex_string)
             if scale_name:
                 latex_string = r"\quad\text{ with }"
