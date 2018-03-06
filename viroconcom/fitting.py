@@ -14,7 +14,6 @@ from .distributions import (WeibullDistribution, LognormalDistribution, NormalDi
                                    KernelDensityDistribution,
                                    MultivariateDistribution)
 import warnings
-from pprint import pprint
 
 __all__ = ["Fit"]
 
@@ -37,6 +36,83 @@ def _f1(x, a, b, c):
 _bounds = ([np.finfo(np.float64).tiny, np.finfo(np.float64).tiny, -np.inf],
           [np.inf, np.inf, np.inf])
 # ----------------------------
+
+class BasicFit():
+
+    def __init__(self, shape, loc, scale, samples):
+
+        self.shape = shape
+        self.loc = loc
+        self.scale = scale
+
+        self.samples = samples
+
+class VisualInspectionData():
+
+    def __init__(self):
+
+        self.used_number_of_intervals = 0
+
+        self.shape_at = None
+        self._shape_value = [None, None, None]
+
+        self.loc_at = None
+        self._loc_value = [None, None, None]
+
+        self.scale_at = None
+        self._scale_value = [None, None, None]
+
+        self.shape_samples = None
+        self.loc_samples = None
+        self.scale_samples = None
+
+    @property
+    def shape_value(self):
+        return self._shape_value[0]
+
+    @property
+    def loc_value(self):
+        return self._loc_value[1]
+
+    @property
+    def scale_value(self):
+        return self._scale_value[2]
+
+    def append_basic_fit(self, param ,basic_fit):
+
+        if (param == 'shape'):
+            _shape_value[0].append(basic_fit.shape)
+            _shape_value[1].append(basic_fit.loc)
+            _shape_value[2].append(basic_fit.scale)
+            shape_samples.append(basic_fit.samples)
+        elif (param == 'loc'):
+            _loc_value[0].append(basic_fit.shape)
+            _loc_value[1].append(basic_fit.loc)
+            _loc_value[2].append(basic_fit.scale)
+            loc_samples.append(basic_fit.samples)
+        elif (param == 'scale'):
+            _scale_value[0].append(basic_fit.shape)
+            _scale_value[1].append(basic_fit.loc)
+            _scale_value[2].append(basic_fit.scale)
+            scale_samples.append(basic_fit.samples)
+        else:
+            err_msg = "Parameter '{}' is unknown.".format(param)
+            raise ValueError(err_msg)
+
+    def get_basic_fit(self, param, index):
+
+        if(param == 'shape'):
+            return BasicFit(self._shape_value[0][index], self._shape_value[1][index],
+                            self._shape_value[2][index], self.shape_samples[index])
+        elif (param == 'loc'):
+            return BasicFit(self._loc_value[0][index], self._loc_value[1][index],
+                            self._loc_value[2][index], self.loc_samples[index])
+        elif (param == 'scale'):
+            return BasicFit(self._scale_value[0][index], self._scale_value[1][index],
+                            self._scale_value[2][index], self.scale_samples[index])
+        else:
+            err_msg = "Parameter '{}' is unknown.".format(param)
+            raise ValueError(err_msg)
 
 
 class Fit():
@@ -225,6 +301,9 @@ class Fit():
         self.mul_param_points = []
         self.mul_dist_points = []
 
+        # list for saving the visual data for each dimension
+        self.visual_data_by_dim = []
+
         # get distributions
         for i, res in enumerate(multiple_results):
             distribution, dependency, dist_points, param_points, used_number_of_intervals = res.get(timeout=1e6)
@@ -238,6 +317,19 @@ class Fit():
             self.mul_param_points.append(param_points)
 
             self.dist_descriptions[i]['used_number_of_intervals'] = used_number_of_intervals
+            # TODO
+            # save the used number of intervals
+            #for dep_index, dep in enumerate(dependency):
+            #    if dep is not None:
+            #        self.dist_descriptions[dep]['used_number_of_intervals'] = used_number_of_intervals[dep_index]
+
+        # TODO
+        #for dist_description in self.dist_descriptions:
+        #    if not dist_description.get('used_number_of_intervals'):
+        #        dist_description['used_number_of_intervals'] = 1
+        #    print(dist_description.get('used_number_of_intervals'))
+        for i, dist_description in enumerate(self.dist_descriptions):
+            print('Dimension ', i, ' - used number of intervals ', dist_description.get('used_number_of_intervals'))
 
         # save multivariate distribution
         self.mul_var_dist = MultivariateDistribution(distributions, dependencies)
@@ -277,7 +369,7 @@ class Fit():
     def _get_function(function_name):
         """
         Returns the function.
-
+^
         Parameters
         ----------
         function_name : str,
@@ -472,7 +564,11 @@ class Fit():
         # initialize params (shape, loc, scale)
         params = [None, None, None]
 
+        # initialize used_number_of_intervals (shape, loc, scale)
+        # TODO
+        #used_number_of_intervals = [None, None, None]
         used_number_of_intervals = 1
+
         for index in range(len(dependency)):
 
             # continue if params is yet computed
@@ -503,6 +599,8 @@ class Fit():
                 for i in range(index, len(functions)):
                     # check if the other parameters have the same dependency
                     if dependency[i] is not None and dependency[i] == dependency[index]:
+                        # TODO
+                        #used_number_of_intervals[i] = len(interval_centers)
                         if i == 2 and name == 'Lognormal_2':
                             fit_points = [np.log(p(None)) for p in param_values[i]]
                         else:
