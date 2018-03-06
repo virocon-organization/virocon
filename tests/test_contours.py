@@ -7,97 +7,81 @@ Created on Fri Sep 15 14:49:33 2017
 """
 
 import unittest
-
 import os
-
-print('current folder:')
-print(os.getcwd())
 
 import numpy as np
 import pandas as pd
-#import csv
-from enviro.compute.params import ConstantParam, FunctionParam
 
-from enviro.compute.distributions import (WeibullDistribution, LognormalDistribution,
+from .context import viroconcom
+
+from viroconcom.params import ConstantParam, FunctionParam
+
+from viroconcom.distributions import (WeibullDistribution, LognormalDistribution,
                                     NormalDistribution, MultivariateDistribution)
-from enviro.compute.contours import IFormContour, HighestDensityContour
-#from skimage.measure import structural_similarity as ssim
-#from mpl_toolkits.mplot3d import Axes3D
-#import cv2
-#import matplotlib as mpl
-#mpl.use("Agg")
-import matplotlib.pyplot as plt
+from viroconcom.contours import IFormContour, HighestDensityContour
 
 
+_here = os.path.dirname(__file__)
+testfiles_path = os.path.abspath(os.path.join(_here, "testfiles"))
 
 class HDCCreationTest(unittest.TestCase):
-    
-        
+
+
     def test_HDC2d_WL(self):
         """
-        Creating Contour example for 2-d HDC with Weibull and Lognormal 
+        Creating Contour example for 2-d HDC with Weibull and Lognormal
         distribution
         """
-    
+
         #define dependency tuple
         dep1 = (None, None, None)
         dep2 = (0, None, 0)
-    
+
         #define parameters
         shape = ConstantParam(1.471)
         loc = ConstantParam(0.8888)
         scale = ConstantParam(2.776)
         par1 = (shape, loc, scale)
-    
+
         mu = FunctionParam(0.1000, 1.489, 0.1901, 'f1')
         sigma = FunctionParam(0.0400, 0.1748, -0.2243, 'f2')
-        
+
         #del shape, loc, scale
-    
+
         #create distributions
         dist1 = WeibullDistribution(*par1)
         dist2 = LognormalDistribution(mu=mu, sigma=sigma)
-    
+
         distributions = [dist1, dist2]
         dependencies = [dep1, dep2]
-    
+
         mul_dist = MultivariateDistribution(distributions, dependencies)
-    
+
         #del dist1, dist2, par1, par2, dep1, dep2, dependencies, distributions
         #calc contour
         n_years = 50
         limits = [(0, 20), (0, 18)]
         deltas = [0.1, 0.1]
-        test_contour_HDC = HighestDensityContour(mul_dist, n_years, 3, 
+        test_contour_HDC = HighestDensityContour(mul_dist, n_years, 3,
                                                  limits, deltas)
-        
-        finaldt0 = pd.DataFrame({'x' : test_contour_HDC.coordinates[0][0], 
+
+        finaldt0 = pd.DataFrame({'x' : test_contour_HDC.coordinates[0][0],
                                 'y' : test_contour_HDC.coordinates[0][1]})
 
 
-        result0 = pd.read_csv("enviro/compute_testfiles/HDC2dWL_coordinates.csv")
-        #matlab = pd.read_csv("enviro/compute_testfiles/hdc25.csv")
-        
+        result0 = pd.read_csv(testfiles_path + "/HDC2dWL_coordinates.csv")
+
         for g,h in [(g, h) for g in result0.index for h in result0.columns]:
             self.assertAlmostEqual(result0.ix[g, h], finaldt0.ix[g, h], places=8)
-       
-#        plt.scatter(matlab['Hs'], matlab['Tz'], label="matlab data plotted", c='blue')
-#        plt.scatter(test_contour_HDC.coordinates[0][0], 
-#                    test_contour_HDC.coordinates[0][1], label="created by code", 
-#                    c='orange')
-#        plt.legend(loc=4, markerscale=3.5)
-#        font = {'family' : 'normal', 'weight' : 'bold', 'size': 32}
-#        plt.rc('font', **font)
-#        plt.show()
-        
-        
-        
+
+
+
     def test_HDC3d_WLL(self):
         """
-        Creating Contour example for 3-d HDC with Weibull, Lognormal and 
+        Creating Contour example for 3-d HDC with Weibull, Lognormal and
         Lognormal distribution
         """
-        
+
         dep1 = (None, None, None)
         dep2 = (0, None, 0)
         dep3 = (0, None, 0)
@@ -107,13 +91,13 @@ class HDCCreationTest(unittest.TestCase):
         loc = ConstantParam(0.8888)
         scale = ConstantParam(2.776)
         par1 = (shape, loc, scale)
-        
+
         mu = FunctionParam(0.1000, 1.489, 0.1901, "f1")
         sigma = FunctionParam(0.0400, 0.1748, -0.2243, "f2")
 
-        
+
         #del shape, loc, scale
-        
+
         #create distributions
         dist1 = WeibullDistribution(*par1)
         dist2 = LognormalDistribution(mu=mu, sigma=sigma)
@@ -128,42 +112,42 @@ class HDCCreationTest(unittest.TestCase):
         #calc contour
         n_years = 50
         limits = [(0, 20), (0, 18),(0, 18)]
-        deltas = [1, 1, 1] 
-        
-        test_contour_HDC = HighestDensityContour(mul_dist, n_years, 3, 
-                                                 limits, deltas)
-        
-        finaldt = pd.DataFrame({'x' : test_contour_HDC.coordinates[0][0], 
-                                'y' : test_contour_HDC.coordinates[0][1], 
-                                'z' : test_contour_HDC.coordinates[0][2]})  
-    
+        deltas = [1, 1, 1]
 
-        result = pd.read_csv("enviro/compute_testfiles/HDC3dWLL_coordinates.csv")
+        test_contour_HDC = HighestDensityContour(mul_dist, n_years, 3,
+                                                 limits, deltas)
+
+        finaldt = pd.DataFrame({'x' : test_contour_HDC.coordinates[0][0],
+                                'y' : test_contour_HDC.coordinates[0][1],
+                                'z' : test_contour_HDC.coordinates[0][2]})
+
+
+        result = pd.read_csv(testfiles_path + "/HDC3dWLL_coordinates.csv")
         for i,j in [(i, j) for i in result.index for j in result.columns]:
             self.assertAlmostEqual(result.ix[i,j], finaldt.ix[i,j], places=8)
-       
-        
+
+
     def test_HDC4d_WLLL(self):
         """
-        Creating Contour example for 4-d HDC with Weibull, Lognormal, 
+        Creating Contour example for 4-d HDC with Weibull, Lognormal,
         Lognormal and Lognormal distribution
         """
-    
+
         #define dependency tuple
         dep1 = (None, None, None)
         dep2 = (0, None, 0)
         dep3 = (0, None, 0)
         dep4 = (0, None, 0)
-    
+
         #define parameters
         shape = ConstantParam(2.776)
         loc = ConstantParam(1.471)
         scale = ConstantParam(0.8888)
         par1 = (shape, loc, scale)
-        
+
         mu = FunctionParam(0.1000, 1.489, 0.1901, "f1")
         sigma = FunctionParam(0.0400, 0.1748, -0.2243, "f2")
-    
+
         #create distributions
         dist1 = WeibullDistribution(*par1)
         dist2 = LognormalDistribution(mu=mu, sigma=sigma)
@@ -173,233 +157,208 @@ class HDCCreationTest(unittest.TestCase):
 
         distributions = [dist1, dist2, dist3, dist4]
         dependencies = [dep1, dep2, dep3, dep4]
-    
+
         mul_dist = MultivariateDistribution(distributions, dependencies)
-    
+
         #del dist1, dist2, par1, par2, dep1, dep2, dependencies, distributions
         #calc contour
         n_years = 50
         limits = [(0, 20), (0, 18), (0, 18), (0, 18)]
         deltas = [1, 1, 1, 1]
-        
-        test_contour_HDC = HighestDensityContour(mul_dist, n_years, 3, 
+
+        test_contour_HDC = HighestDensityContour(mul_dist, n_years, 3,
                                                  limits, deltas)
-        
-        
-        
+
+
+
     def test_HDC2d_WN(self):
         """
         Creating Contour example
         """
-    
-        
+
+
         #define dependency tuple
         dep1 = (None, None, None)
         dep2 = (None, 0, 0)
-        
+
         #define parameters
         shape = ConstantParam(1.471)
         loc = ConstantParam(0.8888)
         scale = ConstantParam(2.776)
         par1 = (shape, loc, scale)
-        
+
         shape = None
         loc = FunctionParam(4, 10, 0.02, "f1")
         scale = FunctionParam(0.1, 0.02, -0.1, "f2")
         par2 = (shape, loc, scale)
-        
+
         #del shape, loc, scale
-        
+
         #create distributions
         dist1 = WeibullDistribution(*par1)
         dist2 = NormalDistribution(*par2)
-        
+
         distributions = [dist1, dist2]
         dependencies = [dep1, dep2]
-        
+
         mul_dist = MultivariateDistribution(distributions, dependencies)
-        
+
         #del dist1, dist2, par1, par2, dep1, dep2, dependencies, distributions
         #calc contour
         n_years = 50
         limits = [(0, 20), (0, 20)]
         deltas = [0.05, 0.01]
-        test_contour_HDC = HighestDensityContour(mul_dist, n_years, 3, 
+        test_contour_HDC = HighestDensityContour(mul_dist, n_years, 3,
                                                  limits, deltas)
-        
-        finaldt2 = pd.DataFrame({'x' : test_contour_HDC.coordinates[0][0], 
+
+        finaldt2 = pd.DataFrame({'x' : test_contour_HDC.coordinates[0][0],
                                  'y' : test_contour_HDC.coordinates[0][1]})
-    
-        result2 = pd.read_csv("enviro/compute_testfiles/HDC2dWN_coordinates.csv")
-        matlab2 = pd.read_csv("enviro/compute_testfiles/hdc2d_wn.csv", names=['x', 'y'])
+
+        result2 = pd.read_csv(testfiles_path + "/HDC2dWN_coordinates.csv")
 
         for k,l in [(k, l) for k in result2.index for l in result2.columns]:
             self.assertAlmostEqual(result2.ix[k,l], finaldt2.ix[k,l], places=8)
-        
-#        plt.scatter(matlab2['x'], matlab2['y'], label="matlab data plotted")
-#        plt.scatter(finaldt2['x'], finaldt2['y'], label="our contour")
-#        plt.legend()
-#        plt.show()
-   
-    
+
+
+
     def test_HDC3d_WLN(self):
-        
+
         dep1 = (None, None, None)
         dep2 = (0, None, 0)
         dep3 = (None, 0, 0)
-        
+
         #define parameters
         shape = ConstantParam(1.471)
         loc = ConstantParam(0.8888)
         scale = ConstantParam(2.776)
         par1 = (shape, loc, scale)
-        
+
         shape = None
         loc = FunctionParam(4, 10, 0.02, "f1")
         scale = FunctionParam(0.1, 0.02, -0.1, "f2")
         par2 = (shape, loc, scale)
-        
+
         mu = FunctionParam(0.1, 1.5, 0.2, "f1")
         sigma = FunctionParam(0.1, 0.2, -0.2, "f2")
-        
+
         #create distributions
         dist1 = WeibullDistribution(*par1)
         dist2 = LognormalDistribution(mu=mu, sigma=sigma)
         dist3 = NormalDistribution(*par2)
-        
+
         distributions = [dist1, dist2, dist3]
         dependencies = [dep1, dep2, dep3]
-        
+
         mul_dist = MultivariateDistribution(distributions, dependencies)
-        
+
         del mu, sigma
         #del dist1, dist2, par1, par2, dep1, dep2, dependencies, distributions
         #calc contour
         n_years = 50
         limits = [(0, 20), (0, 20),(0, 20)]
         deltas = [0.5, 0.5, 0.05]
-        test_contour_HDC = HighestDensityContour(mul_dist, n_years, 3, 
+        test_contour_HDC = HighestDensityContour(mul_dist, n_years, 3,
                                                  limits, deltas)
-        
-        finaldt3 = pd.DataFrame({'x' : test_contour_HDC.coordinates[0][0], 
-                                 'y' : test_contour_HDC.coordinates[0][1], 
+
+        finaldt3 = pd.DataFrame({'x' : test_contour_HDC.coordinates[0][0],
+                                 'y' : test_contour_HDC.coordinates[0][1],
                                  'z' : test_contour_HDC.coordinates[0][2]})
-    
-        matlab3 = pd.read_csv("enviro/compute_testfiles/hdc3d_wln.csv", names=['x', 'y', 'z'])
-        
-        result3 = pd.read_csv("enviro/compute_testfiles/HDC3dWLN_coordinates.csv")
+
+        matlab3 = pd.read_csv(testfiles_path + "/hdc3d_wln.csv", names=['x', 'y', 'z'])
+
+        result3 = pd.read_csv(testfiles_path + "/HDC3dWLN_coordinates.csv")
         for m,n in [(m, n) for m in result3.index for n in result3.columns]:
             self.assertAlmostEqual(result3.ix[m, n], finaldt3.ix[m, n], places=8)
-            
-#        fig1 = plt.figure()
-#        ax2 = fig1.add_subplot(111, projection='3d')
-#        ax2.scatter(matlab3['x'], matlab3['y'], matlab3['z'], 
-#                    label="matlab data plotted")
-#        ax2.scatter(result3["x"], result3["y"], result3["z"], 
-#                    label="our contour")
-#        plt.legend()
-#        plt.show()
 
-     
-        
-    def test_IForm2d_WL(self):      
+
+
+    def test_IForm2d_WL(self):
         """
         Creating Contour example
         """
-    
+
         #define dependency tuple
         dep1 = (None, None, None)
         dep2 = (0, None, 0)
-        
+
         #define parameters
         shape = ConstantParam(1.471)
         loc = ConstantParam(0.8888)
         scale = ConstantParam(2.776)
         par1 = (shape, loc, scale)
-        
+
         mu = FunctionParam(0.1000, 1.489, 0.1901, "f1")
         sigma = FunctionParam(0.0400, 0.1748, -0.2243, "f2")
-        
+
         #create distributions
         dist1 = WeibullDistribution(*par1)
         dist2 = LognormalDistribution(mu=mu, sigma=sigma)
-        
+
         distributions = [dist1, dist2]
         dependencies = [dep1, dep2]
-        
+
         mul_dist = MultivariateDistribution(distributions, dependencies)
-        
+
         test_contour_IForm = IFormContour(mul_dist, 50, 3, 400)
-        
-        finaldt4 = pd.DataFrame({'x' : test_contour_IForm.coordinates[0][0], 
+
+        finaldt4 = pd.DataFrame({'x' : test_contour_IForm.coordinates[0][0],
                                  'y' : test_contour_IForm.coordinates[0][1]})
 
-        result4 = pd.read_csv("enviro/compute_testfiles/IForm2dWL_coordinates.csv")
+        result4 = pd.read_csv(testfiles_path + "/IForm2dWL_coordinates.csv")
         for o,p in [(o, p) for o in result4.index for p in result4.columns]:
             self.assertAlmostEqual(result4.ix[o, p], finaldt4.ix[o, p], places=8)
 
-        matlab4 = pd.read_csv("enviro/compute_testfiles/iform2d_wl.csv", names=['x', 'y'])
-        
-#        plt.scatter(matlab4['x'], matlab4['y'], label="matlab data plotted")
-#        plt.scatter(result4['x'], result4['y'], label="our contour")
-#        plt.legend()
-#        plt.show()
 
-    
-        
-    def test_IForm2d_WN(self):      
+
+
+    def test_IForm2d_WN(self):
         """
         Creating Contour example
         """
-    
+
         #define dependency tuple
         dep1 = (None, None, None)
         dep2 = (None, 0, 0)
-        
+
         #define parameters
         shape = ConstantParam(1.471)
         loc = ConstantParam(0.8888)
         scale = ConstantParam(2.776)
         par1 = (shape, loc, scale)
-        
+
         shape = None
         loc = FunctionParam(7, 1.489, 0.1901, "f1")
         scale = FunctionParam(1.5, 0.1748, -0.2243, "f2")
         par2 = (shape, loc, scale)
-        
+
         #del shape, loc, scale
-        
+
         #create distributions
         dist1 = WeibullDistribution(*par1)
         dist2 = NormalDistribution(*par2)
-        
+
         distributions = [dist1, dist2]
         dependencies = [dep1, dep2]
-        
+
         mul_dist = MultivariateDistribution(distributions, dependencies)
-        
+
         test_contour_IForm = IFormContour(mul_dist, 50, 3, 400)
-        
-        finaldt5 = pd.DataFrame({'x' : test_contour_IForm.coordinates[0][0], 
+
+        finaldt5 = pd.DataFrame({'x' : test_contour_IForm.coordinates[0][0],
                                  'y' : test_contour_IForm.coordinates[0][1]})
 
-        result5 = pd.read_csv("enviro/compute_testfiles/IForm2dWN_coordinates.csv")
-        matlab5 = pd.read_csv("enviro/compute_testfiles/iform2d_wn.csv", names=['x', 'y'])
-        
+        result5 = pd.read_csv(testfiles_path + "/IForm2dWN_coordinates.csv")
+
         for r,s in [(r, s) for r in result5.index for s in result5.columns]:
           self.assertAlmostEqual(result5.ix[r, s], finaldt5.ix[r, s], places=8)
-              
-#        plt.scatter(matlab5['x'], matlab5['y'], label="matlab data plotted")
-#        plt.scatter(result5['x'], result5['y'], label="our contour")
-#        plt.legend()
-#        plt.show()
-          
-          
-    def test_IForm3d(self):      
+
+
+
+    def test_IForm3d(self): # TODO what does this test do
         """
         Creating Contour example
         """
-    
+
         #define dependency tuple
         dep1 = (None, None, None)
         dep2 = (0, None, 0)
@@ -410,78 +369,78 @@ class HDCCreationTest(unittest.TestCase):
         loc = ConstantParam(0.8888)
         scale = ConstantParam(2.776)
         par1 = (shape, loc, scale)
-        
+
         mu = FunctionParam(0.1000, 1.489, 0.1901, "f1")
         sigma = FunctionParam(0.0400, 0.1748, -0.2243, "f2")
-        
+
         #del shape, loc, scale
-        
+
         #create distributions
         dist1 = WeibullDistribution(*par1)
         dist2 = LognormalDistribution(mu=mu, sigma=sigma)
         dist3 = LognormalDistribution(mu=mu, sigma=sigma)
         distributions = [dist1, dist2, dist3]
         dependencies = [dep1, dep2, dep3]
-        
+
         mul_dist = MultivariateDistribution(distributions, dependencies)
-                
+
         test_contour_IForm = IFormContour(mul_dist, 50, 3, 400)
-                
-    
-    
+
+
+
 class HDCTest(unittest.TestCase):
-    
-    def _setup(self, limits=[(0, 20), (0, 20)], deltas=[0.05, 0.05], 
-                n_years = 25, dep1=(None, None, None), dep2=(0, None, 0), 
-                par1=(ConstantParam(1.471), ConstantParam(0.8888), 
-                ConstantParam(2.776)), 
-                par2=(FunctionParam(0.0400, 0.1748, -0.2243, "f2"), None, 
+
+    def _setup(self, limits=[(0, 20), (0, 20)], deltas=[0.05, 0.05],
+                n_years = 25, dep1=(None, None, None), dep2=(0, None, 0),
+                par1=(ConstantParam(1.471), ConstantParam(0.8888),
+                ConstantParam(2.776)),
+                par2=(FunctionParam(0.0400, 0.1748, -0.2243, "f2"), None,
                 FunctionParam(0.1, 1.489, 0.1901, "f1"))):
         """
         Creating Contour example
         """
-        
+
         self.limits = limits
         self.deltas = deltas
         self.n_years = n_years
-        
+
         #define dependency tuple
         self.dep1 = dep1
         self.dep2 = dep2
-    
+
         #define parameters
         self.par1 = par1
         self.par2 = par2
-    
+
         #create distributions
         dist1 = WeibullDistribution(*par1)
         dist2 = LognormalDistribution(*par2)
-    
+
         distributions = [dist1, dist2]
         dependencies = [dep1, dep2]
-    
+
         mul_dist = MultivariateDistribution(distributions, dependencies)
-    
+
         #calc contour
         test_contour_HDC = HighestDensityContour(mul_dist, n_years, 3,
                                                  limits, deltas)
         return test_contour_HDC
-    
-        
+
+
     def test_cumsum(self):
         """
         tests if the return values of cumsum_biggest_until are correct
         """
-        
+
         test_contour_HDC = self._setup()
         data_example = np.array([[80, 7, 20, 40], [1, 9, 45, 23]])
 
-        summed_fields = test_contour_HDC.cumsum_biggest_until(data_example, 
+        summed_fields = test_contour_HDC.cumsum_biggest_until(data_example,
                                                               165.0)[0]
-        last_summed = test_contour_HDC.cumsum_biggest_until(data_example, 
+        last_summed = test_contour_HDC.cumsum_biggest_until(data_example,
                                                             165.0)[1]
         np.testing.assert_array_equal(summed_fields,
-             ([[1, 0, 0, 1], [0, 0, 1, 0]]), 
+             ([[1, 0, 0, 1], [0, 0, 1, 0]]),
              'cumsum calculates wrong summed_fields')
         self.assertEqual(last_summed, 40, 'cumsum gives wrong last_summed')
 
@@ -490,7 +449,7 @@ class HDCTest(unittest.TestCase):
         """
         tests if ValueError is raised when the array has a 'nan' entry
         """
-        
+
         test_contour_HDC = self._setup()
         data_example_nan = np.array([[80, 7, float('nan'), 40], [1, 9, 45, 23]])
         with self.assertRaises(ValueError):
@@ -499,13 +458,13 @@ class HDCTest(unittest.TestCase):
 
     def test_setup_HDC_deltas_single(self):
         """
-        tests if contour is created with a single float for deltas 
+        tests if contour is created with a single float for deltas
         as the exception should handle
         """
-        
+
         try:
             self._setup(deltas=0.05)
-            
+
         except:
             print("contour couldn't be calculated")
 
@@ -514,9 +473,9 @@ class HDCTest(unittest.TestCase):
         """
         tests error when length of deltas is not equal with number of dimensions
         """
-        
+
         test_contour_HDC = self._setup(deltas=None)
-        self.assertEqual(test_contour_HDC.deltas, [0.5] * 
+        self.assertEqual(test_contour_HDC.deltas, [0.5] *
                          test_contour_HDC.distribution.n_dim)
 
 
@@ -524,7 +483,7 @@ class HDCTest(unittest.TestCase):
         """
         tests error when length of deltas is not equal with number of dimensions
         """
-        
+
         with self.assertRaises(ValueError):
             self._setup(deltas=[0.05, 0.05, 0.05])
 
@@ -533,18 +492,18 @@ class HDCTest(unittest.TestCase):
         """
         tests error when length of limits is not equal with number of dimensions
         """
-       
+
         with self.assertRaises(ValueError):
             self._setup(limits=[(0, 20), (0, 20), (0, 20)])
-            
-            
+
+
     def test_setup_HDC_limits_none(self):
         """
         tests error when length of limits is not equal with number of dimensions
         """
-        
+
         test_contour_HDC = self._setup(limits=None)
-        self.assertEqual(test_contour_HDC.limits, [(0, 10)] * 
+        self.assertEqual(test_contour_HDC.limits, [(0, 10)] *
                                     test_contour_HDC.distribution.n_dim)
 
 
@@ -559,7 +518,7 @@ class HDCTest(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             self._setup(limits=[(0, 20, 1), (0, 20)])
-    
+
 
 if __name__ == '__main__':
     unittest.main()
