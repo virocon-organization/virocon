@@ -1,9 +1,9 @@
 :orphan:
 
-compute\.params module
-----------------------
+viroconcom\.params module
+-------------------------
 
-.. automodule:: compute.params
+.. automodule:: viroconcom.params
     :members:
     :undoc-members:
     :show-inheritance:

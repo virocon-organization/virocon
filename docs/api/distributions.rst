@@ -1,9 +1,9 @@
 :orphan:
 
-compute\.distributions module
------------------------------
+viroconcom\.distributions module
+--------------------------------
 
-.. automodule:: compute.distributions
+.. automodule:: viroconcom.distributions
     :members:
     :undoc-members:
     :show-inheritance:

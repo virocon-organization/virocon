@@ -1,10 +1,10 @@
 :orphan:
 
-compute\._n_sphere module
--------------------------
+viroconcom\._n_sphere module
+----------------------------
 
-.. automodule:: compute._n_sphere
+.. automodule:: viroconcom._n_sphere
 
-.. autoclass:: compute._n_sphere.NSphere
+.. autoclass:: viroconcom._n_sphere.NSphere
     :members:
     :private-members:

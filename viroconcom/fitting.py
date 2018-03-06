@@ -277,7 +277,7 @@ class Fit():
     def _get_function(function_name):
         """
         Returns the function.
-^
+
         Parameters
         ----------
         function_name : str,

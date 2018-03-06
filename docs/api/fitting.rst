@@ -1,11 +1,11 @@
 :orphan:
 
-compute\.fitting module
------------------------
+viroconcom\.fitting module
+--------------------------
 
-.. automodule:: compute.fitting
+.. automodule:: viroconcom.fitting
 
-.. autoclass:: compute.fitting.Fit
+.. autoclass:: viroconcom.fitting.Fit
     :members:
     :private-members:
     :show-inheritance:
