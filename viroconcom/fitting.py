@@ -38,21 +38,88 @@ _bounds = ([np.finfo(np.float64).tiny, np.finfo(np.float64).tiny, -np.inf],
 # ----------------------------
 
 class BasicFit():
+    """
+    Holds the parameters (shape, loc, scale) and also the raw data to a single fit.
+
+    Attributes
+    ----------
+    shape : float,
+        The shape parameter for the fit.
+
+    loc : float,
+        The location parameter for the fit.
+
+    scale : float,
+        The scale parameter for the fit.
+
+    samples : list,
+        The raw data that is used for this fit. For that case that there is no dependency this
+        list contains the whole data of the dimension.
+
+    """
 
     def __init__(self, shape, loc, scale, samples):
 
+        # the parameters for the distribution
         self.shape = shape
         self.loc = loc
         self.scale = scale
 
+        # the raw data
         self.samples = samples
 
 class VisualInspectionData():
+    """
+    This class holds information for plotting the fits of a single dimension. It is used to give
+    a visual look about how good the fits in this dimension were.
+
+    Attributes
+    ----------
+    used_number_of_intervals : int,
+        The actually number of intervals this dimension is divided for other dependent dimensions.
+
+    shape_at : list,
+        This list contains the values of the divided dimension the shape parameter depends on.
+
+    _shape_value : list,
+        This list of length three contains lists for each parameter (shape, loc, scale) with the
+        associated values of the parameters to the divided dimension the shape parameter depends on.
+
+    loc_at : list,
+        This list contains the values of the divided dimension the location parameter depends on.
+
+    _loc_value : list,
+        This list of length three contains lists for each parameter (shape, loc, scale) with the
+        associated values of the parameters to the divided dimension the location
+        parameter depends on.
+
+    scale_at : list,
+        This list contains the values of the divided dimension the scale parameter depends on.
+
+    _scale_value : list,
+        This list of length three contains lists for each parameter (shape, loc, scale) with the
+        associated values of the parameters to the divided dimension the scale parameter depends on.
+
+    shape_samples : list,
+        This list with the length of the number of used intervals for the shape parameter
+        contains lists with the used samples for the respective fit.
+
+    loc_samples : list,
+        This list with the length of the number of used intervals for the location parameter
+        contains lists with the used samples for the respective fit.
+
+    scale_samples : list,
+        This list with the length of the number of used intervals for the scale parameter
+        contains lists with the used samples for the respective fit.
+
+    """
 
     def __init__(self):
 
+        # the number of the intervals this dimension is divided
         self.used_number_of_intervals = 0
 
+        # the parameter values and the data they belong to
         self.shape_at = None
         self._shape_value = [None, None, None]
 
@@ -62,24 +129,77 @@ class VisualInspectionData():
         self.scale_at = None
         self._scale_value = [None, None, None]
 
+        # the raw data for each parameter of this dimension
         self.shape_samples = None
         self.loc_samples = None
         self.scale_samples = None
 
     @property
     def shape_value(self):
+        """
+        Take out the list that contains the shape parameters.
+
+        Returns
+        -------
+        list,
+             The associated values of the parameter shape to the divided dimension the shape
+             parameter depends on.
+        Notes
+        ------
+        This function can be used as attribute. For example:
+        >>> v_i_data_dim_0.shape_value
+        """
         return self._shape_value[0]
 
     @property
     def loc_value(self):
+        """
+        Take out the list that contains the location parameters.
+
+        Returns
+        -------
+        list,
+             The associated values of the parameter loc to the divided dimension the location
+             parameter depends on.
+        Notes
+        ------
+        This function can be used as attribute. For example:
+        >>> v_i_data_dim_0.loc_value
+        """
         return self._loc_value[1]
 
     @property
     def scale_value(self):
+        """
+        Take out the list that contains the scale parameters.
+
+        Returns
+        -------
+        list,
+             The associated values of the parameter scale to the divided dimension the scale
+             parameter depends on.
+        Notes
+        ------
+        This function can be used as attribute. For example:
+        >>> v_i_data_dim_0.scale_value
+        """
         return self._scale_value[2]
 
     def append_basic_fit(self, param ,basic_fit):
+        """
+        This function can be used to add a single fit to the hold data.
 
+        Parameters
+        ----------
+        param : str,
+            The respective parameter the data should be associated.
+        basic_fit : BasicFit,
+            The data of the single fit hold in a BasicData object.
+        Raises
+        ------
+        ValueError
+            If the parameter is unknown.
+        """
         if (param == 'shape'):
             _shape_value[0].append(basic_fit.shape)
             _shape_value[1].append(basic_fit.loc)
@@ -100,7 +220,25 @@ class VisualInspectionData():
             raise ValueError(err_msg)
 
     def get_basic_fit(self, param, index):
+        """
+        This function returns the data of a single fit to a given parameter and the index of the
+        interval of the divided dimension the parameter depends on.
 
+        Parameters
+        ----------
+        param : str,
+            The respective parameter of the data.
+        index : int,
+            The index of the interval.
+        Returns
+        -------
+        BasicFit,
+             The data of the single fit hold in a BasicData object.
+        Raises
+        ------
+        ValueError
+            If the parameter is unknown.
+        """
         if(param == 'shape'):
             return BasicFit(self._shape_value[0][index], self._shape_value[1][index],
                             self._shape_value[2][index], self.shape_samples[index])
