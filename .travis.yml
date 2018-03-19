@@ -5,7 +5,7 @@ python:
 script:
 - python -m unittest
 - coverage run --source=viroconcom  -m unittest
-- cd docs/ && make clean && make html && cd ..
+- cd docs/ && make clean && make html && touch _build/html/.nojekyll && cd ..
 
 deploy:
   provider: pages
