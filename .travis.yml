@@ -5,13 +5,12 @@ python:
 script:
 - python -m unittest
 - coverage run --source=viroconcom  -m unittest
-- cd docs/ && make html && cd ..
+- cd docs/ && make clean && make html && cd ..
 
 deploy:
   provider: pages
   skip-cleanup: true
   local-dir: docs/_build/html
   github-token: $GITHUB_TOKEN  # Set in travis-ci.org dashboard, marked secure
-  keep-history: true
   on:
     branch: issue#2-add-ci
