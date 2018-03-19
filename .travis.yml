@@ -13,4 +13,4 @@ deploy:
   local-dir: docs/_build/html
   github-token: $GITHUB_TOKEN  # Set in travis-ci.org dashboard, marked secure
   on:
-    branch: issue#2-add-ci
+    branch: master
