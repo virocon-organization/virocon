@@ -8,7 +8,7 @@ Introduction
 
 This style guide in conjunction with *PEP8* and the *Guide of
 NumPy/SciPy Documentation* by Ralf Gommers describes the conventions to
-follow while designing the software ViroCon. The guide is supposed to
+follow while designing the software viroconcom. The guide is supposed to
 help the developer to stick to a constant style and layout which will
 make the code more readable. This style guide provides conventions and
 should not be seen as a dogma. If it serves the readability you can
@@ -157,8 +157,8 @@ critical statements or just comments (Gommers, 2017), e.g.
 
 Gommers, R. (2017): A Guide to NumPy/SciPy Documentation.
 https://github.com/numpy/numpy/blob/master/doc/HOWTO\_DOCUMENT.rst.txt#a-guide-to-numpyscipy-documentation
-(Abrufdatum 22.09.2017)
+(last access 22.09.2017)
 
 van Rossum, G.; Warsaw, B.; Coghlan, N. (2001): Style Guide for Python
-Code.https://www.python.org/dev/peps/pep-0008/#id30 (Abrufdatum
+Code.https://www.python.org/dev/peps/pep-0008/#id30 (last access
 22.09.2017)
