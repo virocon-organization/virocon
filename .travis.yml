@@ -7,6 +7,9 @@ script:
 - coverage run --source=viroconcom  -m unittest
 - cd docs/ && make clean && make html && touch _build/html/.nojekyll && cd ..
 
+after_success:
+  - coveralls
+
 deploy:
   provider: pages
   skip-cleanup: true
