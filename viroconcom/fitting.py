@@ -121,13 +121,13 @@ class FitInspectionData():
 
         # Parameter values and the data they belong to
         self.shape_at = None
-        self._shape_value = [None, None, None]
+        self._shape_value = [[], [], []]
 
         self.loc_at = None
-        self._loc_value = [None, None, None]
+        self._loc_value = [[], [], []]
 
         self.scale_at = None
-        self._scale_value = [None, None, None]
+        self._scale_value = [[], [], []]
 
         # Raw data for each parameter of this dimension
         self.shape_samples = None
