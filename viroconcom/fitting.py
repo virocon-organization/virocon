@@ -130,9 +130,9 @@ class FitInspectionData():
         self._scale_value = [[], [], []]
 
         # Raw data for each parameter of this dimension
-        self.shape_samples = None
-        self.loc_samples = None
-        self.scale_samples = None
+        self.shape_samples = []
+        self.loc_samples = []
+        self.scale_samples = []
 
     @property
     def shape_value(self):
