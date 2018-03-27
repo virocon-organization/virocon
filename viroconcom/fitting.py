@@ -432,8 +432,8 @@ class Fit():
 
         # Get distributions
         for i, res in enumerate(multiple_results):
-            distribution, dependency, fit_inspection_data, \
-            used_number_of_intervals = res.get(timeout=1e6)
+            distribution, dependency, used_number_of_intervals, \
+            fit_inspection_data = res.get(timeout=1e6)
 
             # Saves distribution and dependency for particular dimension
             distributions.append(distribution)
