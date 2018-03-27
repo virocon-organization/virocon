@@ -743,13 +743,18 @@ class Fit():
                         for basic_fit in multiple_basic_fit:
                             if i == 0:
                                 fit_inspection_data.append_basic_fit('shape', basic_fit)
-                                fit_inspection_data.shape_at = interval_centers
                             elif i == 1:
                                 fit_inspection_data.append_basic_fit('loc', basic_fit)
-                                fit_inspection_data.loc_at = interval_centers
                             elif i == 2:
                                 fit_inspection_data.append_basic_fit('scale', basic_fit)
-                                fit_inspection_data.scale_at = interval_centers
+
+                        # Add interval centers to fit inspection data
+                        if i == 0:
+                            fit_inspection_data.shape_at = interval_centers
+                        elif i == 1:
+                            fit_inspection_data.loc_at = interval_centers
+                        elif i == 2:
+                            fit_inspection_data.scale_at = interval_centers
 
                         # Add used number of intervals for current parameter
                         used_number_of_intervals[i] = len(interval_centers)
