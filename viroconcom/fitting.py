@@ -62,9 +62,9 @@ class BasicFit():
     def __init__(self, shape, loc, scale, samples):
 
         # Parameters as ConstantParams for the distribution
-        self.shape = shape()
-        self.loc = loc()
-        self.scale = scale()
+        self.shape = shape(0)
+        self.loc = loc(0)
+        self.scale = scale(0)
 
         # Raw data
         self.samples = samples
