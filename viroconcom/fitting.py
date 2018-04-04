@@ -61,10 +61,31 @@ class BasicFit():
 
     def __init__(self, shape, loc, scale, samples):
 
-        # Parameters as ConstantParams for the distribution
-        self.shape = shape(0)
-        self.loc = loc(0)
-        self.scale = scale(0)
+        # Parameters for the distribution
+        if type(shape) == ConstantParam:
+            self.shape = shape(0)
+        elif type(shape) == float:
+            self.shape = shape
+        else:
+            err_msg = "Parameter 'shape' must be of Type 'float' or 'ConstantParam'" \
+                      " but was '{}'.".format(type(shape))
+            raise TypeError(err_msg)
+        if type(loc) == ConstantParam:
+            self.loc = loc(0)
+        elif type(loc) == float:
+            self.loc = loc
+        else:
+            err_msg = "Parameter 'loc' must be of Type 'float' or 'ConstantParam'" \
+                      " but was '{}'.".format(type(loc))
+            raise TypeError(err_msg)
+        if type(scale) == ConstantParam:
+            self.scale = scale(0)
+        elif type(scale) == float:
+            self.scale = scale
+        else:
+            err_msg = "Parameter 'scale' must be of Type 'float' or 'ConstantParam'" \
+                      " but was '{}'.".format(type(scale))
+            raise TypeError(err_msg)
 
         # Raw data
         self.samples = samples
