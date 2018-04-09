@@ -27,8 +27,6 @@ class NSphere():
     >>> sphere = NSphere(3, 1000)
     >>> samples = sphere.unit_sphere_points
     >>> #%% plot sphere
-    >>> import matplotlib as mpl
-    >>> mpl.use('Agg')
     >>> from mpl_toolkits.mplot3d import Axes3D
     >>> import matplotlib.pyplot as plt
     >>> plt.close('all')
