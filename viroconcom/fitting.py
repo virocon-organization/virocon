@@ -73,13 +73,13 @@ class Fit():
     >>> import statsmodels.api as sm
     >>> import scipy.stats as sts
     >>> from scipy.optimize import curve_fit
-    >>> from compute.params import ConstantParam, FunctionParam
-    >>> from compute.distributions import (WeibullDistribution,\
+    >>> from viroconcom.params import ConstantParam, FunctionParam
+    >>> from viroconcom.distributions import (WeibullDistribution,\
                                            LognormalDistribution,\
                                            NormalDistribution,\
                                            KernelDensityDistribution,\
                                            MultivariateDistribution)
-    >>> from compute.contours import IFormContour
+    >>> from viroconcom.contours import IFormContour
     >>> prng = np.random.RandomState(42)
     >>> sample_1 = prng.normal(10, 1, 500)
     >>> sample_2 = [point + prng.uniform(-5, 5) for point in sample_1]
@@ -92,7 +92,7 @@ class Fit():
 
     Create a Fit and visualize the result in a HDC contour:
 
-    >>> from compute.contours import HighestDensityContour
+    >>> from viroconcom.contours import HighestDensityContour
     >>> sample_1 = prng.weibull(2, 500) + 15
     >>> sample_2 = [point + prng.uniform(-1, 1) for point in sample_1]
     >>> dist_description_1 = {'name': 'Weibull', 'dependency': (None, None, None)}
@@ -283,7 +283,7 @@ class Fit():
         function_name : str,
             options are 'f1', 'f2'
         """
-        
+
         if function_name == 'f1':
             return _f1
         elif function_name == 'f2':

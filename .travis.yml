@@ -3,7 +3,7 @@ python:
   - "3.6"
 
 script:
-- pytest --cov=viroconcom
+- pytest
 - cd docs/ && make clean && make html && touch _build/html/.nojekyll && cd ..
 
 after_success:
