@@ -534,6 +534,10 @@ class Fit():
             dens.fit(gridsize=2000)
             # kernel density doesn't have shape, loc, scale
             return (dens.cdf, dens.icdf)
+        else:
+            err_msg = "Distribution '{}' is unknown.".format(name)
+            raise ValueError(err_msg)
+
         return (ConstantParam(params[0]), ConstantParam(params[1]), ConstantParam(params[2]))
 
     @staticmethod
