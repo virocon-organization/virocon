@@ -3,8 +3,7 @@ python:
   - "3.6"
 
 script:
-- python -m unittest
-- coverage run --source=viroconcom  -m unittest
+- pytest --cov=. 
 - cd docs/ && make clean && make html && touch _build/html/.nojekyll && cd ..
 
 after_success:
