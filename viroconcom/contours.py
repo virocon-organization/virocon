@@ -72,10 +72,10 @@ class IFormContour(Contour):
         example
         -------
 
-        >>> from compute.distributions import (WeibullDistribution,\
+        >>> from viroconcom.distributions import (WeibullDistribution,\
                                                LognormalDistribution,\
                                                MultivariateDistribution)
-        >>> from compute.params import ConstantParam, FunctionParam
+        >>> from viroconcom.params import ConstantParam, FunctionParam
         >>> #define dependency tuple
         >>> dep1 = (None, None, None)
         >>> dep2 = (0, None, 0)
@@ -172,10 +172,10 @@ class HighestDensityContour(Contour):
         Creating Contour example for 2-d HDC with Weibull and Lognormal
         distribution
 
-        >>> from compute.distributions import (WeibullDistribution,\
+        >>> from viroconcom.distributions import (WeibullDistribution,\
                                                LognormalDistribution,\
                                                MultivariateDistribution)
-        >>> from compute.params import ConstantParam, FunctionParam
+        >>> from viroconcom.params import ConstantParam, FunctionParam
         >>> #define dependency tuple
         >>> dep1 = (None, None, None)
         >>> dep2 = (0, None, 0)

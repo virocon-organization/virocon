@@ -266,7 +266,7 @@ class WeibullDistribution(ParametricDistribution):
 
     >>> import numpy as np
     >>> import matplotlib.pyplot as plt
-    >>> from compute.params import ConstantParam
+    >>> from viroconcom.params import ConstantParam
     >>> shape = ConstantParam(1)
     >>> loc = ConstantParam(0)
     >>> scale = ConstantParam(1)
@@ -307,7 +307,7 @@ class LognormalDistribution(ParametricDistribution):
 
     >>> import numpy as np
     >>> import matplotlib.pyplot as plt
-    >>> from compute.params import ConstantParam
+    >>> from viroconcom.params import ConstantParam
     >>> my_sigma = ConstantParam(1)
     >>> my_mu = ConstantParam(0)
     >>> dist = LognormalDistribution(sigma=my_sigma, mu=my_mu)
@@ -378,14 +378,14 @@ class NormalDistribution(ParametricDistribution):
 
     >>> import numpy as np
     >>> import matplotlib.pyplot as plt
-    >>> from compute.params import ConstantParam
+    >>> from viroconcom.params import ConstantParam
     >>> loc = ConstantParam(0)
     >>> scale = ConstantParam(1)
     >>> dist = NormalDistribution(None, loc, scale)
     >>> x = np.linspace(0, 5, num=100)
     >>> #example_plot = plt.plot(x, dist.cdf(x, None, (None, None, None)),\
                                 #label="Normal")
-    
+
     """
 
     def __init__(self, shape=None, loc=None, scale=None):
@@ -763,7 +763,7 @@ class KernelDensityDistribution(Distribution):
     >>> x = np.linspace(0, 5, num=100)
     >>> #example_plot = plt.plot(x, dist.cdf(x, None, (None, None, None)),\
                                 #label='KernelDensity')
-    
+
 
     """
 
