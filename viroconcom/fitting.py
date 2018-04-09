@@ -206,9 +206,10 @@ class FitInspectionData():
         """
         return self._scale_value[2]
 
-    def get_param_relation(self, param):
+    def get_dependent_param_points(self, param):
         """
-        This function can be used to get a tuple of points of a parameter.
+        This function can be used to get the param_at and the param_value lists as tuple for a given
+        parameter.
 
         Parameters
         ----------
