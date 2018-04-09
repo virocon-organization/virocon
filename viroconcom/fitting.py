@@ -206,6 +206,33 @@ class FitInspectionData():
         """
         return self._scale_value[2]
 
+    def get_param_relation(self, param):
+        """
+        This function can be used to get a tuple of points of a parameter.
+
+        Parameters
+        ----------
+        param : str,
+            The respective parameter.
+        Returns
+        -------
+        tuple of list,
+             The param_at and the param_value.
+        Raises
+        ------
+        ValueError,
+            If the parameter is unknown.
+        """
+        if param == 'shape':
+            return self.shape_at, self.shape_value
+        elif param == 'loc':
+            return self.loc_at, self.loc_value
+        elif param == 'scale':
+            return self.scale_at, self.scale_value
+        else:
+            err_msg = "Parameter '{}' is unknown.".format(param)
+            raise ValueError(err_msg)
+
     def append_basic_fit(self, param ,basic_fit):
         """
         This function can be used to add a single fit to the hold data.
@@ -216,6 +243,7 @@ class FitInspectionData():
             The respective parameter the data should be associated.
         basic_fit : BasicFit,
             The data of the single fit hold in a BasicData object.
+
         Raises
         ------
         ValueError,
