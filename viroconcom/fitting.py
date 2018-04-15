@@ -11,8 +11,7 @@ import scipy.stats as sts
 from scipy.optimize import curve_fit
 from .params import ConstantParam, FunctionParam
 from .distributions import (WeibullDistribution, LognormalDistribution, NormalDistribution,
-                                   KernelDensityDistribution,
-                                   MultivariateDistribution)
+                            KernelDensityDistribution, MultivariateDistribution)
 import warnings
 
 __all__ = ["Fit"]
@@ -208,8 +207,8 @@ class FitInspectionData():
 
     def get_dependent_param_points(self, param):
         """
-        This function can be used to get the param_at and the param_value lists as tuple for a given
-        parameter.
+        This function can be used to get the param_at and the param_value lists as tuple for a
+        given parameter.
 
         Parameters
         ----------
@@ -309,8 +308,8 @@ class Fit():
 
     Note
     ----
-    The fitted results are not checked for correctness. The created distributions may not contain useful
-    parameters. Distribution parameters are being checked in the contour creation process.
+    The fitted results are not checked for correctness. The created distributions may not contain
+    useful parameters. Distribution parameters are being checked in the contour creation process.
 
     Attributes
     ----------
@@ -363,7 +362,8 @@ class Fit():
     >>> #example_plot2 = plt.scatter(my_contour.coordinates[0][0], my_contour.coordinates[0][1], label="HDC")
 
 
-    An Example how to use the attributes mul_param_points and mul_dist_points to visualize how good your fit is:
+    An Example how to use the attributes mul_param_points and mul_dist_points to visualize how
+    good your fit is:
 
     >>> dist_description_0 = {'name': 'Weibull', 'dependency': (None, None, None)}
     >>> dist_description_1 = {'name': 'Lognormal_1', 'dependency': (None, None, 0), 'functions': (None, None, 'f2')}
@@ -445,7 +445,8 @@ class Fit():
 
         number_of_intervals : int,
             Number of bins the data of this variable should be seperated for fits which depend
-                upon it. If the number of bins is given, the width of the bins is determined automatically.
+            upon it. If the number of bins is given, the width of the bins is determined
+            automatically.
 
         width_of_bins : floats,
             Width of the bins. When the width of the bins is given, the number of bins is
@@ -495,7 +496,8 @@ class Fit():
             # Save the used number of intervals
             for dep_index, dep in enumerate(dependency):
                 if dep is not None:
-                    self.dist_descriptions[dep]['used_number_of_intervals'] = used_number_of_intervals[dep_index]
+                    self.dist_descriptions[dep]['used_number_of_intervals'] = \
+                        used_number_of_intervals[dep_index]
 
         # Add used number of intervals for dimensions with no dependency
         for fit_inspection_data in self.multiple_fit_inspection_data:
@@ -584,8 +586,6 @@ class Fit():
 
         fitting_values : list,
             values that are used to fit the distribution
-
-
         """
 
         # fit distribution
@@ -603,7 +603,8 @@ class Fit():
         return basic_fit
 
     @staticmethod
-    def _get_fitting_values(sample, samples, name, dependency, index, number_of_intervals=None, bin_width=None):
+    def _get_fitting_values(sample, samples, name, dependency, index,
+                            number_of_intervals=None, bin_width=None):
         """
         Returns values for fitting.
 
@@ -646,17 +647,18 @@ class Fit():
 
         # compute intervals
         if number_of_intervals:
-            interval_centers, interval_width = np.linspace(0, max(samples[dependency[index]]),
-                                                      num=number_of_intervals, endpoint=False, retstep=True)
+            interval_centers, interval_width = np.linspace(
+                0, max(samples[dependency[index]]), num=number_of_intervals,
+                endpoint=False, retstep=True)
             interval_centers += 0.5 * interval_width
         elif bin_width:
             interval_width = bin_width
-            interval_centers = np.arange(0.5*interval_width, max(samples[dependency[index]]), interval_width)
+            interval_centers = np.arange(0.5*interval_width, max(samples[dependency[index]]),
+                                         interval_width)
         else:
             raise RuntimeError(
-                "Either the parameters number_of_intervals or bin_width has to be specified, otherwise the intervals"
-                " are not specified. Exiting."
-            )
+                "Either the parameters number_of_intervals or bin_width has to be specified, "
+                "otherwise the intervals are not specified. Exiting.")
         # sort samples
         samples = np.stack((sample, samples[dependency[index]])).T
         sort_indice = np.argsort(samples[:, 1])
@@ -670,32 +672,37 @@ class Fit():
 
         # look for data that is fitting to each step
         for i, step in enumerate(interval_centers):
-            mask = ((sorted_samples[:, 1] >= step - 0.5 * interval_width) & (sorted_samples[:, 1] < step + 0.5 * interval_width))
+            mask = ((sorted_samples[:, 1] >= step - 0.5 * interval_width) &
+                    (sorted_samples[:, 1] < step + 0.5 * interval_width))
             fitting_values = sorted_samples[mask, 0]
             if len(fitting_values) >= MIN_DATA_POINTS_FOR_FIT:
                 try:
                     # fit distribution to selected data
-                    basic_fit = Fit._append_params(name, param_values, dependency, index, fitting_values)
+                    basic_fit = Fit._append_params(
+                        name, param_values, dependency, index, fitting_values)
                     multiple_basic_fit.append(basic_fit)
                     dist_values.append(fitting_values)
                 except ValueError:
                     # for case that no fitting data for the step has been found -> step is deleted
                     interval_centers = np.delete(interval_centers,i)
                     warnings.warn(
-                        "There is not enough data for step '{}' in dimension '{}'. This step is skipped. "
-                        "Maybe you should ckeck your data or reduce the number of steps".format(step, dependency[index]),
-                        RuntimeWarning, stacklevel=2)
+                        "There is not enough data for step '{}' in dimension '{}'. This step is "
+                        "skipped. Maybe you should ckeck your data or reduce the number of "
+                        "steps".format(step, dependency[index]), RuntimeWarning, stacklevel=2)
             else:
                 # for case that to few fitting data for the step has been found -> step is deleted
                 interval_centers = np.delete(interval_centers,i)
                 warnings.warn(
-                    "'Due to the restriction of MIN_DATA_POINTS_FOR_FIT='{}' there is not enough data (n='{}') for the interval centered at '{}' in"
-                    " dimension '{}'. This step is skipped. Maybe you should ckeck your data or reduce the number "
-                    "of steps".format(MIN_DATA_POINTS_FOR_FIT, len(fitting_values), step, dependency[index]),
+                    "'Due to the restriction of MIN_DATA_POINTS_FOR_FIT='{}' there is not enough "
+                    "data (n='{}') for the interval centered at '{}' in dimension '{}'. This step "
+                    "is skipped. Maybe you should ckeck your data or reduce the number of "
+                    "steps".format(
+                        MIN_DATA_POINTS_FOR_FIT, len(fitting_values), step, dependency[index]),
                     RuntimeWarning, stacklevel=2)
         if len(interval_centers) < 3:
-            raise RuntimeError("Your settings resulted in " + str(len(interval_centers)) + " intervals. However, "
-                               "at least 3 intervals are required. Consider changing the interval width setting.")
+            raise RuntimeError("Your settings resulted in " + str(len(interval_centers)) +
+                               " intervals. However, at least 3 intervals are required. Consider "
+                               "changing the interval width setting.")
         return interval_centers, dist_values, param_values, multiple_basic_fit
 
     def _get_distribution(self, dimension, samples, **kwargs):
@@ -708,9 +715,10 @@ class Fit():
             Number of the variable, e.g. 0 --> first variable (for exmaple sig. wave height)
 
         samples : list,
-            List that contains data to be fitted : samples[0] -> first variable (for example sig. wave height)
-                                                   samples[1] -> second variable
-                                                   ...
+            List that contains data to be fitted :
+            samples[0] -> first variable (for example sig. wave height)
+            samples[1] -> second variable
+            ...
 
         Returns
         -------
@@ -742,8 +750,8 @@ class Fit():
         if name == 'KernelDensity':
             if dependency != (None, None, None):
                 raise NotImplementedError("KernelDensity can not be conditional.")
-            return KernelDensityDistribution(Fit._fit_distribution(sample, name)), dependency, [
-                [sample], [sample], [sample]], [None, None, None]
+            return KernelDensityDistribution(Fit._fit_distribution(sample, name)), dependency, \
+                   [[sample], [sample], [sample]], [None, None, None]
 
         # initialize params (shape, loc, scale)
         params = [None, None, None]
@@ -783,11 +791,15 @@ class Fit():
             else:
                 # Case that there is a dependency
                 if list_number_of_intervals[dependency[index]]:
-                    interval_centers, dist_values, param_values, multiple_basic_fit = Fit._get_fitting_values(
-                        sample, samples, name, dependency, index, number_of_intervals=list_number_of_intervals[dependency[index]])
+                    interval_centers, dist_values, param_values, multiple_basic_fit = \
+                        Fit._get_fitting_values(
+                            sample, samples, name, dependency, index,
+                            number_of_intervals=list_number_of_intervals[dependency[index]])
                 elif list_width_of_intervals[dependency[index]]:
-                    interval_centers, dist_values, param_values, multiple_basic_fit = Fit._get_fitting_values(
-                        sample, samples, name, dependency, index, bin_width=list_width_of_intervals[dependency[index]])
+                    interval_centers, dist_values, param_values, multiple_basic_fit = \
+                        Fit._get_fitting_values(
+                            sample, samples, name, dependency, index,
+                            bin_width=list_width_of_intervals[dependency[index]])
 
                 for i in range(index, len(functions)):
                     # Check if the other parameters have the same dependency
@@ -836,15 +848,15 @@ class Fit():
                                 param_name = "scale"
 
                             warnings.warn(
-                                "Optimal Parameters not found for parameter '{}' in dimension '{}'. "
-                                "Maybe switch the given function for a better fit. "
-                                "Trying again with a higher number of calls to function '{}'."
-                                "".format(param_name, dimension, functions[i]), RuntimeWarning,
-                                stacklevel=2)
+                                "Optimal Parameters not found for parameter '{}' in dimension "
+                                "'{}'. Maybe switch the given function for a better fit. Trying "
+                                "again with a higher number of calls to function '{}'.".format(
+                                    param_name, dimension, functions[i]),
+                                RuntimeWarning, stacklevel=2)
                             try:
                                 param_popt, param_pcov = curve_fit(
-                                    Fit._get_function(functions[i]),
-                                    interval_centers, fit_points, bounds=_bounds, maxfev=int(1e6))
+                                    Fit._get_function(functions[i]), interval_centers, fit_points,
+                                    bounds=_bounds, maxfev=int(1e6))
                             except RuntimeError:
                                 raise RuntimeError(
                                     "Can't fit curve for parameter '{}' in dimension '{}'. "
@@ -866,7 +878,8 @@ class Fit():
         return distribution, dependency, used_number_of_intervals, fit_inspection_data
 
     def __str__(self):
-        return "Fit() instance with dist_dscriptions: " + "".join([str(d) for d in self.dist_descriptions])
+        return "Fit() instance with dist_dscriptions: " + "".join(
+            [str(d) for d in self.dist_descriptions])
 
 
 if __name__ == "__main__":
