@@ -166,8 +166,7 @@ class FitInspectionData():
              parameter depends on.
         Notes
         ------
-        This function can be used as attribute. For example:
-        >>> v_i_data_dim_0.shape_value
+        This function can be used as attribute.
         """
         return self._shape_value[0]
 
@@ -183,8 +182,7 @@ class FitInspectionData():
              parameter depends on.
         Notes
         ------
-        This function can be used as attribute. For example:
-        >>> v_i_data_dim_0.loc_value
+        This function can be used as attribute.
         """
         return self._loc_value[1]
 
@@ -200,8 +198,7 @@ class FitInspectionData():
              parameter depends on.
         Notes
         ------
-        This function can be used as attribute. For example:
-        >>> v_i_data_dim_0.scale_value
+        This function can be used as attribute.
         """
         return self._scale_value[2]
 
