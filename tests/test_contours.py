@@ -72,7 +72,7 @@ class HDCCreationTest(unittest.TestCase):
         result0 = pd.read_csv(testfiles_path + "/HDC2dWL_coordinates.csv")
 
         for g,h in [(g, h) for g in result0.index for h in result0.columns]:
-            self.assertAlmostEqual(result0.ix[g, h], finaldt0.ix[g, h], places=8)
+            self.assertAlmostEqual(result0.loc[g, h], finaldt0.loc[g, h], places=8)
 
 
 
@@ -124,7 +124,7 @@ class HDCCreationTest(unittest.TestCase):
 
         result = pd.read_csv(testfiles_path + "/HDC3dWLL_coordinates.csv")
         for i,j in [(i, j) for i in result.index for j in result.columns]:
-            self.assertAlmostEqual(result.ix[i,j], finaldt.ix[i,j], places=8)
+            self.assertAlmostEqual(result.loc[i,j], finaldt.loc[i,j], places=8)
 
 
     def test_HDC4d_WLLL(self):
@@ -217,7 +217,7 @@ class HDCCreationTest(unittest.TestCase):
         result2 = pd.read_csv(testfiles_path + "/HDC2dWN_coordinates.csv")
 
         for k,l in [(k, l) for k in result2.index for l in result2.columns]:
-            self.assertAlmostEqual(result2.ix[k,l], finaldt2.ix[k,l], places=8)
+            self.assertAlmostEqual(result2.loc[k,l], finaldt2.loc[k,l], places=8)
 
 
 
@@ -268,7 +268,7 @@ class HDCCreationTest(unittest.TestCase):
 
         result3 = pd.read_csv(testfiles_path + "/HDC3dWLN_coordinates.csv")
         for m,n in [(m, n) for m in result3.index for n in result3.columns]:
-            self.assertAlmostEqual(result3.ix[m, n], finaldt3.ix[m, n], places=8)
+            self.assertAlmostEqual(result3.loc[m, n], finaldt3.loc[m, n], places=8)
 
 
 
@@ -306,7 +306,7 @@ class HDCCreationTest(unittest.TestCase):
 
         result4 = pd.read_csv(testfiles_path + "/IForm2dWL_coordinates.csv")
         for o,p in [(o, p) for o in result4.index for p in result4.columns]:
-            self.assertAlmostEqual(result4.ix[o, p], finaldt4.ix[o, p], places=8)
+            self.assertAlmostEqual(result4.loc[o, p], finaldt4.loc[o, p], places=8)
 
 
 
@@ -350,7 +350,7 @@ class HDCCreationTest(unittest.TestCase):
         result5 = pd.read_csv(testfiles_path + "/IForm2dWN_coordinates.csv")
 
         for r,s in [(r, s) for r in result5.index for s in result5.columns]:
-          self.assertAlmostEqual(result5.ix[r, s], finaldt5.ix[r, s], places=8)
+          self.assertAlmostEqual(result5.loc[r, s], finaldt5.loc[r, s], places=8)
 
 
 

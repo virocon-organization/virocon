@@ -5,6 +5,6 @@ User Guide
 .. toctree::
 	:maxdepth: 2
 
-	setup
+	install
 	contours
 	fitting
