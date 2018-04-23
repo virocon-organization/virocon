@@ -374,28 +374,28 @@ class Fit():
     >>>
     >>> #ax_1 = fig.add_subplot(221)
     >>> #title1 = ax_1.set_title("Fitted curve")
-    >>> param_grid = my_fit.mul_param_points[1][2][0]
+    >>> param_grid = my_fit.multiple_fit_inspection_data[0].scale_at
     >>> x_1 = np.linspace(5, 15, 100)
-    >>> #ax1_plot = ax_1.plot(param_grid, my_fit.mul_param_points[1][2][1], 'x')
+    >>> #ax1_plot = ax_1.plot(param_grid, my_fit.multiple_fit_inspection_data[0].scale_value, 'x')
     >>> #example_plot1 = ax_1.plot(x_1, my_fit.mul_var_dist.distributions[1].scale(x_1))
     >>>
     >>> #ax_2 = fig.add_subplot(222)
     >>> #title2 = ax_2.set_title("Distribution '1'")
-    >>> #ax2_hist = ax_2.hist(my_fit.mul_dist_points[1][2][0], normed=1)
+    >>> #ax2_hist = ax_2.hist(my_fit.multiple_fit_inspection_data[1].scale_samples[0], normed=1)
     >>> shape = my_fit.mul_var_dist.distributions[1].shape(None)
     >>> scale = my_fit.mul_var_dist.distributions[1].scale(param_grid[0])
     >>> #ax2_plot = ax_2.plot(np.linspace(0, 20, 100), sts.lognorm.pdf(np.linspace(0, 20, 100), s=shape, scale=scale))
     >>>
     >>> #ax_3 = fig.add_subplot(223)
     >>> #title3 = ax_3.set_title("Distribution '2'")
-    >>> #ax3_hist = ax_3.hist(my_fit.mul_dist_points[1][2][1], normed=1)
+    >>> #ax3_hist = ax_3.hist(my_fit.multiple_fit_inspection_data[1].scale_samples[1], normed=1)
     >>> shape = my_fit.mul_var_dist.distributions[1].shape(None)
     >>> scale = my_fit.mul_var_dist.distributions[1].scale(param_grid[1])
     >>> #ax3_plot = ax_3.plot(np.linspace(0, 20, 100), sts.lognorm.pdf(np.linspace(0, 20, 100), s=shape, scale=scale))
     >>>
     >>> #ax_4 = fig.add_subplot(224)
     >>> #title4 = ax_4.set_title("Distribution '3'")
-    >>> #ax4_hist = ax_4.hist(my_fit.mul_dist_points[1][2][2], normed=1)
+    >>> #ax4_hist = ax_4.hist(my_fit.multiple_fit_inspection_data[1].scale_samples[2], normed=1)
     >>> shape = my_fit.mul_var_dist.distributions[1].shape(None)
     >>> scale = my_fit.mul_var_dist.distributions[1].scale(param_grid[2])
     >>> #ax4_plot = ax_4.plot(np.linspace(0, 20, 100), sts.lognorm.pdf(np.linspace(0, 20, 100), s=shape, scale=scale))
