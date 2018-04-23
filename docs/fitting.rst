@@ -35,3 +35,6 @@ Example for ``dist_description``::
 If the fit is finished it has the attribute ``mul_var_dist`` that is an object of ``MultivariateDistribution`` that contains all distributions you
 can use to build a contour for your data. Also it has the attributes ``mul_param_points`` and ``mul_dist_points`` which can be used to visualize
 your fit.
+
+.. todo::
+    adapt to changes in fitting.py
