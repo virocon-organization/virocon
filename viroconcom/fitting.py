@@ -371,7 +371,7 @@ class Fit():
     >>>
     >>> #ax_1 = fig.add_subplot(221)
     >>> #title1 = ax_1.set_title("Fitted curve")
-    >>> param_grid = my_fit.multiple_fit_inspection_data[0].scale_at
+    >>> param_grid = my_fit.multiple_fit_inspection_data[1].scale_at
     >>> x_1 = np.linspace(5, 15, 100)
     >>> #ax1_plot = ax_1.plot(param_grid, my_fit.multiple_fit_inspection_data[0].scale_value, 'x')
     >>> #example_plot1 = ax_1.plot(x_1, my_fit.mul_var_dist.distributions[1].scale(x_1))
