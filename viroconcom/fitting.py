@@ -346,11 +346,11 @@ class Fit():
     Create a Fit and visualize the result in a HDC contour:
 
     >>> from viroconcom.contours import HighestDensityContour
-    >>> sample_1 = prng.weibull(2, 500) + 15
-    >>> sample_2 = [point + prng.uniform(-1, 1) for point in sample_1]
-    >>> dist_description_1 = {'name': 'Weibull', 'dependency': (None, None, None), 'number_of_intervals': 5}
+    >>> sample_3 = prng.weibull(2, 500) + 15
+    >>> sample_4 = [point + prng.uniform(-1, 1) for point in sample_1]
+    >>> dist_description_1 = {'name': 'Weibull', 'dependency': (None, None, None)}
     >>> dist_description_2 = {'name': 'Normal', 'dependency': (None, None, None)}
-    >>> my_fit = Fit((sample_1, sample_2), (dist_description_1, dist_description_2))
+    >>> my_fit = Fit((sample_3, sample_4), (dist_description_1, dist_description_2))
     >>> return_period = 50
     >>> state_duration = 3
     >>> limits = [(0, 20), (0, 20)]
@@ -379,21 +379,21 @@ class Fit():
     >>> #ax_2 = fig.add_subplot(222)
     >>> #title2 = ax_2.set_title("Distribution '1'")
     >>> #ax2_hist = ax_2.hist(my_fit.multiple_fit_inspection_data[1].scale_samples[0], normed=1)
-    >>> shape = my_fit.mul_var_dist.distributions[1].shape(None)
+    >>> shape = my_fit.mul_var_dist.distributions[1].shape(0)
     >>> scale = my_fit.mul_var_dist.distributions[1].scale(param_grid[0])
     >>> #ax2_plot = ax_2.plot(np.linspace(0, 20, 100), sts.lognorm.pdf(np.linspace(0, 20, 100), s=shape, scale=scale))
     >>>
     >>> #ax_3 = fig.add_subplot(223)
     >>> #title3 = ax_3.set_title("Distribution '2'")
     >>> #ax3_hist = ax_3.hist(my_fit.multiple_fit_inspection_data[1].scale_samples[1], normed=1)
-    >>> shape = my_fit.mul_var_dist.distributions[1].shape(None)
+    >>> shape = my_fit.mul_var_dist.distributions[1].shape(0)
     >>> scale = my_fit.mul_var_dist.distributions[1].scale(param_grid[1])
     >>> #ax3_plot = ax_3.plot(np.linspace(0, 20, 100), sts.lognorm.pdf(np.linspace(0, 20, 100), s=shape, scale=scale))
     >>>
     >>> #ax_4 = fig.add_subplot(224)
     >>> #title4 = ax_4.set_title("Distribution '3'")
     >>> #ax4_hist = ax_4.hist(my_fit.multiple_fit_inspection_data[1].scale_samples[2], normed=1)
-    >>> shape = my_fit.mul_var_dist.distributions[1].shape(None)
+    >>> shape = my_fit.mul_var_dist.distributions[1].shape(0)
     >>> scale = my_fit.mul_var_dist.distributions[1].scale(param_grid[2])
     >>> #ax4_plot = ax_4.plot(np.linspace(0, 20, 100), sts.lognorm.pdf(np.linspace(0, 20, 100), s=shape, scale=scale))
 
@@ -667,8 +667,8 @@ class Fit():
         # compute intervals
         if number_of_intervals:
             interval_centers, interval_width = np.linspace(
-                0, max(samples[dependency[index]]), num=number_of_intervals,
-                endpoint=False, retstep=True)
+                min(samples[dependency[index]]), max(samples[dependency[index]]),
+                num=number_of_intervals, endpoint=False, retstep=True)
             interval_centers += 0.5 * interval_width
         elif bin_width:
             interval_width = bin_width
@@ -678,6 +678,7 @@ class Fit():
             raise RuntimeError(
                 "Either the parameters number_of_intervals or bin_width has to be specified, "
                 "otherwise the intervals are not specified. Exiting.")
+
         # sort samples
         samples = np.stack((sample, samples[dependency[index]])).T
         sort_indice = np.argsort(samples[:, 1])
