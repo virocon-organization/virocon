@@ -768,18 +768,18 @@ class Fit():
         # fit inspection data for current dimension
         fit_inspection_data = FitInspectionData()
 
+        # initialize used_number_of_intervals (shape, loc, scale
+        used_number_of_intervals = [None, None, None]
+
         # handle KernelDensity separated
         if name == 'KernelDensity':
             if dependency != (None, None, None):
                 raise NotImplementedError("KernelDensity can not be conditional.")
             return KernelDensityDistribution(Fit._fit_distribution(sample, name)), dependency, \
-                   [[sample], [sample], [sample]], [None, None, None]
+                   used_number_of_intervals, fit_inspection_data
 
         # initialize params (shape, loc, scale)
         params = [None, None, None]
-
-        # initialize used_number_of_intervals (shape, loc, scale
-        used_number_of_intervals = [None, None, None]
 
         for index in range(len(dependency)):
 
