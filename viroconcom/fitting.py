@@ -136,10 +136,10 @@ class FitInspectionData():
 
     def __init__(self):
 
-        # number of the intervals this dimension is divided
+        # Number of the intervals this dimension is divided
         self.used_number_of_intervals = None
 
-        # parameter values and the data they belong to
+        # Parameter values and the data they belong to
         self.shape_at = None
         self._shape_value = [[], [], []]
 
@@ -149,7 +149,7 @@ class FitInspectionData():
         self.scale_at = None
         self._scale_value = [[], [], []]
 
-        # raw data for each parameter of this dimension
+        # Raw data for each parameter of this dimension
         self.shape_samples = []
         self.loc_samples = []
         self.scale_samples = []
@@ -166,8 +166,7 @@ class FitInspectionData():
              parameter depends on.
         Notes
         ------
-        This function can be used as attribute. For example:
-        >>> v_i_data_dim_0.shape_value
+        This function can be used as attribute.
         """
         return self._shape_value[0]
 
@@ -183,8 +182,7 @@ class FitInspectionData():
              parameter depends on.
         Notes
         ------
-        This function can be used as attribute. For example:
-        >>> v_i_data_dim_0.loc_value
+        This function can be used as attribute.
         """
         return self._loc_value[1]
 
@@ -200,8 +198,7 @@ class FitInspectionData():
              parameter depends on.
         Notes
         ------
-        This function can be used as attribute. For example:
-        >>> v_i_data_dim_0.scale_value
+        This function can be used as attribute.
         """
         return self._scale_value[2]
 
@@ -339,9 +336,9 @@ class Fit():
     >>> prng = np.random.RandomState(42)
     >>> sample_1 = prng.normal(10, 1, 500)
     >>> sample_2 = [point + prng.uniform(-5, 5) for point in sample_1]
-    >>> dist_description_1 = {'name': 'KernelDensity', 'dependency': (None, None, None)}
+    >>> dist_description_1 = {'name': 'KernelDensity', 'dependency': (None, None, None), 'number_of_intervals': 5}
     >>> dist_description_2 = {'name': 'Normal', 'dependency': (None, 0, None), 'functions':(None, 'f1', None)}
-    >>> my_fit = Fit((sample_1, sample_2), (dist_description_1, dist_description_2), 5)
+    >>> my_fit = Fit((sample_1, sample_2), (dist_description_1, dist_description_2))
     >>> my_contour = IFormContour(my_fit.mul_var_dist)
     >>> #example_plot = plt.scatter(my_contour.coordinates[0][0], my_contour.coordinates[0][1], label="IForm")
 
@@ -349,11 +346,11 @@ class Fit():
     Create a Fit and visualize the result in a HDC contour:
 
     >>> from viroconcom.contours import HighestDensityContour
-    >>> sample_1 = prng.weibull(2, 500) + 15
-    >>> sample_2 = [point + prng.uniform(-1, 1) for point in sample_1]
+    >>> sample_3 = prng.weibull(2, 500) + 15
+    >>> sample_4 = [point + prng.uniform(-1, 1) for point in sample_1]
     >>> dist_description_1 = {'name': 'Weibull', 'dependency': (None, None, None)}
     >>> dist_description_2 = {'name': 'Normal', 'dependency': (None, None, None)}
-    >>> my_fit = Fit((sample_1, sample_2), (dist_description_1, dist_description_2), 5)
+    >>> my_fit = Fit((sample_3, sample_4), (dist_description_1, dist_description_2))
     >>> return_period = 50
     >>> state_duration = 3
     >>> limits = [(0, 20), (0, 20)]
@@ -362,41 +359,40 @@ class Fit():
     >>> #example_plot2 = plt.scatter(my_contour.coordinates[0][0], my_contour.coordinates[0][1], label="HDC")
 
 
-    An Example how to use the attributes mul_param_points and mul_dist_points to visualize how
-    good your fit is:
+    An Example how to visualize how good your fit is:
 
-    >>> dist_description_0 = {'name': 'Weibull', 'dependency': (None, None, None)}
+    >>> dist_description_0 = {'name': 'Weibull', 'dependency': (None, None, None), 'number_of_intervals': 3}
     >>> dist_description_1 = {'name': 'Lognormal_1', 'dependency': (None, None, 0), 'functions': (None, None, 'f2')}
-    >>> my_fit = Fit((sample_1, sample_2), (dist_description_0, dist_description_1), 3)
+    >>> my_fit = Fit((sample_1, sample_2), (dist_description_0, dist_description_1))
     >>>
     >>> #fig = plt.figure(figsize=(10, 8))
     >>> #example_text = fig.suptitle("Dependence of 'scale'")
     >>>
     >>> #ax_1 = fig.add_subplot(221)
     >>> #title1 = ax_1.set_title("Fitted curve")
-    >>> param_grid = my_fit.mul_param_points[1][2][0]
+    >>> param_grid = my_fit.multiple_fit_inspection_data[1].scale_at
     >>> x_1 = np.linspace(5, 15, 100)
-    >>> #ax1_plot = ax_1.plot(param_grid, my_fit.mul_param_points[1][2][1], 'x')
+    >>> #ax1_plot = ax_1.plot(param_grid, my_fit.multiple_fit_inspection_data[0].scale_value, 'x')
     >>> #example_plot1 = ax_1.plot(x_1, my_fit.mul_var_dist.distributions[1].scale(x_1))
     >>>
     >>> #ax_2 = fig.add_subplot(222)
     >>> #title2 = ax_2.set_title("Distribution '1'")
-    >>> #ax2_hist = ax_2.hist(my_fit.mul_dist_points[1][2][0], normed=1)
-    >>> shape = my_fit.mul_var_dist.distributions[1].shape(None)
+    >>> #ax2_hist = ax_2.hist(my_fit.multiple_fit_inspection_data[1].scale_samples[0], normed=1)
+    >>> shape = my_fit.mul_var_dist.distributions[1].shape(0)
     >>> scale = my_fit.mul_var_dist.distributions[1].scale(param_grid[0])
     >>> #ax2_plot = ax_2.plot(np.linspace(0, 20, 100), sts.lognorm.pdf(np.linspace(0, 20, 100), s=shape, scale=scale))
     >>>
     >>> #ax_3 = fig.add_subplot(223)
     >>> #title3 = ax_3.set_title("Distribution '2'")
-    >>> #ax3_hist = ax_3.hist(my_fit.mul_dist_points[1][2][1], normed=1)
-    >>> shape = my_fit.mul_var_dist.distributions[1].shape(None)
+    >>> #ax3_hist = ax_3.hist(my_fit.multiple_fit_inspection_data[1].scale_samples[1], normed=1)
+    >>> shape = my_fit.mul_var_dist.distributions[1].shape(0)
     >>> scale = my_fit.mul_var_dist.distributions[1].scale(param_grid[1])
     >>> #ax3_plot = ax_3.plot(np.linspace(0, 20, 100), sts.lognorm.pdf(np.linspace(0, 20, 100), s=shape, scale=scale))
     >>>
     >>> #ax_4 = fig.add_subplot(224)
     >>> #title4 = ax_4.set_title("Distribution '3'")
-    >>> #ax4_hist = ax_4.hist(my_fit.mul_dist_points[1][2][2], normed=1)
-    >>> shape = my_fit.mul_var_dist.distributions[1].shape(None)
+    >>> #ax4_hist = ax_4.hist(my_fit.multiple_fit_inspection_data[1].scale_samples[2], normed=1)
+    >>> shape = my_fit.mul_var_dist.distributions[1].shape(0)
     >>> scale = my_fit.mul_var_dist.distributions[1].scale(param_grid[2])
     >>> #ax4_plot = ax_4.plot(np.linspace(0, 20, 100), sts.lognorm.pdf(np.linspace(0, 20, 100), s=shape, scale=scale))
 
@@ -464,47 +460,47 @@ class Fit():
             dist_description['list_number_of_intervals'] = list_number_of_intervals
             dist_description['list_width_of_intervals'] = list_width_of_intervals
 
-        # multiprocessing for more performance
+        # Use multiprocessing for more performance
         pool = Pool()
         multiple_results = []
 
-        # fit inspection data for each dimension
+        # Fit inspection data for each dimension
         self.multiple_fit_inspection_data = []
 
-        # distribute work on cores
+        # Distribute work on cores
         for dimension in range(len(samples)):
             dist_description = dist_descriptions[dimension]
             multiple_results.append(
                 pool.apply_async(self._get_distribution, (dimension, samples), dist_description))
 
-        # initialize parameters for multivariate distribution
+        # Initialize parameters for multivariate distribution
         distributions = []
         dependencies = []
 
-        # get distributions
+        # Get distributions
         for i, res in enumerate(multiple_results):
             distribution, dependency, used_number_of_intervals, \
             fit_inspection_data = res.get(timeout=1e6)
 
-            # saves distribution and dependency for particular dimension
+            # Saves distribution and dependency for particular dimension
             distributions.append(distribution)
             dependencies.append(dependency)
 
-            # add fit inspection data for current dimension
+            # Add fit inspection data for current dimension
             self.multiple_fit_inspection_data.append(fit_inspection_data)
 
-            # save the used number of intervals
+            # Save the used number of intervals
             for dep_index, dep in enumerate(dependency):
                 if dep is not None:
                     self.dist_descriptions[dep]['used_number_of_intervals'] = \
                         used_number_of_intervals[dep_index]
 
-        # add used number of intervals for dimensions with no dependency
+        # Add used number of intervals for dimensions with no dependency
         for fit_inspection_data in self.multiple_fit_inspection_data:
             if not fit_inspection_data.used_number_of_intervals:
                 fit_inspection_data.used_number_of_intervals = 1
 
-        # save multivariate distribution
+        # Save multivariate distribution
         self.mul_var_dist = MultivariateDistribution(distributions, dependencies)
 
     @staticmethod
@@ -532,15 +528,15 @@ class Fit():
             params = sts.weibull_min.fit(sample)
         elif name == 'Normal':
             params = list(sts.norm.fit(sample))
-            # shape doesn't exist for normal
+            # Shape doesn't exist for normal
             params.insert(0, 0)
         elif name[:-2] == 'Lognormal':
-            # for lognormal loc is set to 0
+            # For lognormal loc is set to 0
             params = sts.lognorm.fit(sample, floc=0)
         elif name == 'KernelDensity':
             dens = sm.nonparametric.KDEUnivariate(sample)
             dens.fit(gridsize=2000)
-            # kernel density doesn't have shape, loc, scale
+            # Kernel density doesn't have shape, loc, scale
             return (dens.cdf, dens.icdf)
         else:
             err_msg = "Distribution '{}' is unknown.".format(name)
@@ -602,17 +598,17 @@ class Fit():
              The information of this single fit.
         """
 
-        # fit distribution
+        # Fit distribution
         current_params = Fit._fit_distribution(fitting_values, name)
 
-        # create basic fit object
+        # Create basic fit object
         basic_fit = BasicFit(*current_params, fitting_values)
 
         for i in range(index, len(dependency)):
-            # check if there is a dependency and whether it is the right one
+            # Check if there is a dependency and whether it is the right one
             if dependency[i] is not None and \
                             dependency[i] == dependency[index]:
-                # calculated parameter is appended to param_values
+                # Calculated parameter is appended to param_values
                 param_values[i].append(current_params[i])
         return basic_fit
 
@@ -667,11 +663,11 @@ class Fit():
         """
         MIN_DATA_POINTS_FOR_FIT = 10
 
-        # compute intervals
+        # Compute intervals
         if number_of_intervals:
             interval_centers, interval_width = np.linspace(
-                0, max(samples[dependency[index]]), num=number_of_intervals,
-                endpoint=False, retstep=True)
+                min(samples[dependency[index]]), max(samples[dependency[index]]),
+                num=number_of_intervals, endpoint=False, retstep=True)
             interval_centers += 0.5 * interval_width
         elif bin_width:
             interval_width = bin_width
@@ -681,38 +677,39 @@ class Fit():
             raise RuntimeError(
                 "Either the parameters number_of_intervals or bin_width has to be specified, "
                 "otherwise the intervals are not specified. Exiting.")
-        # sort samples
+
+        # Sort samples
         samples = np.stack((sample, samples[dependency[index]])).T
         sort_indice = np.argsort(samples[:, 1])
         sorted_samples = samples[sort_indice]
-        # return values
+        # Return values
         param_values = [[], [], []]
         dist_values = []
 
-        # list of all basic fits
+        # List of all basic fits
         multiple_basic_fit = []
 
-        # look for data that is fitting to each step
+        # Look for data that is fitting to each step
         for i, step in enumerate(interval_centers):
             mask = ((sorted_samples[:, 1] >= step - 0.5 * interval_width) &
                     (sorted_samples[:, 1] < step + 0.5 * interval_width))
             fitting_values = sorted_samples[mask, 0]
             if len(fitting_values) >= MIN_DATA_POINTS_FOR_FIT:
                 try:
-                    # fit distribution to selected data
+                    # Fit distribution to selected data
                     basic_fit = Fit._append_params(
                         name, param_values, dependency, index, fitting_values)
                     multiple_basic_fit.append(basic_fit)
                     dist_values.append(fitting_values)
                 except ValueError:
-                    # for case that no fitting data for the step has been found -> step is deleted
+                    # For case that no fitting data for the step has been found -> step is deleted
                     interval_centers = np.delete(interval_centers,i)
                     warnings.warn(
                         "There is not enough data for step '{}' in dimension '{}'. This step is "
                         "skipped. Maybe you should ckeck your data or reduce the number of "
                         "steps".format(step, dependency[index]), RuntimeWarning, stacklevel=2)
             else:
-                # for case that to few fitting data for the step has been found -> step is deleted
+                # For case that to few fitting data for the step has been found -> step is deleted
                 interval_centers = np.delete(interval_centers,i)
                 warnings.warn(
                     "'Due to the restriction of MIN_DATA_POINTS_FOR_FIT='{}' there is not enough "
@@ -760,7 +757,7 @@ class Fit():
             If not a good fit was found.
         """
 
-        # save settings for distribution
+        # Save settings for distribution
         sample = samples[dimension]
         name = kwargs.get('name', 'Weibull')
         dependency = kwargs.get('dependency', (None, None, None))
@@ -768,39 +765,39 @@ class Fit():
         list_number_of_intervals = kwargs.get('list_number_of_intervals')
         list_width_of_intervals = kwargs.get('list_width_of_intervals')
 
-        # fit inspection data for current dimension
+        # Fit inspection data for current dimension
         fit_inspection_data = FitInspectionData()
 
-        # handle KernelDensity separated
+        # Initialize used_number_of_intervals (shape, loc, scale
+        used_number_of_intervals = [None, None, None]
+
+        # Handle KernelDensity separated
         if name == 'KernelDensity':
             if dependency != (None, None, None):
                 raise NotImplementedError("KernelDensity can not be conditional.")
             return KernelDensityDistribution(Fit._fit_distribution(sample, name)), dependency, \
-                   [[sample], [sample], [sample]], [None, None, None]
+                   used_number_of_intervals, fit_inspection_data
 
-        # initialize params (shape, loc, scale)
+        # Initialize params (shape, loc, scale)
         params = [None, None, None]
-
-        # initialize used_number_of_intervals (shape, loc, scale
-        used_number_of_intervals = [None, None, None]
 
         for index in range(len(dependency)):
 
-            # continue if params is yet computed
+            # Continue if params is yet computed
             if params[index] is not None:
                 continue
 
             if dependency[index] is None:
-                # case that there is no dependency for this param
+                # Case that there is no dependency for this param
                 current_params = Fit._fit_distribution(sample, name)
 
-                # basic fit for no dependency
+                # Basic fit for no dependency
                 basic_fit = BasicFit(*current_params, sample)
                 for i in range(index, len(functions)):
-                    # check if the other parameters have also no dependency
+                    # Check if the other parameters have also no dependency
                     if dependency[i] is None:
 
-                        # add basic fit to fit inspection data
+                        # Add basic fit to fit inspection data
                         # TODO maybe just use index incase of name as string
                         if i == 0:
                             fit_inspection_data.append_basic_fit('shape', basic_fit)
@@ -814,7 +811,7 @@ class Fit():
                         else:
                             params[i] = current_params[i]
             else:
-                # case that there is a dependency
+                # Case that there is a dependency
                 if list_number_of_intervals[dependency[index]]:
                     interval_centers, dist_values, param_values, multiple_basic_fit = \
                         Fit._get_fitting_values(
@@ -827,9 +824,9 @@ class Fit():
                             bin_width=list_width_of_intervals[dependency[index]])
 
                 for i in range(index, len(functions)):
-                    # check if the other parameters have the same dependency
+                    # Check if the other parameters have the same dependency
                     if dependency[i] is not None and dependency[i] == dependency[index]:
-                        # add basic fits to fit inspection data
+                        # Add basic fits to fit inspection data
                         # TODO maybe just use index incase of name as string
                         for basic_fit in multiple_basic_fit:
                             if i == 0:
@@ -839,7 +836,7 @@ class Fit():
                             elif i == 2:
                                 fit_inspection_data.append_basic_fit('scale', basic_fit)
 
-                        # add interval centers to fit inspection data
+                        # Add interval centers to fit inspection data
                         if i == 0:
                             fit_inspection_data.shape_at = interval_centers
                         elif i == 1:
@@ -847,20 +844,20 @@ class Fit():
                         elif i == 2:
                             fit_inspection_data.scale_at = interval_centers
 
-                        # add used number of intervals for current parameter
+                        # Add used number of intervals for current parameter
                         used_number_of_intervals[i] = len(interval_centers)
 
                         if i == 2 and name == 'Lognormal_2':
                             fit_points = [np.log(p(None)) for p in param_values[i]]
                         else:
                             fit_points = [p(None) for p in param_values[i]]
-                        # fit parameters with particular function
+                        # Fit parameters with particular function
                         try:
                             param_popt, param_pcov = curve_fit(
                                 Fit._get_function(functions[i]),
                                 interval_centers, fit_points, bounds=_bounds)
                         except RuntimeError:
-                            # case that optimal parameters not found
+                            # Case that optimal parameters not found
                             if i == 0 and name == 'Lognormal_2':
                                 param_name = "sigma"
                             elif i == 2 and name == 'Lognormal_2':
@@ -887,10 +884,10 @@ class Fit():
                                     "Can't fit curve for parameter '{}' in dimension '{}'. "
                                     "Number of iterations exceeded.".format(param_name, dimension))
 
-                        # save parameter
+                        # Save parameter
                         params[i] = FunctionParam(*param_popt, functions[i])
 
-        # return particular distribution
+        # Return particular distribution
         distribution = None
         if name == 'Weibull':
             distribution = WeibullDistribution(*params)
@@ -910,4 +907,4 @@ class Fit():
 if __name__ == "__main__":
     import doctest
     doctest.testmod()
-    # fit data by creating a Fit object
+    # Fit data by creating a Fit object
