@@ -706,14 +706,14 @@ class Fit():
                     dist_values.append(fitting_values)
                 except ValueError:
                     # For case that no fitting data for the step has been found -> step is deleted
-                    deleted_centers.append(i) # Append not used center to not used centers
+                    deleted_centers.append(i) # Add index of not used center
                     warnings.warn(
                         "There is not enough data for step '{}' in dimension '{}'. This step is "
                         "skipped. Maybe you should ckeck your data or reduce the number of "
                         "steps".format(step, dependency[index]), RuntimeWarning, stacklevel=2)
             else:
                 # For case that to few fitting data for the step has been found -> step is deleted
-                deleted_centers.append(i) # Append not used center to not used centers
+                deleted_centers.append(i) # Add index of not used center
                 warnings.warn(
                     "'Due to the restriction of MIN_DATA_POINTS_FOR_FIT='{}' there is not enough "
                     "data (n='{}') for the interval centered at '{}' in dimension '{}'. This step "
