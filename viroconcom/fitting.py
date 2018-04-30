@@ -689,6 +689,9 @@ class Fit():
         # List of all basic fits
         multiple_basic_fit = []
 
+        # Deleted interval_centers by index
+        deleted_centers = []
+
         # Look for data that is fitting to each step
         for i, step in enumerate(interval_centers):
             mask = ((sorted_samples[:, 1] >= step - 0.5 * interval_width) &
@@ -703,14 +706,14 @@ class Fit():
                     dist_values.append(fitting_values)
                 except ValueError:
                     # For case that no fitting data for the step has been found -> step is deleted
-                    interval_centers = np.delete(interval_centers,i)
+                    deleted_centers.append(i) # Add index of not used center
                     warnings.warn(
                         "There is not enough data for step '{}' in dimension '{}'. This step is "
                         "skipped. Maybe you should ckeck your data or reduce the number of "
                         "steps".format(step, dependency[index]), RuntimeWarning, stacklevel=2)
             else:
                 # For case that to few fitting data for the step has been found -> step is deleted
-                interval_centers = np.delete(interval_centers,i)
+                deleted_centers.append(i) # Add index of not used center
                 warnings.warn(
                     "'Due to the restriction of MIN_DATA_POINTS_FOR_FIT='{}' there is not enough "
                     "data (n='{}') for the interval centered at '{}' in dimension '{}'. This step "
@@ -722,6 +725,10 @@ class Fit():
             raise RuntimeError("Your settings resulted in " + str(len(interval_centers)) +
                                " intervals. However, at least 3 intervals are required. Consider "
                                "changing the interval width setting.")
+
+        # Delete not used centers
+        interval_centers = np.delete(interval_centers, deleted_centers)
+
         return interval_centers, dist_values, param_values, multiple_basic_fit
 
     def _get_distribution(self, dimension, samples, **kwargs):
