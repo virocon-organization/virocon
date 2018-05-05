@@ -4,7 +4,8 @@
 Fit distribution to data.
 """
 
-from multiprocessing import Pool
+from multiprocessing import Pool, TimeoutError
+import time
 import numpy as np
 import statsmodels.api as sm
 import scipy.stats as sts
@@ -398,7 +399,7 @@ class Fit():
 
     """
 
-    def __init__(self, samples, dist_descriptions):
+    def __init__(self, samples, dist_descriptions, timeout=1e6):
         """
         Creates a Fit, by computing the distribution that describes the samples 'best'.
 
@@ -410,6 +411,14 @@ class Fit():
                                                    ...
         dist_descriptions : list of dict,
             contains dictionary for each parameter. See note for further information.
+
+        timeout : int, optional
+            The maximum time in seconds there the contour has to be computed. Defaults to 1e6.
+
+        Raises
+        ------
+        TimeoutError,
+            If the calculation takes too long and the given value for timeout is exceeded.
 
         Note
         ----
@@ -477,10 +486,20 @@ class Fit():
         distributions = []
         dependencies = []
 
+        # Define start time
+        start_time = time.time()
+
         # Get distributions
         for i, res in enumerate(multiple_results):
-            distribution, dependency, used_number_of_intervals, \
-            fit_inspection_data = res.get(timeout=1e6)
+            current_time = time.time()
+            time_difference = current_time - start_time # Previous used time
+            try:
+                distribution, dependency, used_number_of_intervals, fit_inspection_data = res.get(
+                    timeout=timeout-time_difference)
+            except TimeoutError:
+                err_msg = "The calculation takes too long. Precisely longer than the given " \
+                          "value for timeout '{} seconds'.".format(timeout)
+                raise TimeoutError(err_msg)
 
             # Saves distribution and dependency for particular dimension
             distributions.append(distribution)
