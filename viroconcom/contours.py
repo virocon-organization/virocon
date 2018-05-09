@@ -56,6 +56,7 @@ class Contour(ABC):
         # Use multiprocessing to define timeout
         pool = Pool(processes=1)
         res = pool.apply_async(self._setup, args, kwargs)
+        print('Starting the computation with a timeout of ' + timeout + ' s.')
         try:
             computed = res.get(timeout=timeout)
         except TimeoutError:
@@ -254,8 +255,8 @@ class HighestDensityContour(Contour):
         # TODO document sampling
         # TODO document alpha
         # calls _setup
-        super().__init__(mul_var_distribution, return_period, state_duration, timeout, limits,
-                         deltas)
+        super().__init__(mul_var_distribution, return_period, state_duration,
+                         timeout, limits, deltas)
 
     def _setup(self, limits, deltas):
         """
