@@ -87,7 +87,7 @@ class BasicFit():
                       " but was '{}'.".format(type(scale))
             raise TypeError(err_msg)
 
-        # raw data
+        # Raw data
         self.samples = samples
 
 class FitInspectionData():
