@@ -27,6 +27,6 @@ enviro/static/*
 # use git update-index --assume-unchanged db.sqlite3
 # (see https://stackoverflow.com/questions/9794931/keep-file-in-a-git-repo-but-dont-track-changes)
 db.sqlite3
-.coverage
+.coverage*
 htmlcov/
 *.pytest_cache/*
