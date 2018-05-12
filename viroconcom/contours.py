@@ -56,12 +56,12 @@ class Contour(ABC):
         # Use multiprocessing to define timeout
         pool = Pool(processes=1)
         res = pool.apply_async(self._setup, args, kwargs)
-        print('Starting the computation with a timeout of ' + str(timeout) + ' s.')
         try:
             computed = res.get(timeout=timeout)
         except TimeoutError:
-            err_msg = "The calculation takes too long. Precisely longer than the given value for" \
-                      " timeout '{} seconds'.".format(timeout)
+            err_msg = "The calculation takes too long. " \
+                      "It takes longer than the given value for" \
+                      " a timeout, which is '{} seconds'.".format(timeout)
             raise TimeoutError(err_msg)
         # Save the results separated
         self._save(computed)

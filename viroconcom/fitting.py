@@ -497,8 +497,10 @@ class Fit():
                 distribution, dependency, used_number_of_intervals, fit_inspection_data = res.get(
                     timeout=timeout-time_difference)
             except TimeoutError:
-                err_msg = "The calculation takes too long. Precisely longer than the given " \
-                          "value for timeout '{} seconds'.".format(timeout)
+                err_msg = "The calculation takes too long. " \
+                          "It takes longer than the given " \
+                          "value for a timeout, " \
+                          "which is '{} seconds'.".format(timeout)
                 raise TimeoutError(err_msg)
 
             # Saves distribution and dependency for particular dimension
