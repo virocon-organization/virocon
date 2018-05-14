@@ -36,6 +36,11 @@ Currently there are 3 parametric distribution subclasses one can use to instanti
 * :class:`~viroconcom.distributions.LognormalDistribution`
 * :class:`~viroconcom.distributions.NormalDistribution`
 
+This table shows, which variables of the probability density function are are defined by specifying the scale, shape and location parameters:
+.. image:: distributions_with_parameters.png
+   :alt: Distributions implemented in viroconcom and their parameters.
+   :align: left
+
 .. note::
     There is also :class:`~viroconcom.distributions.KernelDensityDistribution`, which is a non-parametric distribution, that can only be instantiated by :doc:`fitting <fitting>`.
 

@@ -74,10 +74,16 @@ class ParametricDistribution(Distribution, ABC):
         All parametric distributions can be initalized with scale, shape
         and location parameters. This table shows their place in the
         probability density function:
-        .. image:: distributions_with_parameters.png
-           :alt: Distributions implemented in viroconcom and their parameters.
-           :align: left
-
+        distribution    | probability density function  | statistical parameter
+        normal          | https://ahaselsteiner.        | scale = sigma
+                        | github.io/viroconcom/_images/ | shape = -
+                        | pdf_normal.png                | location = mu
+        Weibull         | https://ahaselsteiner.        | scale = alpha
+                        | github.io/viroconcom/_images/ | shape = beta
+                        | pdf_weibull_3_parameters.png  | location = gamma
+        log-normal      | https://ahaselsteiner.        | scale = e^mu
+                        | github.io/viroconcom/_images/ | shape = sigma
+                        | pdf_log_normal.png            | location = -
         Parameters
         ----------
         shape : Param,
