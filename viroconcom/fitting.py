@@ -7,6 +7,7 @@ Fit distribution to data.
 from multiprocessing import Pool, TimeoutError
 import time
 import numpy as np
+from numbers import Number
 import statsmodels.api as sm
 import scipy.stats as sts
 from scipy.optimize import curve_fit
@@ -64,27 +65,27 @@ class BasicFit():
         # parameters for the distribution
         if type(shape) == ConstantParam:
             self.shape = shape(0)
-        elif type(shape) == float:
+        elif isinstance(shape, Number):
             self.shape = shape
         else:
-            err_msg = "Parameter 'shape' must be of Type 'float' or 'ConstantParam'" \
-                      " but was '{}'.".format(type(shape))
+            err_msg = "Parameter 'shape' must be an instance of Number or type of ConstantParam " \
+                      "but was '{}'.".format(type(shape))
             raise TypeError(err_msg)
         if type(loc) == ConstantParam:
             self.loc = loc(0)
-        elif type(loc) == float:
+        elif isinstance(loc, Number):
             self.loc = loc
         else:
-            err_msg = "Parameter 'loc' must be of Type 'float' or 'ConstantParam'" \
-                      " but was '{}'.".format(type(loc))
+            err_msg = "Parameter 'loc' must be an instance of Number or type of ConstantParam " \
+                      "but was '{}'.".format(type(loc))
             raise TypeError(err_msg)
         if type(scale) == ConstantParam:
             self.scale = scale(0)
-        elif type(scale) == float:
+        elif isinstance(scale, Number):
             self.scale = scale
         else:
-            err_msg = "Parameter 'scale' must be of Type 'float' or 'ConstantParam'" \
-                      " but was '{}'.".format(type(scale))
+            err_msg = "Parameter 'scale' must be an instance of Number or type of ConstantParam " \
+                      "but was '{}'.".format(type(scale))
             raise TypeError(err_msg)
 
         # Raw data
