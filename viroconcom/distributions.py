@@ -84,6 +84,14 @@ class ParametricDistribution(Distribution, ABC):
         log-normal      | https://ahaselsteiner.        | scale = e^mu
                         | github.io/viroconcom/_images/ | shape = sigma
                         | pdf_log_normal.png            | location = -
+
+        ============  ============================  =====================
+        distribution  probability density function  statistical parameter
+        ============  ============================  =====================
+        normal        test                          test
+        Weibull       test                          test
+        ============  ============================  =====================
+        
         Parameters
         ----------
         shape : Param,
