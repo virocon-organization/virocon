@@ -603,6 +603,11 @@ class MultivariateDistribution():
             The joint pdf in latex format (without $)
             E.g. f(h_s,t_p)=f_{H_s}(h_s)=
         """
+        # Constants to name the scale, shape and location parameter
+        wbl_scale = r"\alpha"
+        wbl_shape = r"\beta"
+        wbl_loc = r"\gamma"
+
         if not var_symbols:
             var_symbols=[]
             for i in range(self.n_dim):
@@ -662,20 +667,24 @@ class MultivariateDistribution():
             shape_name = None
             loc_name = None
             if self.distributions[i].name == "Weibull":
-                scale_name = r"\lambda_{" + realization_symbols[i] + "}"
-                shape_name = r"k_{" + realization_symbols[i] + "}"
-                loc_name = r"\gamma_{" + realization_symbols[i] + "}"
-                latex_string += r"\dfrac{k_{" + realization_symbols[i] + \
-                                r"}}{\lambda_{" + realization_symbols[i] \
-                        + "}}\left(\dfrac{" + realization_symbols[i] + \
-                                r"-" +  loc_name + r"}{\lambda_{" + \
+                scale_name = wbl_scale + r"_{" + realization_symbols[i] + "}"
+                shape_name = wbl_shape + r"_{" + realization_symbols[i] + "}"
+                loc_name = wbl_loc + r"_{" + realization_symbols[i] + "}"
+                latex_string += r"\dfrac{" + wbl_shape + r"_{" + \
+                                realization_symbols[i] + \
+                                r"}}{" + wbl_scale + r"_{" + \
                                 realization_symbols[i] \
-                        + r"}}\right)^{k_{" + realization_symbols[i] + \
+                        + "}}\left(\dfrac{" + realization_symbols[i] + \
+                                r"-" +  loc_name + r"}{" + wbl_scale + r"_{" + \
+                                realization_symbols[i] \
+                        + r"}}\right)^{" + wbl_shape + r"_{" + \
+                                realization_symbols[i] + \
                                 r"}-1}\exp\left[-\left(\dfrac{" + \
                                 realization_symbols[i] \
-                        + r"-" + loc_name + r"}{\lambda_{" + \
+                        + r"-" + loc_name + r"}{" + wbl_scale + r"_{" + \
                                 realization_symbols[i] + \
-                                r"}}\right)^{k_{" + realization_symbols[i] +\
+                                r"}}\right)^{" + wbl_shape + r"_{" + \
+                                realization_symbols[i] +\
                                 r"}}\right]"
             elif self.distributions[i].name == "Normal":
                 scale_name = r"\sigma_{" + realization_symbols[i] + "}"

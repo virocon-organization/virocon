@@ -53,7 +53,7 @@ class Contour(ABC):
         self.return_period = return_period
         self.alpha = state_duration / (return_period * 365.25 * 24)
 
-        # Use multiprocessing to define timeout
+        # Use multiprocessing to define a timeout
         pool = Pool(processes=1)
         res = pool.apply_async(self._setup, args, kwargs)
         try:
