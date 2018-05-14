@@ -69,6 +69,15 @@ class ParametricDistribution(Distribution, ABC):
     @abstractmethod
     def __init__(self, shape, loc, scale):
         """
+        Note
+        ----
+        All parametric distributions can be initalized with scale, shape
+        and location parameters. This table shows their place in the
+        probability density function:
+        .. image:: distributions_with_parameters.png
+           :alt: Distributions implemented in viroconcom and their parameters.
+           :align: left
+
         Parameters
         ----------
         shape : Param,
