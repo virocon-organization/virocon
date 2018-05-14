@@ -42,6 +42,7 @@ This table shows, which variables of the probability density function are are de
    :alt: Distributions implemented in viroconcom and their parameters.
    :align: left
 
+
 .. note::
     There is also :class:`~viroconcom.distributions.KernelDensityDistribution`, which is a non-parametric distribution, that can only be instantiated by :doc:`fitting <fitting>`.
 

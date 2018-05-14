@@ -71,8 +71,8 @@ class ParametricDistribution(Distribution, ABC):
         """
         Note
         ----
-        All parametric distributions can be initalized with scale, shape
-        and location parameters. This table shows their place in the
+        All parametric distributions can be initalized with 'scale', 'shape'
+        and 'loc' (location) parameters. This table shows their place in the
         probability density function:
         distribution    | probability density function  | statistical parameter
         normal          | https://ahaselsteiner.        | scale = sigma
@@ -84,14 +84,22 @@ class ParametricDistribution(Distribution, ABC):
         log-normal      | https://ahaselsteiner.        | scale = e^mu
                         | github.io/viroconcom/_images/ | shape = sigma
                         | pdf_log_normal.png            | location = -
+        f(x) = \dfrac{1}{\sqrt{2 \pi \sigma^2}} \exp\left[{-\dfrac{(x-\mu)^2}{2\sigma^2}}\right]$
 
         ============  ============================  =====================
         distribution  probability density function  statistical parameter
         ============  ============================  =====================
-        normal        test                          test
-        Weibull       test                          test
+        normal        :math:`f(x) = \frac{1}{\sqrt{2 \pi \sigma^2}} \exp\left[{-\dfrac{(x-\mu)^2}{2\sigma^2}}\right]$` scale = sigma
+                                                    shape = -
+                                                    loc = mu
+        Weibull       test                          scale = alpha
+                                                    shape = beta
+                                                    loc = gamma
+        log-normal                                  scale = e^mu
+                                                    shape = sigma
+                                                    loc = -
         ============  ============================  =====================
-        
+
         Parameters
         ----------
         shape : Param,
