@@ -58,7 +58,7 @@ class ParametricDistribution(Distribution, ABC):
         The default scale parameter.
 
 
-    Notes
+    Note
     -----
     The following attributes/methods need to be initialised by child classes:
         - name
