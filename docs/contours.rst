@@ -38,9 +38,11 @@ Currently there are 3 parametric distribution subclasses one can use to instanti
 
 This table shows, which variables of the probability density function are are defined by specifying the scale, shape and location parameters:
 
-.. image:: distributions_with_parameters.png
+.. figure:: distributions_with_parameters.png
    :alt: Distributions implemented in viroconcom and their parameters.
-   :align: left
+   :align: center
+
+   Distributions implemented in viroconcom and their parameters.
 
 
 .. note::
