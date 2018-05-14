@@ -76,6 +76,13 @@ class ParametricDistribution(Distribution, ABC):
         probability density function:
         :math:`f(x) = \\frac{1}{x\\widetilde{\\sigma} \\sqrt{2\\pi}}\\exp \\left[ \\frac{-(\\ln x - \\widetilde{\\mu})^2}{2\\widetilde{\\sigma}^2}\\right]`
 
+        ============  =============================  =====================
+        distribution  probability density function   statistical parameter                                                                                                                                                       statistical parameter
+        ============  =============================  =====================
+        normal        :math:`f(x) = \\frac{1}{2}`    scale = sigma
+                      :math:`f(x) = \\frac{1}{2}`    scale = susi                                                                                                                                   shape = -
+        ============  =============================  =====================
+
         ============  ====================================================================================================================================================================================  =====================
         distribution  probability density function                                                                                                                                                          statistical parameter
         ============  ====================================================================================================================================================================================  =====================
