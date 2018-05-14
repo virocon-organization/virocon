@@ -74,19 +74,7 @@ class ParametricDistribution(Distribution, ABC):
         All parametric distributions can be initalized with 'scale', 'shape'
         and 'loc' (location) parameters. This table shows their place in the
         probability density function:
-        distribution    | probability density function  | statistical parameter
-        normal          | https://ahaselsteiner.        | scale = sigma
-                        | github.io/viroconcom/_images/ | shape = -
-                        | pdf_normal.png                | location = mu
-        Weibull         | https://ahaselsteiner.        | scale = alpha
-                        | github.io/viroconcom/_images/ | shape = beta
-                        | pdf_weibull_3_parameters.png  | location = gamma
-        log-normal      | https://ahaselsteiner.        | scale = e^mu
-                        | github.io/viroconcom/_images/ | shape = sigma
-                        | pdf_log_normal.png            | location = -
-        :math:`f(x) = \\frac{1}{\\sqrt{2 \\pi \\sigma^2}} \\exp\\left[{-\\frac{(x-\\mu)^2}{2\\sigma^2}}\\right]`
-        :math:`f(x) = \\frac{\\beta}{\\alpha}\\left( \\frac{x-\\gamma}{\\alpha}\\right)^{\\beta -1} \\exp \\left[-\\left( \\frac{x-\\gamma}{\\alpha} \\right)^{\\beta} \\right]`
-        :math:`f(x) = \\frac{1}{x\\widetilde{\\sigma} \\sqrt{2\\pi}}\\exp \\left[ \\frac{-(\\ln x - \\widetilde{\\mu})^2}{2\\widetilde{\\sigma}^2}\\right]$ & scale: $e^{\\widetilde{\\mu}}`
+        :math:`f(x) = \\frac{1}{x\\widetilde{\\sigma} \\sqrt{2\\pi}}\\exp \\left[ \\frac{-(\\ln x - \\widetilde{\\mu})^2}{2\\widetilde{\\sigma}^2}\\right]`
 
         ============  ====================================================================================================================================================================================  =====================
         distribution  probability density function                                                                                                                                                          statistical parameter
@@ -97,7 +85,7 @@ class ParametricDistribution(Distribution, ABC):
         Weibull       :math:`f(x) = \\frac{\\beta}{\\alpha}\\left( \\frac{x-\\gamma}{\\alpha}\\right)^{\\beta -1} \\exp \\left[-\\left( \\frac{x-\\gamma}{\\alpha} \\right)^{\\beta} \\right]`              scale = alpha
                                                                                                                                                                                                             shape = beta
                                                                                                                                                                                                             loc = gamma
-        log-normal    :math:`f(x) = \\frac{1}{x\\widetilde{\\sigma} \\sqrt{2\\pi}}\\exp \\left[ \\frac{-(\\ln x - \\widetilde{\\mu})^2}{2\\widetilde{\\sigma}^2}\\right]$ & scale: $e^{\\widetilde{\\mu}}`  scale = e^mu
+        log-normal    :math:`f(x) = \\frac{1}{x\\widetilde{\\sigma} \\sqrt{2\\pi}}\\exp \\left[ \\frac{-(\\ln x - \\widetilde{\\mu})^2}{2\\widetilde{\\sigma}^2}\\right]`                                   scale = e^mu
                                                                                                                                                                                                             shape = sigma
                                                                                                                                                                                                             loc = -
         ============  ====================================================================================================================================================================================  =====================
