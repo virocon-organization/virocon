@@ -302,6 +302,7 @@ class ParametricDistribution(Distribution, ABC):
             raise ValueError("Wrong parameter name. The param_name variable "
                              "must be either 'shape', 'loc' or 'scale', however,"
                              "it was {}.".format(param_name))
+        return param_index
 
 
 class WeibullDistribution(ParametricDistribution):
