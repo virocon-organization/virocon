@@ -72,43 +72,23 @@ class ParametricDistribution(Distribution, ABC):
         Note
         ----
         All parametric distributions can be initalized with 'scale', 'shape'
-        and 'loc' (location) parameters. This table shows their place in the
-        probability density function:
-        :math:`f(x) = \\frac{1}{x\\widetilde{\\sigma} \\sqrt{2\\pi}}\\exp \\left[ \\frac{-(\\ln x - \\widetilde{\\mu})^2}{2\\widetilde{\\sigma}^2}\\right]`
+        and 'loc' (location) parameters. Implemented distributions are:
 
-        ============  =============================  =====================
-        distribution  probability density function   statistical parameter                                                                                                                                                       statistical parameter
-        ============  =============================  =====================
-        normal        just some words                scale = sigma
-        test          words, no math                 scale = susi
-        ============  =============================  =====================
+        * normal: :math:`f(x) = \\frac{1}{x\\widetilde{\\sigma} \\sqrt{2\\pi}}\\exp \\left[ \\frac{-(\\ln x - \\widetilde{\\mu})^2}{2\\widetilde{\\sigma}^2}\\right]`
 
+        * Weibull: :math:`f(x) = \\frac{\\beta}{\\alpha}\\left( \\frac{x-\\gamma}{\\alpha}\\right)^{\\beta -1} \\exp \\left[-\\left( \\frac{x-\\gamma}{\\alpha} \\right)^{\\beta} \\right]`
 
-        .. tabularcolumns:: |l|p{5cm}|l|
+        * log-normal: :math:`f(x) = \\frac{1}{x\\widetilde{\\sigma} \\sqrt{2\\pi}}\\exp \\left[ \\frac{-(\\ln x - \\widetilde{\\mu})^2}{2\\widetilde{\\sigma}^2}\\right]`
 
-        +--------------+------------------------------+-----------------------+
-        | distribution | probability density function | statistical parameter |
-        +==============+==============================+=======================+
-        | normal       | :math:`f(x) = \\frac{1}{2}`  | scale = sigma         |
-        | normal       | :math:`f(x) = \\frac{1}{2}`  | scale = susi          |
-        +--------------+------------------------------+-----------------------+
+        Their scale, shape, and loc values corerspond to the variables
+        in the probability density function in the following manner:
 
-
-        .. tabularcolumns:: |l|p{8cm}|l|
-
-        ============  ====================================================================================================================================================================================  =====================
-        distribution  probability density function                                                                                                                                                          statistical parameter
-        ============  ====================================================================================================================================================================================  =====================
-        normal        :math:`f(x) = \\frac{1}{\\sqrt{2 \\pi \\sigma^2}} \\exp\\left[{-\\frac{(x-\\mu)^2}{2\\sigma^2}}\\right]`                                                                              scale = sigma
-        n                                                                                                                                                                                                   shape = -
-        n                                                                                                                                                                                                   loc = mu
-        Weibull       :math:`f(x) = \\frac{\\beta}{\\alpha}\\left( \\frac{x-\\gamma}{\\alpha}\\right)^{\\beta -1} \\exp \\left[-\\left( \\frac{x-\\gamma}{\\alpha} \\right)^{\\beta} \\right]`              scale = alpha
-        W                                                                                                                                                                                                   shape = beta
-        W                                                                                                                                                                                                   loc = gamma
-        log-normal    :math:`f(x) = \\frac{1}{x\\widetilde{\\sigma} \\sqrt{2\\pi}}\\exp \\left[ \\frac{-(\\ln x - \\widetilde{\\mu})^2}{2\\widetilde{\\sigma}^2}\\right]`                                   scale = e^mu
-        l                                                                                                                                                                                                   shape = sigma
-        l                                                                                                                                                                                                   loc = -
-        ============  ====================================================================================================================================================================================  =====================
+        ============  =====================  =====================  ========
+        distribution  scale                  shape                  location
+        ============  =====================  =====================  ========
+        normal        sigma                  test                   a
+        test          words, no math         scale = susi           b
+        ============  =====================  =====================  ========
 
         Parameters
         ----------
