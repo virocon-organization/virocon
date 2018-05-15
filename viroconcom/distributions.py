@@ -80,14 +80,14 @@ class ParametricDistribution(Distribution, ABC):
         distribution  probability density function   statistical parameter                                                                                                                                                       statistical parameter
         ============  =============================  =====================
         normal        just some words                scale = sigma
-                      words, no math                 scale = susi                                                                                                                                   shape = -
+                      words, no math                 scale = susi
         ============  =============================  =====================
 
         ============  =============================  =====================
-        distribution  probability density function   statistical parameter                                                                                                                                                       statistical parameter
+        distribution  probability density function   statistical parameter
         ============  =============================  =====================
         normal        :math:`f(x) = \\frac{1}{2}`    scale = sigma
-                      :math:`f(x) = \\frac{1}{2}`    scale = susi                                                                                                                                   shape = -
+                      :math:`f(x) = \\frac{1}{2}`    scale = susi
         ============  =============================  =====================
 
         ============  ====================================================================================================================================================================================  =====================
