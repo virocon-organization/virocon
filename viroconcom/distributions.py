@@ -86,9 +86,9 @@ class ParametricDistribution(Distribution, ABC):
         ============  ===================  =================  ================
         distribution  scale                shape              loc
         ============  ===================  =================  ================
-        normal        σ                    -                  μ
+        normal        σ                    --                 μ
         Weibull       α                    β                  γ
-        log-normal    e^μ                  σ                  -
+        log-normal    e^μ                  σ                  --
         ============  ===================  =================  ================
 
         Parameters
