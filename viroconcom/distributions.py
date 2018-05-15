@@ -405,8 +405,8 @@ class LognormalDistribution(ParametricDistribution):
             else:
                 scale = ConstantParam(np.exp(self.mu(None)))
 
-            print('My mu value is ' + self.mu)
-            print('My scale value is ' + self.scale)
+            print('My mu value is ' + str(self.mu))
+            print('My scale value is ' + str(self.scale))
 
         super().__init__(shape, loc, scale)
         self.name = "Lognormal"
