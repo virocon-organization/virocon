@@ -83,12 +83,13 @@ class ParametricDistribution(Distribution, ABC):
         Their scale, shape, and loc values corerspond to the variables
         in the probability density function in the following manner:
 
-        ============  =====================  =====================  ========
-        distribution  scale                  shape                  location
-        ============  =====================  =====================  ========
-        normal        sigma                  test                   a
-        test          words, no math         scale = susi           b
-        ============  =====================  =====================  ========
+        ============  ===================  =================  ================
+        distribution  scale                shape              location
+        ============  ===================  =================  ================
+        normal        sigma                -                  mu
+        Weibull       alpha                beta               gamma
+        log-normal    e^mu                 sigma              -
+        ============  ===================  =================  ================
 
         Parameters
         ----------
