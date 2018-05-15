@@ -83,27 +83,31 @@ class ParametricDistribution(Distribution, ABC):
         test          words, no math                 scale = susi
         ============  =============================  =====================
 
-        .. tabularcolumns:: |l|l|l|
+
+        .. tabularcolumns:: |l|p{5cm}|l|
 
         +--------------+------------------------------+-----------------------+
         | distribution | probability density function | statistical parameter |
         +==============+==============================+=======================+
         | normal       | :math:`f(x) = \\frac{1}{2}`  | scale = sigma         |
-        |              | :math:`f(x) = \\frac{1}{2}`  | scale = susi          |
+        | normal       | :math:`f(x) = \\frac{1}{2}`  | scale = susi          |
         +--------------+------------------------------+-----------------------+
+
+
+        .. tabularcolumns:: |l|p{8cm}|l|
 
         ============  ====================================================================================================================================================================================  =====================
         distribution  probability density function                                                                                                                                                          statistical parameter
         ============  ====================================================================================================================================================================================  =====================
         normal        :math:`f(x) = \\frac{1}{\\sqrt{2 \\pi \\sigma^2}} \\exp\\left[{-\\frac{(x-\\mu)^2}{2\\sigma^2}}\\right]`                                                                              scale = sigma
-                                                                                                                                                                                                            shape = -
-                                                                                                                                                                                                            loc = mu
+        n                                                                                                                                                                                                   shape = -
+        n                                                                                                                                                                                                   loc = mu
         Weibull       :math:`f(x) = \\frac{\\beta}{\\alpha}\\left( \\frac{x-\\gamma}{\\alpha}\\right)^{\\beta -1} \\exp \\left[-\\left( \\frac{x-\\gamma}{\\alpha} \\right)^{\\beta} \\right]`              scale = alpha
-                                                                                                                                                                                                            shape = beta
-                                                                                                                                                                                                            loc = gamma
+        W                                                                                                                                                                                                   shape = beta
+        W                                                                                                                                                                                                   loc = gamma
         log-normal    :math:`f(x) = \\frac{1}{x\\widetilde{\\sigma} \\sqrt{2\\pi}}\\exp \\left[ \\frac{-(\\ln x - \\widetilde{\\mu})^2}{2\\widetilde{\\sigma}^2}\\right]`                                   scale = e^mu
-                                                                                                                                                                                                            shape = sigma
-                                                                                                                                                                                                            loc = -
+        l                                                                                                                                                                                                   shape = sigma
+        l                                                                                                                                                                                                   loc = -
         ============  ====================================================================================================================================================================================  =====================
 
         Parameters
