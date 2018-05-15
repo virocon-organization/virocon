@@ -275,6 +275,7 @@ class ParametricDistribution(Distribution, ABC):
                                      "less than {}, but was {}"
                                      "".format(param_name, valid["max"], param_value))
 
+    @staticmethod
     def param_name_to_index(self, param_name):
         """
         Converts a parameter name ('shape', 'loc', 'scale') to the correct
