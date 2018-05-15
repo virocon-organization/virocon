@@ -377,6 +377,12 @@ class LognormalDistribution(ParametricDistribution):
     """
 
     def __init__(self, shape=None, loc=None, scale=None, **kwargs):
+        print('Initializing a LognormalDistribution with the parameters:')
+        print('shape: ' + str(shape))
+        print('loc: ' + str(shape))
+        print('scale: ' + str(shape))
+        print('**kwargs: ' + str(kwargs))
+
         saved_args = locals()
 
         loc = None
@@ -385,19 +391,22 @@ class LognormalDistribution(ParametricDistribution):
             self.mu = kwargs["mu"]
 
             shape = self.sigma
-            # make mu a scale parameter
+            # Make mu a scale parameter
             if isinstance(self.mu, FunctionParam):
                 _func = self.mu._func
                 _a = self.mu.a
                 _b = self.mu.b
                 _c = self.mu.c
-                # keep possibly already existing wrapper
+                # Keep possibly already existing wrapper
                 scale_wrapper = Wrapper(np.exp, self.mu._wrapper)
-                # create new FunctionParam so the passed one does not get altered
+                # Create new FunctionParam so the passed one does not get altered
                 scale = FunctionParam(_a, _b, _c, "f1", wrapper=scale_wrapper)
                 scale._func = _func
             else:
                 scale = ConstantParam(np.exp(self.mu(None)))
+
+            print('My mu value is ' + self.mu)
+            print('My scale value is ' + self.scale)
 
         super().__init__(shape, loc, scale)
         self.name = "Lognormal"
