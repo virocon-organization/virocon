@@ -87,7 +87,7 @@ class ParametricDistribution(Distribution, ABC):
         distribution  scale                shape              location
         ============  ===================  =================  ================
         normal        sigma                -                  mu
-        Weibull       :math:`\\alpha`      beta               gamma
+        Weibull       α                    beta               gamma
         log-normal    e^mu                 sigma              -
         ============  ===================  =================  ================
 
