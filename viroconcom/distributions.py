@@ -84,11 +84,11 @@ class ParametricDistribution(Distribution, ABC):
         in the probability density function in the following manner:
 
         ============  ===================  =================  ================
-        distribution  scale                shape              location
+        distribution  scale                shape              loc
         ============  ===================  =================  ================
-        normal        sigma                -                  mu
-        Weibull       α                    beta               gamma
-        log-normal    e^mu                 sigma              -
+        normal        σ                    -                  μ
+        Weibull       α                    β                  γ
+        log-normal    e^μ                  σ                  -
         ============  ===================  =================  ================
 
         Parameters
@@ -103,7 +103,7 @@ class ParametricDistribution(Distribution, ABC):
         self.shape = shape
         self.loc = loc
         self.scale = scale
-        # the following attributes need to be overwritten by subclasses
+        # The following attributes need to be overwritten by subclasses
         self.name = "Parametric"  # e.g. "Weibull", "Lognormal",  ...
 
         self._default_shape = 1
@@ -474,7 +474,7 @@ class MultivariateDistribution():
         except TypeError:
             dist_is_iter = False
         try:
-            #check if indexable ~ list of tuple
+            # Check if dependencies is a list of tuples.
             it = iter(dependencies[0])
             dep_is_iter_of_tuple = True
         except TypeError:
@@ -584,7 +584,7 @@ class MultivariateDistribution():
         fbar_shape = tuple((len(coords[i]) for i in dimensions if i <= dist_index))
         fbar = np.zeros(fbar_shape)
 
-        # iterate over all possible dependencies
+        # Iterate over all possible dependencies.
         iter_ranges = (range(i) for i in fbar_shape[0:-1])
         it = itertools.product(*iter_ranges)
 
@@ -603,7 +603,7 @@ class MultivariateDistribution():
             upper = cdf(coords[dist_index] + 0.5 * dx, current_point, dependency)
             fbar[f_index] = (upper - lower)  # / dx
 
-        # append axes until self.n_dim is reached
+        # Append axes until self.n_dim is reached.
         n_dim_shape = fbar_shape + tuple((1 for i in range(self.n_dim - len(fbar_shape))))
         fbar = fbar.reshape(n_dim_shape)
         return fbar / dx
@@ -660,7 +660,7 @@ class MultivariateDistribution():
         left_side_pdfs = ["" for x in range(self.n_dim)]
         for i in range(self.n_dim):
             left_side_pdfs[i] += "f_{" + var_symbols[i]
-            # if there is at least one depedent paramter
+            # If there is at least one depedent parameter.
             if not all(x is None for x in self.dependencies[i]):
                 left_side_pdfs[i] += "|"
                 for j in range(self.n_dim):
@@ -668,7 +668,7 @@ class MultivariateDistribution():
                         left_side_pdfs[i] += var_symbols[j] + ','
                 left_side_pdfs[i] = left_side_pdfs[i][:-1]
             left_side_pdfs[i] += "}(" + realization_symbols[i]
-            # if there is at least one depedent paramter
+            # If there is at least one depedent parameter.
             if not all(x is None for x in self.dependencies[i]):
                 left_side_pdfs[i] += "|"
                 for j in range(self.n_dim):
