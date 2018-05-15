@@ -205,7 +205,6 @@ class ParametricDistribution(Distribution, ABC):
             of dependencies.
             The values are either float or lists of float.
         """
-        #get values
         params = (self.shape, self.loc, self.scale)
         defaults = (self._default_shape, self._default_loc, self._default_scale)
         parameter_vals = []
@@ -276,6 +275,33 @@ class ParametricDistribution(Distribution, ABC):
                                      "less than {}, but was {}"
                                      "".format(param_name, valid["max"], param_value))
 
+    def param_name_to_index(self, param_name):
+        """
+        Converts a parameter name ('shape', 'loc', 'scale') to the correct
+        parameter index used in viroconcom (either 0, 1 or 2).
+
+        Parameters
+        ----------
+        param_name : str,
+            The name of the parameter, must be 'shape', 'loc', or 'scale'.
+
+        Returns
+        -------
+        param_index : int,
+            The index corresponding to the name of the parameter as it is
+            internally defined in viroconcom.
+        """
+        param_index = None
+        if param_name == 'shape':
+            param_index = 0
+        elif param_name == 'loc':
+            param_index = 1
+        elif param_name == 'scale':
+            param_index = 2
+        else:
+            raise ValueError("Wrong parameter name. The param_name variable "
+                             "must be either 'shape', 'loc' or 'scale', however,"
+                             "it was {}.".format(param_name))
 
 
 class WeibullDistribution(ParametricDistribution):
@@ -772,6 +798,7 @@ class MultivariateDistribution():
                 latex_string_list.append(latex_string)
         return latex_string_list
 
+
 class KernelDensityDistribution(Distribution):
     """
     A kernel density distribution.
@@ -892,6 +919,7 @@ class KernelDensityDistribution(Distribution):
                                                self._i_cdf[int(x_point) + 1]], 1))
             result.append(linear_fit(x_point))
         return result
+
 
 if __name__ == "__main__":
     import doctest
