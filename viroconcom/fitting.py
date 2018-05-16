@@ -522,14 +522,10 @@ class Fit():
                     self.dist_descriptions[dep]['used_number_of_intervals'] = \
                         used_number_of_intervals[dep_index]
 
-        print('Initialized a fit with these basic fits: ')
         # Add used number of intervals for dimensions with no dependency
         for fit_inspection_data in self.multiple_fit_inspection_data:
-            basic_fit = fit_inspection_data.get_basic_fit('scale', 0)
-            print(basic_fit)
             if not fit_inspection_data.used_number_of_intervals:
                 fit_inspection_data.used_number_of_intervals = 1
-        print('These were the basic_fits with index=0')
 
         # Save multivariate distribution
         self.mul_var_dist = MultivariateDistribution(distributions, dependencies)
@@ -564,8 +560,6 @@ class Fit():
         elif name[:-2] == 'Lognormal':
             # For lognormal loc is set to 0
             params = sts.lognorm.fit(sample, floc=0)
-            print('Just fitted a Lognormal distirbution, which resulted in these'
-                  'parameters: {},{},{}'.format(params[0], params[1], params[2]))
         elif name == 'KernelDensity':
             dens = sm.nonparametric.KDEUnivariate(sample)
             dens.fit(gridsize=2000)
@@ -636,7 +630,6 @@ class Fit():
 
         # Create basic fit object
         basic_fit = BasicFit(*current_params, sample)
-        print('Just created this BasicFit: ' + str(basic_fit))
 
         for i in range(index, len(dependency)):
             # Check if there is a dependency and whether it is the right one
