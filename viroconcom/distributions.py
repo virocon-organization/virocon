@@ -377,7 +377,7 @@ class LognormalDistribution(ParametricDistribution):
     """
 
     def __init__(self, shape=None, loc=None, scale=None, **kwargs):
-        print('Initializing a LognormalDistribution with the parameters:')
+        print('Call init of LognormalDistribution with the parameters:')
         print('shape: ' + str(shape))
         print('loc: ' + str(shape))
         print('scale: ' + str(shape))
@@ -405,12 +405,9 @@ class LognormalDistribution(ParametricDistribution):
             else:
                 scale = ConstantParam(np.exp(self.mu(None)))
 
-            print('My mu value is ' + str(self.mu))
-            print('My scale value will be set to ' + str(scale))
-
         super().__init__(shape, loc, scale)
-        print('After super() init my mu value is ' + str(self.mu))
-        print('After super() init my scale is ' + str(self.scale))
+        print('Initilaized LognormalDistribution with mu value of ' + str(self.mu))
+        print('Initilaized LognormalDistribution with scale value of ' + str(self.scale))
         self.name = "Lognormal"
 
         self._valid_shape = {"min" : 0, "strict_greater" : True,

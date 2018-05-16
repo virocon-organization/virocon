@@ -127,12 +127,8 @@ class FunctionParam(Param):
             function_string = "" + str(self.a) + "+" + str(self.b) + "x" + "^{" + str(self.c) + "}"
         elif self.func_name == "f2":
             function_string = "" + str(self.a) + "+" + str(self.b) + "e^{" + str(self.c) + "x}"
-        print('Printing the name of the wrappers class:')
-        print(self._wrapper.__class__.__name__)
-        print('Printing the name of the wrappers functoin class:')
-        print(self._wrapper.__class__.__name__)
         if isinstance(self._wrapper.func, np.ufunc):
-            function_string += "with _wrapper: " + str(self._wrapper)
+            function_string += " with _wrapper: " + str(self._wrapper)
         return function_string
 
 
