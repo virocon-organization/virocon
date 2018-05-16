@@ -5,7 +5,6 @@ Parameter for distributions.
 """
 
 from abc import ABC, abstractmethod
-from types import FunctionType
 
 import numpy as np
 
@@ -128,7 +127,7 @@ class FunctionParam(Param):
             function_string = "" + str(self.a) + "+" + str(self.b) + "x" + "^{" + str(self.c) + "}"
         elif self.func_name == "f2":
             function_string = "" + str(self.a) + "+" + str(self.b) + "e^{" + str(self.c) + "x}"
-        if isinstance(self._wrapper, FunctionType):
+        if isinstance(self._wrapper, np.ufunc):
             function_string += "with _wrapper: " + str(self._wrapper)
         return function_string
 
