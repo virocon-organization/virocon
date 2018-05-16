@@ -560,6 +560,8 @@ class Fit():
         elif name[:-2] == 'Lognormal':
             # For lognormal loc is set to 0
             params = sts.lognorm.fit(sample, floc=0)
+            print('Just fitted a Lognormal distirbution, which resulted in these'
+                  'parameters: {},{},{}'.format(params[0], params[1], params[2]))
         elif name == 'KernelDensity':
             dens = sm.nonparametric.KDEUnivariate(sample)
             dens.fit(gridsize=2000)
@@ -630,6 +632,7 @@ class Fit():
 
         # Create basic fit object
         basic_fit = BasicFit(*current_params, sample)
+        print('Just created this BasicFit: ' + str(basic_fit))
 
         for i in range(index, len(dependency)):
             # Check if there is a dependency and whether it is the right one
@@ -882,11 +885,7 @@ class Fit():
                         used_number_of_intervals[i] = len(interval_centers)
 
                         if i == 2 and name == 'Lognormal_2':
-                            print('Printing param_values before np.log: ' + str(
-                                param_values[i][0]))
                             fit_points = [np.log(p(None)) for p in param_values[i]]
-                            print('Printing param_values after np.log: ' + str(
-                                param_values[i][0]))
                         else:
                             fit_points = [p(None) for p in param_values[i]]
                         # Fit parameters with particular function
