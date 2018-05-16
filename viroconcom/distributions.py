@@ -422,7 +422,7 @@ class LognormalDistribution(ParametricDistribution):
     def __str__(self):
         if hasattr(self, "mu"):
             return  "LognormalDistribution with shape={}, loc={}," \
-                    "scale={}, mu =.".format(self.shape, self.loc,
+                    "scale={}, mu={}.".format(self.shape, self.loc,
                                              self.scale, self.mu)
         else:
             return  "LognormalDistribution with shape={}, loc={}," \
