@@ -406,7 +406,7 @@ class LognormalDistribution(ParametricDistribution):
                 scale = ConstantParam(np.exp(self.mu(None)))
 
             print('My mu value is ' + str(self.mu))
-            print('My scale value will be set to' + str(scale))
+            print('My scale value will be set to ' + str(scale))
 
         super().__init__(shape, loc, scale)
         print('After super() init my mu value is ' + str(self.mu))
