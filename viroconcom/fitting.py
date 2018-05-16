@@ -883,10 +883,10 @@ class Fit():
 
                         if i == 2 and name == 'Lognormal_2':
                             print('Printing param_values before np.log: ' + str(
-                                param_values[i]))
+                                param_values[i][0]))
                             fit_points = [np.log(p(None)) for p in param_values[i]]
                             print('Printing param_values after np.log: ' + str(
-                                param_values[i]))
+                                param_values[i][0]))
                         else:
                             fit_points = [p(None) for p in param_values[i]]
                         # Fit parameters with particular function
