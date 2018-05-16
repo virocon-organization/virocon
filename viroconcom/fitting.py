@@ -522,10 +522,14 @@ class Fit():
                     self.dist_descriptions[dep]['used_number_of_intervals'] = \
                         used_number_of_intervals[dep_index]
 
+        print('Initialized a fit with these basic fits: ')
         # Add used number of intervals for dimensions with no dependency
         for fit_inspection_data in self.multiple_fit_inspection_data:
+            basic_fit = fit_inspection_data.get_basic_fit('scale', 0)
+            print(basic_fit)
             if not fit_inspection_data.used_number_of_intervals:
                 fit_inspection_data.used_number_of_intervals = 1
+        print('These were the basic_fits with index=0')
 
         # Save multivariate distribution
         self.mul_var_dist = MultivariateDistribution(distributions, dependencies)
