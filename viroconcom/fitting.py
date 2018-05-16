@@ -91,9 +91,9 @@ class BasicFit():
         # Raw data
         self.samples = samples
 
-        def __str__(self):
-            return "BasicFit with shape={}, loc={}, scale={}.".format(
-                shape, loc, scale)
+    def __str__(self):
+        return "BasicFit with shape={}, loc={}, scale={}.".format(
+            self.shape, self.loc, self.scale)
 
 
 class FitInspectionData():
