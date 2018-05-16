@@ -275,6 +275,10 @@ class ParametricDistribution(Distribution, ABC):
                                      "less than {}, but was {}"
                                      "".format(param_name, valid["max"], param_value))
 
+        def __str__(self):
+            return  "ParametricDistribution with shape={}, loc={}," \
+                    "scale={}.".format(self.shape, self.loc, self.scale)
+
     @staticmethod
     def param_name_to_index(param_name):
         """
@@ -377,12 +381,6 @@ class LognormalDistribution(ParametricDistribution):
     """
 
     def __init__(self, shape=None, loc=None, scale=None, **kwargs):
-        print('Call init of LognormalDistribution with the parameters:')
-        print('shape: ' + str(shape))
-        print('loc: ' + str(shape))
-        print('scale: ' + str(shape))
-        print('**kwargs: ' + str(kwargs))
-
         saved_args = locals()
 
         loc = None
@@ -406,8 +404,6 @@ class LognormalDistribution(ParametricDistribution):
                 scale = ConstantParam(np.exp(self.mu(None)))
 
         super().__init__(shape, loc, scale)
-        print('Initilaized LognormalDistribution with mu value of ' + str(self.mu))
-        print('Initilaized LognormalDistribution with scale value of ' + str(self.scale))
         self.name = "Lognormal"
 
         self._valid_shape = {"min" : 0, "strict_greater" : True,
@@ -422,6 +418,15 @@ class LognormalDistribution(ParametricDistribution):
 
     def _scipy_i_cdf(self, probabilities, shape, _, scale):
         return sts.lognorm.ppf(probabilities, s=shape, scale=scale)
+
+    def __str__(self):
+        if hasattr(self, "mu"):
+            return  "LognormalDistribution with shape={}, loc={}," \
+                    "scale={}, mu =.".format(self.shape, self.loc,
+                                             self.scale, self.mu)
+        else:
+            return  "LognormalDistribution with shape={}, loc={}," \
+                    "scale={}.".format(self.shape, self.loc, self.scale)
 
 
 class NormalDistribution(ParametricDistribution):

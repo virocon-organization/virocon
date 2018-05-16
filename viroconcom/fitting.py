@@ -91,6 +91,11 @@ class BasicFit():
         # Raw data
         self.samples = samples
 
+        def __str__(self):
+            return "BasicFit with shape={}, loc={}, scale={}.".format(
+                shape, loc, scale)
+
+
 class FitInspectionData():
     """
     This class holds information for plotting the fits of a single dimension. It is used to give
@@ -596,7 +601,7 @@ class Fit():
             raise ValueError(err_msg)
 
     @staticmethod
-    def _append_params(name, param_values, dependency, index, fitting_values):
+    def _append_params(name, param_values, dependency, index, sample):
         """
         Distributions are being fitted and the results are appended to param_points.
 
@@ -612,7 +617,7 @@ class Fit():
             int -> depends on particular dimension
         index : int,
             The current parameter as int in the order of (shape, loc, scale) (i.e. 0 -> shape).
-        fitting_values : list of float,
+        sample : list of float,
             Values that are used to fit the distribution.
         Returns
         -------
@@ -621,10 +626,10 @@ class Fit():
         """
 
         # Fit distribution
-        current_params = Fit._fit_distribution(fitting_values, name)
+        current_params = Fit._fit_distribution(sample, name)
 
         # Create basic fit object
-        basic_fit = BasicFit(*current_params, fitting_values)
+        basic_fit = BasicFit(*current_params, sample)
 
         for i in range(index, len(dependency)):
             # Check if there is a dependency and whether it is the right one
@@ -714,18 +719,18 @@ class Fit():
         # Deleted interval_centers by index
         deleted_centers = []
 
-        # Look for data that is fitting to each step
+        # Define the data interval that is used for the fit
         for i, step in enumerate(interval_centers):
             mask = ((sorted_samples[:, 1] >= step - 0.5 * interval_width) &
                     (sorted_samples[:, 1] < step + 0.5 * interval_width))
-            fitting_values = sorted_samples[mask, 0]
-            if len(fitting_values) >= MIN_DATA_POINTS_FOR_FIT:
+            samples_in_interval = sorted_samples[mask, 0]
+            if len(samples_in_interval) >= MIN_DATA_POINTS_FOR_FIT:
                 try:
                     # Fit distribution to selected data
                     basic_fit = Fit._append_params(
-                        name, param_values, dependency, index, fitting_values)
+                        name, param_values, dependency, index, samples_in_interval)
                     multiple_basic_fit.append(basic_fit)
-                    dist_values.append(fitting_values)
+                    dist_values.append(samples_in_interval)
                 except ValueError:
                     # For case that no fitting data for the step has been found -> step is deleted
                     deleted_centers.append(i) # Add index of not used center
@@ -741,7 +746,7 @@ class Fit():
                     "data (n='{}') for the interval centered at '{}' in dimension '{}'. This step "
                     "is skipped. Maybe you should ckeck your data or reduce the number of "
                     "steps".format(
-                        MIN_DATA_POINTS_FOR_FIT, len(fitting_values), step, dependency[index]),
+                        MIN_DATA_POINTS_FOR_FIT, len(samples_in_interval), step, dependency[index]),
                     RuntimeWarning, stacklevel=2)
         if len(interval_centers) < 3:
             raise RuntimeError("Your settings resulted in " + str(len(interval_centers)) +
@@ -816,8 +821,8 @@ class Fit():
             if params[index] is not None:
                 continue
 
+            # In case that there is no dependency for this param
             if dependency[index] is None:
-                # Case that there is no dependency for this param
                 current_params = Fit._fit_distribution(sample, name)
 
                 # Basic fit for no dependency
@@ -827,7 +832,6 @@ class Fit():
                     if dependency[i] is None:
 
                         # Add basic fit to fit inspection data
-                        # TODO maybe just use index incase of name as string
                         if i == 0:
                             fit_inspection_data.append_basic_fit('shape', basic_fit)
                         elif i == 1:
@@ -839,13 +843,15 @@ class Fit():
                             params[i] = ConstantParam(np.log(current_params[i](0)))
                         else:
                             params[i] = current_params[i]
+            # In case that there is a dependency
             else:
-                # Case that there is a dependency
+                # If the number of intervals is given.
                 if list_number_of_intervals[dependency[index]]:
                     interval_centers, dist_values, param_values, multiple_basic_fit = \
                         Fit._get_fitting_values(
                             sample, samples, name, dependency, index,
                             number_of_intervals=list_number_of_intervals[dependency[index]])
+                # If a the (constant) width of the intervals is given.
                 elif list_width_of_intervals[dependency[index]]:
                     interval_centers, dist_values, param_values, multiple_basic_fit = \
                         Fit._get_fitting_values(
@@ -856,7 +862,6 @@ class Fit():
                     # Check if the other parameters have the same dependency
                     if dependency[i] is not None and dependency[i] == dependency[index]:
                         # Add basic fits to fit inspection data
-                        # TODO maybe just use index incase of name as string
                         for basic_fit in multiple_basic_fit:
                             if i == 0:
                                 fit_inspection_data.append_basic_fit('shape', basic_fit)
