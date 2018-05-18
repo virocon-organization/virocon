@@ -575,15 +575,17 @@ class Fit():
     def _get_function(function_name):
         """
         Returns the function.
-^
+
         Parameters
         ----------
         function_name : str,
             Options are 'f1', 'f2'.
+
         Returns
         -------
         func,
              The actual function named function_name.
+
         Raises
         ------
         ValueError,
@@ -619,6 +621,7 @@ class Fit():
             The current parameter as int in the order of (shape, loc, scale) (i.e. 0 -> shape).
         sample : list of float,
             Values that are used to fit the distribution.
+
         Returns
         -------
         BasicFit,

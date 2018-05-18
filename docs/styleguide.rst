@@ -9,7 +9,7 @@ Introduction
 This style guide in conjunction with *PEP8* and the *Guide of
 NumPy/SciPy Documentation* by Ralf Gommers describes the conventions to
 follow while designing the software viroconcom. The guide is supposed to
-help the developer to stick to a constant style and layout which will
+help the developer to stick to a constant style and layout, which will
 make the code more readable. This style guide provides conventions and
 should not be seen as a dogma. If it serves the readability you can
 deviate from the given style.
@@ -28,8 +28,9 @@ unless you need to be conform with code written by some other developer
 Line length
 ===========
 
-The maximum length of a line should be 100 chars. Long lines of code can
-be broken up by a backslash.
+The maximum length of a line should be 79 chars. Long lines of code can
+be broken up by a backslash. Further details are described in PEP8: 
+https://www.python.org/dev/peps/pep-0008/#maximum-line-length
 
 Blank Lines
 ===========
@@ -160,5 +161,5 @@ https://github.com/numpy/numpy/blob/master/doc/HOWTO\_DOCUMENT.rst.txt#a-guide-t
 (last access 22.09.2017)
 
 van Rossum, G.; Warsaw, B.; Coghlan, N. (2001): Style Guide for Python
-Code.https://www.python.org/dev/peps/pep-0008/#id30 (last access
-22.09.2017)
+Code.https://www.python.org/dev/peps/pep-0008 (last access
+18.05.2018)
