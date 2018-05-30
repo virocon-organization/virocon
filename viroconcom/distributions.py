@@ -10,6 +10,7 @@ from abc import ABC, abstractmethod
 import numpy as np
 import scipy.stats as sts
 
+from .settings import SHAPE_STRING, LOCATION_STRING, SCALE_STRING
 from .params import FunctionParam, ConstantParam, Wrapper
 
 __all__ = ["Distribution", "ParametricDistribution", "WeibullDistribution",
@@ -245,13 +246,13 @@ class ParametricDistribution(Distribution, ABC):
 
         if param_index == 0:
             valid = self._valid_shape
-            param_name = "shape"
+            param_name = SHAPE_STRING
         elif param_index == 1:
             valid = self._valid_loc
-            param_name = "loc"
+            param_name = LOCATION_STRING
         elif param_index == 2:
             valid = self._valid_shape
-            param_name = "scale"
+            param_name = SCALE_STRING
 
         if valid["strict_greater"]:
             if not param_value > valid["min"]:
@@ -297,11 +298,11 @@ class ParametricDistribution(Distribution, ABC):
             internally defined in viroconcom.
         """
         param_index = None
-        if param_name == 'shape':
+        if param_name == SHAPE_STRING:
             param_index = 0
-        elif param_name == 'loc':
+        elif param_name == LOCATION_STRING:
             param_index = 1
-        elif param_name == 'scale':
+        elif param_name == SCALE_STRING:
             param_index = 2
         else:
             raise ValueError("Wrong parameter name. The param_name variable "

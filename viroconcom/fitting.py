@@ -4,17 +4,21 @@
 Fit distribution to data.
 """
 
-from multiprocessing import Pool, TimeoutError
+import warnings
 import time
 import numpy as np
+
+from multiprocessing import Pool, TimeoutError
 from numbers import Number
 import statsmodels.api as sm
 import scipy.stats as sts
 from scipy.optimize import curve_fit
+
+from .settings import SHAPE_STRING, LOCATION_STRING, SCALE_STRING
 from .params import ConstantParam, FunctionParam
 from .distributions import (WeibullDistribution, LognormalDistribution, NormalDistribution,
                             KernelDensityDistribution, MultivariateDistribution)
-import warnings
+
 
 __all__ = ["Fit"]
 
@@ -227,11 +231,11 @@ class FitInspectionData():
         ValueError,
             If the parameter is unknown.
         """
-        if param == 'shape':
+        if param == SHAPE_STRING:
             return self.shape_at, self.shape_value
-        elif param == 'loc':
+        elif param == LOCATION_STRING:
             return self.loc_at, self.loc_value
-        elif param == 'scale':
+        elif param == SCALE_STRING:
             return self.scale_at, self.scale_value
         else:
             err_msg = "Parameter '{}' is unknown.".format(param)
@@ -253,17 +257,17 @@ class FitInspectionData():
         ValueError,
             If the parameter is unknown.
         """
-        if param == 'shape':
+        if param == SHAPE_STRING:
             self._shape_value[0].append(basic_fit.shape)
             self._shape_value[1].append(basic_fit.loc)
             self._shape_value[2].append(basic_fit.scale)
             self.shape_samples.append(basic_fit.samples)
-        elif param == 'loc':
+        elif param == LOCATION_STRING:
             self._loc_value[0].append(basic_fit.shape)
             self._loc_value[1].append(basic_fit.loc)
             self._loc_value[2].append(basic_fit.scale)
             self.loc_samples.append(basic_fit.samples)
-        elif param == 'scale':
+        elif param == SCALE_STRING:
             self._scale_value[0].append(basic_fit.shape)
             self._scale_value[1].append(basic_fit.loc)
             self._scale_value[2].append(basic_fit.scale)
@@ -292,13 +296,13 @@ class FitInspectionData():
         ValueError,
             If the parameter is unknown.
         """
-        if param == 'shape':
+        if param == SHAPE_STRING:
             return BasicFit(self._shape_value[0][index], self._shape_value[1][index],
                             self._shape_value[2][index], self.shape_samples[index])
-        elif param == 'loc':
+        elif param == LOCATION_STRING:
             return BasicFit(self._loc_value[0][index], self._loc_value[1][index],
                             self._loc_value[2][index], self.loc_samples[index])
-        elif param == 'scale':
+        elif param == SCALE_STRING:
             return BasicFit(self._scale_value[0][index], self._scale_value[1][index],
                             self._scale_value[2][index], self.scale_samples[index])
         else:
@@ -836,11 +840,14 @@ class Fit():
 
                         # Add basic fit to fit inspection data
                         if i == 0:
-                            fit_inspection_data.append_basic_fit('shape', basic_fit)
+                            fit_inspection_data.append_basic_fit(SHAPE_STRING,
+                                                                 basic_fit)
                         elif i == 1:
-                            fit_inspection_data.append_basic_fit('loc', basic_fit)
+                            fit_inspection_data.append_basic_fit(LOCATION_STRING,
+                                                                 basic_fit)
                         elif i == 2:
-                            fit_inspection_data.append_basic_fit('scale', basic_fit)
+                            fit_inspection_data.append_basic_fit(SCALE_STRING,
+                                                                 basic_fit)
 
                         if i == 2 and name == 'Lognormal_2':
                             params[i] = ConstantParam(np.log(current_params[i](0)))
@@ -867,11 +874,17 @@ class Fit():
                         # Add basic fits to fit inspection data
                         for basic_fit in multiple_basic_fit:
                             if i == 0:
-                                fit_inspection_data.append_basic_fit('shape', basic_fit)
+                                fit_inspection_data.append_basic_fit(
+                                    SHAPE_STRING,
+                                    basic_fit)
                             elif i == 1:
-                                fit_inspection_data.append_basic_fit('loc', basic_fit)
+                                fit_inspection_data.append_basic_fit(
+                                    LOCATION_STRING,
+                                    basic_fit)
                             elif i == 2:
-                                fit_inspection_data.append_basic_fit('scale', basic_fit)
+                                fit_inspection_data.append_basic_fit(
+                                    SCALE_STRING,
+                                    basic_fit)
 
                         # Add interval centers to fit inspection data
                         if i == 0:
@@ -900,11 +913,11 @@ class Fit():
                             elif i == 2 and name == 'Lognormal_2':
                                 param_name = "mu"
                             elif i == 0:
-                                param_name = "shape"
+                                param_name = SHAPE_STRING
                             elif i == 1:
-                                param_name = "loc"
+                                param_name = LOCATION_STRING
                             elif i == 2:
-                                param_name = "scale"
+                                param_name = SCALE_STRING
 
                             warnings.warn(
                                 "Optimal Parameters not found for parameter '{}' in dimension "
