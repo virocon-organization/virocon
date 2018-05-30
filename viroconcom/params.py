@@ -113,9 +113,11 @@ class FunctionParam(Param):
     def _identity(self, x):
         return x
 
+    # Power function
     def _f1(self, x):
         return self.a + self.b * x ** self.c
 
+    # Exponential function
     def _f2(self, x):
         return self.a + self.b * np.exp(self.c * x)
 
