@@ -71,29 +71,34 @@ class NSphere():
         """
         Iteratively move points to reduce potential energy.
 
-        Iteratively moves points in the direction of the tangential part of the coloumb forces
-        and calculates the potential energy after each iteration.
+        Iteratively moves points in the direction of the tangential part of the
+        coloumb forces and calculates the potential energy after each iteration.
         The best state, i.e. the state with least potential energy, is saved.
         """
 
         best_state = np.copy(self.unit_sphere_points)
         best_pot = self._pot_energy()
 
+        # Define the number osf iterations based on the size of the sample size.
+        # At least 10 iterations should be performed. 10 is an empirical value.
         max_iters = max([10, int(10000 / self.n_samples)])
 
 
         for iteration in range(1, max_iters):
 
+            # Tau controls the step size of the optimization. With each iteration
+            # a smaller step is chosen. 3 is an empirical value.
             tau = 3 / iteration
 
             tang_forces = self._tangential_forces(self._get_forces())
 
-            #norm to max force
+            # Norm to max force
             max_force = np.max(np.linalg.norm(tang_forces, axis=1,))
             tang_forces /= max_force
 
             self.unit_sphere_points += tang_forces * tau
-            self.unit_sphere_points /= np.linalg.norm(self.unit_sphere_points, axis=1,
+            self.unit_sphere_points /= np.linalg.norm(self.unit_sphere_points,
+                                                      axis=1,
                                                       keepdims=True)
 
             curr_pot = self._pot_energy()
