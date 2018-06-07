@@ -24,14 +24,17 @@ setup(
 
     version=version,  # Required
 
-    description='Virocon\'s numerical core',
-
+    description='ViroCon\'s numerical core',
 
     long_description=long_description,
 
     url='https://github.com/ahaselsteiner/viroconcom',
 
-    #author='',
+    # We use git tags for this download_url. This approach is based on:
+    # https://peterdowns.com/posts/first-time-with-pypi.html
+    download_url = 'https://github.com/ahaselsteiner/viroconcom/archive/' + version + '.tar.gz',
+
+    author='Virocon Team',
 
     author_email='virocon@uni-bremen.de',
 
@@ -43,7 +46,7 @@ setup(
         #   3 - Alpha
         #   4 - Beta
         #   5 - Production/Stable
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 5 - Production/Stable',
 
         # Indicate who your project is intended for
         'Intended Audience :: Science/Research',
@@ -80,6 +83,7 @@ setup(
     # This field corresponds to the "Project-URL" metadata fields:
     # https://packaging.python.org/specifications/core-metadata/#project-url-multiple-use
     project_urls={  # Optional
-        'Virocon': 'https://github.com/ahaselsteiner/virocon',
+        'Documentation': 'https://ahaselsteiner.github.io/viroconcom/',
+        'Source Code': 'https://github.com/ahaselsteiner/viroconcom',
     },
 )
