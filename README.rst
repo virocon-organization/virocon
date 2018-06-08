@@ -12,11 +12,17 @@ viroconcom
 
 Install
 -------
-As this package is not yet hosted on PyPi use:
+To get the latest version from PyPI use
 
+```console
+pip install viroconcom
+```
+
+Alternatively you can install from this repository's Master branch with
+
+```console
     pip install https://github.com/ahaselsteiner/viroconcom/archive/master.zip
-
-to install.
+```
 
 Documentation
 -------------

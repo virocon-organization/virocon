@@ -15,4 +15,5 @@
 *_build
 *_build/*
 htmlcov/
-.pypirc
+dist/*
+viroconcom.egg-info/*

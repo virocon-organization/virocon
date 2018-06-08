@@ -24,7 +24,7 @@ setup(
 
     version=version,  # Required
 
-    description='ViroCon\'s numerical core',
+    description='ViroCon\'s numerical core: computes n-dimensional environmental contours',
 
     long_description=long_description,
 
@@ -34,7 +34,7 @@ setup(
     # https://peterdowns.com/posts/first-time-with-pypi.html
     download_url = 'https://github.com/ahaselsteiner/viroconcom/archive/' + version + '.tar.gz',
 
-    author='Virocon Team',
+    author='ViroCon Team',
 
     author_email='virocon@uni-bremen.de',
 
