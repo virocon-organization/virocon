@@ -1,7 +1,13 @@
 viroconcom
 ==========
 
-`Build Status`_ `Coverage Status`_
+.. image:: https://travis-ci.org/ahaselsteiner/viroconcom.svg?branch=master
+    :target: https://travis-ci.org/ahaselsteiner/viroconcom
+    :alt: Build status
+
+.. image:: https://coveralls.io/repos/github/ahaselsteiner/viroconcom/badge.svg?branch=master
+    :target: https://coveralls.io/github/ahaselsteiner/viroconcom?branch=master
+
 
 About
 -----
@@ -13,12 +19,12 @@ load combinations based on wave, wind and current. It lets you define
 extreme environmental conditions with a given return period using the
 environmental contour method.
 
-The following methods are available: \* Fitting a probabilistic model to
-measurement data using maximum likelihood estimation \* Defining a
-probabilistic model with the conditonal modeling approach (CMA) \*
-Computing an environmental contour using either the \* inverse first
-order reliability method (IFORM) or the \* highest density contour (HDC)
-method
+The following methods are available:
+- Fitting a probabilistic model to measurement data using maximum likelihood estimation
+- Defining a probabilistic model with the conditonal modeling approach (CMA)
+- Computing an environmental contour using either the
+  - inverse first order reliability method (IFORM) or the
+  -  highest density contour (HDC) method
 
 ViroCon is written in Python 3.6.4. The software is seperated in two
 main packages, viroconweb and viroconcom. This is the repository of
@@ -76,8 +82,6 @@ License
 This software is licensed under the MIT license. For more information,
 read the file `LICENSE`_.
 
-.. _Build Status: https://travis-ci.org/ahaselsteiner/viroconcom
-.. _Coverage Status: https://coveralls.io/github/ahaselsteiner/viroconcom?branch=master
 .. _repository: https://github.com/ahaselsteiner/viroconweb
 .. _here: https://ahaselsteiner.github.io/viroconcom/
 .. _Contribution Guide: https://ahaselsteiner.github.io/viroconcom/styleguide.html
