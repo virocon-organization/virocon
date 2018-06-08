@@ -18,7 +18,7 @@ To get the latest version from PyPI use
 pip install viroconcom
 ```
 
-Alternatively you can install from this repository's Master branch with
+Alternatively you can install from viroconcom repository's Master branch with
 
 ```console
     pip install https://github.com/ahaselsteiner/viroconcom/archive/master.zip
