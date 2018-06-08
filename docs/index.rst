@@ -1,6 +1,6 @@
 
-Welcome to Viroconcom's Documentation!
-=======================================
+Welcome to viroconcom's documentation
+=====================================
 
 .. toctree::
    :maxdepth: 2

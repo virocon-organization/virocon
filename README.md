@@ -26,7 +26,7 @@ which is the numerical core. It handles the statistical computations. viroconweb
  interface. It has its own [repository](https://github.com/ahaselsteiner/viroconweb).
 
 ## Install
-To get the latest version from PyPI use
+To install the latest version of viroconcom from PyPI use
 ```console
 pip install viroconcom
 ```

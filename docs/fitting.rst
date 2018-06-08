@@ -2,9 +2,9 @@
 Fit your own data with fitting.py
 *********************************
 
-This module implements the possibility to fit your own data.
+This module implements the possibility to fit a probabilistc model to your own data.
 
-If you want to fit your own data to a multivariate distribution you have to build an object of the class ``Fit`` in this module.
+If you want to fit multivariate distribution to your data set you have to build an object of the class ``Fit`` in this module.
 The necessary parameters for building objects of ``Fit`` are also listed in the documentation of this class.
 Exemplary call::
 
