@@ -63,9 +63,12 @@ ViroCon. We will provide a link to it here.
 Contributing
 ------------
 
-There are various ways you can contribute. You could \* improve the
-code, \* improve the documentation, \* add a feature or \* report a bug
-or an improvement and leave it to us to implement it.
+There are various ways you can contribute. You could
+
+- improve the code,
+- improve the documentation,
+- add a feature or
+- report a bug or an improvement and leave it to us to implement it.
 
 **Issue.** If you spotted a bug, have an idea for an improvement or a
 new feature please open a issue. Please open an issue in both cases: If
