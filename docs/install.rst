@@ -4,7 +4,7 @@ Installation
 
 To install the latest version of viroconcom from PyPI use
 
-    pip install https://github.com/ahaselsteiner/viroconcom/archive/master.zip
+    pip install viroconcom
 
 Alternatively, you can install from viroconcom repository's Master branch
 
