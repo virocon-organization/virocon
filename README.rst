@@ -32,7 +32,7 @@ The following methods are available:
 ViroCon is written in Python 3.6.4. The software is seperated in two
 main packages, viroconweb and viroconcom. This is the repository of
 viroconcom, which is the numerical core. It handles the statistical
-computations. viroconweb builds on viroconcom and is a a web-based
+computations. viroconweb builds on viroconcom and is a web-based
 application with a graphical user interface. It has its own
 `repository`_.
 
@@ -45,7 +45,7 @@ To install the latest version of viroconcom from PyPI use
 
    pip install viroconcom
 
-Alternatively you can install from viroconcom repository’s Master branch
+Alternatively, you can install from viroconcom repository’s Master branch
 with
 
 .. code:: console
