@@ -1,11 +1,7 @@
 # viroconcom
 
-.. image:: https://travis-ci.org/ahaselsteiner/viroconcom.svg?branch=master
-    :target: https://travis-ci.org/ahaselsteiner/viroconcom
-    :alt: Build status
-
-.. image:: https://coveralls.io/repos/github/ahaselsteiner/viroconcom/badge.svg?branch=issue%232-add-ci
-    :target: https://coveralls.io/github/ahaselsteiner/viroconcom?branch=issue%232-add-ci
+[![Build Status](https://travis-ci.org/ahaselsteiner/viroconcom.svg?branch=master)](https://travis-ci.org/ahaselsteiner/viroconcom)
+[![Coverage Status](https://coveralls.io/repos/github/ahaselsteiner/viroconcom/badge.svg?branch=master)](https://coveralls.io/github/ahaselsteiner/viroconcom?branch=master)
 
 ## About
 viroconcom is a package belonging to the software ViroCon.
