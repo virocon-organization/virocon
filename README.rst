@@ -1,5 +1,5 @@
-viroconcom
-==========
+ViroCon: viroconcom
+===================
 
 .. image:: https://travis-ci.org/ahaselsteiner/viroconcom.svg?branch=master
     :target: https://travis-ci.org/ahaselsteiner/viroconcom
