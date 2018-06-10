@@ -86,4 +86,7 @@ setup(
         'Documentation': 'https://ahaselsteiner.github.io/viroconcom/',
         'Source Code': 'https://github.com/ahaselsteiner/viroconcom',
     },
+
+    # To ensure that pip install viroconcom installs the VERSION file too.
+    data_files=[('', ['viroconcom/VERSION'])],
 )
