@@ -22,7 +22,7 @@ with open(path.join(here, 'viroconcom/version.py')) as version_file:
 setup(
     name='viroconcom',
 
-    version=version,  # Required
+    version=version['__version__'],
 
     description='ViroCon\'s numerical core: computes n-dimensional environmental contours',
 
