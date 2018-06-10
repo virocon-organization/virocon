@@ -60,7 +60,7 @@ author = 'Niklas Bergmann, Christian Castens, Andreas Haselsteiner, Martin Lechn
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 #
-with open(os.path.join(here, '../VERSION')) as version_file:
+with open(os.path.join(here, '../viroconcom/VERSION')) as version_file:
     _version = version_file.read().strip().split(".")
     version = ".".join(_version[0:2]) # The short X.Y version.
     release = ".".join(_version) # The full version, including alpha/beta/rc tags.

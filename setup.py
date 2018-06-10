@@ -15,7 +15,7 @@ here = path.abspath(path.dirname(__file__))
 with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
     long_description = f.read()
 
-with open(path.join(here, 'VERSION')) as version_file:
+with open(path.join(here, 'viroconcom/VERSION')) as version_file:
     version = version_file.read().strip()
 
 
