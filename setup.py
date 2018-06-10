@@ -32,7 +32,7 @@ setup(
 
     # We use git tags for this download_url. This approach is based on:
     # https://peterdowns.com/posts/first-time-with-pypi.html
-    download_url = 'https://github.com/ahaselsteiner/viroconcom/archive/' + version + '.tar.gz',
+    download_url = 'https://github.com/ahaselsteiner/viroconcom/archive/' + version['__version__'] + '.tar.gz',
 
     author='ViroCon Team',
 
