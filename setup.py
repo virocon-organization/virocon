@@ -15,9 +15,9 @@ here = path.abspath(path.dirname(__file__))
 with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
     long_description = f.read()
 
-with open(path.join(here, 'viroconcom/VERSION')) as version_file:
-    version = version_file.read().strip()
-
+version = {}
+with open(path.join(here, 'viroconcom/version.py')) as version_file:
+    exec(version_file.read(), version)
 
 setup(
     name='viroconcom',
@@ -86,7 +86,4 @@ setup(
         'Documentation': 'https://ahaselsteiner.github.io/viroconcom/',
         'Source Code': 'https://github.com/ahaselsteiner/viroconcom',
     },
-
-    # To ensure that pip install viroconcom installs the VERSION file too.
-    data_files=[('', ['viroconcom/VERSION'])],
 )
