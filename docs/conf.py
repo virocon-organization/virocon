@@ -20,7 +20,7 @@
 import os
 import sys
 
-from os import path
+from os import path, pardir
 
 
 sys.path.insert(0, os.path.abspath('../'))
@@ -65,7 +65,7 @@ author = 'Niklas Bergmann, Christian Castens, Andreas Haselsteiner, Martin Lechn
 # built documents.
 #
 version_dict = {}
-with open(path.join(here, 'viroconcom/version.py')) as version_file:
+with open(path.join(here, '../viroconcom/version.py')) as version_file:
     exec(version_file.read(), version_dict)
 version = version_dict['__version__']
 
