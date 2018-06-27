@@ -478,57 +478,74 @@ class Fit():
             dist_description['list_number_of_intervals'] = list_number_of_intervals
             dist_description['list_width_of_intervals'] = list_width_of_intervals
 
-        # Use multiprocessing for more performance
-        pool = Pool()
+        # Results will be computed for each dimension
         multiple_results = []
-
-        # Fit inspection data for each dimension
         self.multiple_fit_inspection_data = []
-
-        # Distribute work on cores
-        for dimension in range(len(samples)):
-            dist_description = dist_descriptions[dimension]
-            multiple_results.append(
-                pool.apply_async(self._get_distribution, (dimension, samples), dist_description))
-
-        # Initialize parameters for multivariate distribution
         distributions = []
         dependencies = []
 
-        # Define start time
-        start_time = time.time()
+        for dimension in range(len(samples)):
+            dist_description = dist_descriptions[dimension]
 
-        # Get distributions
-        for i, res in enumerate(multiple_results):
-            current_time = time.time()
-            time_difference = current_time - start_time # Previous used time
-            try:
-                distribution, dependency, used_number_of_intervals, fit_inspection_data = res.get(
-                    timeout=timeout-time_difference)
-            except TimeoutError:
-                err_msg = "The calculation takes too long. " \
-                          "It takes longer than the given " \
-                          "value for a timeout, " \
-                          "which is '{} seconds'.".format(timeout)
-                raise TimeoutError(err_msg)
+            # Use multiprocessing if a timeout is defined.
+            if timeout:
+                pool = Pool()
+                multiple_results.append(
+                    pool.apply_async(self._get_distribution,
+                                     (dimension, samples),
+                                     dist_description)
+                )
 
-            # Saves distribution and dependency for particular dimension
-            distributions.append(distribution)
-            dependencies.append(dependency)
+            else:
+                distribution, dependency, used_number_of_intervals, \
+                fit_inspection_data = self._get_disstribution(dimension, samples, dist_description)
+                distributions.append(distribution)
+                dependencies.append(dependency)
 
-            # Add fit inspection data for current dimension
-            self.multiple_fit_inspection_data.append(fit_inspection_data)
+                # Save the used number of intervals
+                for dep_index, dep in enumerate(dependency):
+                    if dep is not None:
+                        self.dist_descriptions[dep][
+                            'used_number_of_intervals'] = \
+                            used_number_of_intervals[dep_index]
 
-            # Save the used number of intervals
-            for dep_index, dep in enumerate(dependency):
-                if dep is not None:
-                    self.dist_descriptions[dep]['used_number_of_intervals'] = \
-                        used_number_of_intervals[dep_index]
+                self.multiple_fit_inspection_data.append(fit_inspection_data)
 
-        # Add used number of intervals for dimensions with no dependency
-        for fit_inspection_data in self.multiple_fit_inspection_data:
-            if not fit_inspection_data.used_number_of_intervals:
-                fit_inspection_data.used_number_of_intervals = 1
+        # If multiprocessing is used we have to collect the results differently.
+        if timeout:
+            # Define start time
+            start_time = time.time()
+            # Get distributions
+            for i, res in enumerate(multiple_results):
+                current_time = time.time()
+                time_difference = current_time - start_time # Previous used time
+                try:
+                    distribution, dependency, used_number_of_intervals, fit_inspection_data = res.get(
+                        timeout=timeout-time_difference)
+                except TimeoutError:
+                    err_msg = "The calculation takes too long. " \
+                              "It takes longer than the given " \
+                              "value for a timeout, " \
+                              "which is '{} seconds'.".format(timeout)
+                    raise TimeoutError(err_msg)
+
+                # Saves distribution and dependency for particular dimension
+                distributions.append(distribution)
+                dependencies.append(dependency)
+
+                # Add fit inspection data for current dimension
+                self.multiple_fit_inspection_data.append(fit_inspection_data)
+
+                # Save the used number of intervals
+                for dep_index, dep in enumerate(dependency):
+                    if dep is not None:
+                        self.dist_descriptions[dep]['used_number_of_intervals'] = \
+                            used_number_of_intervals[dep_index]
+
+            # Add used number of intervals for dimensions with no dependency
+            for fit_inspection_data in self.multiple_fit_inspection_data:
+                if not fit_inspection_data.used_number_of_intervals:
+                    fit_inspection_data.used_number_of_intervals = 1
 
         # Save multivariate distribution
         self.mul_var_dist = MultivariateDistribution(distributions, dependencies)
@@ -772,7 +789,7 @@ class Fit():
         Parameters
         ----------
         dimension : int,
-            Number of the variable, e.g. 0 --> first variable (for exmaple sig. wave height).
+            Number of the variable, e.g. 0 --> first variable (for example sig. wave height).
         samples : list of list,
             List that contains data to be fitted :
             samples[0] -> first variable (for example sig. wave height)

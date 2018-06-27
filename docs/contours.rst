@@ -181,7 +181,7 @@ To create an IFORM-contour one has to specify only the number of points to sampl
 
 So with the :ref:`previously created <bundle-multvar-dist>` ``mul_dist`` a contour with a ``return_period`` of ``25`` years , a ``state_duration`` of ``3`` hours and ``n_samples=100`` sampling points can be created like this::
 
-    iform_contour = IFormContour(mul_dist, 25, 3, 100)
+    iform_contour = IFormContour(mul_dist, 25, 3, 100, timeout=None)
 
 
 .. _hdc:
@@ -200,7 +200,7 @@ To create a highest density contour for the :ref:`previously created <bundle-mul
 
 The contour can then be created as follows::
 
-    hdens_contour = HighestDensityContour(mul_dist, 25, 3, limits, deltas)
+    hdens_contour = HighestDensityContour(mul_dist, 25, 3, limits, deltas, timeout=None)
 
 
 Plotting the contour
