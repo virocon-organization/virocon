@@ -1,6 +1,6 @@
-******************************
-Calculate probability contours
-******************************
+********************************
+Calculate environmental contours
+********************************
 The main use of this package is to create environmental contours. For this purpose one has to define a multivariate distribution, choose one of two calculation methods, and initiate the calculation.
 
 This procedure can be further broken down into 8 steps:
@@ -128,8 +128,8 @@ Alternativly we could have defined the distribution as follows, using the wrappe
 
 .. _bundle-multvar-dist:
 
-Bundle distributions and dependencies in a multi-variate distribution
-=====================================================================
+Bundle distributions and dependencies in a multivariate distribution
+====================================================================
 
 To create a contour one usually needs a multi-dimensional distribution. Such a distribution can be represented by the :class:`~viroconcom.distributions.MultivariateDistribution` class.
 
@@ -153,8 +153,8 @@ Calculating the contour
 
 One now has to define return period and state-duration and pick one of the two possible ways to calculate a contour.
 
-- :ref:`Inverse First-Order Reliabilty Method (IFORM) <iform>`
-- :ref:`Highest Density Contour Method (HDC) <hdc>`
+- :ref:`Inverse first-order reliabilty method (IFORM) <iform>`
+- :ref:`Highest density contour method (HDC method) <hdc>`
 
 
 .. _return-period:
@@ -169,7 +169,7 @@ state duration
 
 .. _iform:
 
-Inverse First-Order Reliability Method (IFORM)
+Inverse first-order reliability method (IFORM)
 ----------------------------------------------
 
 To create an IFORM-contour one has to specify only the number of points to sample, in addition to return period and state duration.
@@ -181,8 +181,8 @@ So with the :ref:`previously created <bundle-multvar-dist>` ``mul_dist`` a conto
 
 .. _hdc:
 
-Highest Density Contour Method (HDC)
-------------------------------------
+Highest density contour method (HDC method)
+-------------------------------------------
 
 To create a highest density contour one has to specify a grid in variable space in addition to return period and state duration. This is done by passing the grid's ``limits`` and ``deltas`` to the constructor. ``limits`` has to be a list of tuples containing the min and max limits for the variable space, one tuple for each dimension. ``deltas`` specifies the grid cell size. It is either a list of length equal to the number of dimension, containing the step size per dimensions or a scalar. If it is a scalar it is used for all dimensions.
 
@@ -211,9 +211,9 @@ Using e.g. ``matplotlib`` the following code... ::
 
     import matplotlib.pyplot as plt
     plt.scatter(iform_contour.coordinates[0][0], iform_contour.coordinates[0][1],
-                label="IFORM")
+                label="IFORM contour")
     plt.scatter(hdens_contour.coordinates[0][0], hdens_contour.coordinates[0][1],
-                label="Highest Density")
+                label="Highest density contour")
     plt.legend()
     plt.show()
 

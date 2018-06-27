@@ -33,8 +33,8 @@ class Contour(ABC):
 
     """
 
-    def __init__(self, mul_var_distribution, return_period=25, state_duration=3, timeout=1e6,
-                 *args, **kwargs):
+    def __init__(self, mul_var_distribution, return_period=25, state_duration=3,
+                 use_timeout=False, timeout=1e6, *args, **kwargs):
         """
 
         Parameters
@@ -53,18 +53,22 @@ class Contour(ABC):
         self.return_period = return_period
         self.alpha = state_duration / (return_period * 365.25 * 24)
 
-        # Use multiprocessing to define a timeout
-        pool = Pool(processes=1)
-        res = pool.apply_async(self._setup, args, kwargs)
-        try:
-            computed = res.get(timeout=timeout)
-        except TimeoutError:
-            err_msg = "The calculation takes too long. " \
-                      "It takes longer than the given value for" \
-                      " a timeout, which is '{} seconds'.".format(timeout)
-            raise TimeoutError(err_msg)
-        # Save the results separated
-        self._save(computed)
+        if use_timeout:
+            # Use multiprocessing to define a timeout
+            pool = Pool(processes=1)
+            res = pool.apply_async(self._setup, args, kwargs)
+            try:
+                computed = res.get(timeout=timeout)
+            except TimeoutError:
+                err_msg = "The calculation takes too long. " \
+                          "It takes longer than the given value for" \
+                          " a timeout, which is '{} seconds'.".format(timeout)
+                raise TimeoutError(err_msg)
+            # Save the results separated
+            self._save(computed)
+        else:
+            computed = self._setup(args, kwargs)
+            self._save(computed)
 
     @abstractmethod
     def _setup(self, *args, **kwargs):
@@ -76,8 +80,8 @@ class Contour(ABC):
 
 
 class IFormContour(Contour):
-    def __init__(self, mul_var_distribution, return_period=25, state_duration=3, n_points=20,
-                 timeout=1e6):
+    def __init__(self, mul_var_distribution, return_period=25, state_duration=3,
+                 n_points=20, use_timeout=False, timeout=1e6):
         """
         Parameters
         ----------
@@ -123,9 +127,10 @@ class IFormContour(Contour):
         >>> test_contour_IForm = IFormContour(mul_dist, 50, 3, 400)
 
         """
-        # TODO docuent state_duration
+        # TODO document state_duration
         # Calls _setup
-        super().__init__(mul_var_distribution, return_period, state_duration, timeout, n_points)
+        super().__init__(mul_var_distribution, return_period, state_duration,
+                         use_timeout, timeout, n_points)
 
     def _setup(self, n_points):
         """
@@ -189,8 +194,8 @@ class IFormContour(Contour):
         self.coordinates = computed[2]
 
 class HighestDensityContour(Contour):
-    def __init__(self, mul_var_distribution, return_period=25, state_duration=3, limits=None,
-                 deltas=None, timeout=1e6):
+    def __init__(self, mul_var_distribution, return_period=25, state_duration=3,
+                 limits=None, deltas=None, use_timeout=False, timeout=1e6):
         """
         Parameters
         ----------
@@ -256,7 +261,7 @@ class HighestDensityContour(Contour):
         # TODO document alpha
         # calls _setup
         super().__init__(mul_var_distribution, return_period, state_duration,
-                         timeout, limits, deltas)
+                         use_timeout, timeout, limits, deltas)
 
     def _setup(self, limits, deltas):
         """
