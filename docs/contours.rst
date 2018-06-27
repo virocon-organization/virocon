@@ -23,6 +23,11 @@ This procedure can be further broken down into 8 steps:
 
 These steps are explained in more detail in the following.
 
+The file calculate_contours_similar_to_docs_ contains all the code that we will
+show on this page.
+
+.. _calculate_contours_similar_to_docs: https://github.com/ahaselsteiner/viroconcom/blob/master/examples/calculate_contours_similar_to_docs.py
+
 .. _create-independent-dist:
 
 Create independent distribution
@@ -213,7 +218,9 @@ Using e.g. ``matplotlib`` the following code... ::
     plt.scatter(iform_contour.coordinates[0][0], iform_contour.coordinates[0][1],
                 label="IFORM contour")
     plt.scatter(hdens_contour.coordinates[0][0], hdens_contour.coordinates[0][1],
-                label="Highest density contour")
+                label="highest density contour")
+    plt.xlabel('significant wave height [m]')
+    plt.ylabel('spectral peak period [s]')
     plt.legend()
     plt.show()
 
