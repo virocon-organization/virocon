@@ -67,7 +67,7 @@ class Contour(ABC):
             # Save the results separated
             self._save(computed)
         else:
-            computed = self._setup(args, kwargs)
+            computed = self._setup(*args, **kwargs)
             self._save(computed)
 
     @abstractmethod
