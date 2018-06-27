@@ -34,7 +34,7 @@ class Contour(ABC):
     """
 
     def __init__(self, mul_var_distribution, return_period=25, state_duration=3,
-                 use_timeout=False, timeout=1e6, *args, **kwargs):
+                 timeout=1e6, *args, **kwargs):
         """
 
         Parameters
@@ -53,7 +53,7 @@ class Contour(ABC):
         self.return_period = return_period
         self.alpha = state_duration / (return_period * 365.25 * 24)
 
-        if use_timeout:
+        if timeout:
             # Use multiprocessing to define a timeout
             pool = Pool(processes=1)
             res = pool.apply_async(self._setup, args, kwargs)
@@ -80,8 +80,8 @@ class Contour(ABC):
 
 
 class IFormContour(Contour):
-    def __init__(self, mul_var_distribution, return_period=25, state_duration=3,
-                 n_points=20, use_timeout=False, timeout=1e6):
+    def __init__(self, mul_var_distribution, return_period=25, state_duration=3, n_points=20,
+                 timeout=1e6):
         """
         Parameters
         ----------
@@ -129,8 +129,7 @@ class IFormContour(Contour):
         """
         # TODO document state_duration
         # Calls _setup
-        super().__init__(mul_var_distribution, return_period, state_duration,
-                         use_timeout, timeout, n_points)
+        super().__init__(mul_var_distribution, return_period, state_duration, timeout, n_points)
 
     def _setup(self, n_points):
         """
@@ -194,8 +193,8 @@ class IFormContour(Contour):
         self.coordinates = computed[2]
 
 class HighestDensityContour(Contour):
-    def __init__(self, mul_var_distribution, return_period=25, state_duration=3,
-                 limits=None, deltas=None, use_timeout=False, timeout=1e6):
+    def __init__(self, mul_var_distribution, return_period=25, state_duration=3, limits=None,
+                 deltas=None, timeout=1e6):
         """
         Parameters
         ----------
@@ -261,7 +260,7 @@ class HighestDensityContour(Contour):
         # TODO document alpha
         # calls _setup
         super().__init__(mul_var_distribution, return_period, state_duration,
-                         use_timeout, timeout, limits, deltas)
+                         timeout, limits, deltas)
 
     def _setup(self, limits, deltas):
         """

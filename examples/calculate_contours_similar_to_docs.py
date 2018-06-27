@@ -24,4 +24,4 @@ mul_dist = MultivariateDistribution(distributions, dependencies)
 
 # Compute an IFORM contour with a return period of 25 years, a sea state
 # duration of 3 hours and 100 points along the contour.
-iform_contour = IFormContour(mul_dist, 25, 3, 100)
+iform_contour = IFormContour(mul_dist, 25, 3, 100, timeout=None)
