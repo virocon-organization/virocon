@@ -227,7 +227,7 @@ Using e.g. ``matplotlib`` the following code... ::
 creates this plot:
 
 .. figure:: example_contours.png
-    :scale: 20 %
+    :scale: 100 %
     :alt: example contours plot
 
     Plot of the calculated example contours.

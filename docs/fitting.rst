@@ -8,15 +8,13 @@ If you want to fit multivariate distribution to your data set you have to build 
 The necessary parameters for building objects of ``Fit`` are also listed in the documentation of this class.
 Exemplary call::
 
-    example_fit = Fit((data_1, data_2), (dist_description_0, dist_description_1), 15)
+    example_fit = Fit((data_1, data_2), (dist_description_0, dist_description_1), timeout=None)
 
-It's important that the parameter ``samples`` is in the form (sample_1, sample_2, ...).
+It is important that the parameter ``samples`` is in the form (sample_1, sample_2, ...).
 Each sample is a collection of data from type *list* and also all samples have the same length. The parameter ``dist_descriptions``
 should be from type *list* and contains a dictionary for each dimension in the same sequence of the samples. It should accordingly have
 the same length as ``samples``. The last parameter ``n_steps`` indicates how many distributions should be fitted for a dependent parameter.
 For each distribution an additional parameter is created which affects the final fit.
-
-.. image:: fit_scale.png
 
 Each ``dist_description`` contains the name of the current distribution (i.e. ``"Weibull"``). Then it contains the dependency for this dimension
 from type *list*. In the sequence of ``shape, loc, scale`` it contains integers for the dependency of the current parameter or *None* if it has no
@@ -33,8 +31,72 @@ Example for ``dist_description``::
 				                'functions': ('f1', None, 'f2')}
 
 If the fit is finished it has the attribute ``mul_var_dist`` that is an object of ``MultivariateDistribution`` that contains all distributions you
-can use to build a contour for your data. Also it has the attributes ``mul_param_points`` and ``mul_dist_points`` which can be used to visualize
+can use to build a contour for your data. Also it has the attribute ``multiple_fit_inspection_data``, which can be used to visualize
 your fit.
 
-.. todo::
-    adapt to changes in fitting.py
+Comprehensive example
+---------------------
+
+The following example can is based on the file fit_distribution_similar_to_docs_ .
+
+.. _fit_distribution_similar_to_docs: https://github.com/ahaselsteiner/viroconcom/blob/master/examples/fit_distribution_similar_to_docs.py
+
+First, let us create a data set, which represents sea states. The first variable
+is significant wave height, Hs, and the second variable spectral peak period,
+Tp ::
+
+    import matplotlib.pyplot as plt
+    import numpy as np
+    import scipy.stats as sts
+
+    from viroconcom.fitting import Fit
+    from viroconcom.contours import IFormContour
+    prng = np.random.RandomState(42)
+
+    # Create some sample data.
+    # Draw 1000 samples from a Weibull distribution with shape=1.5 and scale=3,
+    # which represents significant wave height.
+    sample_1 = prng.weibull(1.5, 1000)*3
+    # Let the second sample, which represents spectral peak period increase linearly
+    # with significant wave height and follow a Lognormal distribution with
+    # mean=2 and sigma=0.2
+    sample_2 = [0.1 + 1.5 * np.exp(0.2 * point) + prng.lognormal(2, 0.2) for point in sample_1]
+    plt.scatter(sample_1, sample_2)
+    plt.xlabel('significant wave height [m]')
+    plt.ylabel('spectral peak period [s]')
+    plt.show()
+
+The code snipped will create this plot:
+
+.. figure:: example_contours.png
+    :scale: 100 %
+    :alt: example contours plot
+
+    Plot of a randomly drawn sample.
+
+
+Now we define, which probabilistic model we want to fit to this data ::
+
+    dist_description_0 = {'name': 'Weibull', 'dependency': (None, None, None), 'width_of_intervals': 2}
+    dist_description_1 = {'name': 'Lognormal_1', 'dependency': (None, None, 0), 'functions': (None, None, 'f2')}
+
+Based on this description, we can perform the fit ::
+
+    my_fit = Fit((sample_1, sample_2), (dist_description_0, dist_description_1), timeout=None)
+
+
+Let us plot the fit for the first variable ::
+
+    fig = plt.figure()
+    plt.title('Fit for the significant wave height, Hs')
+    param_grid = my_fit.multiple_fit_inspection_data[0].scale_at
+    plt.hist(my_fit.multiple_fit_inspection_data[0].scale_samples[0], density=1, label='sample')
+    shape = my_fit.mul_var_dist.distributions[0].shape(0)
+    scale = my_fit.mul_var_dist.distributions[0].scale(0)
+    plt.plot(np.linspace(0, 20, 100),
+             sts.weibull_min.pdf(np.linspace(0, 20, 100), c=shape, loc=0, scale=scale),
+             label='fit')
+    plt.legend()
+    plt.show()
+
+
