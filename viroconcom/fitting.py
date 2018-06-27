@@ -501,7 +501,7 @@ class Fit():
                 fit_inspection_data = self._get_distribution(
                     dimension=dimension,
                     samples=samples,
-                    dist_descriptions=dist_descriptions)
+                    dist_description=dist_description)
                 distributions.append(distribution)
                 dependencies.append(dependency)
 
