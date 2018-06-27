@@ -455,7 +455,7 @@ class Fit():
             - :f2: :math:`a + b * e^{x * c}`
             - remark : in case of Lognormal_2 it is (sigma, loc=0, mu)
 
-        and either number_of_bins or width_of_bins:
+        and either number_of_intervals or width_of_intervals:
 
         number_of_intervals : int,
             Number of bins the data of this variable should be seperated for fits which depend
@@ -826,8 +826,6 @@ class Fit():
         functions = kwargs.get('functions', ('polynomial', 'polynomial', 'polynomial'))
         list_number_of_intervals = kwargs.get('list_number_of_intervals')
         list_width_of_intervals = kwargs.get('list_width_of_intervals')
-        print('Received a depdency?' + str(kwargs.get('depdency')))
-        print('Using this dependency: ' + str(dependency))
 
         # Fit inspection data for current dimension
         fit_inspection_data = FitInspectionData()
