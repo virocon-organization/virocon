@@ -94,6 +94,7 @@ Now, let us plot the fit for the first variable ::
     plt.plot(np.linspace(0, 20, 100),
              sts.weibull_min.pdf(np.linspace(0, 20, 100), c=shape, loc=0, scale=scale),
              label='fit')
+    plt.xlabel('significant wave height [m]')
     plt.legend()
     plt.show()
 
@@ -102,7 +103,7 @@ Now, let us plot the fit for the first variable ::
     :scale: 100 %
     :alt: fit of first variable
 
-    Fit of first variable.
+    Fit of the first variable.
 
 For our second variable, we need some more plots to inspect it properly.
 Let us start with the individual distributions, one for each Hs-interval ::

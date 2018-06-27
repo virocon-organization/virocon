@@ -32,6 +32,7 @@ scale = my_fit.mul_var_dist.distributions[0].scale(0)
 plt.plot(np.linspace(0, 20, 100),
          sts.weibull_min.pdf(np.linspace(0, 20, 100), c=shape, loc=0, scale=scale),
          label='fit')
+plt.xlabel('significant wave height [m]')
 plt.legend()
 plt.show()
 
