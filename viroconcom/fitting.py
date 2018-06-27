@@ -501,7 +501,7 @@ class Fit():
                 fit_inspection_data = self._get_distribution(
                     dimension=dimension,
                     samples=samples,
-                    dist_description=dist_description)
+                    kwargs=dist_description)
                 distributions.append(distribution)
                 dependencies.append(dependency)
 
@@ -824,6 +824,7 @@ class Fit():
         functions = kwargs.get('functions', ('polynomial', 'polynomial', 'polynomial'))
         list_number_of_intervals = kwargs.get('list_number_of_intervals')
         list_width_of_intervals = kwargs.get('list_width_of_intervals')
+        print('Received these dependency: ' + str(dependency))
 
         # Fit inspection data for current dimension
         fit_inspection_data = FitInspectionData()
