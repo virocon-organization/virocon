@@ -68,12 +68,11 @@ Tp ::
 
 The code snipped will create this plot:
 
-.. figure:: example_contours.png
+.. figure:: fitting_fig1.png
     :scale: 100 %
     :alt: example contours plot
 
     Plot of a randomly drawn sample.
-
 
 Now we define, which probabilistic model we want to fit to this data ::
 
@@ -83,7 +82,6 @@ Now we define, which probabilistic model we want to fit to this data ::
 Based on this description, we can perform the fit ::
 
     my_fit = Fit((sample_1, sample_2), (dist_description_0, dist_description_1), timeout=None)
-
 
 Let us plot the fit for the first variable ::
 
@@ -100,3 +98,102 @@ Let us plot the fit for the first variable ::
     plt.show()
 
 
+.. figure:: fitting_fig2.png
+    :scale: 100 %
+    :alt: fit of first variable
+
+    Fit of first variable.
+
+For our second variable we need some more plots to inspect it properly.
+Let's start with the individual distributions, one for each Hs-interval ::
+
+    fig = plt.figure(figsize=(10, 8))
+    example_text = fig.suptitle('Fits for spectral peak period, Tp')
+    ax_1 = fig.add_subplot(221)
+    title1 = ax_1.set_title('Tp-Distribution for 0≤Hs<2')
+    param_grid = my_fit.multiple_fit_inspection_data[1].scale_at
+    ax1_hist = ax_1.hist(my_fit.multiple_fit_inspection_data[1].scale_samples[0], density=1)
+    shape = my_fit.mul_var_dist.distributions[1].shape(0)
+    scale = my_fit.mul_var_dist.distributions[1].scale(param_grid[0])
+    ax1_plot = ax_1.plot(np.linspace(0, 20, 100), sts.lognorm.pdf(np.linspace(0, 20, 100), s=shape, scale=scale))
+
+    ax_2 = fig.add_subplot(222)
+    title2 = ax_2.set_title('Tp-Distribution for 2≤Hs<4')
+    ax2_hist = ax_2.hist(my_fit.multiple_fit_inspection_data[1].scale_samples[1], density=1)
+    shape = my_fit.mul_var_dist.distributions[1].shape(0)
+    scale = my_fit.mul_var_dist.distributions[1].scale(param_grid[1])
+    ax2_plot = ax_2.plot(np.linspace(0, 20, 100), sts.lognorm.pdf(np.linspace(0, 20, 100), s=shape, scale=scale))
+
+    ax_3 = fig.add_subplot(223)
+    title3 = ax_3.set_title('Tp-Distribution for 4≤Hs<6')
+    ax3_hist = ax_3.hist(my_fit.multiple_fit_inspection_data[1].scale_samples[2], density=1)
+    shape = my_fit.mul_var_dist.distributions[1].shape(0)
+    scale = my_fit.mul_var_dist.distributions[1].scale(param_grid[2])
+    ax3_plot = ax_3.plot(np.linspace(0, 20, 100), sts.lognorm.pdf(np.linspace(0, 20, 100), s=shape, scale=scale))
+    ax_3.set_xlabel('spectral peak period [s]')
+
+    ax_4 = fig.add_subplot(224)
+    title4 = ax_4.set_title('Tp-Distribution for 6≤Hs<8')
+    ax4_hist = ax_4.hist(my_fit.multiple_fit_inspection_data[1].scale_samples[3], density=1)
+    shape = my_fit.mul_var_dist.distributions[1].shape(0)
+    scale = my_fit.mul_var_dist.distributions[1].scale(param_grid[3])
+    ax4_plot = ax_4.plot(np.linspace(0, 20, 100), sts.lognorm.pdf(np.linspace(0, 20, 100), s=shape, scale=scale))
+    ax_4.set_xlabel('spectral peak period [s]')
+    plt.show()
+
+    fig = plt.figure()
+    plt.title('Dependency of the scale parameter')
+    x_1 = np.linspace(0, 12, 100)
+    plt.plot(param_grid, my_fit.multiple_fit_inspection_data[1].scale_value, 'x',
+             label='discrete scale values')
+    plt.plot(x_1, my_fit.mul_var_dist.distributions[1].scale(x_1),
+             label='fitted dependency function')
+    plt.xlabel('significant wave height [m]')
+    plt.ylabel('scale parameter (Tp-distribution)')
+    plt.legend()
+    plt.show()
+
+
+.. figure:: fitting_fig3.png
+    :scale: 100 %
+    :alt: individual fits of second variable
+
+    Individual fits of second variable, Tp.
+
+Let us now inspect how well our depdency function fits to these four scale
+values we got from the individual distributions ::
+
+    iform_contour = IFormContour(my_fit.mul_var_dist, 25, 3, 100, timeout=None)
+    plt.scatter(sample_1, sample_2, label='sample')
+    plt.plot(iform_contour.coordinates[0][0], iform_contour.coordinates[0][1],
+                '-k', label='IFORM contour')
+    plt.xlabel('significant wave height [m]')
+    plt.ylabel('spectral peak period [s]')
+    plt.legend()
+    plt.show()
+
+
+.. figure:: fitting_fig4.png
+    :scale: 100 %
+    :alt: fit of the dependency function
+
+    Fit of the dependency function.
+
+Finally, let us use the multivariate distribution we fitted to the sample to
+compute an environmental contour ::
+
+    iform_contour = IFormContour(my_fit.mul_var_dist, 25, 3, 100, timeout=None)
+    plt.scatter(sample_1, sample_2, label='sample')
+    plt.plot(iform_contour.coordinates[0][0], iform_contour.coordinates[0][1],
+                '-k', label='IFORM contour')
+    plt.xlabel('significant wave height [m]')
+    plt.ylabel('spectral peak period [s]')
+    plt.legend()
+    plt.show()
+
+
+.. figure:: fitting_fig5.png
+    :scale: 100 %
+    :alt: environmental contour based on the fitted distribution
+
+    Environmental contour based on the fitted distribution.
