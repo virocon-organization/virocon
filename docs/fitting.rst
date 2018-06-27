@@ -74,16 +74,16 @@ The code snipped will create this plot:
 
     Plot of a randomly drawn sample.
 
-Now we define, which probabilistic model we want to fit to this data ::
+Now we describe the type of multivariate distribution that we want to fit to this data ::
 
     dist_description_0 = {'name': 'Weibull', 'dependency': (None, None, None), 'width_of_intervals': 2}
     dist_description_1 = {'name': 'Lognormal_1', 'dependency': (None, None, 0), 'functions': (None, None, 'f2')}
 
-Based on this description, we can perform the fit ::
+Based on this description, we can compute the fit ::
 
     my_fit = Fit((sample_1, sample_2), (dist_description_0, dist_description_1), timeout=None)
 
-Let us plot the fit for the first variable ::
+Now, let us plot the fit for the first variable ::
 
     fig = plt.figure()
     plt.title('Fit for the significant wave height, Hs')
@@ -104,8 +104,8 @@ Let us plot the fit for the first variable ::
 
     Fit of first variable.
 
-For our second variable we need some more plots to inspect it properly.
-Let's start with the individual distributions, one for each Hs-interval ::
+For our second variable, we need some more plots to inspect it properly.
+Let us start with the individual distributions, one for each Hs-interval ::
 
     fig = plt.figure(figsize=(10, 8))
     example_text = fig.suptitle('Fits for spectral peak period, Tp')
@@ -160,8 +160,8 @@ Let's start with the individual distributions, one for each Hs-interval ::
 
     Individual fits of second variable, Tp.
 
-Let us now inspect how well our depdency function fits to these four scale
-values we got from the individual distributions ::
+Let us now inspect how well our dependency function fits to these four scale
+values, which we got from the individual distributions ::
 
     iform_contour = IFormContour(my_fit.mul_var_dist, 25, 3, 100, timeout=None)
     plt.scatter(sample_1, sample_2, label='sample')
@@ -179,7 +179,7 @@ values we got from the individual distributions ::
 
     Fit of the dependency function.
 
-Finally, let us use the multivariate distribution we fitted to the sample to
+Finally, let us use the multivariate distribution we fitted to
 compute an environmental contour ::
 
     iform_contour = IFormContour(my_fit.mul_var_dist, 25, 3, 100, timeout=None)
