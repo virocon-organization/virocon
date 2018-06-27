@@ -498,7 +498,10 @@ class Fit():
 
             else:
                 distribution, dependency, used_number_of_intervals, \
-                fit_inspection_data = self._get_distribution((dimension, samples), dist_description)
+                fit_inspection_data = self._get_distribution(
+                    dimension=dimension,
+                    samples=samples,
+                    dist_descriptions=dist_descriptions)
                 distributions.append(distribution)
                 dependencies.append(dependency)
 
