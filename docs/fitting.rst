@@ -86,7 +86,6 @@ Based on this description, we can compute the fit ::
 Now, let us plot the fit for the first variable ::
 
     fig = plt.figure()
-    plt.title('Fit for the significant wave height, Hs')
     param_grid = my_fit.multiple_fit_inspection_data[0].scale_at
     plt.hist(my_fit.multiple_fit_inspection_data[0].scale_samples[0], density=1, label='sample')
     shape = my_fit.mul_var_dist.distributions[0].shape(0)
@@ -109,7 +108,6 @@ For our second variable, we need some more plots to inspect it properly.
 Let us start with the individual distributions, one for each Hs-interval ::
 
     fig = plt.figure(figsize=(10, 8))
-    example_text = fig.suptitle('Fits for spectral peak period, Tp')
     ax_1 = fig.add_subplot(221)
     title1 = ax_1.set_title('Tp-Distribution for 0≤Hs<2')
     param_grid = my_fit.multiple_fit_inspection_data[1].scale_at
@@ -143,7 +141,6 @@ Let us start with the individual distributions, one for each Hs-interval ::
     plt.show()
 
     fig = plt.figure()
-    plt.title('Dependency of the scale parameter')
     x_1 = np.linspace(0, 12, 100)
     plt.plot(param_grid, my_fit.multiple_fit_inspection_data[1].scale_value, 'x',
              label='discrete scale values')

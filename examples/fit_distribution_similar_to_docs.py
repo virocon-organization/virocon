@@ -23,8 +23,8 @@ dist_description_0 = {'name': 'Weibull', 'dependency': (None, None, None), 'widt
 dist_description_1 = {'name': 'Lognormal_1', 'dependency': (None, None, 0), 'functions': (None, None, 'f2')}
 my_fit = Fit((sample_1, sample_2), (dist_description_0, dist_description_1), timeout=None)
 
+# Plot the fit for the significant wave height, Hs.
 fig = plt.figure()
-plt.title('Fit for the significant wave height, Hs')
 param_grid = my_fit.multiple_fit_inspection_data[0].scale_at
 plt.hist(my_fit.multiple_fit_inspection_data[0].scale_samples[0], density=1, label='sample')
 shape = my_fit.mul_var_dist.distributions[0].shape(0)
@@ -33,11 +33,12 @@ plt.plot(np.linspace(0, 20, 100),
          sts.weibull_min.pdf(np.linspace(0, 20, 100), c=shape, loc=0, scale=scale),
          label='fit')
 plt.xlabel('significant wave height [m]')
+plt.ylabel('probability density [-]')
 plt.legend()
 plt.show()
 
+# Plot the fits for the spectreal peak period, Tp.
 fig = plt.figure(figsize=(10, 8))
-example_text = fig.suptitle('Fits for spectral peak period, Tp')
 ax_1 = fig.add_subplot(221)
 title1 = ax_1.set_title('Tp-Distribution for 0≤Hs<2')
 param_grid = my_fit.multiple_fit_inspection_data[1].scale_at
@@ -70,15 +71,15 @@ ax4_plot = ax_4.plot(np.linspace(0, 20, 100), sts.lognorm.pdf(np.linspace(0, 20,
 ax_4.set_xlabel('spectral peak period [s]')
 plt.show()
 
+# Plot the fit of the dependency function of scale.
 fig = plt.figure()
-plt.title('Dependency of the scale parameter')
 x_1 = np.linspace(0, 12, 100)
 plt.plot(param_grid, my_fit.multiple_fit_inspection_data[1].scale_value, 'x',
          label='discrete scale values')
 plt.plot(x_1, my_fit.mul_var_dist.distributions[1].scale(x_1),
          label='fitted dependency function')
 plt.xlabel('significant wave height [m]')
-plt.ylabel('scale parameter (Tp-distribution)')
+plt.ylabel('scale parameter (Tp-distribution) [-]')
 plt.legend()
 plt.show()
 
