@@ -408,7 +408,7 @@ class Fit():
 
     """
 
-    def __init__(self, samples, dist_descriptions, timeout=1e6):
+    def __init__(self, samples, dist_descriptions, timeout=None):
         """
         Creates a Fit, by computing the distribution that describes the samples 'best'.
 
@@ -422,7 +422,10 @@ class Fit():
             contains dictionary for each parameter. See note for further information.
 
         timeout : int, optional
-            The maximum time in seconds there the contour has to be computed. Defaults to 1e6.
+            The maximum time in seconds there the contour has to be computed.
+            This parameter also controls multiprocessing. If timeout is None
+            serial processing is performed, if it is not None multiprocessing
+            is used. Defaults to None.
 
         Raises
         ------

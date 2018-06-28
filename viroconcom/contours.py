@@ -34,7 +34,7 @@ class Contour(ABC):
     """
 
     def __init__(self, mul_var_distribution, return_period=25, state_duration=3,
-                 timeout=1e6, *args, **kwargs):
+                 timeout=None, *args, **kwargs):
         """
 
         Parameters
@@ -81,7 +81,7 @@ class Contour(ABC):
 
 class IFormContour(Contour):
     def __init__(self, mul_var_distribution, return_period=25, state_duration=3, n_points=20,
-                 timeout=1e6):
+                 timeout=None):
         """
         Parameters
         ----------
@@ -95,7 +95,10 @@ class IFormContour(Contour):
         n_points : int, optional
             Number of points on the contour. Defaults to 20.
         timeout : int, optional
-            The maximum time in seconds there the contour has to be computed. Defaults to 1e6.
+            The maximum time in seconds there the contour has to be computed.
+            This parameter also controls multiprocessing. If timeout is None
+            serial processing is performed, if it is not None multiprocessing
+            is used. Defaults to None.
         Raises
         ------
         TimeoutError,
@@ -194,7 +197,7 @@ class IFormContour(Contour):
 
 class HighestDensityContour(Contour):
     def __init__(self, mul_var_distribution, return_period=25, state_duration=3, limits=None,
-                 deltas=None, timeout=1e6):
+                 deltas=None, timeout=None):
         """
         Parameters
         ----------
@@ -216,7 +219,10 @@ class HighestDensityContour(Contour):
             as there are dimensions in mul_var_dist.
             Defaults to 0.5.
         timeout : int, optional
-            The maximum time in seconds there the contour has to be computed. Defaults to 1e6.
+            The maximum time in seconds there the contour has to be computed.
+            This parameter also controls multiprocessing. If timeout is None
+            serial processing is performed, if it is not None multiprocessing
+            is used. Defaults to None.
         Raises
         ------
         TimeoutError,
