@@ -501,7 +501,6 @@ class Fit():
 
             else:
                 kwargs = dist_description
-                print('My kwargs is: ' + str(kwargs))
                 distribution, dependency, used_number_of_intervals, \
                 fit_inspection_data = self._get_distribution(
                     dimension=dimension,
