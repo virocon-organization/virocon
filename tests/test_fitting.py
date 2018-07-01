@@ -43,3 +43,25 @@ class FittingTest(unittest.TestCase):
         self.assertAlmostEqual(dist1.shape(0), 0.1774288706011632, places=8)
         #self.assertAlmostEqual(dist1.scale, 7.1536437634240135+2.075539206642004e^{0.1515051024957754x}, places=8)
         self.assertAlmostEqual(dist1.loc, None, places=8)
+
+    def test_multi_processing(selfs):
+        """
+        2-d Fit with multiprocessing (specified by setting a value for timeout)
+        """
+
+        # Define a sample and a fit.
+        prng = np.random.RandomState(42)
+        sample_1 = prng.weibull(1.5, 1000)*3
+        sample_2 = [0.1 + 1.5 * np.exp(0.2 * point) +
+                    prng.lognormal(2, 0.2) for point in sample_1]
+        dist_description_0 = {'name': 'Weibull',
+                              'dependency': (None, None, None),
+                              'width_of_intervals': 2}
+        dist_description_1 = {'name': 'Lognormal_1',
+                              'dependency': (None, None, 0),
+                              'functions': (None, None, 'f2')}
+
+        # Compute the fit.
+        my_fit = Fit((sample_1, sample_2),
+                     (dist_description_0, dist_description_1),
+                     timeout=10)
