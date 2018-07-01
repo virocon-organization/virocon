@@ -25,7 +25,8 @@ The following methods are available:
 - Defining a probabilistic model with the conditonal modeling approach (CMA)
 - Computing an environmental contour using either the
 
-  - inverse first order reliability method (IFORM) or the
+  - inverse first-order reliability method (IFORM),
+  - inverse second-order reliability method (ISORM) or the
   - highest density contour (HDC) method
 
 
