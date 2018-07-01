@@ -4,6 +4,7 @@
 Create Contours.
 """
 import warnings
+import math
 from abc import ABC, abstractmethod
 from multiprocessing import Pool, TimeoutError
 
@@ -158,7 +159,7 @@ class IFormContour(Contour):
 
         distributions = self.distribution.distributions
 
-        beta = sts.norm.ppf(self.alpha)
+        beta = sts.norm.ppf(1 - self.alpha)
 
         # Create sphere
         if self.distribution.n_dim == 2:
@@ -281,7 +282,7 @@ class ISormContour(Contour):
 
         # Use the ICDF of an chi-squared distribution with n dimensions. For
         # reference see equation 20 in Chai and Leira (2018).
-        beta = sts.chi2.ppf(self.alpha, self.distribution.n_dim)
+        beta = math.sqrt(sts.chi2.ppf(self.alpha, self.distribution.n_dim))
 
         # Create sphere.
         if self.distribution.n_dim == 2:

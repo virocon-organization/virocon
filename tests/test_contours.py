@@ -299,28 +299,29 @@ class HDCCreationTest(unittest.TestCase):
 
         mul_dist = MultivariateDistribution(distributions, dependencies)
 
-        test_contour_IForm = IFormContour(mul_dist, 50, 3, 400)
+        test_contour_IForm = IFormContour(mul_dist, 50, 3, 50)
 
-        finaldt4 = pd.DataFrame({'x' : test_contour_IForm.coordinates[0][0],
+        calculated_coordinates = pd.DataFrame({'x' : test_contour_IForm.coordinates[0][0],
                                  'y' : test_contour_IForm.coordinates[0][1]})
+        #calculated_coordinates.to_csv('save_this_file.csv', sep=',', header=['x', 'y'], index=False)
 
-        result4 = pd.read_csv(testfiles_path + "/IForm2dWL_coordinates.csv")
-        for o,p in [(o, p) for o in result4.index for p in result4.columns]:
-            self.assertAlmostEqual(result4.loc[o, p], finaldt4.loc[o, p], places=8)
+        true_coordinates = pd.read_csv(testfiles_path + "/IForm2dWL_coordinates.csv")
+        for o,p in [(o, p) for o in true_coordinates.index for p in true_coordinates.columns]:
+            self.assertAlmostEqual(calculated_coordinates.loc[o, p], true_coordinates.loc[o, p], places=8)
 
 
 
 
     def test_IForm2d_WN(self):
         """
-        Creating Contour example
+        Creating contour example.
         """
 
-        #define dependency tuple
+        # Define dependency tuple.
         dep1 = (None, None, None)
         dep2 = (None, 0, 0)
 
-        #define parameters
+        # Define parameters.
         shape = ConstantParam(1.471)
         loc = ConstantParam(0.8888)
         scale = ConstantParam(2.776)
@@ -331,9 +332,7 @@ class HDCCreationTest(unittest.TestCase):
         scale = FunctionParam(1.5, 0.1748, -0.2243, "f2")
         par2 = (shape, loc, scale)
 
-        #del shape, loc, scale
-
-        #create distributions
+        # Create distributions.
         dist1 = WeibullDistribution(*par1)
         dist2 = NormalDistribution(*par2)
 
@@ -342,15 +341,15 @@ class HDCCreationTest(unittest.TestCase):
 
         mul_dist = MultivariateDistribution(distributions, dependencies)
 
-        test_contour_IForm = IFormContour(mul_dist, 50, 3, 400)
+        test_contour_IForm = IFormContour(mul_dist, 50, 3, 50)
 
-        finaldt5 = pd.DataFrame({'x' : test_contour_IForm.coordinates[0][0],
+        calculated_coordinates = pd.DataFrame({'x' : test_contour_IForm.coordinates[0][0],
                                  'y' : test_contour_IForm.coordinates[0][1]})
 
-        result5 = pd.read_csv(testfiles_path + "/IForm2dWN_coordinates.csv")
+        true_coordinates = pd.read_csv(testfiles_path + "/IForm2dWN_coordinates.csv")
 
-        for r,s in [(r, s) for r in result5.index for s in result5.columns]:
-          self.assertAlmostEqual(result5.loc[r, s], finaldt5.loc[r, s], places=8)
+        for r,s in [(r, s) for r in true_coordinates.index for s in true_coordinates.columns]:
+          self.assertAlmostEqual(calculated_coordinates.loc[r, s], true_coordinates.loc[r, s], places=8)
 
 
 

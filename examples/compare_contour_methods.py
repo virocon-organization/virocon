@@ -3,6 +3,8 @@ from viroconcom.distributions import WeibullDistribution, LognormalDistribution,
     MultivariateDistribution
 from viroconcom.contours import IFormContour, ISormContour, HighestDensityContour
 import matplotlib.pyplot as plt
+import scipy.stats as sts
+import math
 
 # Define the multivariate distribution given in the paper by Vanem (2012)
 shape = ConstantParam(1.471)
