@@ -116,7 +116,29 @@ class MultivariateDistributionTest(unittest.TestCase):
         dep2 = (0, None, 0)
         dependencies = [dep1, dep2]
         m = MultivariateDistribution(self.distributions, dependencies)
-        computed_latex = m.latex_repr()
+        computed_latex = m.latex_repr(['Hs', 'Tp'])
+        correct_latex = \
+            ['\\text{ joint PDF: }',
+             'f(h_{s},t_{p})=f_{H_{s}}(h_{s})f_{T_{p}|H_{s}}(t_{p}|h_{s})',
+             '',
+             '1\\text{. variable, }H_{s}: ',
+             'f_{H_{s}}(h_{s})=\\dfrac{\\beta_{h_{s}}}{\\alpha_{h_{s}}}'
+             '\\left(\\dfrac{h_{s}-\\gamma_{h_{s}}}{\\alpha_{h_{s}}}'
+             '\\right)^{\\beta_{h_{s}}-1}\\exp\\left[-\\left(\\dfrac{h_{s}-'
+             '\\gamma_{h_{s}}}{\\alpha_{h_{s}}}\\right)^{\\beta_{h_{s}}}\\right]',
+             '\\quad\\text{ with }\\alpha_{h_{s}}=2.776,',
+             '\\quad\\qquad\\;\\; \\beta_{h_{s}}=1.471,',
+             '\\quad\\qquad\\;\\; \\gamma_{h_{s}}=0.8888.',
+             '',
+             '2\\text{. variable, }T_{p}: ',
+             'f_{T_{p}|H_{s}}(t_{p}|h_{s})=\\dfrac{1}{t_{p}\\tilde{\\sigma}_'
+             '{t_{p}}\\sqrt{2\\pi}}\\exp\\left[-\\dfrac{(\\ln t_{p}-\\tilde{'
+             '\\mu}_{t_{p}})^2}{2\\tilde{\\sigma}_{t_{p}}^2}\\right]',
+             '\\quad\\text{ with }\\exp{\\tilde{\\mu}}_{t_{p}}='
+             '0.1+1.489h_{s}^{0.1901},',
+             '\\quad\\qquad\\;\\; \\tilde{\\sigma}_{t_{p}}='
+             '0.04+0.1748e^{-0.2243h_{s}}.']
+        assert(computed_latex, correct_latex)
 
 
 class ParametricDistributionTest(unittest.TestCase):
