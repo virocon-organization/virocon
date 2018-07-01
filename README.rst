@@ -19,7 +19,7 @@ load combinations based on wave, wind and current. It lets you define
 extreme environmental conditions with a given return period using the
 environmental contour method.
 
-The following methods are available:
+The following methods are implemented in viroconcom:
 
 - Fitting a probabilistic model to measurement data using maximum likelihood estimation
 - Defining a probabilistic model with the conditonal modeling approach (CMA)
