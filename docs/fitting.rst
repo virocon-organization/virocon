@@ -51,16 +51,20 @@ Tp ::
 
     from viroconcom.fitting import Fit
     from viroconcom.contours import IFormContour
+
+
     prng = np.random.RandomState(42)
 
-    # Create some sample data.
     # Draw 1000 samples from a Weibull distribution with shape=1.5 and scale=3,
     # which represents significant wave height.
     sample_1 = prng.weibull(1.5, 1000)*3
-    # Let the second sample, which represents spectral peak period increase linearly
+
+    # Let the second sample, which represents spectral peak period increase
     # with significant wave height and follow a Lognormal distribution with
     # mean=2 and sigma=0.2
-    sample_2 = [0.1 + 1.5 * np.exp(0.2 * point) + prng.lognormal(2, 0.2) for point in sample_1]
+    sample_2 = [0.1 + 1.5 * np.exp(0.2 * point) +
+                prng.lognormal(2, 0.2) for point in sample_1]
+
     plt.scatter(sample_1, sample_2)
     plt.xlabel('significant wave height [m]')
     plt.ylabel('spectral peak period [s]')
@@ -81,7 +85,7 @@ Now we describe the type of multivariate distribution that we want to fit to thi
 
 Based on this description, we can compute the fit ::
 
-    my_fit = Fit((sample_1, sample_2), (dist_description_0, dist_description_1), timeout=None)
+    my_fit = Fit((sample_1, sample_2), (dist_description_0, dist_description_1))
 
 Now, let us plot the fit for the first variable ::
 
@@ -161,12 +165,14 @@ Let us start with the individual distributions, one for each Hs-interval ::
 Let us now inspect how well our dependency function fits to these four scale
 values, which we got from the individual distributions ::
 
-    iform_contour = IFormContour(my_fit.mul_var_dist, 25, 3, 100, timeout=None)
-    plt.scatter(sample_1, sample_2, label='sample')
-    plt.plot(iform_contour.coordinates[0][0], iform_contour.coordinates[0][1],
-                '-k', label='IFORM contour')
+    fig = plt.figure()
+    x_1 = np.linspace(0, 12, 100)
+    plt.plot(param_grid, my_fit.multiple_fit_inspection_data[1].scale_value, 'x',
+             label='discrete scale values')
+    plt.plot(x_1, my_fit.mul_var_dist.distributions[1].scale(x_1),
+             label='fitted dependency function')
     plt.xlabel('significant wave height [m]')
-    plt.ylabel('spectral peak period [s]')
+    plt.ylabel('scale parameter (Tp-distribution) [-]')
     plt.legend()
     plt.show()
 
@@ -180,7 +186,7 @@ values, which we got from the individual distributions ::
 Finally, let us use the multivariate distribution we fitted to
 compute an environmental contour ::
 
-    iform_contour = IFormContour(my_fit.mul_var_dist, 25, 3, 100, timeout=None)
+    iform_contour = IFormContour(my_fit.mul_var_dist, 25, 3, 100)
     plt.scatter(sample_1, sample_2, label='sample')
     plt.plot(iform_contour.coordinates[0][0], iform_contour.coordinates[0][1],
                 '-k', label='IFORM contour')

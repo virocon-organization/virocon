@@ -4,24 +4,36 @@ import scipy.stats as sts
 
 from viroconcom.fitting import Fit
 from viroconcom.contours import IFormContour
+
+
 prng = np.random.RandomState(42)
 
-# Create some sample data.
 # Draw 1000 samples from a Weibull distribution with shape=1.5 and scale=3,
 # which represents significant wave height.
 sample_1 = prng.weibull(1.5, 1000)*3
-# Let the second sample, which represents spectral peak period increase linearly
+
+# Let the second sample, which represents spectral peak period increase
 # with significant wave height and follow a Lognormal distribution with
 # mean=2 and sigma=0.2
-sample_2 = [0.1 + 1.5 * np.exp(0.2 * point) + prng.lognormal(2, 0.2) for point in sample_1]
+sample_2 = [0.1 + 1.5 * np.exp(0.2 * point) +
+            prng.lognormal(2, 0.2) for point in sample_1]
+
 plt.scatter(sample_1, sample_2)
 plt.xlabel('significant wave height [m]')
 plt.ylabel('spectral peak period [s]')
 plt.show()
 
-dist_description_0 = {'name': 'Weibull', 'dependency': (None, None, None), 'width_of_intervals': 2}
-dist_description_1 = {'name': 'Lognormal_1', 'dependency': (None, None, 0), 'functions': (None, None, 'f2')}
-my_fit = Fit((sample_1, sample_2), (dist_description_0, dist_description_1), timeout=None)
+# Describe the distribution that should be fitted to the sample.
+dist_description_0 = {'name': 'Weibull',
+                      'dependency': (None, None, None),
+                      'width_of_intervals': 2}
+dist_description_1 = {'name': 'Lognormal_1',
+                      'dependency': (None, None, 0),
+                      'functions': (None, None, 'f2')}
+
+# Compute the fit.
+my_fit = Fit((sample_1, sample_2),
+             (dist_description_0, dist_description_1))
 
 # Plot the fit for the significant wave height, Hs.
 fig = plt.figure()
@@ -85,7 +97,7 @@ plt.show()
 
 
 # Compute a contour based on the fit and plot it together with the sample.
-iform_contour = IFormContour(my_fit.mul_var_dist, 25, 3, 100, timeout=None)
+iform_contour = IFormContour(my_fit.mul_var_dist, 25, 3, 100)
 plt.scatter(sample_1, sample_2, label='sample')
 plt.plot(iform_contour.coordinates[0][0], iform_contour.coordinates[0][1],
             '-k', label='IFORM contour')
