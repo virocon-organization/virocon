@@ -280,7 +280,7 @@ class ISormContour(Contour):
 
         distributions = self.distribution.distributions
 
-        # Use the ICDF of an chi-squared distribution with n dimensions. For
+        # Use the ICDF of a chi-squared distribution with n dimensions. For
         # reference see equation 20 in Chai and Leira (2018).
         beta = math.sqrt(sts.chi2.ppf(1 - self.alpha, self.distribution.n_dim))
 
