@@ -24,16 +24,16 @@ mul_dist = MultivariateDistribution(distributions, dependencies)
 iform_contour = IFormContour(mul_dist, 25, 3, 100)
 isorm_contour = ISormContour(mul_dist, 25, 3, 100)
 limits = [(0, 20), (0, 20)] # The limits of the computational domain.
-deltas = [0.5, 0.1] # The dimensions of the grid cells.
+deltas = [0.05, 0.05] # The dimensions of the grid cells.
 hdens_contour = HighestDensityContour(mul_dist, 25, 3, limits, deltas)
 
 # Plot the three contours.
+plt.scatter(hdens_contour.coordinates[0][0], hdens_contour.coordinates[0][1],
+            label="highest density contour")
 plt.scatter(iform_contour.coordinates[0][0], iform_contour.coordinates[0][1],
             label="IFORM contour")
 plt.scatter(isorm_contour.coordinates[0][0], isorm_contour.coordinates[0][1],
             label="ISORM contour")
-plt.scatter(hdens_contour.coordinates[0][0], hdens_contour.coordinates[0][1],
-            label="highest density contour")
 plt.xlabel('significant wave height [m]')
 plt.ylabel('spectral peak period [s]')
 plt.legend()
