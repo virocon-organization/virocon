@@ -18,19 +18,21 @@ from viroconcom.params import ConstantParam, FunctionParam
 
 from viroconcom.distributions import (WeibullDistribution, LognormalDistribution,
                                     NormalDistribution, MultivariateDistribution)
-from viroconcom.contours import IFormContour, HighestDensityContour
+from viroconcom.contours import IFormContour, ISormContour, HighestDensityContour
 
 
 _here = os.path.dirname(__file__)
 testfiles_path = os.path.abspath(os.path.join(_here, "testfiles"))
 
-class HDCCreationTest(unittest.TestCase):
+class ContourCreationTest(unittest.TestCase):
 
 
     def test_HDC2d_WL(self):
         """
-        Creating Contour example for 2-d HDC with Weibull and Lognormal
-        distribution
+        2-d HDC with Weibull and Lognormal distribution.
+
+        The used probabilistic model is described in Vanem and Bitner-Gregersen
+        (2012), DOI: 10.1016/j.apor.2012.05.006
         """
 
         #define dependency tuple
@@ -270,18 +272,19 @@ class HDCCreationTest(unittest.TestCase):
         for m,n in [(m, n) for m in result3.index for n in result3.columns]:
             self.assertAlmostEqual(result3.loc[m, n], finaldt3.loc[m, n], places=8)
 
-
-
     def test_IForm2d_WL(self):
         """
-        Creating Contour example
+        2-d IFORM contour.
+
+        The used probabilistic model is described in Vanem and Bitner-Gregersen
+        (2012), DOI: 10.1016/j.apor.2012.05.006
         """
 
-        #define dependency tuple
+        # Define dependency tuple
         dep1 = (None, None, None)
         dep2 = (0, None, 0)
 
-        #define parameters
+        # Define parameters
         shape = ConstantParam(1.471)
         loc = ConstantParam(0.8888)
         scale = ConstantParam(2.776)
@@ -290,7 +293,7 @@ class HDCCreationTest(unittest.TestCase):
         mu = FunctionParam(0.1000, 1.489, 0.1901, "f1")
         sigma = FunctionParam(0.0400, 0.1748, -0.2243, "f2")
 
-        #create distributions
+        # Create distributions
         dist1 = WeibullDistribution(*par1)
         dist2 = LognormalDistribution(mu=mu, sigma=sigma)
 
@@ -309,12 +312,9 @@ class HDCCreationTest(unittest.TestCase):
         for o,p in [(o, p) for o in true_coordinates.index for p in true_coordinates.columns]:
             self.assertAlmostEqual(calculated_coordinates.loc[o, p], true_coordinates.loc[o, p], places=8)
 
-
-
-
     def test_IForm2d_WN(self):
         """
-        Creating contour example.
+        2-d IFORM contour.
         """
 
         # Define dependency tuple.
@@ -351,11 +351,9 @@ class HDCCreationTest(unittest.TestCase):
         for r,s in [(r, s) for r in true_coordinates.index for s in true_coordinates.columns]:
           self.assertAlmostEqual(calculated_coordinates.loc[r, s], true_coordinates.loc[r, s], places=8)
 
-
-
     def test_IForm3d(self): # TODO what does this test do
         """
-        Creating Contour example
+        3-dimensional IFORM contour.
         """
 
         #define dependency tuple
@@ -385,6 +383,44 @@ class HDCCreationTest(unittest.TestCase):
 
         test_contour_IForm = IFormContour(mul_dist, 50, 3, 400)
 
+    def test_isorm2d_WL(self):
+        """
+        ISORM contour with Vanem2012 model.
+
+        The used probabilistic model is described in Vanem and Bitner-Gregersen
+        (2012), DOI: 10.1016/j.apor.2012.05.006
+        """
+
+        # Define dependency tuple
+        dep1 = (None, None, None)
+        dep2 = (0, None, 0)
+
+        # Define parameters
+        shape = ConstantParam(1.471)
+        loc = ConstantParam(0.8888)
+        scale = ConstantParam(2.776)
+        par1 = (shape, loc, scale)
+
+        mu = FunctionParam(0.1000, 1.489, 0.1901, "f1")
+        sigma = FunctionParam(0.0400, 0.1748, -0.2243, "f2")
+
+        # Create distributions
+        dist1 = WeibullDistribution(*par1)
+        dist2 = LognormalDistribution(mu=mu, sigma=sigma)
+
+        distributions = [dist1, dist2]
+        dependencies = [dep1, dep2]
+
+        mul_dist = MultivariateDistribution(distributions, dependencies)
+
+        test_contour_isorm = ISormContour(mul_dist, 50, 3, 50)
+
+        calculated_coordinates = pd.DataFrame({'x': test_contour_isorm.coordinates[0][0],
+                                               'y': test_contour_isorm.coordinates[0][1]})
+
+        true_coordinates = pd.read_csv(testfiles_path + "/isorm2dWL_coordinates.csv")
+        for o, p in [(o, p) for o in true_coordinates.index for p in true_coordinates.columns]:
+            self.assertAlmostEqual(calculated_coordinates.loc[o, p], true_coordinates.loc[o, p], places=8)
 
 
 class HDCTest(unittest.TestCase):
