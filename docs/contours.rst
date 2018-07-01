@@ -215,10 +215,10 @@ To plot the contour one has be access the ``coordinates`` attribute of the conto
 Using e.g. ``matplotlib`` the following code... ::
 
     import matplotlib.pyplot as plt
-    plt.scatter(iform_contour.coordinates[0][0], iform_contour.coordinates[0][1],
-                label="IFORM contour")
     plt.scatter(hdens_contour.coordinates[0][0], hdens_contour.coordinates[0][1],
                 label="highest density contour")
+    plt.scatter(iform_contour.coordinates[0][0], iform_contour.coordinates[0][1],
+                label="IFORM contour")
     plt.xlabel('significant wave height [m]')
     plt.ylabel('spectral peak period [s]')
     plt.legend()
