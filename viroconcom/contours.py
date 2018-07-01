@@ -282,7 +282,7 @@ class ISormContour(Contour):
 
         # Use the ICDF of an chi-squared distribution with n dimensions. For
         # reference see equation 20 in Chai and Leira (2018).
-        beta = math.sqrt(sts.chi2.ppf(self.alpha, self.distribution.n_dim))
+        beta = math.sqrt(sts.chi2.ppf(1 - self.alpha, self.distribution.n_dim))
 
         # Create sphere.
         if self.distribution.n_dim == 2:
