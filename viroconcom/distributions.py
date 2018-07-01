@@ -762,7 +762,7 @@ class MultivariateDistribution():
 
                 # Here for simplicity we save mu in the 'scale_value'
                 # variable, although we know scale = exp(mu)
-                if self.distributions[i].mu:
+                if hasattr(self.distributions[i], 'mu'):
                     scale_name = r"\tilde{\mu}_{" + realization_symbols[i] + "}"
                 else:
                     scale_name = r"\exp{\tilde{\mu}}_{" + realization_symbols[i] + "}"
@@ -780,7 +780,7 @@ class MultivariateDistribution():
                 latex_string = r"\quad\text{ with }"
                 if self.distributions[i].name == "Lognormal":
 
-                    if self.distributions[i].mu:
+                    if hasattr(self.distributions[i], 'mu'):
                         # Here for simplicity we save mu in the 'scale_value'
                         # variable, although we know scale = exp(mu)
                         scale_value = str(self.distributions[i].mu)
