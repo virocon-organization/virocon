@@ -1,11 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Sep 15 14:49:33 2017
-
-@author: nb
-"""
-
 import unittest
 
 
@@ -20,14 +12,14 @@ from viroconcom.distributions import (WeibullDistribution, LognormalDistribution
 
 class MultivariateDistributionTest(unittest.TestCase):
     """
-    Create a example MultivariateDistribution
+    Create an example MultivariateDistribution (Vanem2012 model).
     """
 
-    #define dependency tuple
+    # Define dependency tuple.
     dep1 = (None, 0, None)
     dep2 = (0, None, 0)
 
-    #define parameters
+    # Define parameters.
     shape = ConstantParam(1.471)
     loc = ConstantParam(0.8888)
     scale = ConstantParam(2.776)
@@ -40,7 +32,7 @@ class MultivariateDistributionTest(unittest.TestCase):
 
     del shape, loc, scale
 
-    #create distributions
+    # Create distributions.
     dist1 = WeibullDistribution(*par1)
     dist2 = LognormalDistribution(*par2)
 
@@ -50,8 +42,8 @@ class MultivariateDistributionTest(unittest.TestCase):
 
     def test_add_distribution_err_msg(self):
         """
-        tests if the right exception is raised when distribution1 has a
-        dependency
+        Tests if the right exception is raised when distribution1 has a
+        dependency.
         """
 
         with self.assertRaises(ValueError):
@@ -60,8 +52,8 @@ class MultivariateDistributionTest(unittest.TestCase):
 
     def test_add_distribution_iter(self):
         """
-        tests if an exception is raised by the function add_distribution when
-        distributions isn't iterable but dependencies is and the other way around
+        Tests if an exception is raised by the function add_distribution when
+        distributions isn't iterable but dependencies is and the other way around.
         """
 
         distributions = 1
@@ -73,8 +65,8 @@ class MultivariateDistributionTest(unittest.TestCase):
 
     def test_add_distribution_length(self):
         """
-        tests if an exception is raised when distributions and dependencies
-        are of unequal length
+        Tests if an exception is raised when distributions and dependencies
+        are of unequal length.
         """
 
         dep3 = (0, None, None)
@@ -84,8 +76,8 @@ class MultivariateDistributionTest(unittest.TestCase):
 
     def test_add_distribution_dependencies_length(self):
         """
-        tests if an exception is raised when a tuple in dependencies
-        has not length 3
+        Tests if an exception is raised when a tuple in dependencies
+        has not length 3.
         """
 
         dep1 = (None, None)
@@ -95,7 +87,7 @@ class MultivariateDistributionTest(unittest.TestCase):
 
     def test_add_distribution_dependencies_value(self):
         """
-        tests if an exception is raised when dependencies has an invalid value
+        Tests if an exception is raised when dependencies has an invalid value.
         """
 
         dep1 = (-3, None, None)
@@ -107,8 +99,8 @@ class MultivariateDistributionTest(unittest.TestCase):
 
     def test_add_distribution_not_iterable(self):
         """
-        tests the function when both distributions and dependencies
-        are not iterable
+        Tests the function when both distributions and dependencies
+        are not iterable.
         """
 
         distributions = 1
@@ -116,16 +108,25 @@ class MultivariateDistributionTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             MultivariateDistribution(distributions, dependencies)
 
+    def test_latex_representation(self):
+        """
+        Tests if the latex representation is correct.
+        """
+        dep1 = (None, None, None)
+        dep2 = (0, None, 0)
+        dependencies = [dep1, dep2]
+        m = MultivariateDistribution(self.distributions, dependencies)
+        computed_latex = m.latex_repr()
 
 
 class ParametricDistributionTest(unittest.TestCase):
 
     def test_distribution_shape_None(self):
         """
-        tests if shape is set to default when it has value 'None'
+        Tests if shape is set to default when it has value 'None'.
         """
 
-        #define parameters
+        # Define parameters.
         shape = None
         loc = ConstantParam(0.8888)
         scale = ConstantParam(2.776)
@@ -140,10 +141,10 @@ class ParametricDistributionTest(unittest.TestCase):
 
     def test_distribution_loc_None(self):
         """
-        tests if loc is set to default when it has value 'None'
+        Tests if loc is set to default when it has value 'None'.
         """
 
-        #define parameters
+        # Define parameters.
         shape = ConstantParam(0.8888)
         loc = None
         scale = ConstantParam(2.776)
@@ -158,10 +159,10 @@ class ParametricDistributionTest(unittest.TestCase):
 
     def test_distribution_loc_scale(self):
         """
-        tests if scale is set to default when it has value 'None'
+        Tests if scale is set to default when it has value 'None'.
         """
 
-        #define parameters
+        # Define parameters.
         shape = ConstantParam(0.8888)
         loc = ConstantParam(2.776)
         scale = None
@@ -176,8 +177,8 @@ class ParametricDistributionTest(unittest.TestCase):
 
     def test_check_parameter_value(self):
         """
-        tests if the right exception is raised when the given parameters are
-        not in the valid range of numbers
+        Tests if the right exception is raised when the given parameters are
+        not in the valid range of numbers.
         """
 
         shape = None

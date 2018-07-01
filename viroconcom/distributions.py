@@ -758,13 +758,15 @@ class MultivariateDistribution():
                                 realization_symbols[i] + r"-" + loc_name + \
                                 r")^2}{2" + scale_name + r"^2}\right]"
             elif self.distributions[i].name == "Lognormal":
-                # The shape and scale naming for sigma and mu is not inuitive.
-                # Intuitive would be as with the Normal pdf --> sigma = scale,
-                # mu = location. This should be checked
                 shape_name = r"\tilde{\sigma}_{" + realization_symbols[i] + "}"
-                # Scale could also be interpeted as exp^(mu), but here for
-                # simplicity we use the same variable name
-                scale_name = r"\tilde{\mu}_{" + realization_symbols[i] + "}"
+
+                # Here for simplicity we save mu in the 'scale_value'
+                # variable, although we know scale = exp(mu)
+                if self.distributions[i].mu:
+                    scale_name = r"\tilde{\mu}_{" + realization_symbols[i] + "}"
+                else:
+                    scale_name = r"\exp{\tilde{\mu}}_{" + realization_symbols[i] + "}"
+
                 latex_string += r"\dfrac{1}{" + realization_symbols[i] + \
                                 r"\tilde{\sigma}_{" \
                         + realization_symbols[i] + \
@@ -777,7 +779,14 @@ class MultivariateDistribution():
             if scale_name:
                 latex_string = r"\quad\text{ with }"
                 if self.distributions[i].name == "Lognormal":
-                    scale_value = str(self.distributions[i].mu)
+
+                    if self.distributions[i].mu:
+                        # Here for simplicity we save mu in the 'scale_value'
+                        # variable, although we know scale = exp(mu)
+                        scale_value = str(self.distributions[i].mu)
+                    else:
+                        scale_value = str(self.distributions[i].scale)
+
                 else:
                     scale_value = str(self.distributions[i].scale)
                 for j in range(self.n_dim):

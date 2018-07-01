@@ -24,8 +24,8 @@ from viroconcom.contours import IFormContour, ISormContour, HighestDensityContou
 _here = os.path.dirname(__file__)
 testfiles_path = os.path.abspath(os.path.join(_here, "testfiles"))
 
-class ContourCreationTest(unittest.TestCase):
 
+class ContourCreationTest(unittest.TestCase):
 
     def test_HDC2d_WL(self):
         """
