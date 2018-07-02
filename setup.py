@@ -60,18 +60,7 @@ setup(
         'Programming Language :: Python :: 3 :: Only',
     ],
 
-    # This field adds keywords for your project which will appear on the
-    # project page. What does your project relate to?
-    #
-    keywords = [
-        'virocon',
-        'environmental contour',
-        'mechanical design'
-    ],
-
-
     packages=['viroconcom'],
-
 
     install_requires=[
             'numpy',
