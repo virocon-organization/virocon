@@ -63,7 +63,11 @@ setup(
     # This field adds keywords for your project which will appear on the
     # project page. What does your project relate to?
     #
-    keywords='virocon environmental contours',
+    keywords = [
+        'virocon',
+        'environmental contour',
+        'mechanical design'
+    ],
 
 
     packages=['viroconcom'],
