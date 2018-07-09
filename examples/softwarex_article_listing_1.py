@@ -8,8 +8,6 @@ prng = np.random.RandomState(42)
 # shape=1.5 and scale=3, which represents significant
 # wave height.
 sample_1 = prng.weibull(1.5, 1000) * 3
-print(sample_1)
-print(max(sample_1))
 
 # Let the second sample, which represents spectral peak
 # period, increase with significant wave height and follow

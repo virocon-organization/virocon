@@ -771,7 +771,7 @@ class Fit():
                     warnings.warn(
                         "There is not enough data for step '{}' in dimension "
                         "'{}'. This step is skipped. Consider analyzing your "
-                        "data or reducing the number of steps"
+                        "data or reducing the number of intervals."
                             .format(step, dependency[index]),
                         RuntimeWarning, stacklevel=2)
             else:
@@ -783,7 +783,7 @@ class Fit():
                     "there is not enough data (n='{}') for the interval "
                     "centered at '{}' in dimension '{}'. This step is skipped. "
                     "Consider analyzing your data or reducing the number of "
-                    "steps"
+                    "intervals."
                         .format(MIN_DATA_POINTS_FOR_FIT,
                         len(samples_in_interval),
                         step,
