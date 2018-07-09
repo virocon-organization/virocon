@@ -720,7 +720,7 @@ class Fit():
         """
         MIN_DATA_POINTS_FOR_FIT = 10
 
-        # Compute intervals
+        # Compute intervals.
         if number_of_intervals:
             interval_centers, interval_width = np.linspace(
                 min(samples[dependency[index]]), max(samples[dependency[index]]),
@@ -728,79 +728,93 @@ class Fit():
             interval_centers += 0.5 * interval_width
         elif bin_width:
             interval_width = bin_width
-            interval_centers = np.arange(0.5*interval_width, max(samples[dependency[index]]),
-                                         interval_width)
+            interval_centers = np.arange(
+                0.5 * interval_width,
+                max(samples[dependency[index]] + 0.5 * interval_width),
+                interval_width)
         else:
             raise RuntimeError(
                 "Either the parameters number_of_intervals or bin_width has to be specified, "
                 "otherwise the intervals are not specified. Exiting.")
 
-        # Sort samples
+        # Sort samples.
         samples = np.stack((sample, samples[dependency[index]])).T
         sort_indice = np.argsort(samples[:, 1])
         sorted_samples = samples[sort_indice]
-        # Return values
+
+        # Return values.
         param_values = [[], [], []]
         dist_values = []
 
-        # List of all basic fits
+        # List of all basic fits.
         multiple_basic_fit = []
 
-        # Deleted interval_centers by index
+        # Deleted interval_centers by index.
         deleted_centers = []
 
-        # Define the data interval that is used for the fit
+        # Define the data interval that is used for the fit.
         for i, step in enumerate(interval_centers):
             mask = ((sorted_samples[:, 1] >= step - 0.5 * interval_width) &
                     (sorted_samples[:, 1] < step + 0.5 * interval_width))
             samples_in_interval = sorted_samples[mask, 0]
             if len(samples_in_interval) >= MIN_DATA_POINTS_FOR_FIT:
                 try:
-                    # Fit distribution to selected data
+                    # Fit distribution to selected data.
                     basic_fit = Fit._append_params(
                         name, param_values, dependency, index, samples_in_interval)
                     multiple_basic_fit.append(basic_fit)
                     dist_values.append(samples_in_interval)
                 except ValueError:
-                    # For case that no fitting data for the step has been found -> step is deleted
-                    deleted_centers.append(i) # Add index of not used center
+                    # For case that to few fitting data for the step were found
+                    # the step is deleted.
+                    deleted_centers.append(i) # Add index of unused center.
                     warnings.warn(
-                        "There is not enough data for step '{}' in dimension '{}'. This step is "
-                        "skipped. Maybe you should ckeck your data or reduce the number of "
-                        "steps".format(step, dependency[index]), RuntimeWarning, stacklevel=2)
+                        "There is not enough data for step '{}' in dimension "
+                        "'{}'. This step is skipped. Consider analyzing your "
+                        "data or reducing the number of steps"
+                            .format(step, dependency[index]),
+                        RuntimeWarning, stacklevel=2)
             else:
-                # For case that to few fitting data for the step has been found -> step is deleted
-                deleted_centers.append(i) # Add index of not used center
+                # For case that to few fitting data for the step were found
+                # the step is deleted.
+                deleted_centers.append(i) # Add index of unused center.
                 warnings.warn(
-                    "'Due to the restriction of MIN_DATA_POINTS_FOR_FIT='{}' there is not enough "
-                    "data (n='{}') for the interval centered at '{}' in dimension '{}'. This step "
-                    "is skipped. Maybe you should ckeck your data or reduce the number of "
-                    "steps".format(
-                        MIN_DATA_POINTS_FOR_FIT, len(samples_in_interval), step, dependency[index]),
+                    "'Due to the restriction of MIN_DATA_POINTS_FOR_FIT='{}' "
+                    "there is not enough data (n='{}') for the interval "
+                    "centered at '{}' in dimension '{}'. This step is skipped. "
+                    "Consider analyzing your data or reducing the number of "
+                    "steps"
+                        .format(MIN_DATA_POINTS_FOR_FIT,
+                        len(samples_in_interval),
+                        step,
+                        dependency[index]),
                     RuntimeWarning, stacklevel=2)
         if len(interval_centers) < 3:
-            raise RuntimeError("Your settings resulted in " + str(len(interval_centers)) +
-                               " intervals. However, at least 3 intervals are required. Consider "
-                               "changing the interval width setting.")
+            nr_of_intervals = str(len(interval_centers))
+            raise RuntimeError("Your settings resulted in " + nr_of_intervals +
+                               " intervals. However, at least 3 intervals are "
+                               "required. Consider changing the interval width "
+                               "setting.")
 
-        # Delete not used centers
+        # Delete interval centers that were not used.
         interval_centers = np.delete(interval_centers, deleted_centers)
 
         return interval_centers, dist_values, param_values, multiple_basic_fit
 
     def _get_distribution(self, dimension, samples, **kwargs):
         """
-        Returns the fitted distribution, the dependency and information to visualize all fits for
-        this dimension.
+        Returns the fitted distribution, the dependency and information to
+        visualize all fits for this dimension.
 
         Parameters
         ----------
         dimension : int,
-            Number of the variable, e.g. 0 --> first variable (for example sig. wave height).
+            Number of the variable. For example it can be 0, which means that
+            this is the first variable (for example sig. wave height).
         samples : list of list,
             List that contains data to be fitted :
             samples[0] -> first variable (for example sig. wave height)
-            samples[1] -> second variable
+            samples[1] -> second variable (for example spectral peak period)
             ...
         Returns
         -------
@@ -809,8 +823,8 @@ class Fit():
         dependency : list of int,
             List that contains the used dependencies for fitting.
         used_number_of_intervals: list of int,
-            List with length of three that contains the used number of bins for each parameter
-            (shape, loc, scale).
+            List with length of three that contains the used number of intervals
+            for each parameter (shape, loc, scale).
         fit_inspection_data : FitInspectionData,
             Object that holds information about all fits in this dimension.
         Raises
