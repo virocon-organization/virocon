@@ -7,4 +7,4 @@ Welcome to viroconcom's documentation
 
    user_guide
    reference
-   styleguide
+   contributionguide

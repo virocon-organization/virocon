@@ -105,5 +105,5 @@ read the file `LICENSE`_.
 .. _compute environmental contours: https://ahaselsteiner.github.io/viroconcom/contours.html
 .. _examples: https://github.com/ahaselsteiner/viroconcom/tree/master/examples
 .. _here: https://ahaselsteiner.github.io/viroconcom/
-.. _Contribution Guide: https://ahaselsteiner.github.io/viroconcom/styleguide.html
+.. _Contribution Guide: https://ahaselsteiner.github.io/viroconcom/contributionguide.html
 .. _LICENSE: https://github.com/ahaselsteiner/viroconcom/blob/master/LICENSE
