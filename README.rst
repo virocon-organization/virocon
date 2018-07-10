@@ -8,11 +8,13 @@ ViroCon: viroconcom
 .. image:: https://coveralls.io/repos/github/ahaselsteiner/viroconcom/badge.svg?branch=master
     :target: https://coveralls.io/github/ahaselsteiner/viroconcom?branch=master
 
+ViroCon is a software to compute environmental contours.
 
 About
 -----
 
-viroconcom is a package belonging to the software ViroCon.
+viroconcom is a package belonging to the software ViroCon. The package viroconcom
+handles the statistical computations.
 
 ViroCon helps you to design marine structures, which need to withstand
 load combinations based on wave, wind and current. It lets you define
