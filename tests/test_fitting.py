@@ -37,12 +37,12 @@ class FittingTest(unittest.TestCase):
                      (dist_description_0, dist_description_1))
         dist0 = my_fit.mul_var_dist.distributions[0]
         dist1 = my_fit.mul_var_dist.distributions[1]
-        self.assertAlmostEqual(dist0.shape(0), 1.4165147571863412, places=8)
-        self.assertAlmostEqual(dist0.scale(0), 2.833833521811032, places=8)
-        self.assertAlmostEqual(dist0.loc(0), 0.07055663251419833, places=8)
-        self.assertAlmostEqual(dist1.shape(0), 0.17742685807554776 , places=8)
-        #self.assertAlmostEqual(dist1.scale, 7.1536437634240135+2.075539206642004e^{0.1515051024957754x}, places=8)
-        self.assertAlmostEqual(dist1.loc, None, places=8)
+        self.assertAlmostEqual(dist0.shape(0), 1.4165147571863412, places=5)
+        self.assertAlmostEqual(dist0.scale(0), 2.833833521811032, places=5)
+        self.assertAlmostEqual(dist0.loc(0), 0.07055663251419833, places=5)
+        self.assertAlmostEqual(dist1.shape(0), 0.17742685807554776 , places=5)
+        #self.assertAlmostEqual(dist1.scale, 7.1536437634240135+2.075539206642004e^{0.1515051024957754x}, places=5)
+        self.assertAlmostEqual(dist1.loc, None, places=5)
 
     def test_multi_processing(selfs):
         """
