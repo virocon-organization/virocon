@@ -48,16 +48,16 @@ class BasicFit():
 
     Attributes
     ----------
-    shape : float,
+    shape : float
         The shape parameter for the fit.
 
-    loc : float,
+    loc : float
         The location parameter for the fit.
 
-    scale : float,
+    scale : float
         The scale parameter for the fit.
 
-    samples : list of float,
+    samples : list of float
         The raw data that is used for this fit. For that case that there is no dependency this
         list contains the whole data of the dimension.
 
@@ -106,39 +106,39 @@ class FitInspectionData():
 
     Attributes
     ----------
-    used_number_of_intervals : int,
+    used_number_of_intervals : int
         The actually number of intervals this dimension is divided for other dependent dimensions.
 
-    shape_at : list of float,
+    shape_at : list of float
         This list contains the values of the divided dimension the shape parameter depends on.
 
-    shape_value : list of float,
+    shape_value : list of float
         The associated values of the parameter shape to the divided dimension the shape
         parameter depends on.
 
-    loc_at : list of float,
+    loc_at : list of float
         This list contains the values of the divided dimension the location parameter depends on.
 
-    loc_value : list of float,
+    loc_value : list of float
         The associated values of the parameter loc to the divided dimension the location
         parameter depends on.
 
-    scale_at : list of float,
+    scale_at : list of float
         This list contains the values of the divided dimension the scale parameter depends on.
 
-    scale_value : list of float,
+    scale_value : list of float
         The associated values of the parameter scale to the divided dimension the scale
         parameter depends on.
 
-    shape_samples : list of list,
+    shape_samples : list of list
         This list with the length of the number of used intervals for the shape parameter
         contains lists with the used samples for the respective fit.
 
-    loc_samples : list of list,
+    loc_samples : list of list
         This list with the length of the number of used intervals for the location parameter
         contains lists with the used samples for the respective fit.
 
-    scale_samples : list of list,
+    scale_samples : list of list
         This list with the length of the number of used intervals for the scale parameter
         contains lists with the used samples for the respective fit.
 
@@ -171,7 +171,7 @@ class FitInspectionData():
 
         Returns
         -------
-        list of float,
+        list of float
              The associated values of the parameter shape to the divided dimension the shape
              parameter depends on.
         Notes
@@ -187,7 +187,7 @@ class FitInspectionData():
 
         Returns
         -------
-        list of float,
+        list of float
              The associated values of the parameter loc to the divided dimension the location
              parameter depends on.
         Notes
@@ -203,7 +203,7 @@ class FitInspectionData():
 
         Returns
         -------
-        list of float,
+        list of float
              The associated values of the parameter scale to the divided dimension the scale
              parameter depends on.
         Notes
@@ -219,15 +219,15 @@ class FitInspectionData():
 
         Parameters
         ----------
-        param : str,
+        param : str
             The respective parameter.
         Returns
         -------
-        tuple of list,
+        tuple of list
              The param_at and the param_value.
         Raises
         ------
-        ValueError,
+        ValueError
             If the parameter is unknown.
         """
         if param == SHAPE_STRING:
@@ -246,14 +246,14 @@ class FitInspectionData():
 
         Parameters
         ----------
-        param : str,
+        param : str
             The respective parameter the data should be associated.
-        basic_fit : BasicFit,
+        basic_fit : BasicFit
             The data of the single fit hold in a BasicData object.
 
         Raises
         ------
-        ValueError,
+        ValueError
             If the parameter is unknown.
         """
         if param == SHAPE_STRING:
@@ -282,17 +282,17 @@ class FitInspectionData():
 
         Parameters
         ----------
-        param : str,
+        param : str
             The respective parameter of the data.
-        index : int,
+        index : int
             The index of the interval.
         Returns
         -------
-        BasicFit,
+        BasicFit
              The data of the single fit hold in a BasicData object.
         Raises
         ------
-        ValueError,
+        ValueError
             If the parameter is unknown.
         """
         if param == SHAPE_STRING:
@@ -320,10 +320,10 @@ class Fit():
 
     Attributes
     ----------
-    mul_var_dist : MultivariateDistribution,
+    mul_var_dist : MultivariateDistribution
         Distribution that is calculated
 
-    multiple_fit_inspection_data : list of FitInspectionData,
+    multiple_fit_inspection_data : list of FitInspectionData
         Contains fit inspection data objects for each dimension.
 
     Examples
@@ -414,11 +414,11 @@ class Fit():
 
         Parameters
         ----------
-        samples : list of list,
+        samples : list of list
             List that contains data to be fitted : samples[0] -> first variable (i.e. wave height)
                                                    samples[1] -> second variable
                                                    ...
-        dist_descriptions : list of dict,
+        dist_descriptions : list of dict
             contains dictionary for each parameter. See note for further information.
 
         timeout : int, optional
@@ -429,14 +429,14 @@ class Fit():
 
         Raises
         ------
-        TimeoutError,
+        TimeoutError
             If the calculation takes too long and the given value for timeout is exceeded.
 
         Note
         ----
         dist_descriptions contains the following keys:
 
-        name : str,
+        name : str
             name of distribution:
 
             - Weibull
@@ -445,13 +445,13 @@ class Fit():
             - Normal
             - KernelDensity (no dependency)
 
-        dependency : list of int,
+        dependency : list of int
             Length of 3 in the order (shape, loc, scale) contains:
 
             - None -> no dependency
             - int -> depends on particular dimension
 
-        functions : list of str,
+        functions : list of str
             Length of 3 in the order : (shape, loc, scale), usable options:
 
             - :f1: :math:`a + b * x^c`
@@ -460,12 +460,12 @@ class Fit():
 
         and either number_of_intervals or width_of_intervals:
 
-        number_of_intervals : int,
+        number_of_intervals : int
             Number of bins the data of this variable should be seperated for fits which depend
             upon it. If the number of bins is given, the width of the bins is determined
             automatically.
 
-        width_of_bins : float,
+        width_of_bins : float
             Width of the bins. When the width of the bins is given, the number of bins is
             determined automatically.
 
@@ -564,17 +564,17 @@ class Fit():
 
         Parameters
         ----------
-        sample : list of float,
+        sample : list of float
             Raw data the distribution is fitted on.
-        name : str,
+        name : str
             Name of the distribution (Weibull, Lognormal_x, Normal, KernelDensity (no dependency)).
         Returns
         -------
-        tuple of ConstantParam,
+        tuple of ConstantParam
              The computed parameters in the order of (shape, loc, scale).
         Raises
         ------
-        ValueError,
+        ValueError
             If the distribution is unknown.
         """
 
@@ -605,17 +605,17 @@ class Fit():
 
         Parameters
         ----------
-        function_name : str,
+        function_name : str
             Options are 'f1', 'f2'.
 
         Returns
         -------
-        func,
+        func
              The actual function named function_name.
 
         Raises
         ------
-        ValueError,
+        ValueError
             If the function is unknown.
         """
 
@@ -636,22 +636,22 @@ class Fit():
 
         Parameters
         ----------
-        name : str,
+        name : str
             Name of distribution (Weibull, Lognormal, Normal, KernelDensity (no dependency)).
         param_values : list of list,
             Contains lists that contain values for each param : order (shape, loc, scale).
-        dependency : list of int,
+        dependency : list of int
             Length of 3 in the order (shape, loc, scale) contains :
             None -> no dependency
             int -> depends on particular dimension
-        index : int,
+        index : int
             The current parameter as int in the order of (shape, loc, scale) (i.e. 0 -> shape).
-        sample : list of float,
+        sample : list of float
             Values that are used to fit the distribution.
 
         Returns
         -------
-        BasicFit,
+        BasicFit
              The information of this single fit.
         """
 
@@ -677,21 +677,21 @@ class Fit():
 
         Parameters
         ----------
-        sample : list of float,
+        sample : list of float
             The current sample to fit.
-        samples : list of list,
+        samples : list of list
             List that contains data to be fitted : samples[0] -> first variable (i.e. wave height)
                                                    samples[1] -> second variable
                                                    ...
-        name : str,
+        name : str
             Name of distribution (Weibull, Lognormal, Normal, KernelDensity (no dependency)).
-        dependency : list of int,
+        dependency : list of int
             Length of 3 in the order (shape, loc, scale) contains :
                 None -> no dependency
                 int -> depends on particular dimension
-        index : int,
+        index : int
             Order : (shape, loc, scale) (i.e. 0 -> shape).
-        number_of_intervals : int,
+        number_of_intervals : int
             Number of distributions used to fit shape, loc, scale.
         Notes
         -----
@@ -700,22 +700,22 @@ class Fit():
 
         Returns
         -------
-        interval_centers : ndarray,
+        interval_centers : ndarray
             Array with length of the number of bins that contains the centers of the
             calculated bins.
-        dist_values : list of list,
+        dist_values : list of list
             List with length of the number of intervals that contains for each bin center
             the used samples for the current fit.
-        param_values : list of list,
+        param_values : list of list
             List with length of three that contains for each parameter (shape, loc, scale)
             a list with length of the number of bins that contains the calculated parameters.
-        multiple_basic_fit : list of BasicFit,
+        multiple_basic_fit : list of BasicFit
             Contains information for each fit.
         Raises
         ------
-        RuntimeError,
+        RuntimeError
             If the parameter number_of_intervals or bin_width was not specified.
-        RuntimeError,
+        RuntimeError
             If there was not enough data and the number of intervals was less than three.
         """
         MIN_DATA_POINTS_FOR_FIT = 10
@@ -730,7 +730,7 @@ class Fit():
             interval_width = bin_width
             interval_centers = np.arange(
                 0.5 * interval_width,
-                max(samples[dependency[index]] + 0.5 * interval_width),
+                max(samples[dependency[index]]) + 0.5 * interval_width,
                 interval_width)
         else:
             raise RuntimeError(
@@ -808,30 +808,30 @@ class Fit():
 
         Parameters
         ----------
-        dimension : int,
+        dimension : int
             Number of the variable. For example it can be 0, which means that
             this is the first variable (for example sig. wave height).
-        samples : list of list,
+        samples : list of list
             List that contains data to be fitted :
             samples[0] -> first variable (for example sig. wave height)
             samples[1] -> second variable (for example spectral peak period)
             ...
         Returns
         -------
-        distribution : Distribution,
+        distribution : Distribution
             The fitted distribution instance.
-        dependency : list of int,
+        dependency : list of int
             List that contains the used dependencies for fitting.
-        used_number_of_intervals: list of int,
+        used_number_of_intervals: list of int
             List with length of three that contains the used number of intervals
             for each parameter (shape, loc, scale).
-        fit_inspection_data : FitInspectionData,
+        fit_inspection_data : FitInspectionData
             Object that holds information about all fits in this dimension.
         Raises
         ------
-        NotImplementedError,
+        NotImplementedError
             If the the name of a dependent distribution was 'KernelDensity'.
-        RuntimeError,
+        RuntimeError
             If not a good fit was found.
         """
 

@@ -23,9 +23,9 @@ class Contour(ABC):
 
     Attributes
     ----------
-    distribution : MultivariateDistribution,
+    distribution : MultivariateDistribution
         The distribution to calculate the contour of.
-    coordinates : list of lists of ndarrays,
+    coordinates : list of lists of ndarrays
         Contains the coordinates of points on the contour.
         If the distribution is unimodal the outer list contains only one element,
         else the outer list divides possible multiple contour parts.
@@ -44,7 +44,7 @@ class Contour(ABC):
             The distribution to be used to calculate the contour.
         Raises
         ------
-        TimeoutError,
+        TimeoutError
             If the calculation takes too long and the given value for timeout is exceeded.
         """
         self.distribution = mul_var_distribution
@@ -90,7 +90,7 @@ class IFormContour(Contour):
 
         Parameters
         ----------
-        mul_var_distribution : MultivariateDistribution,
+        mul_var_distribution : MultivariateDistribution
             The distribution to be used to calculate the contour.
         return_period : float, optional
             The years to consider for calculation. Defaults to 25.
@@ -144,13 +144,13 @@ class IFormContour(Contour):
 
         Parameters
         ----------
-        n_points : int,
+        n_points : int
             Number of points the shape contains.
-        return_period : float,
+        return_period : float
             The years to consider for calculation. Defaults to 25.
         Returns
         -------
-        tuple of objects,
+        tuple of objects
             The computed results.
         """
 
@@ -192,7 +192,7 @@ class IFormContour(Contour):
 
         Parameters
         ----------
-        computed : tuple of objects,
+        computed : tuple of objects
             The computed results to be saved.
         """
         self.beta = computed[0]
@@ -211,7 +211,7 @@ class ISormContour(Contour):
 
         Parameters
         ----------
-        mul_var_distribution : MultivariateDistribution,
+        mul_var_distribution : MultivariateDistribution
             The distribution to be used to calculate the contour.
         return_period : float, optional
             The years to consider for calculation. Defaults to 25.
@@ -265,13 +265,13 @@ class ISormContour(Contour):
 
         Parameters
         ----------
-        n_points : int,
+        n_points : int
             Number of points the shape contains.
-        return_period : float,
+        return_period : float
             The years to consider for calculation. Defaults to 25.
         Returns
         -------
-        tuple of objects,
+        tuple of objects
             The computed results.
         """
 
@@ -315,7 +315,7 @@ class ISormContour(Contour):
 
         Parameters
         ----------
-        computed : tuple of objects,
+        computed : tuple of objects
             The computed results to be saved.
         """
         self.beta = computed[0]
@@ -334,7 +334,7 @@ class HighestDensityContour(Contour):
 
         Parameters
         ----------
-        mul_var_distribution : MultivariateDistribution,
+        mul_var_distribution : MultivariateDistribution
             The distribution to be used to calculate the contour.
         return_period : float, optional
             The years to consider for calculation. Defaults to 25.
@@ -407,11 +407,11 @@ class HighestDensityContour(Contour):
 
         Parameters
         ----------
-        limits : list of tuples,
+        limits : list of tuples
             One 2-Element tuple per dimension in mul_var_distribution,
             containing min and max limits for calculation. ((min, max)).
             Smaller value is always assumed minimum.
-        deltas : scalar or list of scalar,
+        deltas : scalar or list of scalar
             The grid stepsize used for calculation.
             If a single float is supplied it is used for all dimensions.
             If a list of float is supplied it has to be of the same length
@@ -540,9 +540,9 @@ class HighestDensityContour(Contour):
 
         Parameters
         ----------
-        array : ndarray,
+        array : ndarray
             Array of arbitrary shape with all values >= 0.
-        limit : float,
+        limit : float
             limit to sum up to.
 
         Returns

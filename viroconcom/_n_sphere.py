@@ -48,9 +48,9 @@ class NSphere():
         """
         Parameters
         ----------
-        dim : int,
+        dim : int
             The number of dimensions. (i.e. the n in n-sphere plus 1)
-        n_samples : int,
+        n_samples : int
             The number of points to distribute on the n-sphere.
 
         """

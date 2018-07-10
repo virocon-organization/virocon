@@ -24,12 +24,12 @@ class Param(ABC):
         """
         Parameters
         ----------
-        x : float or array_like,
+        x : float or array_like
             Point(s) at which to evaluate Param.
 
         Returns
         -------
-        self._value(x) : float or list,
+        self._value(x) : float or list
             If x is an iterable a list of the same length will be returned,
             else if x is a scalar a float will be returned.
 
@@ -54,7 +54,7 @@ class ConstantParam(Param):
         """
         Parameters
         ----------
-        constant : scalar,
+        constant : scalar
             The constant value to return.
         """
         self._constant = float(constant)
@@ -74,13 +74,13 @@ class FunctionParam(Param):
         """
         Parameters
         ----------
-        a,b,c : float,
+        a,b,c : float
             The function parameters.
-        func_type : str,
+        func_type : str
             Defines which kind of function to use:
                 :f1: :math:`a + b * x^c`
                 :f2: :math:`a + b * e^{x * c}`
-        wrapper : function or Wrapper,
+        wrapper : function or Wrapper
             A function or a Wrapper object to wrap around the function.
             The function has to be pickleable. (i.e. lambdas, clojures, etc. are not supported.)
             Using this wrapper, one can e.g. create :math:`exp(a + b * x^c)`

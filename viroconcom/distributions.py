@@ -39,17 +39,17 @@ class ParametricDistribution(Distribution, ABC):
 
     Attributes
     ----------
-    shape : Param,
+    shape : Param
         The shape parameter.
-    loc : Param,
+    loc : Param
         The location parameter.
-    scale : Param,
+    scale : Param
         The scale parameter.
-    name : str,
+    name : str
         The name of the distribution. ("Weibull", "LogNormal", "Normal")
-    _scipy_cdf : function,
+    _scipy_cdf : function
         The cumulative distribution function from scipy. (sts.weibull_min.cdf, ...)
-    _scipy_i_cdf : function,
+    _scipy_i_cdf : function
         The inverse cumulative distribution (or percent-point) function.(sts.weibull_min.ppf, ...)
     _default_shape : float
         The default shape parameter.
@@ -133,14 +133,14 @@ class ParametricDistribution(Distribution, ABC):
 
         Parameters
         ----------
-        x : array_like,
+        x : array_like
             Points at which to calculate the cdf.
-        rv_values : array_like,
+        rv_values : array_like
             Values of all random variables in variable space in correct order.
             This can be a 1-dimensional array with length equal to the number of
             random variables N or a 2-dimensional array with shape (N, M).
             If x is an array, M must be len(x).
-        dependencies : tuple,
+        dependencies : tuple
             A 3-element tuple with one entry each for the shape, loc and scale parameters.
             The entry is the index of the random variable the parameter depends on.
             The index order has to be the same as in rv_values.
@@ -162,14 +162,14 @@ class ParametricDistribution(Distribution, ABC):
 
         Parameters
         ----------
-        probabilities : array_like,
+        probabilities : array_like
             Probabilities for which to calculate the i_cdf.
-        rv_values : array_like,
+        rv_values : array_like
             Values of all random variables in variable space in correct order.
             This can be a 1-dimensional array with length equal to the number of
             random variables N or a 2-dimensional array with shape (N, M).
             If probabilities is an array, M must be len(probabilities).
-        dependencies : tuple,
+        dependencies : tuple
             A 3-element tuple with one entry each for the shape, loc and scale parameters.
             The entry is the index of the random variable the parameter depends on.
             The index order has to be the same as in rv_values.
@@ -191,16 +191,16 @@ class ParametricDistribution(Distribution, ABC):
 
         Parameters
         ----------
-        rv_values : array_like,
+        rv_values : array_like
             Values of all random variables in variable space in correct order.
-        dependencies : tuple,
+        dependencies : tuple
             A 3-element tuple with one entry each for the shape, loc and scale parameters.
             The entry is the index of the random variable the parameter depends on.
             The index order has to be the same as in rv_values.
 
         Returns
         -------
-        parameter_vals : tuple,
+        parameter_vals : tuple
             A 3-element tuple with one entry each for the shape, loc and scale parameters.
             The tuple contains the values of the parameters evaluated under the conditions
             of dependencies.
@@ -232,10 +232,10 @@ class ParametricDistribution(Distribution, ABC):
 
         Parameters
         ----------
-        param_index : int,
+        param_index : int
             Index of parameter.
             (0 = 'shape', 1 = 'loc', 2 = 'scale')
-        param_value : float,
+        param_value : float
             Value of parameter.
 
         Raises
@@ -288,12 +288,12 @@ class ParametricDistribution(Distribution, ABC):
 
         Parameters
         ----------
-        param_name : str,
+        param_name : str
             The name of the parameter, must be 'shape', 'loc', or 'scale'.
 
         Returns
         -------
-        param_index : int,
+        param_index : int
             The index corresponding to the name of the parameter as it is
             internally defined in viroconcom.
         """
@@ -471,11 +471,11 @@ class MultivariateDistribution():
 
     Attributes
     ----------
-    distributions : list of Distribution,
+    distributions : list of Distribution
         A list containing the distributions.
-    dependencies : list of tuples,
+    dependencies : list of tuples
         A list containing a dependency tuple for each distribution.
-    n_dim : int,
+    n_dim : int
         The number of distributions. Equal to len(distributions).
     """
 
@@ -483,9 +483,9 @@ class MultivariateDistribution():
         """
         Parameters
         ----------
-        distributions : list of Distribution,
+        distributions : list of Distribution
             A list containing distributions.
-        dependencies : list of tuples,
+        dependencies : list of tuples
             A list with one dependency tuple for each distribution.
         """
         self.distributions = []
@@ -502,9 +502,9 @@ class MultivariateDistribution():
 
         Parameters
         ----------
-        distributions : ``Distribution`` or list of ``Distribution``,
+        distributions : ``Distribution`` or list of ``Distribution``
             A distribution or list containing distributions.
-        dependencies : tuple or list of tuples,
+        dependencies : tuple or list of tuples
             A dependency tuple or list with one dependency tuple for each distribution.
 
         """
@@ -573,13 +573,13 @@ class MultivariateDistribution():
 
         Parameters
         ----------
-        coords : array_like,
+        coords : array_like
             List of the sampling points of the random variables.
             The length of coords has to equal self.n_dim.
 
         Returns
         -------
-        fbar : ndarray,
+        fbar : ndarray
             Cell averaged joint probabilty density function evaluated at coords.
             It is a self.n_dim dimensional array,
             with shape (len(coords[0]), len(coords[1]), ...)
@@ -601,17 +601,17 @@ class MultivariateDistribution():
 
         Parameters
         ----------
-        dist_index : int,
+        dist_index : int
             The index of the distribution to calculate the pdf of,
             according to order of self.distributions.
-        coords : array_like,
+        coords : array_like
             List of the sampling points of the random variables.
             The pdf is calculated at coords[dist_index].
             The length of coords has to equal self.n_dim.
 
         Returns
         -------
-        fbar : ndarray,
+        fbar : ndarray
             Cell averaged probabilty density function evaluated at coords[dist_index].
             It is a self.n_dim dimensional array.
         """
@@ -656,14 +656,14 @@ class MultivariateDistribution():
 
         Parameters
         ----------
-        var_symbols : list,
+        var_symbols : list
             List of the random variable symbols, the first letter should be
              capitalized and further characters will be converged to subscripts,
              an example would be  ['Hs', 'Tp', 'V']
 
         Returns
         -------
-        latex_string : String,
+        latex_string : str
             The joint pdf in latex format (without $)
             E.g. f(h_s,t_p)=f_{H_s}(h_s)=
         """
@@ -879,15 +879,15 @@ class KernelDensityDistribution(Distribution):
 
         Parameters
         ----------
-        x : array_like,
+        x : array_like
             Points at which to calculate the cdf.
-        rv_values : array_like,
+        rv_values : array_like
             Values of all random variables in variable space in correct order.
             This can be a 1-dimensional array with length equal to the number of
             random variables N or a 2-dimensional array with shape (N, M).
             If x is an array, M must be len(x).
             --Not used for Kernel Density--
-        dependencies : tuple,
+        dependencies : tuple
             A 3-element tuple with one entry each for the shape, loc and scale parameters.
             The entry is the index of the random variable the parameter depends on.
             The index order has to be the same as in rv_values.
@@ -895,7 +895,7 @@ class KernelDensityDistribution(Distribution):
 
         Returns
         -------
-        cdf : ndarray,
+        cdf : ndarray
             Cumulative distribution function evaluated at x.
         """
         result = []
@@ -915,15 +915,15 @@ class KernelDensityDistribution(Distribution):
 
         Parameters
         ----------
-        probabilities : array_like,
+        probabilities : array_like
             Probabilities for which to calculate the i_cdf.
-        rv_values : array_like,
+        rv_values : array_like
             Values of all random variables in variable space in correct order.
             This can be a 1-dimensional array with length equal to the number of
             random variables N or a 2-dimensional array with shape (N, M).
             If probabilities is an array, M must be len(probabilities).
             --Not used for Kernel Density--
-        dependencies : tuple,
+        dependencies : tuple
             A 3-element tuple with one entry each for the shape, loc and scale parameters.
             The entry is the index of the random variable the parameter depends on.
             The index order has to be the same as in rv_values.
