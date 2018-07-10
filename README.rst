@@ -53,6 +53,17 @@ with
 
    pip install https://github.com/ahaselsteiner/viroconcom/archive/master.zip
 
+Import and use the package
+--------------------------
+
+viroconcom is designed as an importable package.
+
+The documentation gives examples how to `fit a distribution`_ to measurement data
+and how to `compute environmental contours`_.
+
+Additionally, the folder `examples`_ contains python files that show how one can
+import and use viroconcom.
+
 Documentation
 -------------
 
@@ -90,6 +101,9 @@ This software is licensed under the MIT license. For more information,
 read the file `LICENSE`_.
 
 .. _repository: https://github.com/ahaselsteiner/viroconweb
+.. _fit a distribution: https://ahaselsteiner.github.io/viroconcom/fitting.html
+.. _compute environmental contours: https://ahaselsteiner.github.io/viroconcom/contours.html
+.. _examples: https://github.com/ahaselsteiner/viroconcom/tree/master/examples
 .. _here: https://ahaselsteiner.github.io/viroconcom/
 .. _Contribution Guide: https://ahaselsteiner.github.io/viroconcom/styleguide.html
 .. _LICENSE: https://github.com/ahaselsteiner/viroconcom/blob/master/LICENSE
