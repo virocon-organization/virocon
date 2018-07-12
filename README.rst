@@ -75,6 +75,25 @@ and how to `compute environmental contours`_.
 Additionally, the folder `examples`_ contains python files that show how one can
 import and use viroconcom.
 
+As an example, to run the file 'calculate_contours_similar_to_docs.py', which
+is located in the examples folder, use your shell to navigate to the folder
+that contains the file. Then make sure that you have installed the python
+package matplotlib or install it by typing
+
+.. code:: console
+
+   pip install matplotlib
+
+in your shell.
+
+Now run the Python file by typing
+
+.. code:: console
+
+   python calculate_contours_similar_to_docs.py
+
+in your shell.
+
 Documentation
 -------------
 
