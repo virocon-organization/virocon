@@ -28,11 +28,11 @@ setup(
 
     long_description=long_description,
 
-    url='https://github.com/ahaselsteiner/viroconcom',
+    url='https://github.com/virocon-organization/viroconcom',
 
     # We use git tags for this download_url. This approach is based on:
     # https://peterdowns.com/posts/first-time-with-pypi.html
-    download_url = 'https://github.com/ahaselsteiner/viroconcom/archive/' + version['__version__'] + '.tar.gz',
+    download_url = 'https://github.com/virocon-organization/viroconcom/archive/' + version['__version__'] + '.tar.gz',
 
     author='ViroCon Team',
 
@@ -76,7 +76,7 @@ setup(
     # This field corresponds to the "Project-URL" metadata fields:
     # https://packaging.python.org/specifications/core-metadata/#project-url-multiple-use
     project_urls={  # Optional
-        'Documentation': 'https://ahaselsteiner.github.io/viroconcom/',
-        'Source Code': 'https://github.com/ahaselsteiner/viroconcom',
+        'Documentation': 'https://virocon-organization.github.io/viroconcom/',
+        'Source Code': 'https://github.com/virocon-organization/viroconcom',
     },
 )

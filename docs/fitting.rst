@@ -39,7 +39,7 @@ Comprehensive example
 
 The following example can is based on the file fit_distribution_similar_to_docs_ .
 
-.. _fit_distribution_similar_to_docs: https://github.com/ahaselsteiner/viroconcom/blob/master/examples/fit_distribution_similar_to_docs.py
+.. _fit_distribution_similar_to_docs: https://github.com/virocon-organization/viroconcom/blob/master/examples/fit_distribution_similar_to_docs.py
 
 First, let us create a data set, which represents sea states. The first variable
 is significant wave height, Hs, and the second variable spectral peak period,

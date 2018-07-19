@@ -26,7 +26,7 @@ These steps are explained in more detail in the following.
 The file calculate_contours_similar_to_docs_ contains all the code that we will
 show on this page.
 
-.. _calculate_contours_similar_to_docs: https://github.com/ahaselsteiner/viroconcom/blob/master/examples/calculate_contours_similar_to_docs.py
+.. _calculate_contours_similar_to_docs: https://github.com/virocon-organization/viroconcom/blob/master/examples/calculate_contours_similar_to_docs.py
 
 .. _create-independent-dist:
 

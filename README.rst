@@ -1,12 +1,12 @@
 ViroCon: viroconcom
 ===================
 
-.. image:: https://travis-ci.org/ahaselsteiner/viroconcom.svg?branch=master
-    :target: https://travis-ci.org/ahaselsteiner/viroconcom
+.. image:: https://travis-ci.org/virocon-organization/viroconcom.svg?branch=master
+    :target: https://travis-ci.org/virocon-organization/viroconcom
     :alt: Build status
 
-.. image:: https://coveralls.io/repos/github/ahaselsteiner/viroconcom/badge.svg?branch=master
-    :target: https://coveralls.io/github/ahaselsteiner/viroconcom?branch=master
+.. image:: https://coveralls.io/repos/github/virocon-organization/viroconcom/badge.svg?branch=master
+    :target: https://coveralls.io/github/virocon-organization/viroconcom?branch=master
 
 ViroCon is a software to compute environmental contours.
 
@@ -39,33 +39,42 @@ computations. viroconweb builds on viroconcom and is a web-based
 application with a graphical user interface. It has its own
 `repository`_.
 
-Install
--------
-Make sure you have installed Python 3
-(`www.python.org`_)
-and git (`git-scm.com`_).
+How to use viroconcom
+---------------------
+Requirements
+~~~~~~~~~~~~
+Make sure you have installed Python `3.6.4`_ by typing
 
-Then install the latest version of viroconcom from PyPI by typing
+.. code:: console
+
+   python --version
+
+in your `shell`_.
+
+Consider using the python version management `pyenv`_.
+
+
+Install
+~~~~~~~
+Install the latest version of viroconcom from PyPI by typing
 
 .. code:: console
 
    pip install viroconcom
 
-in your shell (your shell could be Bash if you are using a Mac or cmd.exe if you
-are using Windows;
-`wikipedia entry for shell`_).
+in your shell.
 
 Alternatively, you can install from viroconcom repository’s Master branch
 by typing
 
 .. code:: console
 
-   pip install https://github.com/ahaselsteiner/viroconcom/archive/master.zip
+   pip install https://github.com/virocon-organization/viroconcom/archive/master.zip
 
 in your shell.
 
-Import and use the package
---------------------------
+Usage
+~~~~~
 
 viroconcom is designed as an importable package.
 
@@ -75,10 +84,9 @@ and how to `compute environmental contours`_.
 Additionally, the folder `examples`_ contains python files that show how one can
 import and use viroconcom.
 
-As an example, to run the file 'calculate_contours_similar_to_docs.py', which
-is located in the examples folder, use your shell to navigate to the folder
-that contains the file. Then make sure that you have installed the python
-package matplotlib or install it by typing
+As an example, to run the file `calculate_contours_similar_to_docs.py`_, use
+your shell to navigate to the folder that contains the file. Then make sure
+that you have installed the python package matplotlib or install it by typing
 
 .. code:: console
 
@@ -130,13 +138,15 @@ License
 This software is licensed under the MIT license. For more information,
 read the file `LICENSE`_.
 
-.. _repository: https://github.com/ahaselsteiner/viroconweb
+.. _repository: https://github.com/virocon-organization/viroconweb
+.. _3.6.4: https://www.python.org/downloads/release/python-364
+.. _shell: https://en.wikipedia.org/wiki/Command-line_interface#Modern_usage_as_an_operating_system_shell
+.. _pyenv: https://github.com/pyenv/pyenv
 .. _www.python.org: https://www.python.org
-.. _git-scm.com: https://git-scm.com
-.. _wikipedia entry for shell: https://en.wikipedia.org/wiki/Command-line_interface#Modern_usage_as_an_operating_system_shell
-.. _fit a distribution: https://ahaselsteiner.github.io/viroconcom/fitting.html
-.. _compute environmental contours: https://ahaselsteiner.github.io/viroconcom/contours.html
-.. _examples: https://github.com/ahaselsteiner/viroconcom/tree/master/examples
-.. _here: https://ahaselsteiner.github.io/viroconcom/
-.. _Contribution Guide: https://ahaselsteiner.github.io/viroconcom/contributionguide.html
-.. _LICENSE: https://github.com/ahaselsteiner/viroconcom/blob/master/LICENSE
+.. _fit a distribution: https://virocon-organization.github.io/viroconcom/fitting.html
+.. _compute environmental contours: https://virocon-organization.github.io/viroconcom/contours.html
+.. _examples: https://github.com/virocon-organization/viroconcom/tree/master/examples
+.. _calculate_contours_similar_to_docs.py:
+.. _here: https://virocon-organization.github.io/viroconcom/
+.. _Contribution Guide: https://virocon-organization.github.io/viroconcom/contributionguide.html
+.. _LICENSE: https://github.com/virocon-organization/viroconcom/blob/master/LICENSE

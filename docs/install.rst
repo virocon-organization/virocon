@@ -1,30 +1,38 @@
 ************
 Installation
 ************
+Requirements
+~~~~~~~~~~~~
+Make sure you have installed Python `3.6.4`_ by typing
 
-Make sure you have installed Python 3
-(`www.python.org`_)
-and git (`git-scm.com`_).
+.. code:: console
 
-Then install the latest version of viroconcom from PyPI by typing
+   python --version
+
+in your `shell`_.
+
+Consider using the python version management `pyenv`_.
+
+
+Install
+~~~~~~~
+Install the latest version of viroconcom from PyPI by typing
 
 .. code:: console
 
    pip install viroconcom
 
-in your shell (your shell could be Bash if you are using a Mac or cmd.exe if you
-are using Windows;
-`wikipedia entry for shell`_).
+in your shell.
 
 Alternatively, you can install from viroconcom repository’s Master branch
 by typing
 
 .. code:: console
 
-   pip install https://github.com/ahaselsteiner/viroconcom/archive/master.zip
+   pip install https://github.com/virocon-organization/viroconcom/archive/master.zip
 
 in your shell.
 
-.. _www.python.org: https://www.python.org
-.. _git-scm.com: https://git-scm.com
-.. _wikipedia entry for shell: https://en.wikipedia.org/wiki/Command-line_interface#Modern_usage_as_an_operating_system_shell
+.. _3.6.4: https://www.python.org/downloads/release/python-364
+.. _shell: https://en.wikipedia.org/wiki/Command-line_interface#Modern_usage_as_an_operating_system_shell
+.. _pyenv: https://github.com/pyenv/pyenv
