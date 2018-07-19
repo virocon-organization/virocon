@@ -146,7 +146,7 @@ read the file `LICENSE`_.
 .. _fit a distribution: https://virocon-organization.github.io/viroconcom/fitting.html
 .. _compute environmental contours: https://virocon-organization.github.io/viroconcom/contours.html
 .. _examples: https://github.com/virocon-organization/viroconcom/tree/master/examples
-.. _calculate_contours_similar_to_docs.py:
+.. _calculate_contours_similar_to_docs.py: https://github.com/virocon-organization/viroconcom/blob/master/examples/calculate_contours_similar_to_docs.py
 .. _here: https://virocon-organization.github.io/viroconcom/
 .. _Contribution Guide: https://virocon-organization.github.io/viroconcom/contributionguide.html
 .. _LICENSE: https://github.com/virocon-organization/viroconcom/blob/master/LICENSE
