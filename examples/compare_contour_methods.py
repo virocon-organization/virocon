@@ -3,10 +3,9 @@ from viroconcom.distributions import WeibullDistribution, LognormalDistribution,
     MultivariateDistribution
 from viroconcom.contours import IFormContour, ISormContour, HighestDensityContour
 import matplotlib.pyplot as plt
-import scipy.stats as sts
-import math
 
-# Define the multivariate distribution given in the paper by Vanem (2012)
+# Define the multivariate distribution given in the paper by Vanem and
+# Bitner-Gregersen (2012; doi: 10.1016/j.apor.2012.05.006)
 shape = ConstantParam(1.471)
 loc = ConstantParam(0.889)
 scale = ConstantParam(2.776)
@@ -21,11 +20,14 @@ dependencies = [dep0, dep1]
 mul_dist = MultivariateDistribution(distributions, dependencies)
 
 # Compute an IFORM, an ISORM and a highest density contour.
-iform_contour = IFormContour(mul_dist, 25, 3, 100)
-isorm_contour = ISormContour(mul_dist, 25, 3, 100)
-limits = [(0, 20), (0, 20)] # The limits of the computational domain.
-deltas = [0.05, 0.05] # The dimensions of the grid cells.
-hdens_contour = HighestDensityContour(mul_dist, 25, 3, limits, deltas)
+return_period = 25 # In years
+sea_state_duration = 3 # In hours
+iform_contour = IFormContour(mul_dist, return_period, sea_state_duration, 100)
+isorm_contour = ISormContour(mul_dist, return_period, sea_state_duration, 100)
+limits = [(0, 20), (0, 20)] # Limits of the computational domain
+deltas = [0.005, 0.005] # Dimensions of the grid cells
+hdens_contour = HighestDensityContour(
+    mul_dist, return_period, sea_state_duration, limits, deltas)
 
 # Plot the three contours.
 plt.scatter(hdens_contour.coordinates[0][0], hdens_contour.coordinates[0][1],
@@ -35,6 +37,25 @@ plt.scatter(iform_contour.coordinates[0][0], iform_contour.coordinates[0][1],
 plt.scatter(isorm_contour.coordinates[0][0], isorm_contour.coordinates[0][1],
             label="ISORM contour")
 plt.xlabel('significant wave height [m]')
-plt.ylabel('spectral peak period [s]')
+plt.ylabel('zero-upcrossing period [s]')
 plt.legend()
 plt.show()
+
+
+# To evalute viroconcom, we compare the maximum values of the contour with the
+# results from Haselsteiner et al. (2017; doi: 10.1016/j.coastaleng.2017.03.002).
+#
+# Results in Haselsteiner et al. (2017) are:
+# Method           maximum Hs (m)     maximum Tz (s)
+# IFORM contour    15.23              13.96
+# ISORM contour    ca. 17.4           ca. 14.9
+# HDC              16.79              14.64
+print('Maximum values for the IFORM contour: ' +
+      '{:.2f}'.format(max(iform_contour.coordinates[0][0])) + ' m, '
+      + '{:.2f}'.format(max(iform_contour.coordinates[0][1])) + ' s')
+print('Maximum values for the ISORM contour: ' +
+      '{:.2f}'.format(max(isorm_contour.coordinates[0][0])) + ' m, '
+      + '{:.2f}'.format(max(isorm_contour.coordinates[0][1])) + ' s')
+print('Maximum values for the HDC: ' +
+      '{:.2f}'.format(max(hdens_contour.coordinates[0][0])) + ' m, '
+      + '{:.2f}'.format(max(hdens_contour.coordinates[0][1])) + ' s')
