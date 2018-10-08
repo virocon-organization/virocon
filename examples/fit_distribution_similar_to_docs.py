@@ -36,17 +36,31 @@ my_fit = Fit((sample_1, sample_2),
              (dist_description_0, dist_description_1))
 
 # Plot the fit for the significant wave height, Hs.
-fig = plt.figure()
+# For panel A: use a histogram.
+fig = plt.figure(figsize=(9, 4.5))
+ax_1 = fig.add_subplot(121)
 param_grid = my_fit.multiple_fit_inspection_data[0].scale_at
-plt.hist(my_fit.multiple_fit_inspection_data[0].scale_samples[0], density=1, label='sample')
+plt.hist(my_fit.multiple_fit_inspection_data[0].scale_samples[0], density=1,
+         label='sample')
 shape = my_fit.mul_var_dist.distributions[0].shape(0)
 scale = my_fit.mul_var_dist.distributions[0].scale(0)
 plt.plot(np.linspace(0, 20, 100),
-         sts.weibull_min.pdf(np.linspace(0, 20, 100), c=shape, loc=0, scale=scale),
-         label='fit')
+         sts.weibull_min.pdf(np.linspace(0, 20, 100), c=shape, loc=0,
+                             scale=scale),
+         label='fitted Weibull distribution')
 plt.xlabel('significant wave height [m]')
 plt.ylabel('probability density [-]')
 plt.legend()
+# For panel B: use a Q-Q plot.
+ax_2 = fig.add_subplot(122)
+sts.probplot(my_fit.multiple_fit_inspection_data[0].scale_samples[0],
+             sparams=(shape, 0, scale), dist=sts.weibull_min, plot=plt)
+ax_2.get_lines()[0].set_markerfacecolor('#1f77ba') # Adapt to v2.0 colors
+ax_2.get_lines()[0].set_markeredgecolor('#1f77ba') # Adapt to v2.0 colors
+ax_2.get_lines()[1].set_color('#ff7f02') # Adapt to v2.0 colors
+plt.title("")
+plt.xlabel('theoretical quantiles [m]')
+plt.ylabel('data quantiles [m]')
 plt.show()
 
 # Plot the fits for the spectreal peak period, Tp.
