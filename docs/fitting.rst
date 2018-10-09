@@ -27,7 +27,7 @@ and contains information about the used functions for fitting. Actually you can 
 
 Example for ``dist_description``::
 
-	example_dist_description = {'name': 'Lognormal_1', 'dependency': (0, None, 1),
+	example_dist_description = {'name': 'Lognormal_ShapeNoneScale', 'dependency': (0, None, 1),
 				                'functions': ('power3', None, 'exp3')}
 
 If the fit is finished it has the attribute ``mul_var_dist`` that is an object of ``MultivariateDistribution`` that contains all distributions you
@@ -81,7 +81,7 @@ The code snipped will create this plot:
 Now we describe the type of multivariate distribution that we want to fit to this data ::
 
     dist_description_0 = {'name': 'Weibull', 'dependency': (None, None, None), 'width_of_intervals': 2}
-    dist_description_1 = {'name': 'Lognormal_1', 'dependency': (None, None, 0), 'functions': (None, None, 'exp3')}
+    dist_description_1 = {'name': 'Lognormal_ShapeNoneScale', 'dependency': (None, None, 0), 'functions': (None, None, 'exp3')}
 
 Based on this description, we can compute the fit ::
 
