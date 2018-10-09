@@ -399,7 +399,7 @@ class LognormalDistribution(ParametricDistribution):
                 # Keep possibly already existing wrapper
                 scale_wrapper = Wrapper(np.exp, self.mu._wrapper)
                 # Create new FunctionParam so the passed one does not get altered
-                scale = FunctionParam(_a, _b, _c, "f1", wrapper=scale_wrapper)
+                scale = FunctionParam(_a, _b, _c, "power3", wrapper=scale_wrapper)
                 scale._func = _func
             else:
                 scale = ConstantParam(np.exp(self.mu(None)))

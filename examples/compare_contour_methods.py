@@ -11,8 +11,8 @@ loc = ConstantParam(0.889)
 scale = ConstantParam(2.776)
 dist0 = WeibullDistribution(shape, loc, scale)
 dep0 = (None, None, None) # All three parameters are independent.
-my_sigma = FunctionParam(0.040, 0.175, -0.224, "f2")
-my_mu = FunctionParam(0.100, 1.489, 0.190, "f1")
+my_sigma = FunctionParam(0.040, 0.175, -0.224, "exp3")
+my_mu = FunctionParam(0.100, 1.489, 0.190, "power3")
 dist1 = LognormalDistribution(sigma=my_sigma, mu=my_mu)
 dep1 = (0, None, 0) # Parameter one and three depend on dist0.
 distributions = [dist0, dist1]
@@ -20,8 +20,8 @@ dependencies = [dep0, dep1]
 mul_dist = MultivariateDistribution(distributions, dependencies)
 
 # Compute an IFORM, an ISORM and a highest density contour.
-return_period = 25 # In years
-sea_state_duration = 3 # In hours
+return_period = 50 # In years
+sea_state_duration = 6 # In hours
 iform_contour = IFormContour(mul_dist, return_period, sea_state_duration, 100)
 isorm_contour = ISormContour(mul_dist, return_period, sea_state_duration, 100)
 limits = [(0, 20), (0, 20)] # Limits of the computational domain
@@ -45,7 +45,7 @@ plt.show()
 # To evalute viroconcom, we compare the maximum values of the contour with the
 # results from Haselsteiner et al. (2017; doi: 10.1016/j.coastaleng.2017.03.002).
 #
-# Results in Haselsteiner et al. (2017) are:
+# Results in Haselsteiner et al. (2017) with alpha = 1.37 * 10^-5 are:
 # Method           maximum Hs (m)     maximum Tz (s)
 # IFORM contour    15.23              13.96
 # ISORM contour    ca. 17.4           ca. 14.9

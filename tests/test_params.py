@@ -27,21 +27,21 @@ class ParamsTest(unittest.TestCase):
         self.assertEqual(test._value(test), 1.471)
 
 
-    def test_FunctionParam_f1(self):
+    def test_FunctionParam_power3(self):
         """
-        tests if function f1 calculates the correct value
+        tests if function power3 calculates the correct value
         """
 
-        test_func = FunctionParam(0, 1, 0, 'f1')
+        test_func = FunctionParam(0, 1, 0, 'power3')
         self.assertEqual(test_func._value(0), 1)
 
 
-    def test_FunctionParam_f2(self):
+    def test_FunctionParam_exp3(self):
         """
-        tests if function f1 calculates the correct value
+        tests if function exp3 calculates the correct value
         """
 
-        test_func = FunctionParam(1, 1, 0, 'f2')
+        test_func = FunctionParam(1, 1, 0, 'exp3')
         self.assertEqual(test_func._value(0), 2)
 
 
@@ -61,8 +61,8 @@ class ParamsTest(unittest.TestCase):
         calculates
         """
 
-        test_func = FunctionParam(0.5, 1.0, 0.0, 'f1', wrapper=np.exp)
-        test_func2 = FunctionParam(0.5, 1.0, 0.0, 'f1', wrapper=Wrapper(np.exp))
+        test_func = FunctionParam(0.5, 1.0, 0.0, 'power3', wrapper=np.exp)
+        test_func2 = FunctionParam(0.5, 1.0, 0.0, 'power3', wrapper=Wrapper(np.exp))
 
         self.assertEqual(test_func._value(9), test_func2._value(9))
 

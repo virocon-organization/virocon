@@ -28,9 +28,9 @@ class FittingTest(unittest.TestCase):
         dist_description_0 = {'name': 'Weibull',
                               'dependency': (None, None, None),
                               'width_of_intervals': 2}
-        dist_description_1 = {'name': 'Lognormal_1',
+        dist_description_1 = {'name': 'Lognormal_ShapeNoneScale',
                               'dependency': (None, None, 0),
-                              'functions': (None, None, 'f2')}
+                              'functions': (None, None, 'exp3')}
 
         # Compute the fit.
         my_fit = Fit((sample_1, sample_2),
@@ -57,9 +57,9 @@ class FittingTest(unittest.TestCase):
         dist_description_0 = {'name': 'Weibull',
                               'dependency': (None, None, None),
                               'width_of_intervals': 2}
-        dist_description_1 = {'name': 'Lognormal_1',
+        dist_description_1 = {'name': 'Lognormal_ShapeNoneScale',
                               'dependency': (None, None, 0),
-                              'functions': (None, None, 'f2')}
+                              'functions': (None, None, 'exp3')}
 
         # Compute the fit.
         my_fit = Fit((sample_1, sample_2),
