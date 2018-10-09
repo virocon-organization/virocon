@@ -21,14 +21,14 @@ from type *list*. In the sequence of ``shape, loc, scale`` it contains integers 
 dependency. It is important that the dependency is less than the index of the current dimension. The list for the parameter ``functions`` also has length of three
 and contains information about the used functions for fitting. Actually you can switch between the functions:
 
-- **f1** :  :math:`a + b * x^c`
-- **f2** : :math:`a + b * e^{x * c}`
+- **power3** :  :math:`a + b * x^c`
+- **exp3** : :math:`a + b * e^{x * c}`
 - **None** : no dependency
 
 Example for ``dist_description``::
 
 	example_dist_description = {'name': 'Lognormal_1', 'dependency': (0, None, 1),
-				                'functions': ('f1', None, 'f2')}
+				                'functions': ('power3', None, 'exp3')}
 
 If the fit is finished it has the attribute ``mul_var_dist`` that is an object of ``MultivariateDistribution`` that contains all distributions you
 can use to build a contour for your data. Also it has the attribute ``multiple_fit_inspection_data``, which can be used to visualize
@@ -81,7 +81,7 @@ The code snipped will create this plot:
 Now we describe the type of multivariate distribution that we want to fit to this data ::
 
     dist_description_0 = {'name': 'Weibull', 'dependency': (None, None, None), 'width_of_intervals': 2}
-    dist_description_1 = {'name': 'Lognormal_1', 'dependency': (None, None, 0), 'functions': (None, None, 'f2')}
+    dist_description_1 = {'name': 'Lognormal_1', 'dependency': (None, None, 0), 'functions': (None, None, 'exp3')}
 
 Based on this description, we can compute the fit ::
 

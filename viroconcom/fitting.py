@@ -25,12 +25,12 @@ __all__ = ["Fit"]
 
 # Functions for fitting
 # Power function
-def _f1(x, a, b, c):
+def _power3(x, a, b, c):
     return a + b * x ** c
 
 
 # Exponential function
-def _f2(x, a, b, c):
+def _exp3(x, a, b, c):
     return a + b * np.exp(c * x)
 
 
@@ -347,7 +347,7 @@ class Fit():
     >>> sample_1 = prng.normal(10, 1, 500)
     >>> sample_2 = [point + prng.uniform(-5, 5) for point in sample_1]
     >>> dist_description_1 = {'name': 'KernelDensity', 'dependency': (None, None, None), 'number_of_intervals': 5}
-    >>> dist_description_2 = {'name': 'Normal', 'dependency': (None, 0, None), 'functions':(None, 'f1', None)}
+    >>> dist_description_2 = {'name': 'Normal', 'dependency': (None, 0, None), 'functions':(None, 'power3', None)}
     >>> my_fit = Fit((sample_1, sample_2), (dist_description_1, dist_description_2))
     >>> my_contour = IFormContour(my_fit.mul_var_dist)
     >>> #example_plot = plt.scatter(my_contour.coordinates[0][0], my_contour.coordinates[0][1], label="IForm")
@@ -372,7 +372,7 @@ class Fit():
     An Example how to visualize how good your fit is:
 
     >>> dist_description_0 = {'name': 'Weibull', 'dependency': (None, None, None), 'number_of_intervals': 3}
-    >>> dist_description_1 = {'name': 'Lognormal_1', 'dependency': (None, None, 0), 'functions': (None, None, 'f2')}
+    >>> dist_description_1 = {'name': 'Lognormal_1', 'dependency': (None, None, 0), 'functions': (None, None, 'exp3')}
     >>> my_fit = Fit((sample_1, sample_2), (dist_description_0, dist_description_1))
     >>>
     >>> #fig = plt.figure(figsize=(10, 8))
@@ -454,8 +454,8 @@ class Fit():
         functions : list of str
             Length of 3 in the order : (shape, loc, scale), usable options:
 
-            - :f1: :math:`a + b * x^c`
-            - :f2: :math:`a + b * e^{x * c}`
+            - :power3: :math:`a + b * x^c`
+            - :exp3: :math:`a + b * e^{x * c}`
             - remark : in case of Lognormal_2 it is (sigma, loc=0, mu)
 
         and either number_of_intervals or width_of_intervals:
@@ -606,7 +606,7 @@ class Fit():
         Parameters
         ----------
         function_name : str
-            Options are 'f1', 'f2'.
+            Options are 'power3', 'exp3'.
 
         Returns
         -------
@@ -619,10 +619,10 @@ class Fit():
             If the function is unknown.
         """
 
-        if function_name == 'f1':
-            return _f1
-        elif function_name == 'f2':
-            return _f2
+        if function_name == 'power3':
+            return _power3
+        elif function_name == 'exp3':
+            return _exp3
         elif function_name is None:
             return None
         else:

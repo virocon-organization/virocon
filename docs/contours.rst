@@ -113,8 +113,8 @@ The dependency can be described as follows, where :math:`x` is a realization of 
 
 First we create the parameters as :class:`~viroconcom.params.FunctionParam`::
 
-    my_sigma = FunctionParam(0.05, 0.2, -0.2, "f2")
-    my_mu = FunctionParam(0.1, 1.5, 0.2, "f1")
+    my_sigma = FunctionParam(0.05, 0.2, -0.2, "exp3")
+    my_mu = FunctionParam(0.1, 1.5, 0.2, "power3")
 
 Then we create the :class:`~viroconcom.distribution.LognormalDistribution` using the alternative constructor::
 
@@ -126,8 +126,8 @@ And eventually define the dependency tuple::
 
 Alternativly we could have defined the distribution as follows, using the wrapper argument of the :class:`~viroconcom.params.FunctionParam`::
 
-    shape = FunctionParam(0.05, 0.2, -0.2, "f2")
-    scale = FunctionParam(0.1, 1.5, 0.2, "f1", wrapper=numpy.exp)
+    shape = FunctionParam(0.05, 0.2, -0.2, "exp3")
+    scale = FunctionParam(0.1, 1.5, 0.2, "power3", wrapper=numpy.exp)
     dist1 = LognormalDistribution(shape, None, scale)
     dep1 = (0, None, 0)
 

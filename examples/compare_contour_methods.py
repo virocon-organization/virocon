@@ -11,8 +11,8 @@ loc = ConstantParam(0.889)
 scale = ConstantParam(2.776)
 dist0 = WeibullDistribution(shape, loc, scale)
 dep0 = (None, None, None) # All three parameters are independent.
-my_sigma = FunctionParam(0.040, 0.175, -0.224, "f2")
-my_mu = FunctionParam(0.100, 1.489, 0.190, "f1")
+my_sigma = FunctionParam(0.040, 0.175, -0.224, "exp3")
+my_mu = FunctionParam(0.100, 1.489, 0.190, "power3")
 dist1 = LognormalDistribution(sigma=my_sigma, mu=my_mu)
 dep1 = (0, None, 0) # Parameter one and three depend on dist0.
 distributions = [dist0, dist1]
