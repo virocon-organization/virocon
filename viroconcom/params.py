@@ -77,7 +77,7 @@ class FunctionParam(Param):
         a,b,c : float
             The function parameters.
         func_type : str
-            Defines which kind of function to use:
+            Defines which kind of dependence function to use:
                 :power3: :math:`a + b * x^c`
                 :exp3: :math:`a + b * e^{x * c}`
         wrapper : function or Wrapper
@@ -113,11 +113,11 @@ class FunctionParam(Param):
     def _identity(self, x):
         return x
 
-    # The 3-parameter power function.
+    # The 3-parameter power function (a dependence function).
     def _power3(self, x):
         return self.a + self.b * x ** self.c
 
-    # The 3-parameter exponential function.
+    # The 3-parameter exponential function (a dependence function).
     def _exp3(self, x):
         return self.a + self.b * np.exp(self.c * x)
 
