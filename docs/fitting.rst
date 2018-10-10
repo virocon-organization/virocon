@@ -10,7 +10,7 @@ Exemplary call::
 
     example_fit = Fit((data_1, data_2), (dist_description_0, dist_description_1), timeout=None)
 
-It is important that the parameter ``samples`` is in the form (sample_1, sample_2, ...).
+It is important that the parameter ``samples`` is in the form (sample_0, sample_1, ...).
 Each sample is a collection of data from type *list* and also all samples have the same length. The parameter ``dist_descriptions``
 should be from type *list* and contains a dictionary for each dimension in the same sequence of the samples. It should accordingly have
 the same length as ``samples``. The last parameter ``n_steps`` indicates how many distributions should be fitted for a dependent parameter.
@@ -57,15 +57,15 @@ Tp ::
 
     # Draw 1000 samples from a Weibull distribution with shape=1.5 and scale=3,
     # which represents significant wave height.
-    sample_1 = prng.weibull(1.5, 1000)*3
+    sample_0 = prng.weibull(1.5, 1000)*3
 
     # Let the second sample, which represents spectral peak period increase
     # with significant wave height and follow a Lognormal distribution with
     # mean=2 and sigma=0.2
-    sample_2 = [0.1 + 1.5 * np.exp(0.2 * point) +
-                prng.lognormal(2, 0.2) for point in sample_1]
+    sample_1 = [0.1 + 1.5 * np.exp(0.2 * point) +
+                prng.lognormal(2, 0.2) for point in sample_0]
 
-    plt.scatter(sample_1, sample_2)
+    plt.scatter(sample_0, sample_1)
     plt.xlabel('significant wave height [m]')
     plt.ylabel('spectral peak period [s]')
     plt.show()
@@ -85,7 +85,7 @@ Now we describe the type of multivariate distribution that we want to fit to thi
 
 Based on this description, we can compute the fit ::
 
-    my_fit = Fit((sample_1, sample_2), (dist_description_0, dist_description_1))
+    my_fit = Fit((sample_0, sample_1), (dist_description_0, dist_description_1))
 
 Now, let us plot the fit for the first variable ::
 
@@ -121,7 +121,7 @@ Now, let us plot the fit for the first variable ::
     :scale: 100 %
     :alt: fit of first variable
 
-    Fit of the first variable.
+    Fit of the first variable, Hs.
 
 For our second variable, we need some more plots to inspect it properly.
 Let us start with the individual distributions, one for each Hs-interval ::
@@ -164,7 +164,7 @@ Let us start with the individual distributions, one for each Hs-interval ::
     plt.plot(param_grid, my_fit.multiple_fit_inspection_data[1].scale_value, 'x',
              label='discrete scale values')
     plt.plot(x_1, my_fit.mul_var_dist.distributions[1].scale(x_1),
-             label='fitted dependency function')
+             label='fitted dependence function')
     plt.xlabel('significant wave height [m]')
     plt.ylabel('scale parameter (Tp-distribution)')
     plt.legend()
@@ -177,7 +177,7 @@ Let us start with the individual distributions, one for each Hs-interval ::
 
     Individual fits of second variable, Tp.
 
-Let us now inspect how well our dependency function fits to these four scale
+Let us now inspect how well our dependence function fits to these four scale
 values, which we got from the individual distributions ::
 
     fig = plt.figure()
@@ -185,7 +185,7 @@ values, which we got from the individual distributions ::
     plt.plot(param_grid, my_fit.multiple_fit_inspection_data[1].scale_value, 'x',
              label='discrete scale values')
     plt.plot(x_1, my_fit.mul_var_dist.distributions[1].scale(x_1),
-             label='fitted dependency function')
+             label='fitted dependence function')
     plt.xlabel('significant wave height [m]')
     plt.ylabel('scale parameter (Tp-distribution) [-]')
     plt.legend()
@@ -194,15 +194,15 @@ values, which we got from the individual distributions ::
 
 .. figure:: fitting_fig4.png
     :scale: 100 %
-    :alt: fit of the dependency function
+    :alt: fit of the dependence function
 
-    Fit of the dependency function.
+    Fit of the dependence function.
 
 Finally, let us use the multivariate distribution we fitted to
 compute an environmental contour ::
 
     iform_contour = IFormContour(my_fit.mul_var_dist, 25, 3, 100)
-    plt.scatter(sample_1, sample_2, label='sample')
+    plt.scatter(sample_0, sample_1, label='sample')
     plt.plot(iform_contour.coordinates[0][0], iform_contour.coordinates[0][1],
                 '-k', label='IFORM contour')
     plt.xlabel('significant wave height [m]')
