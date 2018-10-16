@@ -27,7 +27,7 @@ plt.show()
 dist_description_0 = {'name': 'Weibull',
                       'dependency': (None, None, None),
                       'width_of_intervals': 2}
-dist_description_1 = {'name': 'Lognormal_ShapeNoneScale',
+dist_description_1 = {'name': 'Lognormal',
                       'dependency': (None, None, 0),
                       'functions': (None, None, 'exp3')}
 

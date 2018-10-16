@@ -372,7 +372,7 @@ class Fit():
     An Example how to visualize how good your fit is:
 
     >>> dist_description_0 = {'name': 'Weibull', 'dependency': (None, None, None), 'number_of_intervals': 3}
-    >>> dist_description_1 = {'name': 'Lognormal_ShapeNoneScale', 'dependency': (None, None, 0), 'functions': (None, None, 'exp3')}
+    >>> dist_description_1 = {'name': 'Lognormal', 'dependency': (None, None, 0), 'functions': (None, None, 'exp3')}
     >>> my_fit = Fit((sample_1, sample_2), (dist_description_0, dist_description_1))
     >>>
     >>> #fig = plt.figure(figsize=(10, 8))
@@ -440,8 +440,8 @@ class Fit():
             name of distribution:
 
             - Weibull,
-            - Lognormal_ShapeNoneScale (shape, scale),
-            - Lognormal_SigmaNoneMu (sigma, mu),
+            - Lognormal (shape, scale),
+            - Lognormal_SigmaMu (sigma, mu),
             - Normal,
             - KernelDensity (no dependency)
 
@@ -456,7 +456,7 @@ class Fit():
 
             - :power3: :math:`a + b * x^c`
             - :exp3: :math:`a + b * e^{x * c}`
-            - remark : in case of Lognormal_SigmaNoneMu it is (sigma, None, mu)
+            - remark : in case of Lognormal_SigmaMu it is (sigma, None, mu)
 
         and either number_of_intervals or width_of_intervals:
 
@@ -567,7 +567,8 @@ class Fit():
         sample : list of float
             Raw data the distribution is fitted on.
         name : str
-            Name of the distribution (Weibull, Lognormal_x, Normal, KernelDensity (no dependency)).
+            Name of the distribution ("Weibull", "Lognormal" or
+            "Lognormal_SigmaMu", "Normal", "KernelDensity").
         Returns
         -------
         tuple of ConstantParam
@@ -886,7 +887,7 @@ class Fit():
                             fit_inspection_data.append_basic_fit(SCALE_STRING,
                                                                  basic_fit)
 
-                        if i == 2 and name == 'Lognormal_SigmaNoneMu':
+                        if i == 2 and name == 'Lognormal_SigmaMu':
                             params[i] = ConstantParam(np.log(current_params[i](0)))
                         else:
                             params[i] = current_params[i]
@@ -934,7 +935,7 @@ class Fit():
                         # Add used number of intervals for current parameter
                         used_number_of_intervals[i] = len(interval_centers)
 
-                        if i == 2 and name == 'Lognormal_SigmaNoneMu':
+                        if i == 2 and name == 'Lognormal_SigmaMu':
                             fit_points = [np.log(p(None)) for p in param_values[i]]
                         else:
                             fit_points = [p(None) for p in param_values[i]]
@@ -945,9 +946,9 @@ class Fit():
                                 interval_centers, fit_points, bounds=_bounds)
                         except RuntimeError:
                             # Case that optimal parameters not found
-                            if i == 0 and name == 'Lognormal_SigmaNoneMu':
+                            if i == 0 and name == 'Lognormal_SigmaMu':
                                 param_name = "sigma"
-                            elif i == 2 and name == 'Lognormal_SigmaNoneMu':
+                            elif i == 2 and name == 'Lognormal_SigmaMu':
                                 param_name = "mu"
                             elif i == 0:
                                 param_name = SHAPE_STRING
@@ -978,9 +979,9 @@ class Fit():
         distribution = None
         if name == 'Weibull':
             distribution = WeibullDistribution(*params)
-        elif name == 'Lognormal_SigmaNoneMu':
+        elif name == 'Lognormal_SigmaMu':
             distribution = LognormalDistribution(sigma=params[0], mu=params[2])
-        elif name == 'Lognormal_ShapeNoneScale':
+        elif name == 'Lognormal':
             distribution = LognormalDistribution(*params)
         elif name == 'Normal':
             distribution = NormalDistribution(*params)
