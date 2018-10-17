@@ -39,25 +39,12 @@ setup(
     author_email='virocon@uni-bremen.de',
 
 
-    # For a list of valid classifiers, see
-    # https://pypi.python.org/pypi?%3Aaction=list_classifiers
-    classifiers=[  # Optional
-        # How mature is this project? Common values are
-        #   3 - Alpha
-        #   4 - Beta
-        #   5 - Production/Stable
+    classifiers=[ 
         'Development Status :: 5 - Production/Stable',
-
-        # Indicate who your project is intended for
         'Intended Audience :: Science/Research',
         'Topic :: Scientific/Engineering',
-
-        # Pick your license as you wish
         'License :: OSI Approved :: MIT License',
-
-        # Specify the Python versions you support here. In particular, ensure
-        # that you indicate whether you support Python 2, Python 3 or both.
-        'Programming Language :: Python :: 3 :: Only',
+        'Programming Language :: Python :: 3.6',
     ],
 
     packages=['viroconcom'],
@@ -73,8 +60,6 @@ setup(
         'test': [],
     },
 
-    # This field corresponds to the "Project-URL" metadata fields:
-    # https://packaging.python.org/specifications/core-metadata/#project-url-multiple-use
     project_urls={  # Optional
         'Documentation': 'https://virocon-organization.github.io/viroconcom/',
         'Source Code': 'https://github.com/virocon-organization/viroconcom',
