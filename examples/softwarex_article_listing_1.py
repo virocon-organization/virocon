@@ -30,7 +30,7 @@ dist_description_1 = {'name': 'Lognormal',
                       'dependency': (None, None, 0),
                       'functions': (None, None, 'exp3')}
 
-# Compute the fit.
+# Compute the fit based on maximum likelihood estimation.
 my_fit = Fit((sample_0, sample_1),
              (dist_description_0, dist_description_1))
 
