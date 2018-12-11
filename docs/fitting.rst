@@ -12,14 +12,22 @@ Exemplary call::
 
 It is important that the parameter ``samples`` is in the form (sample_0, sample_1, ...).
 Each sample is a collection of data from type *list* and also all samples have the same length. The parameter ``dist_descriptions``
-should be from type *list* and contains a dictionary for each dimension in the same sequence of the samples. It should accordingly have
-the same length as ``samples``. The last parameter ``n_steps`` indicates how many distributions should be fitted for a dependent parameter.
-For each distribution an additional parameter is created which affects the final fit.
+describes the structure of the probabilistic model that should be fitted to the sample. It should be from type *list* and should
+contain a dictionary for each dimension in the same sequence of the samples. It should accordingly have the same length as ``samples``.
 
-Each ``dist_description`` contains the name of the current distribution (i.e. ``"Weibull"``). Then it contains the dependency for this dimension
-from type *list*. In the sequence of ``shape, loc, scale`` it contains integers for the dependency of the current parameter or *None* if it has no
-dependency. It is important that the dependency is less than the index of the current dimension. The list for the parameter ``functions`` also has length of three
-and contains information about the used functions for fitting. Actually you can switch between the functions:
+Each ``dist_description`` describes one dimension of the probabilistic model structure. It contains the name of the current distribution (i.e. ``"Weibull"``).
+Then it contains the dependency for this dimension from type *list*. In the sequence of ``shape, loc, scale`` it contains integers for the dependency
+of the current parameter or *None* if it has no dependency. It is important that the dependency is less than the index of the current dimension.
+The list for the parameter ``functions`` also has length of three and contains information about the used functions for fitting.
+
+The following distributions are available (keyword and meaning):
+- **Weibull_2p** :  2-parameter Weibull distribution
+- **Weibull_3p** :  3-parameter Weibull distribution
+- **Lognormal** :  lognormal distribution parametrized with exp(mu) and sigma
+- **Lognormal_SigmaMu** :  lognormal distribution parametrized with mu and sigma
+- **Normal** :  normal distribution
+
+The following dependence functions are available (keyword and meaning):
 
 - **power3** :  :math:`a + b * x^c`
 - **exp3** : :math:`a + b * e^{x * c}`
