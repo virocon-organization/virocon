@@ -994,7 +994,8 @@ class Fit():
 
         # Return particular distribution
         distribution = None
-        if name == WEIBULL_3P_KEYWORD or name == WEIBULL_3P_KEYWORD_ALTERNATIVE:
+        if name == WEIBULL_2P_KEYWORD or name == WEIBULL_3P_KEYWORD or \
+                        name == WEIBULL_3P_KEYWORD_ALTERNATIVE:
             distribution = WeibullDistribution(*params)
         elif name == LOGNORMAL_MU_PARAMETER_KEYWORD:
             distribution = LognormalDistribution(sigma=params[0], mu=params[2])

@@ -4,7 +4,6 @@ import numpy as np
 
 from viroconcom.fitting import Fit
 
-
 class FittingTest(unittest.TestCase):
 
     def test_2d_fit(self):
