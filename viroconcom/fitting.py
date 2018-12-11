@@ -14,7 +14,12 @@ import statsmodels.api as sm
 import scipy.stats as sts
 from scipy.optimize import curve_fit
 
-from .settings import SHAPE_STRING, LOCATION_STRING, SCALE_STRING
+from .settings import (SHAPE_STRING, LOCATION_STRING, SCALE_STRING,
+                       LOGNORMAL_EXPMU_PARAMETER_KEYWORD,
+                       LOGNORMAL_MU_PARAMETER_KEYWORD,
+                       NORMAL_KEYWORD, WEIBULL_3P_KEYWORD,
+                       WEIBULL_3P_KEYWORD_ALTERNATIVE,
+                       WEIBULL_2P_KEYWORD)
 from .params import ConstantParam, FunctionParam
 from .distributions import (WeibullDistribution, LognormalDistribution, NormalDistribution,
                             KernelDensityDistribution, MultivariateDistribution)
@@ -371,7 +376,7 @@ class Fit():
 
     An Example how to visualize how good your fit is:
 
-    >>> dist_description_0 = {'name': 'Weibull', 'dependency': (None, None, None), 'number_of_intervals': 3}
+    >>> dist_description_0 = {'name': 'Weibull_3p', 'dependency': (None, None, None), 'number_of_intervals': 3}
     >>> dist_description_1 = {'name': 'Lognormal', 'dependency': (None, None, 0), 'functions': (None, None, 'exp3')}
     >>> my_fit = Fit((sample_1, sample_2), (dist_description_0, dist_description_1))
     >>>
@@ -437,9 +442,10 @@ class Fit():
         dist_descriptions contains the following keys:
 
         name : str
-            name of distribution:
+            name of distribution (defined in settings.py):
 
-            - Weibull,
+            - Weibull_2p,
+            - Weibull_3p
             - Lognormal (shape, scale),
             - Lognormal_SigmaMu (sigma, mu),
             - Normal,
@@ -567,8 +573,9 @@ class Fit():
         sample : list of float
             Raw data the distribution is fitted on.
         name : str
-            Name of the distribution ("Weibull", "Lognormal" or
-            "Lognormal_SigmaMu", "Normal", "KernelDensity").
+            Name of the distribution ("Weibull_2p", "Weibull_3p", "Lognormal" or
+            "Lognormal_SigmaMu", "Normal", "KernelDensity"). They keyword list
+            is defined in settings.py.
         Returns
         -------
         tuple of ConstantParam
@@ -578,14 +585,18 @@ class Fit():
         ValueError
             If the distribution is unknown.
         """
-
-        if name == 'Weibull':
+        if name == WEIBULL_2P_KEYWORD:
+            # Do not fit the location parameter because it is 0 for a 3-p. dist.
+            params = sts.weibull.min.fit(sample, floc=0)
+        elif name == WEIBULL_3P_KEYWORD or \
+                        name == WEIBULL_3P_KEYWORD_ALTERNATIVE:
             params = sts.weibull_min.fit(sample)
-        elif name == 'Normal':
+        elif name == NORMAL_KEYWORD:
             params = list(sts.norm.fit(sample))
             # Shape doesn't exist for normal
             params.insert(0, 0)
-        elif name[:9] == 'Lognormal':
+        elif name == LOGNORMAL_EXPMU_PARAMETER_KEYWORD or \
+                        name == LOGNORMAL_MU_PARAMETER_KEYWORD:
             # For lognormal loc is set to 0
             params = sts.lognorm.fit(sample, floc=0)
         elif name == 'KernelDensity':
@@ -597,7 +608,9 @@ class Fit():
             err_msg = "Distribution '{}' is unknown.".format(name)
             raise ValueError(err_msg)
 
-        return (ConstantParam(params[0]), ConstantParam(params[1]), ConstantParam(params[2]))
+        return (ConstantParam(params[0]),
+                ConstantParam(params[1]),
+                ConstantParam(params[2]))
 
     @staticmethod
     def _get_function(function_name):
@@ -638,7 +651,7 @@ class Fit():
         Parameters
         ----------
         name : str
-            Name of distribution (Weibull, Lognormal, Normal, KernelDensity (no dependency)).
+            Name of distribution (e.g. 'Weibull_2p' or 'Lognormal').
         param_values : list of list,
             Contains lists that contain values for each param : order (shape, loc, scale).
         dependency : list of int
@@ -685,7 +698,7 @@ class Fit():
                                                    samples[1] -> second variable
                                                    ...
         name : str
-            Name of distribution (Weibull, Lognormal, Normal, KernelDensity (no dependency)).
+            Name of distribution (e.g. 'Weibull_2p' or 'Lognormal').
         dependency : list of int
             Length of 3 in the order (shape, loc, scale) contains :
                 None -> no dependency
@@ -838,7 +851,11 @@ class Fit():
 
         # Save settings for distribution
         sample = samples[dimension]
-        name = kwargs.get('name', 'Weibull')
+        if 'name' in kwargs:
+            name = kwargs.get('name')
+        else:
+            err_msg = "_get_distribution misses the argument 'name'."
+            raise TypeError(err_msg)
         dependency = kwargs.get('dependency', (None, None, None))
         functions = kwargs.get('functions', ('polynomial', 'polynomial', 'polynomial'))
         list_number_of_intervals = kwargs.get('list_number_of_intervals')
@@ -887,7 +904,7 @@ class Fit():
                             fit_inspection_data.append_basic_fit(SCALE_STRING,
                                                                  basic_fit)
 
-                        if i == 2 and name == 'Lognormal_SigmaMu':
+                        if i == 2 and name == LOGNORMAL_MU_PARAMETER_KEYWORD:
                             params[i] = ConstantParam(np.log(current_params[i](0)))
                         else:
                             params[i] = current_params[i]
@@ -935,7 +952,7 @@ class Fit():
                         # Add used number of intervals for current parameter
                         used_number_of_intervals[i] = len(interval_centers)
 
-                        if i == 2 and name == 'Lognormal_SigmaMu':
+                        if i == 2 and name == LOGNORMAL_MU_PARAMETER_KEYWORD:
                             fit_points = [np.log(p(None)) for p in param_values[i]]
                         else:
                             fit_points = [p(None) for p in param_values[i]]
@@ -946,9 +963,9 @@ class Fit():
                                 interval_centers, fit_points, bounds=_bounds)
                         except RuntimeError:
                             # Case that optimal parameters not found
-                            if i == 0 and name == 'Lognormal_SigmaMu':
+                            if i == 0 and name == LOGNORMAL_MU_PARAMETER_KEYWORD:
                                 param_name = "sigma"
-                            elif i == 2 and name == 'Lognormal_SigmaMu':
+                            elif i == 2 and name == LOGNORMAL_MU_PARAMETER_KEYWORD:
                                 param_name = "mu"
                             elif i == 0:
                                 param_name = SHAPE_STRING
@@ -977,13 +994,13 @@ class Fit():
 
         # Return particular distribution
         distribution = None
-        if name == 'Weibull':
+        if name == WEIBULL_3P_KEYWORD or name == WEIBULL_3P_KEYWORD_ALTERNATIVE:
             distribution = WeibullDistribution(*params)
-        elif name == 'Lognormal_SigmaMu':
+        elif name == LOGNORMAL_MU_PARAMETER_KEYWORD:
             distribution = LognormalDistribution(sigma=params[0], mu=params[2])
-        elif name == 'Lognormal':
+        elif name == LOGNORMAL_EXPMU_PARAMETER_KEYWORD:
             distribution = LognormalDistribution(*params)
-        elif name == 'Normal':
+        elif name == NORMAL_KEYWORD:
             distribution = NormalDistribution(*params)
         return distribution, dependency, used_number_of_intervals, fit_inspection_data
 
