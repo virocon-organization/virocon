@@ -21,6 +21,7 @@ of the current parameter or *None* if it has no dependency. It is important that
 The list for the parameter ``functions`` also has length of three and contains information about the used functions for fitting.
 
 The following distributions are available (keyword and meaning):
+
 - **Weibull_2p** :  2-parameter Weibull distribution
 - **Weibull_3p** :  3-parameter Weibull distribution
 - **Lognormal** :  lognormal distribution parametrized with exp(mu) and sigma
