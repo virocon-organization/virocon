@@ -586,8 +586,8 @@ class Fit():
             If the distribution is unknown.
         """
         if name == WEIBULL_2P_KEYWORD:
-            # Do not fit the location parameter because it is 0 for a 3-p. dist.
-            params = sts.weibull.min.fit(sample, floc=0)
+            # Do not fit the location parameter because it is 0 for a 2-p. dist.
+            params = sts.weibull_min.fit(sample, floc=0)
         elif name == WEIBULL_3P_KEYWORD or \
                         name == WEIBULL_3P_KEYWORD_ALTERNATIVE:
             params = sts.weibull_min.fit(sample)

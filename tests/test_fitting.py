@@ -25,7 +25,7 @@ class FittingTest(unittest.TestCase):
 
 
         # Describe the distribution that should be fitted to the sample.
-        dist_description_0 = {'name': 'Weibull',
+        dist_description_0 = {'name': 'Weibull_3p',
                               'dependency': (None, None, None),
                               'width_of_intervals': 2}
         dist_description_1 = {'name': 'Lognormal',
@@ -43,6 +43,16 @@ class FittingTest(unittest.TestCase):
         self.assertAlmostEqual(dist1.shape(0), 0.17742685807554776 , places=5)
         #self.assertAlmostEqual(dist1.scale, 7.1536437634240135+2.075539206642004e^{0.1515051024957754x}, places=5)
         self.assertAlmostEqual(dist1.loc, None, places=5)
+
+        # Now use a 2-parameter Weibull distribution instead of 3-p distr.
+        dist_description_0 = {'name': 'Weibull_2p',
+                              'dependency': (None, None, None),
+                              'width_of_intervals': 2}
+        dist_description_1 = {'name': 'Lognormal',
+                              'dependency': (None, None, 0),
+                              'functions': (None, None, 'exp3')}
+        my_fit = Fit((sample_1, sample_2),
+                     (dist_description_0, dist_description_1))
 
     def test_multi_processing(selfs):
         """
