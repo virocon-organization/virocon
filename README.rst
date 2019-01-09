@@ -107,8 +107,9 @@ Documentation
 
 **Code.** The code’s documentation can be found `here`_.
 
-**Paper.** We are currently writing an academic paper describing
-ViroCon. We will provide a link to it here.
+**Paper.** Our `SoftwareX paper`_ "ViroCon: A software to compute multivariate
+extremes using the environmental contour method." provides a concise
+description of the software.
 
 Contributing
 ------------
@@ -132,6 +133,18 @@ finally file a pull request to merge it into our repository.
 **Conventions.** In our `Contribution Guide`_ we summarize our
 conventions, which are consistent with PEP8.
 
+Cite
+____
+If you are using viroconcom in your academic work please cite it by referencing
+our SoftwareX paper.
+
+Example: The environmental contours were computed using the package viroconcom
+(version 1.2.0) of the software ViroCon [1].
+
+[1] A.F. Haselsteiner, J. Lemkuhl, T. Pape, K.-L. Windmeier, K.-D. Thoben:
+ViroCon: A software to compute multivariate extremes using the environmental
+contour method. Accepted by SoftwareX.
+
 License
 -------
 
@@ -150,3 +163,4 @@ read the file `LICENSE`_.
 .. _here: https://virocon-organization.github.io/viroconcom/
 .. _Contribution Guide: https://virocon-organization.github.io/viroconcom/contributionguide.html
 .. _LICENSE: https://github.com/virocon-organization/viroconcom/blob/master/LICENSE
+.. _SoftwareX paper: https://github.com/ahaselsteiner/publications/blob/master/2018-10-25_SoftwareX_ViroCon_revised.pdf
