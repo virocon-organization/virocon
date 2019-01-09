@@ -134,7 +134,7 @@ finally file a pull request to merge it into our repository.
 conventions, which are consistent with PEP8.
 
 Cite
-____
+----
 If you are using viroconcom in your academic work please cite it by referencing
 our SoftwareX paper.
 
