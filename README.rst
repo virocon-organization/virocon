@@ -138,7 +138,7 @@ Cite
 If you are using viroconcom in your academic work please cite it by referencing
 our SoftwareX paper.
 
-Example: The environmental contours were computed using the package viroconcom
+Example: Environmental contours were computed using the package viroconcom
 (version 1.2.0) of the software ViroCon [1].
 
 [1] A.F. Haselsteiner, J. Lemkuhl, T. Pape, K.-L. Windmeier, K.-D. Thoben:
