@@ -9,6 +9,9 @@ from scipy import stats
 import numpy as np
 
 from urllib.error import HTTPError
+import warnings
+
+warnings.simplefilter("always", UserWarning)
 
 __all__ = ["NDBCImport"]
 
@@ -122,6 +125,10 @@ class NDBCImport:
         # drop NANs
         df.dropna(inplace=True)
 
+        # ToDo: check for empty dataframe
+        # if df.empty:
+        #     warnings.warn()
+
         # eliminate the outliers (where the absolute value of Z-Score more than 3)
         df = df[(np.abs(stats.zscore(df)) < 3).all(axis=1)]
         df.reset_index(drop=True, inplace=True)
@@ -146,9 +153,14 @@ class NDBCImport:
         start, end = self.year_range
         df = pd.DataFrame()
 
+        # ToDo: replace for loop with map for higher performance
+        # ToDo: Documentation for warnings
         for current_year in range(start, end+1):
             self.year = current_year
-            df = df.append([self.get_virocon_data()])
+            try:
+                df = df.append([self.get_virocon_data()])
+            except HTTPError as e:
+                warnings.warn(e.msg)
 
         df.reset_index(drop=True, inplace=True)
 
