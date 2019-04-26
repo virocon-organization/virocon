@@ -17,3 +17,6 @@
 htmlcov/
 dist/*
 viroconcom.egg-info/*
+.idea
+/viroconcom/lib/*
+/viroconcom/tcl/*
