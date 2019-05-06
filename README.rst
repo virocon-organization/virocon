@@ -3,7 +3,7 @@ ViroCon: viroconcom
 
 This is an **Forked version** from Viroconcom_, aiming to develop and update the original version.
 
-For more information read tihs readme_.
+For more information about the original version read tihs readme_.
 
 Updates
 -------
