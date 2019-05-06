@@ -27,7 +27,6 @@ class NDBCImport:
     >>> import matplotlib.pyplot as plt
     >>> myNDBC = NDBCImport(41002)
     >>> df = myNDBC.get_virocon_data_range(year_range=(2015, 2018))
-    >>> df.write_to_csv('C:')  # replace path with yours!
     >>> fig, ax = plt.subplots(3, sharex=True)
     >>> df.WSPD.plot(ax=ax[0])
     >>> ax[0].set_ylabel('Wind speed (m/s)', fontsize=8)
@@ -125,6 +124,11 @@ class NDBCImport:
     def get_virocon_data_range(self, year_range):
         """
         Gets the Historical Standard Meteorological Data for a specific buoy and year range. See get_virocon_data.
+
+        Parameters
+        ----------
+        year_range: (int,int)
+            The year range in which the data need to be imported
 
         Raises
         ------
