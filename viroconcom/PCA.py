@@ -30,7 +30,7 @@ class ViroconcomPCA:
   
 
 
-# In[83]:
+# In[152]:
 
 
 # uses imports to do pca on NDBC data
@@ -56,14 +56,14 @@ def pca_imports_range(self, buoy, years):
     buoy.get_virocon_data_range(years).to_csv("test.csv", index=False)
     return buoy
     
-test = pca_imports_year(None, 41002, 2015)
-test = open("test.csv", "r")
-for line in test:
-    print(line)
-test.close()
+test = pca_imports_year(None, 41002, 2010)
+#test = open("test.csv", "r")
+#for line in test:
+#    print(line)
+#test.close()
 
 
-# In[84]:
+# In[137]:
 
 
 def extract_data_from_file(self):    
@@ -97,12 +97,12 @@ def extract_data_from_file(self):
 extract_data_from_file(None)
 
 
-# In[105]:
+# In[150]:
 
 
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
-
+from mpl_toolkits.mplot3d import Axes3D
 #import mglearn
 
 def pca_on_data():
@@ -111,7 +111,7 @@ def pca_on_data():
     scaler = StandardScaler()
     scaler.fit(data)
     X_scaled = scaler.transform(data)
-    pca = PCA(n_components=2)
+    pca = PCA(n_components=3)
     pca.fit(X_scaled)
     X_pca = pca.transform(X_scaled)
     
@@ -128,11 +128,12 @@ def pca_on_data():
     
     print("Ursprüngliche Abmessung: {}".format(str(X_scaled.shape)))
     print("Reduzierte Abmessung: {}".format(str(X_pca.shape)))
-
-
-    plt.figure(figsize=(8, 8))
+    fig = plt.figure()
+    
+    ax= fig.add_subplot(111, projection="3d")
+    
     #mglearn.discrete_scatter(X_pca[:, 0], X_pca[:, 1])
-    plt.plot(X_pca[:, 0], X_pca[:, 1], 'go')
+    ax.scatter(X_pca[:, 0], X_pca[:, 1], X_pca[:, 2])
     #plt.legend(data, loc="best")
     plt.gca().set_aspect("equal")
     plt.xlabel("Erste Hauptkomponente")
