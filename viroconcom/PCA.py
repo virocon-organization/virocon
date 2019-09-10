@@ -1,43 +1,56 @@
-#!/usr/bin/env python
-# coding: utf-8
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+PCA implementation for ViroconCom.
 
-# In[ ]:
-
+Author:  mish-mosh
+"""
 
 import numpy as np
+
 from sklearn.decomposition import PCA
-import matplotlib.pyplot as plt
-import pandas as pd
 from sklearn.preprocessing import StandardScaler
 
 
 
-class ViroconcomPCA:
-    
-    def __init__(self):
-        pass
-    
-    def pca_on_data(self, data, numberOfDimension):        
-        scaler = StandardScaler()
-        scaler.fit(data)
-        X_scaled = scaler.transform(data)
-        pca = PCA(n_components=numberOfDimension)
-        pca.fit(X_scaled)
-        X_pca = pca.transform(X_scaled)
-        return X_pca
-    
-    def get_data_array(self, data, dimensions):        
-        x = self.pca_on_data(data, dimension)
-        data_array = []
-        n = dimensions-1
-        
-        for a in range(0, n):
-            array = []
-            for i in x:
-                array.append(i[a])
-            data_array.append(array) 
-        return data_array      
-        
-        
-        
+__all__ = ["PCAFit"]
 
+
+class PCAFit(PCA):
+    """
+    A PCA fitting class, based on the Scikit-Learn's PCA (see below)
+
+    """
+
+    def __init__(self, dec_data, **kwargs):
+        """
+
+        Parameters
+        ----------
+        dec_data : ndarray
+            data to decompose (with PCA)
+
+        """
+        super(PCAFit, self).__init__(n_components=dec_data.shape[1], whiten=True, **kwargs)
+
+        # Standardizing the data
+        x = StandardScaler().fit_transform(dec_data)
+
+        # Fitting the model due to the data and transforming the data
+        self.fit(x)
+
+    def get_fitted_contour(self, coords):
+        """
+
+        :param coords: the coordinates of the contour needed to be fitted. (ndarray/list)
+        :return: the fitted contour as ndarray
+
+        """
+
+        # transform the contour
+        contour_transposed = np.vstack(coords).transpose()
+        contour_transformed = self.transform(contour_transposed)
+
+        # inverse-transform the contour
+        contour_fitted = self.inverse_transform(contour_transformed).transpose()
+        return contour_fitted
