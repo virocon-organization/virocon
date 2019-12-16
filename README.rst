@@ -43,7 +43,7 @@ How to use viroconcom
 ---------------------
 Requirements
 ~~~~~~~~~~~~
-Make sure you have installed Python `3.6.4`_ by typing
+Make sure you have installed Python `3.7.4`_ by typing
 
 .. code:: console
 
