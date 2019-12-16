@@ -73,4 +73,4 @@ class FittingTest(unittest.TestCase):
         # Compute the fit.
         my_fit = Fit((sample_1, sample_2),
                      (dist_description_0, dist_description_1),
-                     timeout=10)
+                     timeout=100)
