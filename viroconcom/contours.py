@@ -577,9 +577,9 @@ class HighestDensityContour(Contour):
 
         summed_fields = np.zeros(array.shape)
 
-        summed_fields[np.unravel_index(summed_flat_inds, dims=array.shape)] = 1
+        summed_fields[np.unravel_index(summed_flat_inds, shape=array.shape)] = 1
 
-        last_summed = array[np.unravel_index(summed_flat_inds[-1], dims=array.shape)]
+        last_summed = array[np.unravel_index(summed_flat_inds[-1], shape=array.shape)]
 
 
         return summed_fields, last_summed

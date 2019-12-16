@@ -779,24 +779,21 @@ class Fit():
                     multiple_basic_fit.append(basic_fit)
                     dist_values.append(samples_in_interval)
                 except ValueError:
-                    # For case that to few fitting data for the step were found
-                    # the step is deleted.
                     deleted_centers.append(i) # Add index of unused center.
                     warnings.warn(
-                        "There is not enough data for step '{}' in dimension "
-                        "'{}'. This step is skipped. Consider analyzing your "
-                        "data or reducing the number of intervals."
+                        "A ValueError occured for the interval centered at '{}'"
+                        " in dimension '{}'."
                             .format(step, dependency[index]),
                         RuntimeWarning, stacklevel=2)
             else:
-                # For case that to few fitting data for the step were found
+                # For case that too few fitting data for the step were found
                 # the step is deleted.
                 deleted_centers.append(i) # Add index of unused center.
                 warnings.warn(
                     "'Due to the restriction of MIN_DATA_POINTS_FOR_FIT='{}' "
                     "there is not enough data (n='{}') for the interval "
-                    "centered at '{}' in dimension '{}'. This step is skipped. "
-                    "Consider analyzing your data or reducing the number of "
+                    "centered at '{}' in dimension '{}'. No distribution will "
+                    "be fitted to this interval. Consider adjusting your "
                     "intervals."
                         .format(MIN_DATA_POINTS_FOR_FIT,
                         len(samples_in_interval),
