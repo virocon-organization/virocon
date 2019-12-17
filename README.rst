@@ -152,7 +152,7 @@ This software is licensed under the MIT license. For more information,
 read the file `LICENSE`_.
 
 .. _repository: https://github.com/virocon-organization/viroconweb
-.. _3.6.4: https://www.python.org/downloads/release/python-364
+.. _3.7.4: https://www.python.org/downloads/release/python-374/
 .. _shell: https://en.wikipedia.org/wiki/Command-line_interface#Modern_usage_as_an_operating_system_shell
 .. _pyenv: https://github.com/pyenv/pyenv
 .. _www.python.org: https://www.python.org
