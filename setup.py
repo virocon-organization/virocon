@@ -14,6 +14,7 @@ here = path.abspath(path.dirname(__file__))
 # Get the long description from the README file
 with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
     long_description = f.read()
+long_description_content_type='text/x-rst'
 
 version = {}
 with open(path.join(here, 'viroconcom/version.py')) as version_file:
