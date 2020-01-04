@@ -242,6 +242,31 @@ class ParametricDistributionTest(unittest.TestCase):
         p = dist.cdf(-1)
         self.assertEqual(p, 0) # CDF(negative value) should be 0
 
+    def test_exponentiated_weibull_distribution_icdf(self):
+        """
+        Tests the ICDF of the exponentiated Weibull distribution.
+        """
+
+        # Define parameters with the values from the distribution fitted to
+        # dataset A with the MLE in https://arxiv.org/pdf/1911.12835.pdf .
+        shape = ConstantParam(0.4743)
+        loc = None
+        scale = ConstantParam(0.0373)
+        shape2 = ConstantParam(46.6078)
+        params = (shape, loc, scale, shape2)
+        dist = ExponentiatedWeibullDistribution(*params)
+
+        x = dist.i_cdf(0.5) # Should be roughly 0.8, see Figure 12 in https://arxiv.org/pdf/1911.12835.pdf .
+        self.assertGreater(x, 0.5)
+        self.assertLess(x, 1)
+
+        xs = dist.i_cdf(np.array((0.1, 0.2, 0.5, 0.9)))
+        self.assertGreater(xs[-1], 1) # ICDF(0.9) should be roughly 1.8, see Figure 12 in https://arxiv.org/pdf/1911.12835.pdf .
+        self.assertLess(xs[-1], 2)
+
+        p = dist.i_cdf(5)
+        self.assertTrue(np.isnan(p)) # ICDF(value greater than 1) should be nan.
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -401,8 +401,15 @@ class ExponentiatedWeibullDistribution(ParametricDistribution):
         p = np.power(1 - np.exp(np.multiply(-1, np.power(np.divide(x,  scale), shape))), shape2)
         return p
 
-    def _scipy_i_cdf(self, probabilities, shape, loc, scale):
-        return sts.weibull_min.ppf(probabilities, c=shape, loc=loc, scale=scale)
+    def _scipy_i_cdf(self, p, shape, loc, scale, shape2):
+        p = np.array(p)
+        if np.any(np.greater(p, 1)):
+            p = np.nan
+        if np.any(np.less(p, 0)):
+            p = np.nan
+        # In Matlab syntax: x = scale .* (-1 .* log(1 - p.^(1 ./ shape2))).^(1 ./ shape);
+        x = np.multiply(scale, np.power(np.multiply(-1, np.log(1 - np.power(p, np.divide(1, shape2)))), np.divide(1, shape)))
+        return x
 
 
 class LognormalDistribution(ParametricDistribution):
