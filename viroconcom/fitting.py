@@ -871,8 +871,9 @@ class Fit():
             return KernelDensityDistribution(Fit._fit_distribution(sample, name)), dependency, \
                    used_number_of_intervals, fit_inspection_data
 
-        # Initialize params (shape, loc, scale)
-        params = [None, None, None]
+        # Initialize params (shape, loc, scale, shape2). The second shape
+        # parameter is currently only used by the exponentiated Weibull distr.
+        params = [None, None, None, None]
 
         for index in range(len(dependency)):
 
@@ -993,13 +994,13 @@ class Fit():
         distribution = None
         if name == WEIBULL_2P_KEYWORD or name == WEIBULL_3P_KEYWORD or \
                         name == WEIBULL_3P_KEYWORD_ALTERNATIVE:
-            distribution = WeibullDistribution(*params)
+            distribution = WeibullDistribution(*params[:3])
         elif name == LOGNORMAL_MU_PARAMETER_KEYWORD:
             distribution = LognormalDistribution(sigma=params[0], mu=params[2])
         elif name == LOGNORMAL_EXPMU_PARAMETER_KEYWORD:
-            distribution = LognormalDistribution(*params)
+            distribution = LognormalDistribution(*params[:3])
         elif name == NORMAL_KEYWORD:
-            distribution = NormalDistribution(*params)
+            distribution = NormalDistribution(*params[:3])
         return distribution, dependency, used_number_of_intervals, fit_inspection_data
 
     def __str__(self):

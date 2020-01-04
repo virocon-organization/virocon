@@ -51,11 +51,11 @@ sample_hs, sample_tz, label_hs, label_tz = read_dataset()
 # dataset. We will use the model that is recommended in DNV-RP-C205 (2010) on
 # page 38 and that is called 'conditonal modeling approach' (CMA).
 dist_description_hs = {'name': 'Weibull_3p',
-                      'dependency': (None, None, None),
+                      'dependency': (None, None, None, None), # Shape, Location, Scale, Shape2
                       'width_of_intervals': 0.5}
 dist_description_tz = {'name': 'Lognormal_SigmaMu',
-                      'dependency': (0,  None, 0), #Shape, Location, Scale
-                      'functions': ('exp3', None, 'power3') #Shape, Location, Scale
+                      'dependency': (0,  None, 0), # Shape, Location, Scale
+                      'functions': ('exp3', None, 'power3') # Shape, Location, Scale
                       }
 
 # Fit the model to the data.
