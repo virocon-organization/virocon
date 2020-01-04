@@ -6,9 +6,10 @@ import numpy as np
 from .context import viroconcom
 
 from viroconcom.params import ConstantParam, FunctionParam
-from viroconcom.distributions import (WeibullDistribution, LognormalDistribution, NormalDistribution,
-                                   KernelDensityDistribution,
-                                   MultivariateDistribution)
+from viroconcom.distributions import (
+    WeibullDistribution, ExponentiatedWeibullDistribution,
+    LognormalDistribution, NormalDistribution,
+    MultivariateDistribution)
 
 class MultivariateDistributionTest(unittest.TestCase):
     """
@@ -214,6 +215,32 @@ class ParametricDistributionTest(unittest.TestCase):
             dist._check_parameter_value(2, -2.776)
         with self.assertRaises(ValueError):
             dist._check_parameter_value(2, np.inf)
+
+
+    def test_exponentiated_weibull_distribution_cdf(self):
+        """
+        Tests the CDF of the exponentiated Weibull distribution.
+        """
+
+        # Define parameters with the values from the distribution fitted to
+        # dataset A with the MLE in https://arxiv.org/pdf/1911.12835.pdf .
+        shape = ConstantParam(0.4743)
+        loc = None
+        scale = ConstantParam(0.0373)
+        shape2 = ConstantParam(46.6078)
+        params = (shape, loc, scale, shape2)
+        dist = ExponentiatedWeibullDistribution(*params)
+
+        p = dist.cdf(1) # Should be roughly 0.7, see Figure 12 in https://arxiv.org/pdf/1911.12835.pdf .
+        self.assertGreater(p, 0.5)
+        self.assertLess(p, 0.8)
+
+        ps = dist.cdf(np.array((0.5, 1, 2, 4)))
+        self.assertGreater(ps[-1], 0.99) # CDF(4) should be roughly 0.993, see Figure 12 in https://arxiv.org/pdf/1911.12835.pdf .
+        self.assertLess(ps[-1], 0.999)
+
+        p = dist.cdf(-1)
+        self.assertEqual(p, 0) # CDF(negative value) should be 0
 
 
 if __name__ == '__main__':
