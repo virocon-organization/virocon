@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Fri Sep 15 14:49:33 2017
-
-@author: nb
+Tests the computation of contours.
 """
 
 import unittest
@@ -16,8 +14,9 @@ from .context import viroconcom
 
 from viroconcom.params import ConstantParam, FunctionParam
 
-from viroconcom.distributions import (WeibullDistribution, LognormalDistribution,
-                                    NormalDistribution, MultivariateDistribution)
+from viroconcom.distributions import (
+    WeibullDistribution, ExponentiatedWeibullDistribution, LognormalDistribution,
+    NormalDistribution, MultivariateDistribution)
 from viroconcom.contours import IFormContour, ISormContour, HighestDensityContour
 
 
@@ -77,6 +76,53 @@ class ContourCreationTest(unittest.TestCase):
             self.assertAlmostEqual(result0.loc[g, h], finaldt0.loc[g, h], places=8)
 
 
+    def test_HDC2d_ExponentiatedWbl(self):
+        """
+        2-d HDC with exponentiated Weibull distributions.
+        """
+
+        # Define dependency tuple.
+        dep1 = (None, None, None, None)
+        dep2 = (None, None, 0, None)
+
+        # Define parameters.
+        v_shape = ConstantParam(11)
+        v_loc = None
+        v_scale = ConstantParam(2.6)
+        v_shape2 = ConstantParam(0.54)
+        par1 = (v_shape, v_loc, v_scale, v_shape2)
+
+        hs_shape = ConstantParam(1.4)
+        hs_loc = None
+        hs_scale = FunctionParam(0.15, 0.0033, 2.45, 'power3')
+        hs_shape2 = ConstantParam(5)
+        par2 = (hs_shape, hs_loc, hs_scale, hs_shape2)
+
+        # Create distributions.
+        dist1 = ExponentiatedWeibullDistribution(*par1)
+        dist2 = ExponentiatedWeibullDistribution(*par2)
+
+        distributions = [dist1, dist2]
+        dependencies = [dep1, dep2]
+
+        mul_dist = MultivariateDistribution(distributions, dependencies)
+
+        # Calculate the contour.
+        n_years = 50
+        limits = [(0, 20), (0, 18)]
+        deltas = [0.1, 0.1]
+        test_contour_HDC = HighestDensityContour(mul_dist, n_years, 3,
+                                                 limits, deltas)
+
+        contour_coordinates = pd.DataFrame({'x' : test_contour_HDC.coordinates[0][0],
+                                'y' : test_contour_HDC.coordinates[0][1]})
+
+
+        #result0 = pd.read_csv(testfiles_path + "/HDC2dWL_coordinates.csv")
+
+        #for g,h in [(g, h) for g in result0.index for h in result0.columns]:
+        #    self.assertAlmostEqual(result0.loc[g, h], contour_coordinates.loc[g, h], places=8)
+
 
     def test_HDC3d_WLL(self):
         """
@@ -131,7 +177,7 @@ class ContourCreationTest(unittest.TestCase):
 
     def test_HDC4d_WLLL(self):
         """
-        Creating Contour example for 4-d HDC with Weibull, Lognormal,
+        Creating contour example for 4-d HDC with Weibull, Lognormal,
         Lognormal and Lognormal distribution
         """
 

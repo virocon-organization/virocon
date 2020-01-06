@@ -619,14 +619,14 @@ class MultivariateDistribution():
         """
         for dimension, dependency in enumerate(self.dependencies):
             if(dep_is_iter_of_tuple):
-                if len(dependency) != 3:
-                    return ("The length of the dependency in dimension '{}' was not three.".format(dimension))
+                if len(dependency) < 3:
+                    return ("The length of the dependency in dimension '{}' was less than three.".format(dimension))
                 elif not all([True if d is None or d < dimension else False for d in dependency]):
                     return ("The dependency of dimension '{}' must have smaller index than dimension or 'None'.".format(dimension))
                 elif not all([True if d is None or d >= 0 else False for d in dependency]):
                     return ("The dependency of dimension '{}' must be positive or 'None'.".format(dimension))
-            elif len(self.dependencies) != 3:
-                return ("The length of dependencies was not three.")
+            elif len(self.dependencies) < 3:
+                return ("The length of dependencies was less than three.")
         return None
 
     def cell_averaged_joint_pdf(self, coords):
