@@ -677,7 +677,7 @@ class Fit():
                     ConstantParam(params[2]),
                     ConstantParam(params[3]))
         else:
-            err_msg = "params must have a length of 3 or 4, but was '{}'."\
+            err_msg = "params must have a length of 4, but was '{}'."\
                 .format(len(params))
             raise ValueError(err_msg)
 
