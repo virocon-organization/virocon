@@ -15,13 +15,15 @@ import scipy.stats as sts
 from scipy.optimize import curve_fit
 
 from .settings import (SHAPE_STRING, LOCATION_STRING, SCALE_STRING,
+                       SHAPE2_STRING,
                        LOGNORMAL_EXPMU_PARAMETER_KEYWORD,
                        LOGNORMAL_MU_PARAMETER_KEYWORD,
                        NORMAL_KEYWORD, WEIBULL_3P_KEYWORD,
                        WEIBULL_3P_KEYWORD_ALTERNATIVE,
-                       WEIBULL_2P_KEYWORD)
+                       WEIBULL_2P_KEYWORD, WEIBULL_EXP_KEYWORD)
 from .params import ConstantParam, FunctionParam
-from .distributions import (WeibullDistribution, LognormalDistribution, NormalDistribution,
+from .distributions import (WeibullDistribution, ExponentiatedWeibullDistribution,
+                            LognormalDistribution, NormalDistribution,
                             KernelDensityDistribution, MultivariateDistribution)
 
 
@@ -49,7 +51,7 @@ _bounds = ([np.finfo(np.float64).tiny, np.finfo(np.float64).tiny, -np.inf],
 
 class BasicFit():
     """
-    Holds the parameters (shape, loc, scale) and also the raw data to a single fit.
+    Holds the parameters (shape, loc, scale, shape2) and the raw data of a single fit.
 
     Attributes
     ----------
@@ -62,13 +64,16 @@ class BasicFit():
     scale : float
         The scale parameter for the fit.
 
-    samples : list of float
-        The raw data that is used for this fit. For that case that there is no dependency this
+    shape2 : float, defaults to None
+        The second shape parameter for the fit.
+
+    samples : list of float, defaults to None
+        The raw data that was used for this fit. For that case that there is no dependency this
         list contains the whole data of the dimension.
 
     """
 
-    def __init__(self, shape, loc, scale, samples):
+    def __init__(self, shape, loc, scale, shape2=None, samples=None):
 
         # parameters for the distribution
         if type(shape) == ConstantParam:
@@ -95,13 +100,23 @@ class BasicFit():
             err_msg = "Parameter 'scale' must be an instance of Number or type of ConstantParam " \
                       "but was '{}'.".format(type(scale))
             raise TypeError(err_msg)
+        if type(shape2) == ConstantParam:
+            self.shape2 = shape2(0)
+        elif isinstance(shape, Number):
+            self.shape2 = shape2
+        elif shape2 is None:
+            self.shape2 = None
+        else:
+            err_msg = "Parameter 'shape2' must be an instance of Number or type of ConstantParam " \
+                      "but was '{}'.".format(type(shape))
+            raise TypeError(err_msg)
 
         # Raw data
         self.samples = samples
 
     def __str__(self):
-        return "BasicFit with shape={}, loc={}, scale={}.".format(
-            self.shape, self.loc, self.scale)
+        return "BasicFit with shape={}, loc={}, scale={}, shape2={}.".format(
+            self.shape, self.loc, self.scale, self.shape2)
 
 
 class FitInspectionData():
@@ -156,18 +171,22 @@ class FitInspectionData():
 
         # Parameter values and the data they belong to
         self.shape_at = None
-        self._shape_value = [[], [], []]
+        self._shape_value = [[], [], [], []]
 
         self.loc_at = None
-        self._loc_value = [[], [], []]
+        self._loc_value = [[], [], [], []]
 
         self.scale_at = None
-        self._scale_value = [[], [], []]
+        self._scale_value = [[], [], [], []]
+
+        self.shape2_at = None
+        self._shape2_value = [[], [], [], []]
 
         # Raw data for each parameter of this dimension
         self.shape_samples = []
         self.loc_samples = []
         self.scale_samples = []
+        self.shape2_samples = []
 
     @property
     def shape_value(self):
@@ -217,6 +236,22 @@ class FitInspectionData():
         """
         return self._scale_value[2]
 
+    @property
+    def shape2_value(self):
+        """
+        Takes out the list that contains the shape2 parameters.
+
+        Returns
+        -------
+        list of float
+             The associated values of the parameter shape2 to the divided
+             dimension the shape2 parameter depends on.
+        Notes
+        ------
+        This function can be used as attribute.
+        """
+        return self._shape2_value[0]
+
     def get_dependent_param_points(self, param):
         """
         This function can be used to get the param_at and the param_value lists as tuple for a
@@ -241,6 +276,8 @@ class FitInspectionData():
             return self.loc_at, self.loc_value
         elif param == SCALE_STRING:
             return self.scale_at, self.scale_value
+        elif param == SHAPE2_STRING:
+            return self.shape2_at, self.shape2_value
         else:
             err_msg = "Parameter '{}' is unknown.".format(param)
             raise ValueError(err_msg)
@@ -265,17 +302,26 @@ class FitInspectionData():
             self._shape_value[0].append(basic_fit.shape)
             self._shape_value[1].append(basic_fit.loc)
             self._shape_value[2].append(basic_fit.scale)
+            self._shape_value[3].append(basic_fit.scale)
             self.shape_samples.append(basic_fit.samples)
         elif param == LOCATION_STRING:
             self._loc_value[0].append(basic_fit.shape)
             self._loc_value[1].append(basic_fit.loc)
             self._loc_value[2].append(basic_fit.scale)
+            self._loc_value[3].append(basic_fit.scale)
             self.loc_samples.append(basic_fit.samples)
         elif param == SCALE_STRING:
             self._scale_value[0].append(basic_fit.shape)
             self._scale_value[1].append(basic_fit.loc)
             self._scale_value[2].append(basic_fit.scale)
+            self._scale_value[3].append(basic_fit.scale)
             self.scale_samples.append(basic_fit.samples)
+        elif param == SHAPE2_STRING:
+            self._shape2_value[0].append(basic_fit.shape)
+            self._shape2_value[1].append(basic_fit.loc)
+            self._shape2_value[2].append(basic_fit.scale)
+            self._shape2_value[3].append(basic_fit.scale)
+            self.shape_samples.append(basic_fit.samples)
         else:
             err_msg = "Parameter '{}' is unknown.".format(param)
             raise ValueError(err_msg)
@@ -301,14 +347,23 @@ class FitInspectionData():
             If the parameter is unknown.
         """
         if param == SHAPE_STRING:
-            return BasicFit(self._shape_value[0][index], self._shape_value[1][index],
-                            self._shape_value[2][index], self.shape_samples[index])
+            return BasicFit(shape=self._shape_value[0][index],
+                            loc=self._shape_value[1][index],
+                            scale=self._shape_value[2][index],
+                            shape2=self._shape_value[3][index],
+                            samples=self.shape_samples[index])
         elif param == LOCATION_STRING:
-            return BasicFit(self._loc_value[0][index], self._loc_value[1][index],
-                            self._loc_value[2][index], self.loc_samples[index])
+            return BasicFit(shape=self._loc_value[0][index],
+                            loc=self._loc_value[1][index],
+                            scale=self._loc_value[2][index],
+                            shape2=self._shape_value[3][index],
+                            samples=self.loc_samples[index])
         elif param == SCALE_STRING:
-            return BasicFit(self._scale_value[0][index], self._scale_value[1][index],
-                            self._scale_value[2][index], self.scale_samples[index])
+            return BasicFit(shape=self._scale_value[0][index],
+                            loc=self._scale_value[1][index],
+                            scale=self._scale_value[2][index],
+                            shape2=self._shape_value[3][index],
+                            samples=self.scale_samples[index])
         else:
             err_msg = "Parameter '{}' is unknown.".format(param)
             raise ValueError(err_msg)
@@ -579,7 +634,7 @@ class Fit():
         Returns
         -------
         tuple of ConstantParam
-             The computed parameters in the order of (shape, loc, scale).
+             The computed parameters in the order of (shape, loc, scale, shape2).
         Raises
         ------
         ValueError
@@ -591,6 +646,9 @@ class Fit():
         elif name == WEIBULL_3P_KEYWORD or \
                         name == WEIBULL_3P_KEYWORD_ALTERNATIVE:
             params = sts.weibull_min.fit(sample)
+        elif name == WEIBULL_EXP_KEYWORD:
+            dist = ExponentiatedWeibullDistribution()
+            params = dist.fit(sample)
         elif name == NORMAL_KEYWORD:
             params = list(sts.norm.fit(sample))
             # Shape doesn't exist for normal
@@ -608,9 +666,23 @@ class Fit():
             err_msg = "Distribution '{}' is unknown.".format(name)
             raise ValueError(err_msg)
 
-        return (ConstantParam(params[0]),
-                ConstantParam(params[1]),
-                ConstantParam(params[2]))
+        if len(params) == 3:
+            constant_params = (ConstantParam(params[0]),
+                    ConstantParam(params[1]),
+                    ConstantParam(params[2]),
+                    ConstantParam(None))
+        elif len(params) == 4:
+            constant_params = (ConstantParam(params[0]),
+                    ConstantParam(params[1]),
+                    ConstantParam(params[2]),
+                    ConstantParam(params[3]))
+        else:
+            err_msg = "params must have a length of 3 or 4, but was '{}'."\
+                .format(len(params))
+            raise ValueError(err_msg)
+
+
+        return constant_params
 
     @staticmethod
     def _get_function(function_name):
@@ -901,6 +973,9 @@ class Fit():
                         elif i == 2:
                             fit_inspection_data.append_basic_fit(SCALE_STRING,
                                                                  basic_fit)
+                        elif i == 3:
+                            fit_inspection_data.append_basic_fit(SHAPE2_STRING,
+                                                                 basic_fit)
 
                         if i == 2 and name == LOGNORMAL_MU_PARAMETER_KEYWORD:
                             params[i] = ConstantParam(np.log(current_params[i](0)))
@@ -938,6 +1013,10 @@ class Fit():
                                 fit_inspection_data.append_basic_fit(
                                     SCALE_STRING,
                                     basic_fit)
+                            if i == 3:
+                                fit_inspection_data.append_basic_fit(
+                                    SHAPE2_STRING,
+                                    basic_fit)
 
                         # Add interval centers to fit inspection data
                         if i == 0:
@@ -971,6 +1050,8 @@ class Fit():
                                 param_name = LOCATION_STRING
                             elif i == 2:
                                 param_name = SCALE_STRING
+                            elif i == 3:
+                                param_name = SHAPE2_STRING
 
                             warnings.warn(
                                 "Optimal Parameters not found for parameter '{}' in dimension "
@@ -995,6 +1076,8 @@ class Fit():
         if name == WEIBULL_2P_KEYWORD or name == WEIBULL_3P_KEYWORD or \
                         name == WEIBULL_3P_KEYWORD_ALTERNATIVE:
             distribution = WeibullDistribution(*params[:3])
+        elif name == WEIBULL_EXP_KEYWORD:
+            distribution = ExponentiatedWeibullDistribution(*params)
         elif name == LOGNORMAL_MU_PARAMETER_KEYWORD:
             distribution = LognormalDistribution(sigma=params[0], mu=params[2])
         elif name == LOGNORMAL_EXPMU_PARAMETER_KEYWORD:

@@ -57,7 +57,11 @@ class ConstantParam(Param):
         constant : scalar
             The constant value to return.
         """
-        self._constant = float(constant)
+
+        if constant is None:
+            self._constant = constant
+        else:
+            self._constant = float(constant)
 
     def _value(self, _):
         return self._constant
