@@ -9,6 +9,7 @@ from abc import ABC, abstractmethod
 
 import numpy as np
 import scipy.stats as sts
+import scipy.optimize
 
 from .settings import SHAPE_STRING, LOCATION_STRING, SCALE_STRING, SHAPE2_STRING
 from .params import FunctionParam, ConstantParam, Wrapper
@@ -410,6 +411,115 @@ class ExponentiatedWeibullDistribution(ParametricDistribution):
         # In Matlab syntax: x = scale .* (-1 .* log(1 - p.^(1 ./ shape2))).^(1 ./ shape);
         x = np.multiply(scale, np.power(np.multiply(-1, np.log(1 - np.power(p, np.divide(1, shape2)))), np.divide(1, shape)))
         return x
+
+    def fit(self, sample, method='WLS', shape=None, loc=None, scale=None, shape2=None):
+        """
+
+        Parameters
+        ----------
+        sample : array_like,
+            The data that should be used to fit the distribution to it.
+        method : str,
+            Fitting method, either 'MLE' for maximum likelihood estimation or
+            'WLS' for weighted least squares, similar to: https://arxiv.org/pdf/1911.12835.pdf
+        shape : float, optional
+            If given the shape parameter won't be fitted.
+        loc : Not used, must be None
+            The exponentiated Weibull distribution does not have a location
+            parameter. However, for consistency we have it as a parameter at the
+            expected place.
+        scale : float, optional
+            If given the scale parameter won't be fitted.
+        shape2 : float, optional
+            If given the second shape parametr won't be fitted.
+
+        Returns
+        -------
+        params: 4-dimensional tuple
+         Holds (shape, loc=None, scale, shape2).
+
+        """
+        def estimateAlphaBetaWithWLS(delta, xi, pi, do_return_parameters=True):
+            """
+            Translated from the Matlab implementation available at
+            https://github.com/ahaselsteiner/exponentiated-weibull/blob/issue%231/ExponentiatedWeibull.m#L210
+
+            Parameters
+            ----------
+            delta : float
+                shape2 parameter of the distribution
+            xi : array_like
+                Sorted sample.
+            pi : array_like
+                Probabilities of the sorted sample.
+
+            Returns
+            -------
+            (WLSError, pHat) where pHat are the parameter estimates.
+            """
+            xi = np.array(xi)
+            pi = np.array(pi)
+
+
+            # First, transform xi and pi to get a lienar relationship.
+            xstar_i = np.log10(xi)
+            power_term = np.power(pi, np.divide(1.0, delta))
+            pstar_i = np.log10(-1.0 * np.log(1.0 - power_term))
+
+            # Define the weights.
+            wi = np.divide(np.power(xi, 2), sum(np.power(xi, 2)))
+
+            # Estimate the parameters alphaHat and betaHat.
+            pstarbar = sum(np.multiply(wi, pstar_i))
+            xstarbar = sum(np.multiply(wi, xstar_i))
+            temp1 = sum(np.multiply(wi, np.multiply(pstar_i, xstar_i))) - np.multiply(pstarbar, xstarbar)
+            temp2 = sum(np.multiply(wi, np.power(pstar_i, 2))) - np.power(pstarbar, 2)
+            bHat = np.divide(temp1, temp2)
+            aHat = xstarbar - bHat * pstarbar
+            alphaHat = np.power(10, aHat)
+            betaHat = 1.0 / bHat
+            pHat = (alphaHat, betaHat, delta)
+
+            # Compute the weighted least squares error.
+            xiHat = np.multiply(alphaHat, np.power(np.multiply(-1, np.log(1 - np.power(pi, 1.0 / delta))), 1.0 / betaHat))
+            WLSError = sum(np.multiply(wi, np.power(xi - xiHat, 2.0)))
+
+            if do_return_parameters:
+                return pHat, WLSError
+            else:
+                return WLSError # If the function shall be used as cost function.
+
+        params = (shape, loc, scale, shape2)
+        # Code written based on the Matlab implementation available here:
+        # https://github.com/ahaselsteiner/exponentiated-weibull/blob/issue%231/ExponentiatedWeibull.m
+        isFixed = (shape is not None, loc is not None, scale is not None, shape2 is not None)
+        if method == 'WLS': # Weighted least squares
+            n = sample.size
+            i = np.array(range(n)) + 1
+            pi = np.divide((i - 0.5), n)
+            xi = np.sort(sample)
+            delta0 = 2
+            if sum(isFixed) == 0:
+                shape2 = scipy.optimize.fmin(estimateAlphaBetaWithWLS, delta0, args=(xi, pi, False))
+                shape2 = shape2[0] # Returns an 1x1 array, however, we want a float.
+                pHat, WLSError = estimateAlphaBetaWithWLS(shape2, xi, pi)
+            elif sum(isFixed) == 1:
+                if isFixed[3] == 1:
+                       pHat, WLSError = estimateAlphaBetaWithWLS(shape2, xi, pi)
+                else:
+                    err_msg = "Error. Fixing shape or scale is not implemented yet."
+                    raise NotImplementedError(err_msg)
+            elif sum(isFixed == 2):
+                err_msg = "Error. Fixing multiple parameters is not implemented yet."
+                raise NotImplementedError(err_msg)
+            else:
+                err_msg = "Error. At least one parameter needs to be free to fit it."
+                raise NotImplementedError(err_msg)
+
+        params = (pHat[1], loc, pHat[0], shape2) # shape, location, scale, shape2
+        self.__init__(*params)
+
+        return params
 
 
 class LognormalDistribution(ParametricDistribution):
