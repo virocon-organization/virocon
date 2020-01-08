@@ -111,6 +111,9 @@ class BasicFit():
                       "but was '{}'.".format(type(shape))
             raise TypeError(err_msg)
 
+
+        print('Printing self.shape2 in BasicFit')
+        print(self.shape2)
         # Raw data
         self.samples = samples
 
@@ -470,11 +473,11 @@ class Fit():
 
     def __init__(self, samples, dist_descriptions, timeout=None):
         """
-        Creates a Fit, by computing the distribution that describes the samples 'best'.
+        Creates a Fit, by estimating the parameters of the distribution.
 
         Parameters
         ----------
-        samples : list of list
+        samples : tuple or list of list
             List that contains data to be fitted : samples[0] -> first variable (i.e. wave height)
                                                    samples[1] -> second variable
                                                    ...
@@ -500,19 +503,20 @@ class Fit():
             name of distribution (defined in settings.py):
 
             - Weibull_2p,
-            - Weibull_3p
+            - Weibull_3p,
+            - Weibull_Exp
             - Lognormal (shape, scale),
             - Lognormal_SigmaMu (sigma, mu),
             - Normal,
             - KernelDensity (no dependency)
 
-        dependency : list of int
-            Length of 3 in the order (shape, loc, scale) contains:
+        dependency : tuple or list of int
+            Length of 3 or 4 in the order (shape, loc, scale, shape2) contains:
 
             - None -> no dependency
             - int -> depends on particular dimension
 
-        functions : list of str
+        functions : tuple or list of str
             Length of 3 in the order : (shape, loc, scale), usable options:
 
             - :power3: :math:`a + b * x^c`
@@ -531,6 +535,16 @@ class Fit():
             determined automatically.
 
         """
+
+        # If the distribution is 1D and the user did not create a list or tuple
+        # of length 1, let's create it
+        if type(dist_descriptions) not in [list,tuple] and \
+                        type(dist_descriptions.get('name')) is str:
+            if len(dist_descriptions) != len(samples):
+                samples = (samples, )
+            dist_descriptions = (dist_descriptions, )
+
+
         self.dist_descriptions = dist_descriptions # Compute references this attribute at plot.py
 
         list_number_of_intervals = []
@@ -681,6 +695,9 @@ class Fit():
                 .format(len(params))
             raise ValueError(err_msg)
 
+
+        print('Printing params in _fit_distribution')
+        print(params)
 
         return constant_params
 

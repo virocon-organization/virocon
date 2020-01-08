@@ -82,10 +82,11 @@ class FittingTest(unittest.TestCase):
                                }
 
         # Fit the model to the data.
-        fit = Fit((sample_hs, sample_tz), (
-            dist_description_hs, dist_description_tz))
+        #fit = Fit((sample_hs, sample_tz),
+        #          (dist_description_hs, dist_description_tz))
+        fit = Fit(sample_hs, dist_description_hs)
         dist0 = fit.mul_var_dist.distributions[0]
-        dist1 = fit.mul_var_dist.distributions[1]
+        #dist1 = fit.mul_var_dist.distributions[1]
 
         self.assertGreater(dist0.shape(0), 1) # Should be about 1.5
         self.assertLess(dist0.shape(0), 2)
