@@ -208,6 +208,39 @@ class ParametricDistribution(Distribution, ABC):
 
         return self._scipy_i_cdf(probabilities, *params)
 
+    def pdf(self, x, rv_values=None, dependencies=None):
+        """
+        Probability density function.
+
+        Parameters
+        ----------
+        x : array_like
+            Points at which the PDF should be evaluated.
+        rv_values : array_like
+            Values of all random variables in variable space in correct order.
+            This can be a 1-dimensional array with length equal to the number of
+            random variables N or a 2-dimensional array with shape (N, M).
+            If x is an array, M must be len(x).
+        dependencies : tuple
+            A 3-element tuple with one entry each for the shape, loc and scale parameters.
+            The entry is the index of the random variable the parameter depends on.
+            The index order has to be the same as in rv_values.
+
+
+        Returns
+        -------
+        cdf : ndarray,
+            Porbability densities at x under condition rv_values.
+        """
+
+        shape_val, loc_val, scale_val, shape2_val = self._get_parameter_values(rv_values, dependencies)
+        if shape2_val == None:
+            params = (shape_val, loc_val, scale_val)
+        else:
+            params = (shape_val, loc_val, scale_val, shape2_val)
+
+        return self._scipy_pdf(x, *params)
+
     def _get_parameter_values(self, rv_values, dependencies):
         """
         Evaluates the conditional shape, loc, scale parameters.
@@ -414,6 +447,49 @@ class ExponentiatedWeibullDistribution(ParametricDistribution):
         # In Matlab syntax: x = scale .* (-1 .* log(1 - p.^(1 ./ shape2))).^(1 ./ shape);
         x = np.multiply(scale, np.power(np.multiply(-1, np.log(1 - np.power(p, np.divide(1, shape2)))), np.divide(1, shape)))
         return x
+
+    def _scipy_pdf(self, x, shape, loc, scale, shape2):
+        """
+        Probability density function of the exponentiated Weibull distribution.
+
+        The parametrization from https://arxiv.org/pdf/1911.12835.pdf is used.
+
+        Parameters
+        ----------
+        x : array_like
+            Position where the PDF should be evaluated.
+        shape: float
+            beta in https://arxiv.org/pdf/1911.12835.pdf .
+        loc : float
+            The distribution does not have a location parameter.
+        scale : float
+            alpha in https://arxiv.org/pdf/1911.12835.pdf .
+        shape 2: float
+            delta in https://arxiv.org/pdf/1911.12835.pdf .
+
+        Returns
+        -------
+        f : array_like
+            Probability density values.
+        """
+
+        x = np.array(x)
+        # In Matlab syntax: f = delta .* beta ./ alpha .* (x ./ alpha).^
+        # (beta - 1) .* (1 - exp(-1 * (x ./ alpha).^beta)).^(delta - 1) .*
+        # exp(-1 .* (x ./ alpha).^beta);
+        a = scale
+        b = shape
+        d = shape2
+        term1 = d * np.divide(b, a) * np.power(np.divide(x, a), b - 1)
+        term2 = np.power(1 - np.exp(-1 * np.power(np.divide(x, a), b)), d - 1)
+        term3 = np.exp(-1 * np.power(np.divide(x, a), b))
+        f = np.multiply(term1, np.multiply(term2, term3))
+        f = np.array(f) # Ensure that f is an numpy array, also if x is 1D.
+
+        # Ensure that PDF(negative value) = 0
+        f[x < 0] = 0
+
+        return f
 
     def fit(self, sample, method='WLS', shape=None, loc=None, scale=None, shape2=None):
         """

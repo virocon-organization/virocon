@@ -285,6 +285,35 @@ class ParametricDistributionTest(unittest.TestCase):
         self.assertTrue(np.isnan(p)) # ICDF(value greater than 1) should be nan.
 
 
+    def test_exponentiated_weibull_distribution_pdf(self):
+        """
+        Tests the PDF of the exponentiated Weibull distribution.
+        """
+
+        # Define parameters with the values from the distribution fitted to
+        # dataset A with the MLE in https://arxiv.org/pdf/1911.12835.pdf .
+        shape = ConstantParam(0.4743)
+        loc = None
+        scale = ConstantParam(0.0373)
+        shape2 = ConstantParam(46.6078)
+        params = (shape, loc, scale, shape2)
+        dist = ExponentiatedWeibullDistribution(*params)
+
+        # PDF(0.7) should be roughly 1.1, see Figure 3 in
+        # https://arxiv.org/pdf/1911.12835.pdf .
+        x = dist.pdf(0.7)
+        self.assertGreater(x, 0.6)
+        self.assertLess(x, 1.5)
+
+        # PDF(2) should be roughly 0.1, see Figure 12
+        # in https://arxiv.org/pdf/1911.12835.pdf .
+        xs = dist.pdf(np.array((0.1, 0.5, 2)))
+        self.assertGreater(xs[-1], 0.05)
+        self.assertLess(xs[-1], 0.2)
+
+        p = dist.pdf(-1)
+        self.assertEqual(p, 0) # PDF(value less than 0) should be 0.
+
     def test_fitting_exponentiated_weibull(self):
         """
         Tests estimating the parameters of the  exponentiated Weibull distribution.
