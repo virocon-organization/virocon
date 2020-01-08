@@ -53,6 +53,54 @@ class FittingTest(unittest.TestCase):
         my_fit = Fit((sample_1, sample_2),
                      (dist_description_0, dist_description_1))
 
+
+    def test_2d_exponentiated_wbl_fit(self):
+        """
+        Tests if a 2D fit that includes an exp. Weibull distribution works.
+        """
+        prng = np.random.RandomState(42)
+
+        # Draw 1000 samples from a Weibull distribution with shape=1.5 and scale=3,
+        # which represents significant wave height.
+        sample_hs = prng.weibull(1.5, 1000)*3
+
+        # Let the second sample, which represents zero-upcrossing period increase
+        # with significant wave height and follow a Lognormal distribution with
+        # mean=2 and sigma=0.2
+        sample_tz = [0.1 + 1.5 * np.exp(0.2 * point) +
+                    prng.lognormal(2, 0.2) for point in sample_hs]
+
+
+        # Define the structure of the probabilistic model that will be fitted to the
+        # dataset.
+        dist_description_hs = {'name': 'Weibull_Exp',
+                               'dependency': (None, None, None, None),
+                               # Shape, Location, Scale, Shape2
+                               'width_of_intervals': 0.5}
+        dist_description_tz = {'name': 'Lognormal_SigmaMu',
+                               'dependency': (0, None, 0),
+                               # Shape, Location, Scale
+                               'functions': ('exp3', None, 'power3')
+                               # Shape, Location, Scale
+                               }
+
+        # Fit the model to the data, first test a 1D fit.
+        fit = Fit(sample_hs, dist_description_hs)
+        # Now perform the 2D fit.
+        fit = Fit((sample_hs, sample_tz),
+                  (dist_description_hs, dist_description_tz))
+
+        dist0 = fit.mul_var_dist.distributions[0]
+        dist1 = fit.mul_var_dist.distributions[1]
+
+        self.assertGreater(dist0.shape(0), 1) # Should be about 1.5.
+        self.assertLess(dist0.shape(0), 2)
+        self.assertIsNone(dist0.loc(0)) # Has no location parameter, should be None.
+        self.assertGreater(dist0.scale(0), 2) # Should be about 3.
+        self.assertLess(dist0.scale(0), 4)
+        self.assertGreater(dist0.shape2(0), 0.5) # Should be about 1.
+        self.assertLess(dist0.shape2(0), 2)
+
     def test_multi_processing(selfs):
         """
         2-d Fit with multiprocessing (specified by setting a value for timeout)

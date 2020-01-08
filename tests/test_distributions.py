@@ -2,13 +2,15 @@ import unittest
 
 
 import numpy as np
+import scipy.stats as sts
 
 from .context import viroconcom
 
 from viroconcom.params import ConstantParam, FunctionParam
-from viroconcom.distributions import (WeibullDistribution, LognormalDistribution, NormalDistribution,
-                                   KernelDensityDistribution,
-                                   MultivariateDistribution)
+from viroconcom.distributions import (
+    WeibullDistribution, ExponentiatedWeibullDistribution,
+    LognormalDistribution, NormalDistribution,
+    MultivariateDistribution)
 
 class MultivariateDistributionTest(unittest.TestCase):
     """
@@ -214,6 +216,102 @@ class ParametricDistributionTest(unittest.TestCase):
             dist._check_parameter_value(2, -2.776)
         with self.assertRaises(ValueError):
             dist._check_parameter_value(2, np.inf)
+
+    def test_parameter_name_to_index(self):
+        dist = ExponentiatedWeibullDistribution()
+        self.assertEqual(dist.param_name_to_index('shape'), 0)
+        self.assertEqual(dist.param_name_to_index('loc'), 1)
+        self.assertEqual(dist.param_name_to_index('scale'), 2)
+        self.assertEqual(dist.param_name_to_index('shape2'), 3)
+        self.assertRaises(ValueError, dist.param_name_to_index, 'something')
+
+    def test_exponentiated_weibull_distribution_cdf(self):
+        """
+        Tests the CDF of the exponentiated Weibull distribution.
+        """
+
+        # Define parameters with the values from the distribution fitted to
+        # dataset A with the MLE in https://arxiv.org/pdf/1911.12835.pdf .
+        shape = ConstantParam(0.4743)
+        loc = None
+        scale = ConstantParam(0.0373)
+        shape2 = ConstantParam(46.6078)
+        params = (shape, loc, scale, shape2)
+        dist = ExponentiatedWeibullDistribution(*params)
+
+        # CDF(1) should be roughly 0.7, see Figure 12 in
+        # https://arxiv.org/pdf/1911.12835.pdf .
+        p = dist.cdf(1)
+        self.assertGreater(p, 0.5)
+        self.assertLess(p, 0.8)
+
+        # CDF(4) should be roughly 0.993, see Figure 12 in
+        # https://arxiv.org/pdf/1911.12835.pdf .
+        ps = dist.cdf(np.array((0.5, 1, 2, 4)))
+        self.assertGreater(ps[-1], 0.99)
+        self.assertLess(ps[-1], 0.999)
+
+        p = dist.cdf(-1)
+        self.assertEqual(p, 0) # CDF(negative value) should be 0
+
+
+    def test_exponentiated_weibull_distribution_icdf(self):
+        """
+        Tests the ICDF of the exponentiated Weibull distribution.
+        """
+
+        # Define parameters with the values from the distribution fitted to
+        # dataset A with the MLE in https://arxiv.org/pdf/1911.12835.pdf .
+        shape = ConstantParam(0.4743)
+        loc = None
+        scale = ConstantParam(0.0373)
+        shape2 = ConstantParam(46.6078)
+        params = (shape, loc, scale, shape2)
+        dist = ExponentiatedWeibullDistribution(*params)
+
+        # ICDF(0.5) should be roughly 0.8, see Figure 12 in
+        # https://arxiv.org/pdf/1911.12835.pdf .
+        x = dist.i_cdf(0.5)
+        self.assertGreater(x, 0.5)
+        self.assertLess(x, 1)
+
+        # ICDF(0.9) should be roughly 1.8, see Figure 12
+        # in https://arxiv.org/pdf/1911.12835.pdf .
+        xs = dist.i_cdf(np.array((0.1, 0.2, 0.5, 0.9)))
+        self.assertGreater(xs[-1], 1)
+        self.assertLess(xs[-1], 2)
+
+        p = dist.i_cdf(5)
+        self.assertTrue(np.isnan(p)) # ICDF(value greater than 1) should be nan.
+
+
+    def test_fitting_exponentiated_weibull(self):
+        """
+        Tests estimating the parameters of the  exponentiated Weibull distribution.
+        """
+
+        dist = ExponentiatedWeibullDistribution()
+
+        # Draw 1000 samples from a Weibull distribution with shape=1.5 and scale=3,
+        # which represents significant wave height.
+        hs = sts.weibull_min.rvs(1.5, loc=0, scale=3, size=1000, random_state=42)
+
+        params = dist.fit(hs)
+        self.assertGreater(params[0], 1) # shape parameter should be about 1.5.
+        self.assertLess(params[0], 2)
+        self.assertIsNone(params[1], 2) # location parameter should be None.
+        self.assertGreater(params[2], 2) # scale parameter should be about 3.
+        self.assertLess(params[2], 4)
+        self.assertGreater(params[3], 0.5) # shape2 parameter should be about 1.
+        self.assertLess(params[3], 2)
+
+
+        params = dist.fit(hs, shape2=1)
+        self.assertGreater(params[0], 1) # shape parameter should be about 1.5.
+        self.assertLess(params[0], 2)
+        self.assertIsNone(params[1], 2) # location parameter should be None.
+        self.assertGreater(params[2], 2) # scale parameter should be about 3.
+        self.assertLess(params[2], 4)
 
 
 if __name__ == '__main__':
