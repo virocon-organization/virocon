@@ -271,7 +271,8 @@ class ParametricDistribution(Distribution, ABC):
                 parameter_vals.append(defaults[i])
             elif dependencies is None or dependencies[i] is None:
                 parameter_vals.append(param(None))
-                self._check_parameter_value(i, parameter_vals[-1])
+                if parameter_vals[-1] is not None:
+                    self._check_parameter_value(i, parameter_vals[-1])
             else:
                 parameter_vals.append(param(rv_values[dependencies[i]]))
                 try: # if list fo values iterate over values
@@ -596,7 +597,12 @@ class ExponentiatedWeibullDistribution(ParametricDistribution):
                 raise NotImplementedError(err_msg)
 
         params = (pHat[1], loc, pHat[0], shape2) # shape, location, scale, shape2
-        self.__init__(*params)
+        constantParams = (ConstantParam(pHat[1]), # shape parameter.
+                          ConstantParam(loc), # location parameter.
+                          ConstantParam(pHat[0]), # scale parameter.
+                          ConstantParam(shape2)) # Second shape parameter
+
+        self.__init__(*constantParams)
 
         return params
 

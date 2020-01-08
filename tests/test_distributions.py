@@ -342,6 +342,10 @@ class ParametricDistributionTest(unittest.TestCase):
         self.assertGreater(params[2], 2) # scale parameter should be about 3.
         self.assertLess(params[2], 4)
 
+        # Check whether the fitted distribution has a working CDF and PDF.
+        self.assertGreater(dist.cdf(2), 0)
+        self.assertGreater(dist.pdf(2), 0)
+
 
 if __name__ == '__main__':
     unittest.main()
