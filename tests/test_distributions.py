@@ -269,12 +269,16 @@ class ParametricDistributionTest(unittest.TestCase):
         params = (shape, loc, scale, shape2)
         dist = ExponentiatedWeibullDistribution(*params)
 
-        x = dist.i_cdf(0.5) # Should be roughly 0.8, see Figure 12 in https://arxiv.org/pdf/1911.12835.pdf .
+        # ICDF(0.5) should be roughly 0.8, see Figure 12 in
+        # https://arxiv.org/pdf/1911.12835.pdf .
+        x = dist.i_cdf(0.5)
         self.assertGreater(x, 0.5)
         self.assertLess(x, 1)
 
+        # ICDF(0.9) should be roughly 1.8, see Figure 12
+        # in https://arxiv.org/pdf/1911.12835.pdf .
         xs = dist.i_cdf(np.array((0.1, 0.2, 0.5, 0.9)))
-        self.assertGreater(xs[-1], 1) # ICDF(0.9) should be roughly 1.8, see Figure 12 in https://arxiv.org/pdf/1911.12835.pdf .
+        self.assertGreater(xs[-1], 1)
         self.assertLess(xs[-1], 2)
 
         p = dist.i_cdf(5)
