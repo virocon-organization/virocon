@@ -78,8 +78,9 @@ limits = [(0, 20), (0, 20)] # Limits of the computational domain.
 deltas = [0.01, 0.01] # Dimensions of the grid cells.
 hdens_contour = HighestDensityContour(mul_dist, tr, ts, limits, deltas)
 
-# Plot the contour.
-plt.scatter(hdens_contour.coordinates[0][0], hdens_contour.coordinates[0][1])
+# Plot the data and the contour.
+plt.scatter(sample_tz, sample_hs, c='black')
+plt.scatter(hdens_contour.coordinates[0][1], hdens_contour.coordinates[0][0])
 plt.xlabel('zero-up-crossing period [s]')
 plt.ylabel('significant wave height (m)')
 
