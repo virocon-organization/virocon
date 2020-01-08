@@ -112,8 +112,6 @@ class BasicFit():
             raise TypeError(err_msg)
 
 
-        print('Printing self.shape2 in BasicFit')
-        print(self.shape2)
         # Raw data
         self.samples = samples
 
@@ -695,10 +693,6 @@ class Fit():
                 .format(len(params))
             raise ValueError(err_msg)
 
-
-        print('Printing params in _fit_distribution')
-        print(params)
-
         return constant_params
 
     @staticmethod
@@ -942,20 +936,20 @@ class Fit():
         else:
             err_msg = "_get_distribution misses the argument 'name'."
             raise TypeError(err_msg)
-        dependency = kwargs.get('dependency', (None, None, None))
-        functions = kwargs.get('functions', ('polynomial', 'polynomial', 'polynomial'))
+        dependency = kwargs.get('dependency', (None, None, None, None))
+        functions = kwargs.get('functions', ('polynomial', )*len(dependency))
         list_number_of_intervals = kwargs.get('list_number_of_intervals')
         list_width_of_intervals = kwargs.get('list_width_of_intervals')
 
         # Fit inspection data for current dimension
         fit_inspection_data = FitInspectionData()
 
-        # Initialize used_number_of_intervals (shape, loc, scale
-        used_number_of_intervals = [None, None, None]
+        # Initialize used_number_of_intervals (shape, loc, scale, shape2)
+        used_number_of_intervals = [None, None, None, None]
 
         # Handle KernelDensity separated
         if name == 'KernelDensity':
-            if dependency != (None, None, None):
+            if not all(x is None for x in dependency):
                 raise NotImplementedError("KernelDensity can not be conditional.")
             return KernelDensityDistribution(Fit._fit_distribution(sample, name)), dependency, \
                    used_number_of_intervals, fit_inspection_data
@@ -1042,6 +1036,8 @@ class Fit():
                             fit_inspection_data.loc_at = interval_centers
                         elif i == 2:
                             fit_inspection_data.scale_at = interval_centers
+                        elif i == 3:
+                            fit_inspection_data.shape2_at = interval_centers
 
                         # Add used number of intervals for current parameter
                         used_number_of_intervals[i] = len(interval_centers)
@@ -1094,6 +1090,8 @@ class Fit():
                         name == WEIBULL_3P_KEYWORD_ALTERNATIVE:
             distribution = WeibullDistribution(*params[:3])
         elif name == WEIBULL_EXP_KEYWORD:
+            print('Creating an exp. Weibull distirbution with params, printing params:')
+            print(params)
             distribution = ExponentiatedWeibullDistribution(*params)
         elif name == LOGNORMAL_MU_PARAMETER_KEYWORD:
             distribution = LognormalDistribution(sigma=params[0], mu=params[2])
