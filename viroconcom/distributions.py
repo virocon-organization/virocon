@@ -208,6 +208,11 @@ class ParametricDistribution(Distribution, ABC):
 
         return self._scipy_i_cdf(probabilities, *params)
 
+    def ppf(self, probabilities, rv_values=None, dependencies=None):
+        # Synsynom for i_cdf. Implemented that in external code a ParametricDistribution
+        # object can be used when scipy.stats.rv_continuous.ppf is meant.
+        return self.i_cdf(probabilities, rv_values, dependencies)
+
     def pdf(self, x, rv_values=None, dependencies=None):
         """
         Probability density function.

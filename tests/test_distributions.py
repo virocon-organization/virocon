@@ -274,6 +274,9 @@ class ParametricDistributionTest(unittest.TestCase):
         x = dist.i_cdf(0.5)
         self.assertGreater(x, 0.5)
         self.assertLess(x, 1)
+        x = dist.ppf(0.5)
+        self.assertGreater(x, 0.5)
+        self.assertLess(x, 1)
 
         # ICDF(0.9) should be roughly 1.8, see Figure 12
         # in https://arxiv.org/pdf/1911.12835.pdf .
