@@ -87,15 +87,18 @@ class ParametricDistribution(Distribution, ABC):
 
         * log-normal: :math:`f(x) = \\frac{1}{x\\widetilde{\\sigma} \\sqrt{2\\pi}}\\exp \\left[ \\frac{-(\\ln x - \\widetilde{\\mu})^2}{2\\widetilde{\\sigma}^2}\\right]`
 
+        * Exponentiated Weibull:
+
         Their scale, shape, and loc values corerspond to the variables
         in the probability density function in the following manner:
 
         ============  ===================  =================  ================
-        distribution  scale                shape              loc
+        distribution  scale                shape              loc (or shape2)
         ============  ===================  =================  ================
         normal        σ                    --                 μ
         Weibull       α                    β                  γ
         log-normal    e^μ                  σ                  --
+        exp. Weibull  α                    β                  -- instead: γ
         ============  ===================  =================  ================
 
         Parameters

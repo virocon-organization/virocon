@@ -55,6 +55,9 @@ class FittingTest(unittest.TestCase):
 
 
     def test_2d_exponentiated_wbl_fit(self):
+        """
+        Tests if a 2D fit that includes an exp. Weibull distribution works.
+        """
         prng = np.random.RandomState(42)
 
         # Draw 1000 samples from a Weibull distribution with shape=1.5 and scale=3,

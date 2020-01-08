@@ -287,8 +287,9 @@ class ParametricDistributionTest(unittest.TestCase):
 
     def test_fitting_exponentiated_weibull(self):
         """
-        Tests estimating the paraemters of the  exponentiated Weibull distribution.
+        Tests estimating the parameters of the  exponentiated Weibull distribution.
         """
+
         dist = ExponentiatedWeibullDistribution()
 
         # Draw 1000 samples from a Weibull distribution with shape=1.5 and scale=3,
