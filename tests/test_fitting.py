@@ -81,24 +81,20 @@ class FittingTest(unittest.TestCase):
                                # Shape, Location, Scale
                                }
 
-        # Fit the model to the data.
-        #fit = Fit((sample_hs, sample_tz),
-        #          (dist_description_hs, dist_description_tz))
+        # Fit the model to the data, first test a 1D fit.
         fit = Fit(sample_hs, dist_description_hs)
-        dist0 = fit.mul_var_dist.distributions[0]
-        #dist1 = fit.mul_var_dist.distributions[1]
+        # Now perform the 2D fit.
+        fit = Fit((sample_hs, sample_tz),
+                  (dist_description_hs, dist_description_tz))
 
-        self.assertGreater(dist0.shape(0), 1) # Should be about 1.5
+        dist0 = fit.mul_var_dist.distributions[0]
+        dist1 = fit.mul_var_dist.distributions[1]
+
+        self.assertGreater(dist0.shape(0), 1) # Should be about 1.5.
         self.assertLess(dist0.shape(0), 2)
         self.assertIsNone(dist0.loc(0)) # Has no location parameter, should be None.
         self.assertGreater(dist0.scale(0), 2) # Should be about 3.
         self.assertLess(dist0.scale(0), 4)
-        print('Printing dist0')
-        print(dist0)
-        print('Printing shape2')
-        print(dist0.shape2)
-        print('Printing shape2(0)')
-        print(dist0.shape2(0))
         self.assertGreater(dist0.shape2(0), 0.5) # Should be about 1.
         self.assertLess(dist0.shape2(0), 2)
 
