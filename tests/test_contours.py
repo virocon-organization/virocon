@@ -114,12 +114,11 @@ class ContourCreationTest(unittest.TestCase):
         test_contour_HDC = HighestDensityContour(mul_dist, n_years, 3,
                                                  limits, deltas)
 
-        contour_coordinates = pd.DataFrame({'x' : test_contour_HDC.coordinates[0][0],
-                                'y' : test_contour_HDC.coordinates[0][1]})
-
-
-        #result0 = pd.read_csv(testfiles_path + "/HDC2dWL_coordinates.csv")
-
+        # If we knew the correct coordinates we could continue with something like
+        # this:
+        #contour_coordinates = pd.DataFrame({'x' : test_contour_HDC.coordinates[0][0],
+        #                        'y' : test_contour_HDC.coordinates[0][1]})
+        #result0 = pd.read_csv(testfiles_path + "/filename.csv")
         #for g,h in [(g, h) for g in result0.index for h in result0.columns]:
         #    self.assertAlmostEqual(result0.loc[g, h], contour_coordinates.loc[g, h], places=8)
 
