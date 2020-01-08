@@ -217,6 +217,13 @@ class ParametricDistributionTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             dist._check_parameter_value(2, np.inf)
 
+    def test_parameter_name_to_index(self):
+        dist = ExponentiatedWeibullDistribution()
+        self.assertEqual(dist.param_name_to_index('shape'), 0)
+        self.assertEqual(dist.param_name_to_index('loc'), 1)
+        self.assertEqual(dist.param_name_to_index('scale'), 2)
+        self.assertEqual(dist.param_name_to_index('shape2'), 3)
+        self.assertRaises(ValueError, dist.param_name_to_index, 'something')
 
     def test_exponentiated_weibull_distribution_cdf(self):
         """
