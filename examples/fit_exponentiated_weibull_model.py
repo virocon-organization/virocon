@@ -48,8 +48,7 @@ def read_dataset(path='examples/datasets/A.txt'):
 sample_hs, sample_tz, label_hs, label_tz = read_dataset()
 
 # Define the structure of the probabilistic model that will be fitted to the
-# dataset. We will use the model that is recommended in DNV-RP-C205 (2010) on
-# page 38 and that is called 'conditonal modeling approach' (CMA).
+# dataset.
 dist_description_hs = {'name': 'Weibull_3p',
                       'dependency': (None, None, None, None), # Shape, Location, Scale, Shape2
                       'width_of_intervals': 0.5}
@@ -66,12 +65,13 @@ dist0 = fit.mul_var_dist.distributions[0]
 print('First variable: ' + dist0.name + ' with '
       + ' scale: ' + str(dist0.scale) + ', '
       + ' shape: ' + str(dist0.shape) + ', '
-      + ' location: ' + str(dist0.loc))
+      + ' location: ' + str(dist0.loc) + ', '
+      + ' shape2: ' + str(dist0.shape2))
 print('Second variable: ' + str(fit.mul_var_dist.distributions[1]))
 
 
-# Compute an IFORM contour with a return period of 25 years, a sea state
-# duration of 3 hours and 100 points along the contour.
+# Compute a highest density contour with a return period of 50 years and
+# a sea  state duration of 1 hour.
 tr = 50 # Return period in years.
 ts = 1 # Sea state duration in hours.
 limits = [(0, 20), (0, 20)] # Limits of the computational domain.
