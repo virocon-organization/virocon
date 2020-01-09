@@ -30,15 +30,21 @@ from .distributions import (WeibullDistribution, ExponentiatedWeibullDistributio
 __all__ = ["Fit"]
 
 
-# Functions for fitting
-# Power function
+# Dependence functions for the parameters, the following functions are available.
+# Power function.
 def _power3(x, a, b, c):
     return a + b * x ** c
 
 
-# Exponential function
+# Exponential function.
 def _exp3(x, a, b, c):
     return a + b * np.exp(c * x)
+
+
+# Logarithmic square function. Function has two paramters, but 3 are given such
+# that in the software all dependence functions can be called with 3 parameters.
+def _lnsquare2(x, a, b, c):
+    return np.log(a + b * np.sqrt(np.divide(x, 9.81)))
 
 
 # Bounds for function parameters
@@ -519,6 +525,7 @@ class Fit():
 
             - :power3: :math:`a + b * x^c`
             - :exp3: :math:`a + b * e^{x * c}`
+            - :lnsquare2: :math:`ln[a + b * sqrt(x / 9.81)`
             - remark : in case of Lognormal_SigmaMu it is (sigma, None, mu)
 
         and either number_of_intervals or width_of_intervals:
@@ -703,7 +710,7 @@ class Fit():
         Parameters
         ----------
         function_name : str
-            Options are 'power3', 'exp3'.
+            Options are 'power3', 'exp3', 'lnsquare2'.
 
         Returns
         -------
@@ -720,6 +727,8 @@ class Fit():
             return _power3
         elif function_name == 'exp3':
             return _exp3
+        elif function_name == 'lnsquare2':
+            return _lnsquare2
         elif function_name is None:
             return None
         else:

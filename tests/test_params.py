@@ -44,6 +44,14 @@ class ParamsTest(unittest.TestCase):
         test_func = FunctionParam(1, 1, 0, 'exp3')
         self.assertEqual(test_func._value(0), 2)
 
+    def test_FunctionParam_lnsquare2(self):
+        """
+        Tests if function lnsquare2 calculates the correct value
+        """
+
+        test_func = FunctionParam(1, 1, None, 'lnsquare2')
+        self.assertEqual(test_func._value(0), 0)
+
 
     def test_FunctionParam_unknown(self):
         """
