@@ -6,7 +6,7 @@ from viroconcom.fitting import Fit
 from viroconcom.contours import HighestDensityContour
 
 
-def read_dataset(path='examples/datasets/A.txt'):
+def read_benchmark_dataset(path='examples/datasets/A.txt'):
     """
     Reads a datasets provided for the environmental contour benchmark.
     Parameters
@@ -45,7 +45,7 @@ def read_dataset(path='examples/datasets/A.txt'):
     y = np.asarray(y)
     return (x, y, x_label, y_label)
 
-sample_hs, sample_tz, label_hs, label_tz = read_dataset()
+sample_hs, sample_tz, label_hs, label_tz = read_benchmark_dataset()
 
 # Define the structure of the probabilistic model that will be fitted to the
 # dataset.

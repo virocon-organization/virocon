@@ -5,7 +5,7 @@ import numpy as np
 from viroconcom.fitting import Fit
 
 
-def read_dataset(path='tests/testfiles/1year_dataset_A.txt'):
+def read_benchmark_dataset(path='tests/testfiles/1year_dataset_A.txt'):
     """
     Reads a datasets provided for the environmental contour benchmark.
     Parameters
@@ -150,7 +150,7 @@ class FittingTest(unittest.TestCase):
         Tests a 2D fit that includes an logarithm square dependence function.
         """
 
-        sample_hs, sample_tz, label_hs, label_tz = read_dataset()
+        sample_hs, sample_tz, label_hs, label_tz = read_benchmark_dataset()
 
 
         # Define the structure of the probabilistic model that will be fitted to the
