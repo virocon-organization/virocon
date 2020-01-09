@@ -62,6 +62,14 @@ class ParamsTest(unittest.TestCase):
         self.assertEqual(test_func._value(0), 1.25)
         self.assertEqual(test_func.func_name, 'powerdecrease3')
 
+    def test_FunctionParam_asymdecrease3(self):
+        """
+        Tests if function asymdecrease3 calculates the correct value.
+        """
+
+        test_func = FunctionParam(1, 4, 2, 'asymdecrease3')
+        self.assertEqual(test_func._value(0), 1.125)
+        self.assertEqual(test_func.func_name, 'asymdecrease3')
 
     def test_FunctionParam_unknown(self):
         """

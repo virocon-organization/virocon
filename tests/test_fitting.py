@@ -181,9 +181,9 @@ class FittingTest(unittest.TestCase):
         self.assertLess(dist1.scale(0), 10)
         self.assertEqual(dist1.scale.func_name, 'lnsquare2')
 
-    def test_fit_lnsquare2(self):
+    def test_fit_powerdecrease3(self):
         """
-        Tests a 2D fit that includes an logarithm square dependence function.
+        Tests a 2D fit that includes an powerdecrease3 dependence function.
         """
 
         sample_hs, sample_tz, label_hs, label_tz = read_benchmark_dataset()
@@ -218,6 +218,52 @@ class FittingTest(unittest.TestCase):
         self.assertGreater(dist1.shape(0), 0.25) # Should be about 0.35
         self.assertLess(dist1.shape(0), 0.4) # Should be about 0.35
         self.assertEqual(dist1.shape.func_name, 'powerdecrease3')
+
+    def test_fit_asymdecrease3(self):
+        """
+        Tests a 2D fit that includes an asymdecrease3 dependence function.
+        """
+
+        sample_hs, sample_tz, label_hs, label_tz = read_benchmark_dataset()
+
+
+        # Define the structure of the probabilistic model that will be fitted to the
+        # dataset.
+        dist_description_hs = {'name': 'Weibull_Exp',
+                               'dependency': (None, None, None, None),
+                               # Shape, Location, Scale, Shape2
+                               'width_of_intervals': 0.5}
+        dist_description_tz = {'name': 'Lognormal_SigmaMu',
+                               'dependency': (0, None, 0),
+                               # Shape, Location, Scale
+                               'functions': ('asymdecrease3', None, 'lnsquare2')
+                               # Shape, Location, Scale
+                               }
+
+        # Fit the model to the data.
+        fit = Fit((sample_hs, sample_tz),
+                  (dist_description_hs, dist_description_tz))
+
+
+        # Check whether the logarithmic square fit worked correctly.
+        dist1 = fit.mul_var_dist.distributions[1]
+        print('Printing shape.a')
+        print(dist1.shape.a)
+        print('Printing shape.b')
+        print(dist1.shape.b)
+        print('Printing shape.c')
+        print(dist1.shape.c)
+        print('Printing shape')
+        print(dist1.shape)
+
+        self.assertGreater(dist1.shape.a, -0.1) # Should be about 0
+        self.assertLess(dist1.shape.a, 0.1)  # Should be about 0
+        self.assertGreater(dist1.shape.b, 1) # Should be about 1-2.5
+        self.assertLess(dist1.shape.b, 2.5)  # Should be about 1-2.5
+        self.assertGreater(np.abs(dist1.shape.c), 1.5) # Should be about 1.5 - 4
+        self.assertLess(np.abs(dist1.shape.c), 4)  # Should be about 1.1
+        self.assertGreater(dist1.shape(0), 0.25) # Should be about 0.35
+        self.assertLess(dist1.shape(0), 0.4) # Should be about 0.35
 
     def test_min_number_datapoints_for_fit(self):
         """

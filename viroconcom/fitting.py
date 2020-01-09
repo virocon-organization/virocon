@@ -52,6 +52,11 @@ def _powerdecrease3(x, a, b, c):
     return a + 1 / (x + b) ** c
 
 
+# Function that decreases with x to the power of c.
+def _asymdecrease3(x, a, b, c):
+    return a + 1 / (b * (x + np.abs(c)))
+
+
 # Bounds for function parameters
 # 0 < a < inf
 # 0 < b < inf
@@ -532,6 +537,7 @@ class Fit():
             - :exp3: :math:`a + b * e^{x * c}`
             - :lnsquare2: :math:`ln[a + b * sqrt(x / 9.81)`
             - :powerdecrease3: :math:`a + 1 / (x + b)^c`
+            - :asymdecrease3: :math:`a + 1 / (b * (x + |c|))`
             - remark : in case of Lognormal_SigmaMu it is (sigma, None, mu)
 
         and either number_of_intervals or width_of_intervals:
@@ -716,7 +722,8 @@ class Fit():
         Parameters
         ----------
         function_name : str
-            Options are 'power3', 'exp3', 'lnsquare2', 'powerdecrease3'.
+            Options are 'power3', 'exp3', 'lnsquare2', 'powerdecrease3',
+            'asymdecrease3'.
 
         Returns
         -------
@@ -737,6 +744,8 @@ class Fit():
             return _lnsquare2
         elif function_name == 'powerdecrease3':
             return _powerdecrease3
+        elif function_name == 'asymdecrease3':
+            return _asymdecrease3
         elif function_name is None:
             return None
         else:

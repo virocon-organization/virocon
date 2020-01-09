@@ -86,6 +86,7 @@ class FunctionParam(Param):
                 :exp3: :math:`a + b * e^{x * c}`
                 :lnsquare2: :math:`ln[a + b * sqrt(x / 9.81)`
                 :powerdecrease3: :math:`a + 1 / (x + b)^c`
+                :asymdecrease3: :math:`a + 1 / (b * (x + c))`
         wrapper : function or Wrapper
             A function or a Wrapper object to wrap around the function.
             The function has to be pickleable. (i.e. lambdas, clojures, etc. are not supported.)
@@ -109,6 +110,9 @@ class FunctionParam(Param):
         elif func_type == "powerdecrease3":
             self._func = self._powerdecrease3
             self.func_name = "powerdecrease3"
+        elif func_type == "asymdecrease3":
+            self._func = self._asymdecrease3
+            self.func_name = "asymdecrease3"
         else:
             raise ValueError("{} is not a known kind of function.".format(func_type))
 
@@ -141,6 +145,10 @@ class FunctionParam(Param):
     def _powerdecrease3(self, x):
         return self.a + 1.0 / (x + self.b) ** self.c
 
+    # A 3-parameter function that asymptotically decreases (a dependence function).
+    def _asymdecrease3(self, x):
+        return self.a + 1.0 / (self.b * (x + np.abs(self.c)))
+
     def _value(self, x):
         return self._wrapper(self._func(x))
 
@@ -153,6 +161,8 @@ class FunctionParam(Param):
             function_string = "ln[" + str(self.a) + " + " + str(self.b) + "sqrt(x / 9.81]"
         elif self.func_name == "powerdecrease3":
             function_string = "" + str(self.a) + " + 1 / (x + " + str(self.b) + ")^" + str(self.c)
+        elif self.func_name == "asymdecrease3":
+            function_string = "" + str(self.a) + " + 1 / (" + str(self.b) + "(x + " + str(self.c) + "))"
         if isinstance(self._wrapper.func, np.ufunc):
             function_string += " with _wrapper: " + str(self._wrapper)
         return function_string
