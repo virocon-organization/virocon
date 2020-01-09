@@ -166,15 +166,13 @@ class FittingTest(unittest.TestCase):
                                # Shape, Location, Scale
                                }
 
-        # Fit the model to the data, first test a 1D fit.
-        fit = Fit(sample_hs, dist_description_hs)
-        # Now perform the 2D fit.
+        # Fit the model to the data.
         fit = Fit((sample_hs, sample_tz),
                   (dist_description_hs, dist_description_tz))
 
-        dist0 = fit.mul_var_dist.distributions[0]
-        dist1 = fit.mul_var_dist.distributions[1]
 
+        # Check whether the logarithmic square fit worked correctly.
+        dist1 = fit.mul_var_dist.distributions[1]
         self.assertGreater(dist1.scale.a, 1) # Should be about 1-5
         self.assertLess(dist1.scale.a, 5)  # Should be about 1-5
         self.assertGreater(dist1.scale.b, 2) # Should be about 2-10
