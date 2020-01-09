@@ -30,7 +30,7 @@ from .distributions import (WeibullDistribution, ExponentiatedWeibullDistributio
 __all__ = ["Fit"]
 
 
-# Dependence functions for the parameters:
+# Dependence functions for the parameters, the following functions are available.
 # Power function.
 def _power3(x, a, b, c):
     return a + b * x ** c
@@ -39,6 +39,7 @@ def _power3(x, a, b, c):
 # Exponential function.
 def _exp3(x, a, b, c):
     return a + b * np.exp(c * x)
+
 
 # Logarithmic square function. Function has two paramters, but 3 are given such
 # that in the software all dependence functions can be called with 3 parameters.
