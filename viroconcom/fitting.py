@@ -777,7 +777,8 @@ class Fit():
 
     @staticmethod
     def _get_fitting_values(sample, samples, name, dependency, index,
-                            number_of_intervals=None, bin_width=None):
+                            number_of_intervals=None, bin_width=None,
+                            min_datapoints_for_fit=20):
         """
         Returns values for fitting.
 
@@ -799,6 +800,8 @@ class Fit():
             Order : (shape, loc, scale) (i.e. 0 -> shape).
         number_of_intervals : int
             Number of distributions used to fit shape, loc, scale.
+        min_datapoints_for_fit : int
+            Minimum number of datapoints required to perform the fit.
         Notes
         -----
         For that case that number_of_intervals and also bin_width is given the parameter
@@ -824,7 +827,6 @@ class Fit():
         RuntimeError
             If there was not enough data and the number of intervals was less than three.
         """
-        MIN_DATA_POINTS_FOR_FIT = 10
 
         # Compute intervals.
         if number_of_intervals:
@@ -863,7 +865,7 @@ class Fit():
             mask = ((sorted_samples[:, 1] >= step - 0.5 * interval_width) &
                     (sorted_samples[:, 1] < step + 0.5 * interval_width))
             samples_in_interval = sorted_samples[mask, 0]
-            if len(samples_in_interval) >= MIN_DATA_POINTS_FOR_FIT:
+            if len(samples_in_interval) >= min_datapoints_for_fit:
                 try:
                     # Fit distribution to selected data.
                     basic_fit = Fit._append_params(
@@ -882,12 +884,12 @@ class Fit():
                 # the step is deleted.
                 deleted_centers.append(i) # Add index of unused center.
                 warnings.warn(
-                    "'Due to the restriction of MIN_DATA_POINTS_FOR_FIT='{}' "
+                    "'Due to the restriction of min_datapoints_for_fit='{}' "
                     "there is not enough data (n='{}') for the interval "
                     "centered at '{}' in dimension '{}'. No distribution will "
                     "be fitted to this interval. Consider adjusting your "
                     "intervals."
-                        .format(MIN_DATA_POINTS_FOR_FIT,
+                        .format(min_datapoints_for_fit,
                         len(samples_in_interval),
                         step,
                         dependency[index]),
@@ -949,6 +951,7 @@ class Fit():
         functions = kwargs.get('functions', ('polynomial', )*len(dependency))
         list_number_of_intervals = kwargs.get('list_number_of_intervals')
         list_width_of_intervals = kwargs.get('list_width_of_intervals')
+        min_datapoints_for_fit = kwargs.get('min_datapoints_for_fit', 20)
 
         # Fit inspection data for current dimension
         fit_inspection_data = FitInspectionData()
@@ -1008,13 +1011,15 @@ class Fit():
                     interval_centers, dist_values, param_values, multiple_basic_fit = \
                         Fit._get_fitting_values(
                             sample, samples, name, dependency, index,
-                            number_of_intervals=list_number_of_intervals[dependency[index]])
+                            number_of_intervals=list_number_of_intervals[dependency[index]],
+                        min_datapoints_for_fit=min_datapoints_for_fit)
                 # If a the (constant) width of the intervals is given.
                 elif list_width_of_intervals[dependency[index]]:
                     interval_centers, dist_values, param_values, multiple_basic_fit = \
                         Fit._get_fitting_values(
                             sample, samples, name, dependency, index,
-                            bin_width=list_width_of_intervals[dependency[index]])
+                            bin_width=list_width_of_intervals[dependency[index]],
+                            min_datapoints_for_fit=min_datapoints_for_fit)
 
                 for i in range(index, len(functions)):
                     # Check if the other parameters have the same dependency

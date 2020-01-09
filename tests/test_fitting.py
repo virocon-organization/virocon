@@ -181,6 +181,55 @@ class FittingTest(unittest.TestCase):
         self.assertLess(dist1.scale(0), 10)
         self.assertEqual(dist1.scale.func_name, 'lnsquare2')
 
+    def test_min_number_datapoints_for_fit(self):
+        """
+        Tests if the minimum number of datapoints required for a fit works.
+        """
+
+        sample_hs, sample_tz, label_hs, label_tz = read_benchmark_dataset()
+
+        # Define the structure of the probabilistic model that will be fitted to the
+        # dataset.
+        dist_description_hs = {'name': 'Weibull_Exp',
+                               'dependency': (None, None, None, None),
+                               # Shape, Location, Scale, Shape2
+                               'width_of_intervals': 0.5}
+        dist_description_tz = {'name': 'Lognormal_SigmaMu',
+                               'dependency': (0, None, 0),
+                               # Shape, Location, Scale
+                               'functions': ('exp3', None, 'lnsquare2'),
+                               # Shape, Location, Scale
+                               'min_datapoints_for_fit': 10
+                               }
+
+        # Fit the model to the data.
+        fit = Fit((sample_hs, sample_tz),
+                  (dist_description_hs, dist_description_tz))
+
+        # Check whether the logarithmic square fit worked correctly.
+        dist1 = fit.mul_var_dist.distributions[1]
+        a_min_10 = dist1.scale.a
+
+        # Now require more datapoints for a fit.
+        dist_description_tz = {'name': 'Lognormal_SigmaMu',
+                               'dependency': (0, None, 0),
+                               # Shape, Location, Scale
+                               'functions': ('exp3', None, 'lnsquare2'),
+                               # Shape, Location, Scale
+                               'min_datapoints_for_fit': 500
+                               }
+
+        # Fit the model to the data.
+        fit = Fit((sample_hs, sample_tz),
+                  (dist_description_hs, dist_description_tz))
+
+        # Check whether the logarithmic square fit worked correctly.
+        dist1 = fit.mul_var_dist.distributions[1]
+        a_min_500 = dist1.scale.a
+
+        # Because in case 2 fewer bins have been used we should get different
+        # coefficients for the dependence function.
+        self.assertNotEqual(a_min_10, a_min_500)
 
     def test_multi_processing(selfs):
         """
