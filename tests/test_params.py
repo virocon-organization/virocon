@@ -38,7 +38,7 @@ class ParamsTest(unittest.TestCase):
 
     def test_FunctionParam_exp3(self):
         """
-        tests if function exp3 calculates the correct value
+        tests if function exp3 calculates the correct value.
         """
 
         test_func = FunctionParam(1, 1, 0, 'exp3')
@@ -46,12 +46,21 @@ class ParamsTest(unittest.TestCase):
 
     def test_FunctionParam_lnsquare2(self):
         """
-        Tests if function lnsquare2 calculates the correct value
+        Tests if function lnsquare2 calculates the correct value.
         """
 
         test_func = FunctionParam(1, 1, None, 'lnsquare2')
         self.assertEqual(test_func._value(0), 0)
         self.assertEqual(test_func.func_name, 'lnsquare2')
+
+    def test_FunctionParam_powerdecrease3(self):
+        """
+        Tests if function powerdecrease3 calculates the correct value.
+        """
+
+        test_func = FunctionParam(1, 2, 2, 'powerdecrease3')
+        self.assertEqual(test_func._value(0), 1.25)
+        self.assertEqual(test_func.func_name, 'powerdecrease3')
 
 
     def test_FunctionParam_unknown(self):

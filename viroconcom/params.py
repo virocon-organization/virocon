@@ -85,6 +85,7 @@ class FunctionParam(Param):
                 :power3: :math:`a + b * x^c`
                 :exp3: :math:`a + b * e^{x * c}`
                 :lnsquare2: :math:`ln[a + b * sqrt(x / 9.81)`
+                :powerdecrease3: :math:`a + 1 / (x + b)^c`
         wrapper : function or Wrapper
             A function or a Wrapper object to wrap around the function.
             The function has to be pickleable. (i.e. lambdas, clojures, etc. are not supported.)
@@ -105,6 +106,9 @@ class FunctionParam(Param):
         elif func_type == "lnsquare2":
             self._func = self._lnsquare2
             self.func_name = "lnsquare2"
+        elif func_type == "powerdecrease3":
+            self._func = self._powerdecrease3
+            self.func_name = "powerdecrease3"
         else:
             raise ValueError("{} is not a known kind of function.".format(func_type))
 
@@ -133,16 +137,22 @@ class FunctionParam(Param):
     def _lnsquare2(self, x):
         return np.log(self.a + self.b * np.sqrt(np.divide(x, 9.81)))
 
+    # The 3-parameter decreasing power function (a dependence function).
+    def _powerdecrease3(self, x):
+        return self.a + 1.0 / (x + self.b) ** self.c
+
     def _value(self, x):
         return self._wrapper(self._func(x))
 
     def __str__(self):
         if self.func_name == "power3":
-            function_string = "" + str(self.a) + "+" + str(self.b) + "x" + "^{" + str(self.c) + "}"
+            function_string = "" + str(self.a) + " + " + str(self.b) + "x" + "^{" + str(self.c) + "}"
         elif self.func_name == "exp3":
-            function_string = "" + str(self.a) + "+" + str(self.b) + "e^{" + str(self.c) + "x}"
+            function_string = "" + str(self.a) + " + " + str(self.b) + "e^{" + str(self.c) + "x}"
         elif self.func_name == "lnsquare2":
             function_string = "ln[" + str(self.a) + " + " + str(self.b) + "sqrt(x / 9.81]"
+        elif self.func_name == "powerdecrease3":
+            function_string = "" + str(self.a) + " + 1 / (x + " + str(self.b) + ")^" + str(self.c)
         if isinstance(self._wrapper.func, np.ufunc):
             function_string += " with _wrapper: " + str(self._wrapper)
         return function_string

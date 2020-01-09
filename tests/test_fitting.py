@@ -181,6 +181,44 @@ class FittingTest(unittest.TestCase):
         self.assertLess(dist1.scale(0), 10)
         self.assertEqual(dist1.scale.func_name, 'lnsquare2')
 
+    def test_fit_lnsquare2(self):
+        """
+        Tests a 2D fit that includes an logarithm square dependence function.
+        """
+
+        sample_hs, sample_tz, label_hs, label_tz = read_benchmark_dataset()
+
+
+        # Define the structure of the probabilistic model that will be fitted to the
+        # dataset.
+        dist_description_hs = {'name': 'Weibull_Exp',
+                               'dependency': (None, None, None, None),
+                               # Shape, Location, Scale, Shape2
+                               'width_of_intervals': 0.5}
+        dist_description_tz = {'name': 'Lognormal_SigmaMu',
+                               'dependency': (0, None, 0),
+                               # Shape, Location, Scale
+                               'functions': ('powerdecrease3', None, 'lnsquare2')
+                               # Shape, Location, Scale
+                               }
+
+        # Fit the model to the data.
+        fit = Fit((sample_hs, sample_tz),
+                  (dist_description_hs, dist_description_tz))
+
+
+        # Check whether the logarithmic square fit worked correctly.
+        dist1 = fit.mul_var_dist.distributions[1]
+        self.assertGreater(dist1.shape.a, -0.1) # Should be about 0
+        self.assertLess(dist1.shape.a, 0.1)  # Should be about 0
+        self.assertGreater(dist1.shape.b, 1.5) # Should be about 2-5
+        self.assertLess(dist1.shape.b, 6)  # Should be about 2-10
+        self.assertGreater(dist1.shape.c, 0.8) # Should be about 1.1
+        self.assertLess(dist1.shape.c, 2)  # Should be about 1.1
+        self.assertGreater(dist1.shape(0), 0.25) # Should be about 0.35
+        self.assertLess(dist1.shape(0), 0.4) # Should be about 0.35
+        self.assertEqual(dist1.shape.func_name, 'powerdecrease3')
+
     def test_min_number_datapoints_for_fit(self):
         """
         Tests if the minimum number of datapoints required for a fit works.
