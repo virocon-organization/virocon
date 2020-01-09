@@ -179,6 +179,7 @@ class FittingTest(unittest.TestCase):
         self.assertLess(dist1.scale.b, 10)  # Should be about 2-10
         self.assertGreater(dist1.scale(0), 0.1)
         self.assertLess(dist1.scale(0), 10)
+        self.assertEqual(dist1.scale.func_name, 'lnsquare2')
 
 
     def test_multi_processing(selfs):

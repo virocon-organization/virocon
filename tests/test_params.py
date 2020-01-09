@@ -51,6 +51,7 @@ class ParamsTest(unittest.TestCase):
 
         test_func = FunctionParam(1, 1, None, 'lnsquare2')
         self.assertEqual(test_func._value(0), 0)
+        self.assertEqual(test_func.func_name, 'lnsquare2')
 
 
     def test_FunctionParam_unknown(self):
