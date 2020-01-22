@@ -677,6 +677,14 @@ class Fit():
         elif name == WEIBULL_3P_KEYWORD or \
                         name == WEIBULL_3P_KEYWORD_ALTERNATIVE:
             params = sts.weibull_min.fit(sample)
+            if params[1] < 0:
+                warnings.warn('The estimated location parameter of a translated '
+                              'Weibull distribution was negative ({}). However, '
+                              'as this is likely unphysical and could lead to '
+                              'problems with conditonal variables, the '
+                              'location parameter is set to 0.'.format(params[1]),
+                              RuntimeWarning, stacklevel=2)
+                params = (params[0], 0, params[2])
         elif name == WEIBULL_EXP_KEYWORD:
             dist = ExponentiatedWeibullDistribution()
             params = dist.fit(sample)
@@ -900,17 +908,6 @@ class Fit():
                 # For case that too few fitting data for the step were found
                 # the step is deleted.
                 deleted_centers.append(i) # Add index of unused center.
-                warnings.warn(
-                    "'Due to the restriction of min_datapoints_for_fit='{}' "
-                    "there is not enough data (n='{}') for the interval "
-                    "centered at '{}' in dimension '{}'. No distribution will "
-                    "be fitted to this interval. Consider adjusting your "
-                    "intervals."
-                        .format(min_datapoints_for_fit,
-                        len(samples_in_interval),
-                        step,
-                        dependency[index]),
-                    RuntimeWarning, stacklevel=2)
         if len(interval_centers) < 3:
             nr_of_intervals = str(len(interval_centers))
             raise RuntimeError("Your settings resulted in " + nr_of_intervals +

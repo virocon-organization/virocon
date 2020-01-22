@@ -336,3 +336,42 @@ class FittingTest(unittest.TestCase):
         my_fit = Fit((sample_1, sample_2),
                      (dist_description_0, dist_description_1),
                      timeout=10)
+
+    def test_wbl_fit_with_negative_location(self):
+        """
+        Tests fitting a translated Weibull distribution which would result
+        in a negative location parameter.
+        """
+
+        sample_hs, sample_tz, label_hs, label_tz = read_benchmark_dataset()
+
+
+        # Define the structure of the probabilistic model that will be fitted to the
+        # dataset.
+        dist_description_hs = {'name': 'Weibull_3p',
+                               'dependency': (None, None, None)}
+
+        # Fit the model to the data.
+        fit = Fit((sample_hs, ),
+                  (dist_description_hs, ))
+
+
+        # Correct values for 10 years of data can be found in
+        # 10.1115/OMAE2019-96523 . Here we used 1 year of data.
+        dist0 = fit.mul_var_dist.distributions[0]
+        self.assertAlmostEqual(dist0.shape(0) / 10, 1.48 / 10, places=1)
+        self.assertGreater(dist0.loc(0), 0.0) # Should be 0.0981
+        self.assertLess(dist0.loc(0), 0.3)  # Should be 0.0981
+        self.assertAlmostEqual(dist0.scale(0), 0.944, places=1)
+
+        # Shift the wave data with -1 m and fit again.
+        sample_hs = sample_hs - 2
+        fit = Fit((sample_hs, ),
+                  (dist_description_hs, ))
+        dist0 = fit.mul_var_dist.distributions[0]
+        self.assertAlmostEqual(dist0.shape(0) / 10, 1.48 / 10, places=1)
+
+        # Should be estimated to be  0.0981 - 2 and corrected to be 0.
+        self.assertEqual(dist0.loc(0), 0)
+
+        self.assertAlmostEqual(dist0.scale(0), 0.944, places=1)
