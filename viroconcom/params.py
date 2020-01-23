@@ -74,12 +74,10 @@ class ConstantParam(Param):
 class FunctionParam(Param):
     """A callable parameter, which depends on the value supplied."""
 
-    def __init__(self, a, b, c, func_type, wrapper=None):
+    def __init__(self, func_type, a, b, c, d=None, wrapper=None):
         """
         Parameters
         ----------
-        a,b,c : float
-            The function parameters.
         func_type : str
             Defines which kind of dependence function to use:
                 :power3: :math:`a + b * x^c`
@@ -87,6 +85,12 @@ class FunctionParam(Param):
                 :lnsquare2: :math:`ln[a + b * sqrt(x / 9.81)`
                 :powerdecrease3: :math:`a + 1 / (x + b)^c`
                 :asymdecrease3: :math:`a + 1 / (b * (x + c))`
+                :logistics4: :math:`not yet`
+        a,b,c : float
+            The function parameters.
+        d : float, defaults to None
+            An optional function parameter (only some function have more than
+            3 parameters.
         wrapper : function or Wrapper
             A function or a Wrapper object to wrap around the function.
             The function has to be pickleable. (i.e. lambdas, clojures, etc. are not supported.)
@@ -97,22 +101,26 @@ class FunctionParam(Param):
         self.a = a
         self.b = b
         self.c = c
+        self.d = d
 
         if func_type == "power3":
             self._func = self._power3
-            self.func_name = "power3"
+            self.func_name = func_type
         elif func_type == "exp3":
             self._func = self._exp3
-            self.func_name = "exp3"
+            self.func_name = func_type
         elif func_type == "lnsquare2":
             self._func = self._lnsquare2
-            self.func_name = "lnsquare2"
+            self.func_name = func_type
         elif func_type == "powerdecrease3":
             self._func = self._powerdecrease3
-            self.func_name = "powerdecrease3"
+            self.func_name = func_type
         elif func_type == "asymdecrease3":
             self._func = self._asymdecrease3
-            self.func_name = "asymdecrease3"
+            self.func_name = func_type
+        elif func_type == "logistics4":
+            self._func = self._logistics4
+            self.func_name = func_type
         else:
             raise ValueError("{} is not a known kind of function.".format(func_type))
 
@@ -149,20 +157,33 @@ class FunctionParam(Param):
     def _asymdecrease3(self, x):
         return self.a + 1.0 / (self.b * (x + np.abs(self.c)))
 
+    # A 4-parameter logististics function (a dependence function).
+    def _logistics4(self, x):
+        return self.a + self.b / (1 + np.exp(self.c * (x - self.d)))
+
     def _value(self, x):
         return self._wrapper(self._func(x))
 
     def __str__(self):
         if self.func_name == "power3":
-            function_string = "" + str(self.a) + " + " + str(self.b) + "x" + "^(" + str(self.c) + ")"
+            function_string = "" + str(self.a) + " + " + str(self.b) + \
+                              "x" + "^(" + str(self.c) + ")"
         elif self.func_name == "exp3":
-            function_string = "" + str(self.a) + " + " + str(self.b) + "e^{" + str(self.c) + "x}"
+            function_string = "" + str(self.a) + " + " + str(self.b) + \
+                              "e^{" + str(self.c) + "x}"
         elif self.func_name == "lnsquare2":
-            function_string = "ln[" + str(self.a) + " + " + str(self.b) + "sqrt(x / 9.81)]"
+            function_string = "ln[" + str(self.a) + " + " + str(self.b) + \
+                              "sqrt(x / 9.81)]"
         elif self.func_name == "powerdecrease3":
-            function_string = "" + str(self.a) + " + 1 / (x + " + str(self.b) + ")^" + str(self.c)
+            function_string = "" + str(self.a) + " + 1 / (x + " + str(self.b) + \
+                               ")^" + str(self.c)
         elif self.func_name == "asymdecrease3":
-            function_string = "" + str(self.a) + " + 1 / [" + str(self.b) + "(x + " + str(self.c) + ")]"
+            function_string = "" + str(self.a) + " + 1 / [" + str(self.b) + \
+                               "(x + " + str(self.c) + ")]"
+        elif self.func_name == "logistics4":
+            function_string = "" + str(self.a) + " + " + str(self.b) + \
+                              " / {1 + e^[-" + str(self.c) + \
+                              " * (x - " + str(self.c) + ")]}"
         if isinstance(self._wrapper.func, np.ufunc):
             function_string += " with _wrapper: " + str(self._wrapper)
         return function_string

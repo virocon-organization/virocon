@@ -12,8 +12,8 @@ dist0 = WeibullDistribution(shape, loc, scale)
 dep0 = (None, None, None) # All three parameters are independent.
 
 # Define a Lognormal distribution representing spectral peak period.
-my_sigma = FunctionParam(0.05, 0.2, -0.2, "exp3")
-my_mu = FunctionParam(0.1, 1.5, 0.2, "power3")
+my_sigma = FunctionParam('exp3', 0.05, 0.2, -0.2)
+my_mu = FunctionParam('power3', 0.1, 1.5, 0.2)
 dist1 = LognormalDistribution(sigma=my_sigma, mu=my_mu)
 dep1 = (0, None, 0) # Parameter one and three depend on dist0.
 
@@ -34,9 +34,9 @@ hdens_contour = HighestDensityContour(mul_dist, 25, 3, limits, deltas)
 
 # Plot the two contours.
 plt.scatter(hdens_contour.coordinates[0][0], hdens_contour.coordinates[0][1],
-            label="highest density contour")
+            label='highest density contour')
 plt.scatter(iform_contour.coordinates[0][0], iform_contour.coordinates[0][1],
-            label="IFORM contour")
+            label='IFORM contour')
 plt.xlabel('significant wave height [m]')
 plt.ylabel('spectral peak period [s]')
 plt.legend()

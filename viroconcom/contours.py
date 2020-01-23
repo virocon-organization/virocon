@@ -124,8 +124,8 @@ class IFormContour(Contour):
         >>> loc = ConstantParam(0.8888)
         >>> scale = ConstantParam(2.776)
         >>> par1 = (shape, loc, scale)
-        >>> mu = FunctionParam(0.1000, 1.489, 0.1901, "power3")
-        >>> sigma = FunctionParam(0.0400, 0.1748, -0.2243, "exp3")
+        >>> mu = FunctionParam('power3', 0.1000, 1.489, 0.1901)
+        >>> sigma = FunctionParam('exp3', 0.0400, 0.1748, -0.2243)
         >>> #Create distributions
         >>> dist1 = WeibullDistribution(*par1)
         >>> dist2 = LognormalDistribution(mu=mu, sigma=sigma)
@@ -245,8 +245,8 @@ class ISormContour(Contour):
         >>> loc = ConstantParam(0.8888)
         >>> scale = ConstantParam(2.776)
         >>> par1 = (shape, loc, scale)
-        >>> mu = FunctionParam(0.1000, 1.489, 0.1901, "power3")
-        >>> sigma = FunctionParam(0.0400, 0.1748, -0.2243, "exp3")
+        >>> mu = FunctionParam('power3', 0.1000, 1.489, 0.1901)
+        >>> sigma = FunctionParam('exp3', 0.0400, 0.1748, -0.2243)
         >>> #Create distributions
         >>> dist1 = WeibullDistribution(*par1)
         >>> dist2 = LognormalDistribution(mu=mu, sigma=sigma)
@@ -379,8 +379,8 @@ class HighestDensityContour(Contour):
         >>> loc = ConstantParam(0.8888)
         >>> scale = ConstantParam(2.776)
         >>> par1 = (shape, loc, scale)
-        >>> mu = FunctionParam(0.1000, 1.489, 0.1901, 'power3')
-        >>> sigma = FunctionParam(0.0400, 0.1748, -0.2243, 'exp3')
+        >>> mu = FunctionParam('power3', 0.1000, 1.489, 0.1901)
+        >>> sigma = FunctionParam('exp3', 0.0400, 0.1748, -0.2243)
         >>> #Create distributions
         >>> dist1 = WeibullDistribution(*par1)
         >>> dist2 = LognormalDistribution(mu=mu, sigma=sigma)

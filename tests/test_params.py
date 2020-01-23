@@ -32,7 +32,7 @@ class ParamsTest(unittest.TestCase):
         tests if function power3 calculates the correct value
         """
 
-        test_func = FunctionParam(0, 1, 0, 'power3')
+        test_func = FunctionParam('power3', 0, 1, 0)
         self.assertEqual(test_func._value(0), 1)
 
 
@@ -41,7 +41,7 @@ class ParamsTest(unittest.TestCase):
         tests if function exp3 calculates the correct value.
         """
 
-        test_func = FunctionParam(1, 1, 0, 'exp3')
+        test_func = FunctionParam('exp3', 1, 1, 0)
         self.assertEqual(test_func._value(0), 2)
 
     def test_FunctionParam_lnsquare2(self):
@@ -49,7 +49,7 @@ class ParamsTest(unittest.TestCase):
         Tests if function lnsquare2 calculates the correct value.
         """
 
-        test_func = FunctionParam(1, 1, None, 'lnsquare2')
+        test_func = FunctionParam('lnsquare2', 1, 1, None)
         self.assertEqual(test_func._value(0), 0)
         self.assertEqual(test_func.func_name, 'lnsquare2')
 
@@ -58,7 +58,7 @@ class ParamsTest(unittest.TestCase):
         Tests if function powerdecrease3 calculates the correct value.
         """
 
-        test_func = FunctionParam(1, 2, 2, 'powerdecrease3')
+        test_func = FunctionParam('powerdecrease3', 1, 2, 2)
         self.assertEqual(test_func._value(0), 1.25)
         self.assertEqual(test_func.func_name, 'powerdecrease3')
 
@@ -67,7 +67,7 @@ class ParamsTest(unittest.TestCase):
         Tests if function asymdecrease3 calculates the correct value.
         """
 
-        test_func = FunctionParam(1, 4, 2, 'asymdecrease3')
+        test_func = FunctionParam('asymdecrease3', 1, 4, 2)
         self.assertEqual(test_func._value(0), 1.125)
         self.assertEqual(test_func.func_name, 'asymdecrease3')
 
@@ -78,7 +78,7 @@ class ParamsTest(unittest.TestCase):
         """
 
         with self.assertRaises(ValueError):
-            FunctionParam(2.5, 1.0, 0.5, 'linear')
+            FunctionParam('linear', 2.5, 1.0, 0.5)
 
 
     def test_Wrapper(self):
@@ -87,8 +87,8 @@ class ParamsTest(unittest.TestCase):
         calculates
         """
 
-        test_func = FunctionParam(0.5, 1.0, 0.0, 'power3', wrapper=np.exp)
-        test_func2 = FunctionParam(0.5, 1.0, 0.0, 'power3', wrapper=Wrapper(np.exp))
+        test_func = FunctionParam('power3', 0.5, 1.0, 0.0, wrapper=np.exp)
+        test_func2 = FunctionParam('power3', 0.5, 1.0, 0.0, wrapper=Wrapper(np.exp))
 
         self.assertEqual(test_func._value(9), test_func2._value(9))
 

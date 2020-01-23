@@ -1110,7 +1110,7 @@ class Fit():
                                     "Number of iterations exceeded.".format(param_name, dimension))
 
                         # Save parameter
-                        params[i] = FunctionParam(*param_popt, functions[i])
+                        params[i] = FunctionParam(functions[i], *param_popt)
 
         # Return particular distribution
         distribution = None

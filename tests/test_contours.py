@@ -44,8 +44,8 @@ class ContourCreationTest(unittest.TestCase):
         scale = ConstantParam(2.776)
         par1 = (shape, loc, scale)
 
-        mu = FunctionParam(0.1000, 1.489, 0.1901, 'power3')
-        sigma = FunctionParam(0.0400, 0.1748, -0.2243, 'exp3')
+        mu = FunctionParam('power3', 0.1000, 1.489, 0.1901)
+        sigma = FunctionParam('exp3', 0.0400, 0.1748, -0.2243)
 
         #del shape, loc, scale
 
@@ -94,7 +94,7 @@ class ContourCreationTest(unittest.TestCase):
 
         hs_shape = ConstantParam(1.4)
         hs_loc = None
-        hs_scale = FunctionParam(0.15, 0.0033, 2.45, 'power3')
+        hs_scale = FunctionParam('power3', 0.15, 0.0033, 2.45)
         hs_shape2 = ConstantParam(5)
         par2 = (hs_shape, hs_loc, hs_scale, hs_shape2)
 
@@ -139,8 +139,8 @@ class ContourCreationTest(unittest.TestCase):
         scale = ConstantParam(2.776)
         par1 = (shape, loc, scale)
 
-        mu = FunctionParam(0.1000, 1.489, 0.1901, "power3")
-        sigma = FunctionParam(0.0400, 0.1748, -0.2243, "exp3")
+        mu = FunctionParam('power3', 0.1000, 1.489, 0.1901)
+        sigma = FunctionParam('exp3', 0.0400, 0.1748, -0.2243)
 
 
         #del shape, loc, scale
@@ -192,8 +192,8 @@ class ContourCreationTest(unittest.TestCase):
         scale = ConstantParam(0.8888)
         par1 = (shape, loc, scale)
 
-        mu = FunctionParam(0.1000, 1.489, 0.1901, "power3")
-        sigma = FunctionParam(0.0400, 0.1748, -0.2243, "exp3")
+        mu = FunctionParam('power3', 0.1000, 1.489, 0.1901)
+        sigma = FunctionParam('exp3', 0.0400, 0.1748, -0.2243)
 
         #create distributions
         dist1 = WeibullDistribution(*par1)
@@ -235,8 +235,8 @@ class ContourCreationTest(unittest.TestCase):
         par1 = (shape, loc, scale)
 
         shape = None
-        loc = FunctionParam(4, 10, 0.02, "power3")
-        scale = FunctionParam(0.1, 0.02, -0.1, "exp3")
+        loc = FunctionParam('power3', 4, 10, 0.02)
+        scale = FunctionParam('exp3', 0.1, 0.02, -0.1)
         par2 = (shape, loc, scale)
 
         #del shape, loc, scale
@@ -281,12 +281,12 @@ class ContourCreationTest(unittest.TestCase):
         par1 = (shape, loc, scale)
 
         shape = None
-        loc = FunctionParam(4, 10, 0.02, "power3")
-        scale = FunctionParam(0.1, 0.02, -0.1, "exp3")
+        loc = FunctionParam('power3', 4, 10, 0.02)
+        scale = FunctionParam('exp3', 0.1, 0.02, -0.1)
         par2 = (shape, loc, scale)
 
-        mu = FunctionParam(0.1, 1.5, 0.2, "power3")
-        sigma = FunctionParam(0.1, 0.2, -0.2, "exp3")
+        mu = FunctionParam('power3', 0.1, 1.5, 0.2)
+        sigma = FunctionParam('exp3', 0.1, 0.2, -0.2)
 
         #create distributions
         dist1 = WeibullDistribution(*par1)
@@ -335,8 +335,8 @@ class ContourCreationTest(unittest.TestCase):
         scale = ConstantParam(2.776)
         par1 = (shape, loc, scale)
 
-        mu = FunctionParam(0.1000, 1.489, 0.1901, "power3")
-        sigma = FunctionParam(0.0400, 0.1748, -0.2243, "exp3")
+        mu = FunctionParam('power3', 0.1000, 1.489, 0.1901)
+        sigma = FunctionParam('exp3', 0.0400, 0.1748, -0.2243)
 
         # Create distributions
         dist1 = WeibullDistribution(*par1)
@@ -373,8 +373,8 @@ class ContourCreationTest(unittest.TestCase):
         par1 = (shape, loc, scale)
 
         shape = None
-        loc = FunctionParam(7, 1.489, 0.1901, "power3")
-        scale = FunctionParam(1.5, 0.1748, -0.2243, "exp3")
+        loc = FunctionParam('power3', 7, 1.489, 0.1901)
+        scale = FunctionParam('exp3', 1.5, 0.1748, -0.2243)
         par2 = (shape, loc, scale)
 
         # Create distributions.
@@ -412,8 +412,8 @@ class ContourCreationTest(unittest.TestCase):
         scale = ConstantParam(2.776)
         par1 = (shape, loc, scale)
 
-        mu = FunctionParam(0.1000, 1.489, 0.1901, "power3")
-        sigma = FunctionParam(0.0400, 0.1748, -0.2243, "exp3")
+        mu = FunctionParam('power3', 0.1000, 1.489, 0.1901)
+        sigma = FunctionParam('exp3', 0.0400, 0.1748, -0.2243)
 
         #del shape, loc, scale
 
@@ -446,8 +446,8 @@ class ContourCreationTest(unittest.TestCase):
         scale = ConstantParam(2.776)
         par1 = (shape, loc, scale)
 
-        mu = FunctionParam(0.1000, 1.489, 0.1901, "power3")
-        sigma = FunctionParam(0.0400, 0.1748, -0.2243, "exp3")
+        mu = FunctionParam('power3', 0.1000, 1.489, 0.1901)
+        sigma = FunctionParam('exp3', 0.0400, 0.1748, -0.2243)
 
         # Create distributions
         dist1 = WeibullDistribution(*par1)
@@ -474,8 +474,8 @@ class HDCTest(unittest.TestCase):
                 n_years = 25, dep1=(None, None, None), dep2=(0, None, 0),
                 par1=(ConstantParam(1.471), ConstantParam(0.8888),
                 ConstantParam(2.776)),
-                par2=(FunctionParam(0.0400, 0.1748, -0.2243, "exp3"), None,
-                FunctionParam(0.1, 1.489, 0.1901, "power3"))):
+                par2=(FunctionParam('exp3', 0.0400, 0.1748, -0.2243), None,
+                FunctionParam('power3', 0.1, 1.489, 0.1901))):
         """
         Creating Contour example
         """
