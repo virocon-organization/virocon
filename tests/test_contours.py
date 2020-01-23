@@ -82,8 +82,8 @@ class ContourCreationTest(unittest.TestCase):
         """
 
         # Define dependency tuple.
-        dep1 = (None, None, None, None)
-        dep2 = (None, None, 0, None)
+        dep1 = (None, None, None, None) # shape, location, scale, shape2
+        dep2 = (None, None, 0, None) # shape, location, scale, shape2
 
         # Define parameters.
         v_shape = ConstantParam(11)
@@ -121,6 +121,51 @@ class ContourCreationTest(unittest.TestCase):
         #result0 = pd.read_csv(testfiles_path + "/filename.csv")
         #for g,h in [(g, h) for g in result0.index for h in result0.columns]:
         #    self.assertAlmostEqual(result0.loc[g, h], contour_coordinates.loc[g, h], places=8)
+
+
+    def test_HDC2d_LogisticsFunction(self):
+        """
+        Contour similar to the wind-wave contour in 'Global hierararchical models
+        for wind and wave contours', dataset D. First variable = wind speed,
+        second variable = sig. wave height
+        """
+
+        # Define dependency tuple.
+        dep1 = (None, None, None, None) # shape, location, scale, shape2
+        dep2 = (0, None, 0, None) # shape, location, scale, shape2
+
+        # Define parameters.
+        v_shape = ConstantParam(2.42)
+        v_loc = None
+        v_scale = ConstantParam(10)
+        v_shape2 = ConstantParam(0.761)
+        par1 = (v_shape, v_loc, v_scale, v_shape2)
+
+        hs_shape = FunctionParam('logistics4', 0.582, 1.90, 0.248, 8.49)
+        hs_loc = None
+        divide_by = 2.0445**(1/2.5)
+        hs_scale = FunctionParam('power3', 0.394 / divide_by, 0.0178 / divide_by, 1.88)
+        hs_shape2 = ConstantParam(5)
+        par2 = (hs_shape, hs_loc, hs_scale, hs_shape2)
+
+        # Create distributions.
+        dist1 = ExponentiatedWeibullDistribution(*par1)
+        dist2 = ExponentiatedWeibullDistribution(*par2)
+
+        distributions = [dist1, dist2]
+        dependencies = [dep1, dep2]
+
+        mul_dist = MultivariateDistribution(distributions, dependencies)
+
+        # Calculate the contour.
+        n_years = 50
+        limits = [(0, 40), (0, 20)]
+        deltas = [0.1, 0.1]
+        test_contour_HDC = HighestDensityContour(mul_dist, n_years, 3,
+                                                 limits, deltas)
+        max_hs = max(test_contour_HDC.coordinates[0][1])
+        self.assertGreater(max_hs, 12) # Should be about 15, see Fig. 8 in 'Global...'
+        self.assertLess(max_hs, 20) # Should be about 15, see Fig. 8 in 'Global...'
 
 
     def test_HDC3d_WLL(self):

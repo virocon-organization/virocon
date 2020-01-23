@@ -71,6 +71,16 @@ class ParamsTest(unittest.TestCase):
         self.assertEqual(test_func._value(0), 1.125)
         self.assertEqual(test_func.func_name, 'asymdecrease3')
 
+    def test_FunctionParam_logistics4(self):
+        """
+        Tests if function logistics4 calculates the correct value.
+        """
+
+        test_func = FunctionParam('logistics4', 1, 2, 3, 4)
+        self.assertAlmostEqual(test_func._value(0), 1, delta=0.001)
+        self.assertAlmostEqual(test_func._value(10), 3, delta=0.001)
+        self.assertEqual(test_func.func_name, 'logistics4')
+
     def test_FunctionParam_unknown(self):
         """
         tests if the right exception appears when trying to create a non existent

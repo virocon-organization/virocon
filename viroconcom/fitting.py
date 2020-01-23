@@ -56,6 +56,9 @@ def _powerdecrease3(x, a, b, c):
 def _asymdecrease3(x, a, b, c):
     return a + 1 / (b * (x + np.abs(c)))
 
+# A 4-parameter logististics function (a dependence function).
+def _logistics4(self, x):
+    return self.a + self.b / (1 + np.exp(self.c * (x - self.d)))
 
 # Bounds for function parameters:
 # 0 < a < inf
@@ -754,6 +757,8 @@ class Fit():
             return _powerdecrease3
         elif function_name == 'asymdecrease3':
             return _asymdecrease3
+        elif function_name == 'logistics4':
+            return _logistics4
         elif function_name is None:
             return None
         else:

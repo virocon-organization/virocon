@@ -82,10 +82,10 @@ class FunctionParam(Param):
             Defines which kind of dependence function to use:
                 :power3: :math:`a + b * x^c`
                 :exp3: :math:`a + b * e^{x * c}`
-                :lnsquare2: :math:`ln[a + b * sqrt(x / 9.81)`
+                :lnsquare2: :math:`\ln[a + b * \sqrt(x / 9.81)`
                 :powerdecrease3: :math:`a + 1 / (x + b)^c`
                 :asymdecrease3: :math:`a + 1 / (b * (x + c))`
-                :logistics4: :math:`not yet`
+                :logistics4: :math:`a + b / [1 + e^{-c * (x - d)}]`
         a,b,c : float
             The function parameters.
         d : float, defaults to None
@@ -159,7 +159,7 @@ class FunctionParam(Param):
 
     # A 4-parameter logististics function (a dependence function).
     def _logistics4(self, x):
-        return self.a + self.b / (1 + np.exp(self.c * (x - self.d)))
+        return self.a + self.b / (1 + np.exp(-1 * self.c * (x - self.d)))
 
     def _value(self, x):
         return self._wrapper(self._func(x))
