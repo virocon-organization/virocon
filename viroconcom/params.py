@@ -154,15 +154,15 @@ class FunctionParam(Param):
 
     def __str__(self):
         if self.func_name == "power3":
-            function_string = "" + str(self.a) + " + " + str(self.b) + "x" + "^{" + str(self.c) + "}"
+            function_string = "" + str(self.a) + " + " + str(self.b) + "x" + "^(" + str(self.c) + ")"
         elif self.func_name == "exp3":
             function_string = "" + str(self.a) + " + " + str(self.b) + "e^{" + str(self.c) + "x}"
         elif self.func_name == "lnsquare2":
-            function_string = "ln[" + str(self.a) + " + " + str(self.b) + "sqrt(x / 9.81]"
+            function_string = "ln[" + str(self.a) + " + " + str(self.b) + "sqrt(x / 9.81)]"
         elif self.func_name == "powerdecrease3":
             function_string = "" + str(self.a) + " + 1 / (x + " + str(self.b) + ")^" + str(self.c)
         elif self.func_name == "asymdecrease3":
-            function_string = "" + str(self.a) + " + 1 / (" + str(self.b) + "(x + " + str(self.c) + "))"
+            function_string = "" + str(self.a) + " + 1 / [" + str(self.b) + "(x + " + str(self.c) + ")]"
         if isinstance(self._wrapper.func, np.ufunc):
             function_string += " with _wrapper: " + str(self._wrapper)
         return function_string
