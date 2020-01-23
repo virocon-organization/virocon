@@ -30,13 +30,13 @@ from .distributions import (WeibullDistribution, ExponentiatedWeibullDistributio
 __all__ = ["Fit"]
 
 
-# Dependence functions for the parameters, the following functions are available.
-# Power function.
+# Dependence functions for the parameters, the following functions are available:
+# A 3-parameter power function (a dependence function).
 def _power3(x, a, b, c):
     return a + b * x ** c
 
 
-# Exponential function.
+# A 3-parameter exponential function (a dependence function).
 def _exp3(x, a, b, c):
     return a + b * np.exp(c * x)
 
@@ -47,17 +47,17 @@ def _lnsquare2(x, a, b, c):
     return np.log(a + b * np.sqrt(np.divide(x, 9.81)))
 
 
-# Function that decreases with x to the power of c.
+# 3-parameter function that decreases with x to the power of c (a dependence fucntion).
 def _powerdecrease3(x, a, b, c):
     return a + 1 / (x + b) ** c
 
 
-# Function that decreases with x to the power of c.
+# 3-parameter function that asymptotically decreases (a dependence function).
 def _asymdecrease3(x, a, b, c):
     return a + 1 / (b * (x + np.abs(c)))
 
 
-# Bounds for function parameters
+# Bounds for function parameters:
 # 0 < a < inf
 # 0 < b < inf
 # -inf < c < inf
