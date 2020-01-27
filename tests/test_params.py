@@ -52,6 +52,7 @@ class ParamsTest(unittest.TestCase):
         test_func = FunctionParam('lnsquare2', 1, 1, None)
         self.assertEqual(test_func._value(0), 0)
         self.assertEqual(test_func.func_name, 'lnsquare2')
+        self.assertEqual(str(test_func)[0:2], 'ln')
 
     def test_FunctionParam_powerdecrease3(self):
         """
@@ -61,6 +62,7 @@ class ParamsTest(unittest.TestCase):
         test_func = FunctionParam('powerdecrease3', 1, 2, 2)
         self.assertEqual(test_func._value(0), 1.25)
         self.assertEqual(test_func.func_name, 'powerdecrease3')
+        self.assertEqual(str(test_func)[0:1], '1')
 
     def test_FunctionParam_asymdecrease3(self):
         """
@@ -70,6 +72,7 @@ class ParamsTest(unittest.TestCase):
         test_func = FunctionParam('asymdecrease3', 1, 4, 2)
         self.assertEqual(test_func._value(0), 1.125)
         self.assertEqual(test_func.func_name, 'asymdecrease3')
+        self.assertEqual(str(test_func)[0:1], '1')
 
     def test_FunctionParam_logistics4(self):
         """
@@ -80,6 +83,7 @@ class ParamsTest(unittest.TestCase):
         self.assertAlmostEqual(test_func._value(0), 1, delta=0.001)
         self.assertAlmostEqual(test_func._value(10), 3, delta=0.001)
         self.assertEqual(test_func.func_name, 'logistics4')
+        self.assertEqual(str(test_func)[0:1], '1')
 
     def test_FunctionParam_alpha3(self):
         """
@@ -92,6 +96,8 @@ class ParamsTest(unittest.TestCase):
         self.assertAlmostEqual(test_func._value(10), 1, delta=0.3)
         self.assertAlmostEqual(test_func._value(20), 4, delta=0.5)
         self.assertEqual(test_func.func_name, 'alpha3')
+        self.assertEqual(str(test_func)[0:1], '(')
+
     def test_FunctionParam_unknown(self):
         """
         tests if the right exception appears when trying to create a non existent
@@ -100,7 +106,6 @@ class ParamsTest(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             FunctionParam('linear', 2.5, 1.0, 0.5)
-
 
     def test_Wrapper(self):
         """
