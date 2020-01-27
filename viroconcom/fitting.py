@@ -13,6 +13,7 @@ from numbers import Number
 import statsmodels.api as sm
 import scipy.stats as sts
 from scipy.optimize import curve_fit
+from inspect import signature
 
 from .settings import (SHAPE_STRING, LOCATION_STRING, SCALE_STRING,
                        SHAPE2_STRING,
@@ -56,16 +57,27 @@ def _powerdecrease3(x, a, b, c):
 def _asymdecrease3(x, a, b, c):
     return a + 1 / (b * (x + np.abs(c)))
 
+
 # A 4-parameter logististics function (a dependence function).
-def _logistics4(self, x):
-    return self.a + self.b / (1 + np.exp(self.c * (x - self.d)))
+def _logistics4(x, a, b, c, d):
+    return a + b / (1 + np.exp(c * (x - d)))
+
+
+# A 3-parameter function designed for the scale parameter (alpha) of an
+# exponentiated Weibull distribution with shape2=5 (see 'Global hierarchical
+# models for wind and wave contours').
+def _alpha3(x, a, b, c, C1=None, C2=None, C3=None, C4=None):
+    return (a + b * x ** c) \
+           / 2.0445 ** (1 / _logistics4(x, C1, C2, C3, C4))
+
 
 # Bounds for function parameters:
 # 0 < a < inf
 # 0 < b < inf
 # -inf < c < inf
-_bounds = ([np.finfo(np.float64).tiny, np.finfo(np.float64).tiny, -np.inf],
-          [np.inf, np.inf, np.inf])
+# -inf < d < inf
+_bounds = ([np.finfo(np.float64).tiny, np.finfo(np.float64).tiny, -np.inf, -np.inf],
+          [np.inf, np.inf, np.inf, np.inf])
 
 
 class BasicFit():
@@ -514,7 +526,10 @@ class Fit():
 
         Note
         ----
-        dist_descriptions contains the following keys:
+        dist_descriptions contains the following keys where some are
+        required and some are optional.
+
+        Required:
 
         name : str
             name of distribution (defined in settings.py):
@@ -541,7 +556,16 @@ class Fit():
             - :lnsquare2: :math:`ln[a + b * sqrt(x / 9.81)`
             - :powerdecrease3: :math:`a + 1 / (x + b)^c`
             - :asymdecrease3: :math:`a + 1 / (b * (x + |c|))`
+            - :asymdecrease3: :math:`a + 1 / (b * (x + c))`
+            - :logistics4: :math:`a + b / [1 + e^{-c * (x - d)}]`
             - remark : in case of Lognormal_SigmaMu it is (sigma, None, mu)
+
+        Optional:
+
+        fixed_parameters : tuple of floats
+            If some parameters shall not be estimated, but should be fixed,
+            they can be specified with this key. Floats are interpeted in the
+            order (shape, location, scale, shape2).
 
         and either number_of_intervals or width_of_intervals:
 
@@ -653,7 +677,7 @@ class Fit():
         self.mul_var_dist = MultivariateDistribution(distributions, dependencies)
 
     @staticmethod
-    def _fit_distribution(sample, name):
+    def _fit_distribution(sample, name, fixed_parameters=(None, None, None, None)):
         """
         Fits the distribution and returns the parameters.
 
@@ -665,6 +689,9 @@ class Fit():
             Name of the distribution ("Weibull_2p", "Weibull_3p", "Lognormal" or
             "Lognormal_SigmaMu", "Normal", "KernelDensity"). They keyword list
             is defined in settings.py.
+        fixed_parameters : tuple of float
+            Specifies which value parameters are fixed and thus are not
+            fitted. None means that it is not fixed, but shall be estimated.
         Returns
         -------
         tuple of ConstantParam
@@ -674,6 +701,11 @@ class Fit():
         ValueError
             If the distribution is unknown.
         """
+        if fixed_parameters != (None, None, None, None) and \
+                        name != WEIBULL_EXP_KEYWORD:
+            err_msg = "Fixing parameters is not implemented for the " \
+                      "distribution {} yet.".format(name)
+            raise NotImplementedError(err_msg)
         if name == WEIBULL_2P_KEYWORD:
             # Do not fit the location parameter because it is 0 for a 2-p. dist.
             params = sts.weibull_min.fit(sample, floc=0)
@@ -690,7 +722,10 @@ class Fit():
                 params = (params[0], 0, params[2])
         elif name == WEIBULL_EXP_KEYWORD:
             dist = ExponentiatedWeibullDistribution()
-            params = dist.fit(sample)
+            params = dist.fit(sample, shape=fixed_parameters[0],
+                                  scale=fixed_parameters[1],
+                                  loc=fixed_parameters[2],
+                                  shape2=fixed_parameters[3])
         elif name == NORMAL_KEYWORD:
             params = list(sts.norm.fit(sample))
             # Shape doesn't exist for normal
@@ -734,7 +769,7 @@ class Fit():
         ----------
         function_name : str
             Options are 'power3', 'exp3', 'lnsquare2', 'powerdecrease3',
-            'asymdecrease3'.
+            'asymdecrease3', 'logistics4', 'alpha3'.
 
         Returns
         -------
@@ -759,6 +794,8 @@ class Fit():
             return _asymdecrease3
         elif function_name == 'logistics4':
             return _logistics4
+        elif function_name == 'alpha3':
+            return _alpha3
         elif function_name is None:
             return None
         else:
@@ -766,7 +803,7 @@ class Fit():
             raise ValueError(err_msg)
 
     @staticmethod
-    def _append_params(name, param_values, dependency, index, sample):
+    def _append_params(name, param_values, dependency, index, sample, fixed_parameters=(None, None, None, None)):
         """
         Distributions are being fitted and the results are appended to param_points.
 
@@ -784,6 +821,9 @@ class Fit():
             The current parameter as int in the order of (shape, loc, scale) (i.e. 0 -> shape).
         sample : list of float
             Values that are used to fit the distribution.
+        fixed_parameters : tuple of float
+            Specifies which value parameters are fixed and thus are not
+            fitted. None means that it is not fixed, but shall be estimated.
 
         Returns
         -------
@@ -792,7 +832,7 @@ class Fit():
         """
 
         # Fit distribution
-        current_params = Fit._fit_distribution(sample, name)
+        current_params = Fit._fit_distribution(sample, name, fixed_parameters=fixed_parameters)
 
         # Create basic fit object
         basic_fit = BasicFit(*current_params, sample)
@@ -808,7 +848,8 @@ class Fit():
     @staticmethod
     def _get_fitting_values(sample, samples, name, dependency, index,
                             number_of_intervals=None, bin_width=None,
-                            min_datapoints_for_fit=20):
+                            min_datapoints_for_fit=20,
+                            fixed_parameters=(None, None, None, None)):
         """
         Returns values for fitting.
 
@@ -832,6 +873,9 @@ class Fit():
             Number of distributions used to fit shape, loc, scale.
         min_datapoints_for_fit : int
             Minimum number of datapoints required to perform the fit.
+        fixed_parameters : tuple of float
+            Specifies which value parameters are fixed and thus are not
+            fitted. None means that it is not fixed, but shall be estimated.
         Notes
         -----
         For that case that number_of_intervals and also bin_width is given the parameter
@@ -898,8 +942,12 @@ class Fit():
             if len(samples_in_interval) >= min_datapoints_for_fit:
                 try:
                     # Fit distribution to selected data.
-                    basic_fit = Fit._append_params(
-                        name, param_values, dependency, index, samples_in_interval)
+                    basic_fit = Fit._append_params(name,
+                                                   param_values,
+                                                   dependency,
+                                                   index,
+                                                   samples_in_interval,
+                                                   fixed_parameters=fixed_parameters)
                     multiple_basic_fit.append(basic_fit)
                     dist_values.append(samples_in_interval)
                 except ValueError:
@@ -940,6 +988,8 @@ class Fit():
             samples[0] -> first variable (for example sig. wave height)
             samples[1] -> second variable (for example spectral peak period)
             ...
+        **kwargs: contains the fit_description data to clarify which kind of
+            distribution with which method should be fitted.
         Returns
         -------
         distribution : Distribution
@@ -971,6 +1021,7 @@ class Fit():
         list_number_of_intervals = kwargs.get('list_number_of_intervals')
         list_width_of_intervals = kwargs.get('list_width_of_intervals')
         min_datapoints_for_fit = kwargs.get('min_datapoints_for_fit', 20)
+        fixed_parameters = kwargs.get('fixed_parameters', (None, None, None, None))
 
         # Fit inspection data for current dimension
         fit_inspection_data = FitInspectionData()
@@ -997,7 +1048,7 @@ class Fit():
 
             # In case that there is no dependency for this param
             if dependency[index] is None:
-                current_params = Fit._fit_distribution(sample, name)
+                current_params = Fit._fit_distribution(sample, name, fixed_parameters=fixed_parameters)
 
                 # Basic fit for no dependency
                 basic_fit = BasicFit(*current_params, sample)
@@ -1031,14 +1082,16 @@ class Fit():
                         Fit._get_fitting_values(
                             sample, samples, name, dependency, index,
                             number_of_intervals=list_number_of_intervals[dependency[index]],
-                        min_datapoints_for_fit=min_datapoints_for_fit)
+                            min_datapoints_for_fit=min_datapoints_for_fit,
+                            fixed_parameters=fixed_parameters)
                 # If a the (constant) width of the intervals is given.
                 elif list_width_of_intervals[dependency[index]]:
                     interval_centers, dist_values, param_values, multiple_basic_fit = \
                         Fit._get_fitting_values(
                             sample, samples, name, dependency, index,
                             bin_width=list_width_of_intervals[dependency[index]],
-                            min_datapoints_for_fit=min_datapoints_for_fit)
+                            min_datapoints_for_fit=min_datapoints_for_fit,
+                            fixed_parameters=fixed_parameters)
 
                 for i in range(index, len(functions)):
                     # Check if the other parameters have the same dependency
@@ -1079,11 +1132,48 @@ class Fit():
                             fit_points = [np.log(p(None)) for p in param_values[i]]
                         else:
                             fit_points = [p(None) for p in param_values[i]]
-                        # Fit parameters with particular function
+                        # Fit parameters with particular dependence function.
                         try:
-                            param_popt, param_pcov = curve_fit(
+                            # Get the number of parameters of the dependence function
+                            # and choose the according bounds for the fit.
+                            sig = signature(Fit._get_function(functions[i]))
+                            nParam = 0
+                            for param in sig.parameters.values():
+                                if param.kind == param.POSITIONAL_OR_KEYWORD and \
+                                                param.default is param.empty:
+                                    nParam = nParam + 1
+                            bLower = _bounds[0][0: nParam - 1]
+                            bUpper = _bounds[1][0: nParam - 1]
+                            bounds = (bLower, bUpper)
+
+                            if functions[i] != "alpha3":
+                                param_popt, param_pcov = curve_fit(
                                 Fit._get_function(functions[i]),
-                                interval_centers, fit_points, bounds=_bounds)
+                                interval_centers, fit_points, bounds=bounds)
+                            else: # Special case, this is the wind wave model of OMAE2020
+                                # Get the fitted coefficients for the shape parameter,
+                                # which is modelled with a logistics4 function
+                                f = params[0]
+                                C1 = f.a
+                                C2 = f.b
+                                C3 = f.c
+                                C4 = f.d
+                                if f.func_name == "logistics4":
+                                    # Thanks to: https://stackoverflow.com/questions/
+                                    # 47884910/fixing-fit-parameters-in-curve-fit
+                                    param_popt, param_pcov = \
+                                        curve_fit(lambda x, a, b,
+                                                  c: Fit._get_function(functions[i])(x, a, b, c, C1=C1, C2=C2, C3=C3, C4=C4),
+                                                  interval_centers, fit_points, bounds=bounds)
+                                else:
+                                    err_msg = \
+                                        "The alpha3 function is only " \
+                                        "allowed when shape is modelled " \
+                                        "with a  logistics4 function. In your " \
+                                        "model shape is modelled with a function " \
+                                        "of type {}.".format(f.func_type)
+                                    raise TypeError(err_msg)
+
                         except RuntimeError:
                             # Case that optimal parameters not found
                             if i == 0 and name == LOGNORMAL_MU_PARAMETER_KEYWORD:
@@ -1115,7 +1205,15 @@ class Fit():
                                     "Number of iterations exceeded.".format(param_name, dimension))
 
                         # Save parameter
-                        params[i] = FunctionParam(functions[i], *param_popt)
+                        if functions[i] != "alpha3":
+                            params[i] = FunctionParam(functions[i], *param_popt)
+                        else:
+                            a = param_popt[0]
+                            b = param_popt[1]
+                            c = param_popt[2]
+                            params[i] = FunctionParam(functions[i], a, b, c,
+                                                     C1=C1, C2=C2, C3=C3, C4=C4)
+
 
         # Return particular distribution
         distribution = None

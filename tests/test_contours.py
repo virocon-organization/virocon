@@ -166,10 +166,13 @@ class ContourCreationTest(unittest.TestCase):
         deltas = [0.1, 0.1]
         test_contour_HDC = HighestDensityContour(mul_dist, n_years, 1,
                                                  limits, deltas)
+
+        # Compare the computed contours to the contours published in
+        # 'Global hierarchical models for wind and wave contours', Figure 8.
         max_v = max(test_contour_HDC.coordinates[0][0])
-        self.assertAlmostEqual(max_v, 29.5, delta=0.5)  # Should be about 29.5, see Fig. 8 in 'Global...'
+        self.assertAlmostEqual(max_v, 29.5, delta=0.5) # Should be about 29.5
         max_hs = max(test_contour_HDC.coordinates[0][1])
-        self.assertAlmostEqual(max_hs, 14.5, delta=0.5) # Should be about 15, see Fig. 8 in 'Global...'
+        self.assertAlmostEqual(max_hs, 14.5, delta=0.5) # Should be about 15
 
 
     def test_HDC3d_WLL(self):

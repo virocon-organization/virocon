@@ -470,7 +470,7 @@ class ExponentiatedWeibullDistribution(ParametricDistribution):
             The distribution does not have a location parameter.
         scale : float
             alpha in https://arxiv.org/pdf/1911.12835.pdf .
-        shape 2: float
+        shape2 : float
             delta in https://arxiv.org/pdf/1911.12835.pdf .
 
         Returns

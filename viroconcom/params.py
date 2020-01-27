@@ -74,12 +74,12 @@ class ConstantParam(Param):
 class FunctionParam(Param):
     """A callable parameter, which depends on the value supplied."""
 
-    def __init__(self, func_type, a, b, c, d=None,
+    def __init__(self, func_name, a, b, c, d=None,
                  C1=None, C2=None, C3=None, C4=None, wrapper=None):
         """
         Parameters
         ----------
-        func_type : str
+        func_name : str
             Defines which kind of dependence function to use:
                 :power3: :math:`a + b * x^c`
                 :exp3: :math:`a + b * e^{x * c}`
@@ -110,29 +110,29 @@ class FunctionParam(Param):
         self.C3 = C3
         self.C4 = C4
 
-        if func_type == "power3":
+        if func_name == "power3":
             self._func = self._power3
-            self.func_name = func_type
-        elif func_type == "exp3":
+            self.func_name = func_name
+        elif func_name == "exp3":
             self._func = self._exp3
-            self.func_name = func_type
-        elif func_type == "lnsquare2":
+            self.func_name = func_name
+        elif func_name == "lnsquare2":
             self._func = self._lnsquare2
-            self.func_name = func_type
-        elif func_type == "powerdecrease3":
+            self.func_name = func_name
+        elif func_name == "powerdecrease3":
             self._func = self._powerdecrease3
-            self.func_name = func_type
-        elif func_type == "asymdecrease3":
+            self.func_name = func_name
+        elif func_name == "asymdecrease3":
             self._func = self._asymdecrease3
-            self.func_name = func_type
-        elif func_type == "logistics4":
+            self.func_name = func_name
+        elif func_name == "logistics4":
             self._func = self._logistics4
-            self.func_name = func_type
-        elif func_type == "alpha3":
+            self.func_name = func_name
+        elif func_name == "alpha3":
             self._func = self._alpha3
-            self.func_name = func_type
+            self.func_name = func_name
         else:
-            raise ValueError("{} is not a known kind of function.".format(func_type))
+            raise ValueError("{} is not a known kind of function.".format(func_name))
 
         if wrapper is None:
             self._wrapper = Wrapper(self._identity)
