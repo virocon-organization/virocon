@@ -282,7 +282,7 @@ class FitInspectionData():
         ------
         This function can be used as attribute.
         """
-        return self._shape2_value[0]
+        return self._shape2_value[3]
 
     def get_dependent_param_points(self, param):
         """
@@ -334,25 +334,25 @@ class FitInspectionData():
             self._shape_value[0].append(basic_fit.shape)
             self._shape_value[1].append(basic_fit.loc)
             self._shape_value[2].append(basic_fit.scale)
-            self._shape_value[3].append(basic_fit.scale)
+            self._shape_value[3].append(basic_fit.shape2)
             self.shape_samples.append(basic_fit.samples)
         elif param == LOCATION_STRING:
             self._loc_value[0].append(basic_fit.shape)
             self._loc_value[1].append(basic_fit.loc)
             self._loc_value[2].append(basic_fit.scale)
-            self._loc_value[3].append(basic_fit.scale)
+            self._loc_value[3].append(basic_fit.shape2)
             self.loc_samples.append(basic_fit.samples)
         elif param == SCALE_STRING:
             self._scale_value[0].append(basic_fit.shape)
             self._scale_value[1].append(basic_fit.loc)
             self._scale_value[2].append(basic_fit.scale)
-            self._scale_value[3].append(basic_fit.scale)
+            self._scale_value[3].append(basic_fit.shape2)
             self.scale_samples.append(basic_fit.samples)
         elif param == SHAPE2_STRING:
             self._shape2_value[0].append(basic_fit.shape)
             self._shape2_value[1].append(basic_fit.loc)
             self._shape2_value[2].append(basic_fit.scale)
-            self._shape2_value[3].append(basic_fit.scale)
+            self._shape2_value[3].append(basic_fit.shape2)
             self.shape_samples.append(basic_fit.samples)
         else:
             err_msg = "Parameter '{}' is unknown.".format(param)

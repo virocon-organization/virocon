@@ -409,6 +409,11 @@ class FittingTest(unittest.TestCase):
 
         dist1 = fit.mul_var_dist.distributions[1]
         self.assertEqual(dist1.shape2(0), 5)
+        inspection_data1 = fit.multiple_fit_inspection_data[1]
+        self.assertEqual(inspection_data1.shape2_value[0], 5)
+        self.assertAlmostEqual(inspection_data1.shape_value[0], 0.8, delta=0.5) # interval centered at 1
+        self.assertAlmostEqual(inspection_data1.shape_value[4], 1.5, delta=0.5)  # interval centered at 9
+        self.assertAlmostEqual(inspection_data1.shape_value[9], 2.5, delta=1)  # interval centered at 19
         self.assertAlmostEqual(dist1.shape(0), 0.8, delta=1)
         self.assertAlmostEqual(dist1.shape(10), 1.5, delta=1)
         self.assertAlmostEqual(dist1.shape(20), 2.5, delta=1)
@@ -416,6 +421,9 @@ class FittingTest(unittest.TestCase):
         self.assertAlmostEqual(dist1.shape.b, 1.90, delta=2)
         self.assertAlmostEqual(dist1.shape.c, 0.248, delta=5)
         self.assertAlmostEqual(dist1.shape.d, 8.49, delta=20)
+        self.assertAlmostEqual(inspection_data1.scale_value[0], 0.15, delta=0.2) # interval centered at 1
+        self.assertAlmostEqual(inspection_data1.scale_value[4], 1, delta=0.5)  # interval centered at 9
+        self.assertAlmostEqual(inspection_data1.scale_value[9], 4, delta=1)  # interval centered at 19
         self.assertAlmostEqual(dist1.scale(0), 0.15, delta=0.5)
         self.assertAlmostEqual(dist1.scale(10), 1, delta=0.5)
         self.assertAlmostEqual(dist1.scale(20), 4, delta=1)
