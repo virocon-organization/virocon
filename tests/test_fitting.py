@@ -96,6 +96,8 @@ class FittingTest(unittest.TestCase):
         my_fit = Fit((sample_1, sample_2),
                      (dist_description_0, dist_description_1))
 
+        self.assertEqual(str(my_fit)[0:5], 'Fit()')
+
 
     def test_2d_exponentiated_wbl_fit(self):
         """
@@ -134,7 +136,6 @@ class FittingTest(unittest.TestCase):
                   (dist_description_hs, dist_description_tz))
 
         dist0 = fit.mul_var_dist.distributions[0]
-        dist1 = fit.mul_var_dist.distributions[1]
 
         self.assertGreater(dist0.shape(0), 1) # Should be about 1.5.
         self.assertLess(dist0.shape(0), 2)
@@ -247,15 +248,6 @@ class FittingTest(unittest.TestCase):
 
         # Check whether the logarithmic square fit worked correctly.
         dist1 = fit.mul_var_dist.distributions[1]
-        print('Printing shape.a')
-        print(dist1.shape.a)
-        print('Printing shape.b')
-        print(dist1.shape.b)
-        print('Printing shape.c')
-        print(dist1.shape.c)
-        print('Printing shape')
-        print(dist1.shape)
-
         self.assertGreater(dist1.shape.a, -0.1) # Should be about 0
         self.assertLess(dist1.shape.a, 0.1)  # Should be about 0
         self.assertGreater(dist1.shape.b, 1) # Should be about 1-2.5
