@@ -440,8 +440,48 @@ class FittingTest(unittest.TestCase):
         sample_v, sample_hs, label_v, label_hs = read_benchmark_dataset(path='tests/testfiles/1year_dataset_D.txt')
 
 
-        # Define the structure of the probabilistic model that will be fitted to the
-        # dataset. This structure is incorrect as alpha3 is only compatible with
+        # This structure is incorrect as there is not distribution called 'something'.
+        dist_description_v = {'name': 'something',
+                              'dependency': (None, None, None, None),
+                              'fixed_parameters': (None, None, None, None), # shape, location, scale, shape2
+                              'width_of_intervals': 2}
+        with self.assertRaises(ValueError):
+            # Fit the model to the data.
+            fit = Fit((sample_v, ),
+                      (dist_description_v, ))
+
+
+        # This structure is incorrect as there is not dependence function called 'something'.
+        dist_description_v = {'name': 'Weibull_Exp',
+                              'dependency': (None, None, None, None),
+                              'width_of_intervals': 2}
+        dist_description_hs = {'name': 'Weibull_Exp',
+                              'dependency':        (0, None, 0,  None), # shape, location, scale, shape2
+                              'functions':         ('something', None, 'alpha3', None), # shape, location, scale, shape2
+                              'min_datapoints_for_fit': 20}
+        with self.assertRaises(ValueError):
+            # Fit the model to the data.
+            fit = Fit((sample_v, sample_hs),
+                      (dist_description_v, dist_description_hs))
+
+
+        # This structure is incorrect as there will be only 1 or 2 intervals
+        # that fit 2000 datapoints.
+        dist_description_v = {'name': 'Weibull_Exp',
+                              'dependency': (None, None, None, None),
+                              'width_of_intervals': 2}
+        dist_description_hs = {'name': 'Weibull_Exp',
+                              'dependency':        (0, None, 0,  None), # shape, location, scale, shape2
+                              'functions':         ('logistics4', None, 'alpha3', None), # shape, location, scale, shape2
+                              'min_datapoints_for_fit': 2000}
+        with self.assertRaises(RuntimeError):
+            # Fit the model to the data.
+            fit = Fit((sample_v, sample_hs),
+                      (dist_description_v, dist_description_hs))
+
+
+
+        # This structure is incorrect as alpha3 is only compatible with
         # logistics4 .
         dist_description_v = {'name': 'Weibull_Exp',
                               'dependency': (None, None, None, None),

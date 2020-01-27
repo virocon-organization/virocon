@@ -971,15 +971,17 @@ class Fit():
                 # For case that too few fitting data for the step were found
                 # the step is deleted.
                 deleted_centers.append(i) # Add index of unused center.
+
+
+        # Delete interval centers that were not used.
+        interval_centers = np.delete(interval_centers, deleted_centers)
         if len(interval_centers) < 3:
             nr_of_intervals = str(len(interval_centers))
             raise RuntimeError("Your settings resulted in " + nr_of_intervals +
                                " intervals. However, at least 3 intervals are "
-                               "required. Consider changing the interval width "
-                               "setting.")
-
-        # Delete interval centers that were not used.
-        interval_centers = np.delete(interval_centers, deleted_centers)
+                               "required. Consider changing the required  "
+                               " minimum of datapoints within an interval using "
+                               "the 'min_datapoints_for_fit' key.")
 
         return interval_centers, dist_values, param_values, multiple_basic_fit
 
