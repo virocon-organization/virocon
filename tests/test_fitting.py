@@ -455,3 +455,30 @@ class FittingTest(unittest.TestCase):
             # Fit the model to the data.
             fit = Fit((sample_v, sample_hs),
                       (dist_description_v, dist_description_hs))
+
+
+        # This structure is incorrect as only shape2 of an exponentiated Weibull
+        # distribution can be fixed at the moment.
+        dist_description_v = {'name': 'Lognormal',
+                              'dependency': (None, None, None, None),
+                              'fixed_parameters': (None, None, 5, None), # shape, location, scale, shape2
+                              'width_of_intervals': 2}
+        with self.assertRaises(NotImplementedError):
+            # Fit the model to the data.
+            fit = Fit((sample_v, ),
+                      (dist_description_v, ))
+
+        # This structure is incorrect as only shape2 of an exponentiated Weibull
+        # distribution can be fixed at the moment.
+        dist_description_v = {'name': 'Weibull_Exp',
+                              'dependency': (None, None, None, None),
+                              'width_of_intervals': 2}
+        dist_description_hs = {'name': 'Weibull_Exp',
+                              'fixed_parameters' :  (None,         None, 5,     None), # shape, location, scale, shape2
+                              'dependency':        (0,            None, 0,        None), # shape, location, scale, shape2
+                              'functions':         ('logistics4', None, 'alpha3', None), # shape, location, scale, shape2
+                              'min_datapoints_for_fit': 20}
+        with self.assertRaises(NotImplementedError):
+            # Fit the model to the data.
+            fit = Fit((sample_v, sample_hs),
+                      (dist_description_v, dist_description_hs))
