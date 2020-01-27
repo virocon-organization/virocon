@@ -430,3 +430,28 @@ class FittingTest(unittest.TestCase):
         self.assertAlmostEqual(dist1.scale.a, 0.394, delta=0.5)
         self.assertAlmostEqual(dist1.scale.b, 0.0178, delta=0.1)
         self.assertAlmostEqual(dist1.scale.c, 1.88, delta=0.5)
+
+    def test_wrong_model(self):
+        """
+        Tests wheter errors are raised when incorrect fitting models are
+        specified.
+        """
+
+        sample_v, sample_hs, label_v, label_hs = read_benchmark_dataset(path='tests/testfiles/1year_dataset_D.txt')
+
+
+        # Define the structure of the probabilistic model that will be fitted to the
+        # dataset. This structure is incorrect as alpha3 is only compatible with
+        # logistics4 .
+        dist_description_v = {'name': 'Weibull_Exp',
+                              'dependency': (None, None, None, None),
+                              'width_of_intervals': 2}
+        dist_description_hs = {'name': 'Weibull_Exp',
+                              'fixed_parameters' :  (None,         None, None,     5), # shape, location, scale, shape2
+                              'dependency':        (0,            None, 0,        None), # shape, location, scale, shape2
+                              'functions':         ('power3', None, 'alpha3', None), # shape, location, scale, shape2
+                              'min_datapoints_for_fit': 20}
+        with self.assertRaises(TypeError):
+            # Fit the model to the data.
+            fit = Fit((sample_v, sample_hs),
+                      (dist_description_v, dist_description_hs))

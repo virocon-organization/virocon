@@ -1184,9 +1184,9 @@ class Fit():
                                     err_msg = \
                                         "The alpha3 function is only " \
                                         "allowed when shape is modelled " \
-                                        "with a  logistics4 function. In your " \
+                                        "with a logistics4 function. In your " \
                                         "model shape is modelled with a function " \
-                                        "of type {}.".format(f.func_type)
+                                        "of type '{}'.".format(f.func_name)
                                     raise TypeError(err_msg)
 
                         except RuntimeError:
