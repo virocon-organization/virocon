@@ -81,6 +81,17 @@ class ParamsTest(unittest.TestCase):
         self.assertAlmostEqual(test_func._value(10), 3, delta=0.001)
         self.assertEqual(test_func.func_name, 'logistics4')
 
+    def test_FunctionParam_alpha3(self):
+        """
+        Tests if function alpha3 calculates the correct value.
+        """
+
+        # Use the function presented in 'Global hierachical models ...' for dataset D.
+        test_func = FunctionParam('alpha3', 0.394, 0.0178, 1.88, C1=0.582, C2=1.90, C3=0.248, C4=8.49)
+        self.assertAlmostEqual(test_func._value(0), 0.2, delta=0.2)
+        self.assertAlmostEqual(test_func._value(10), 1, delta=0.3)
+        self.assertAlmostEqual(test_func._value(20), 4, delta=0.5)
+        self.assertEqual(test_func.func_name, 'alpha3')
     def test_FunctionParam_unknown(self):
         """
         tests if the right exception appears when trying to create a non existent

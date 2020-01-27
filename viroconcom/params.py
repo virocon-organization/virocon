@@ -74,7 +74,8 @@ class ConstantParam(Param):
 class FunctionParam(Param):
     """A callable parameter, which depends on the value supplied."""
 
-    def __init__(self, func_type, a, b, c, d=None, wrapper=None):
+    def __init__(self, func_type, a, b, c, d=None,
+                 C1=None, C2=None, C3=None, C4=None, wrapper=None):
         """
         Parameters
         ----------
@@ -91,6 +92,8 @@ class FunctionParam(Param):
         d : float, defaults to None
             An optional function parameter (only some function have more than
             3 parameters.
+        C1, C2, C3, C4 : float, default to None
+            Parameters that are used for the alpha3 dependence function.
         wrapper : function or Wrapper
             A function or a Wrapper object to wrap around the function.
             The function has to be pickleable. (i.e. lambdas, clojures, etc. are not supported.)
@@ -102,6 +105,10 @@ class FunctionParam(Param):
         self.b = b
         self.c = c
         self.d = d
+        self.C1 = C1
+        self.C2 = C2
+        self.C3 = C3
+        self.C4 = C4
 
         if func_type == "power3":
             self._func = self._power3
@@ -120,6 +127,9 @@ class FunctionParam(Param):
             self.func_name = func_type
         elif func_type == "logistics4":
             self._func = self._logistics4
+            self.func_name = func_type
+        elif func_type == "alpha3":
+            self._func = self._alpha3
             self.func_name = func_type
         else:
             raise ValueError("{} is not a known kind of function.".format(func_type))
@@ -158,8 +168,18 @@ class FunctionParam(Param):
         return self.a + 1.0 / (self.b * (x + np.abs(self.c)))
 
     # A 4-parameter logististics function (a dependence function).
-    def _logistics4(self, x):
-        return self.a + self.b / (1 + np.exp(-1 * self.c * (x - self.d)))
+    def _logistics4(self, x, a=None, b=None, c=None, d=None):
+        if a == None:
+            return self.a + self.b / (1 + np.exp(-1 * self.c * (x - self.d)))
+        else:
+            return a + b / (1 + np.exp(-1 * c * (x - d)))
+
+    # A 3-parameter function designed for the scale parameter (alpha) of an
+    # exponentiated Weibull distribution with shape2=5 (see 'Global hierarchical
+    # models for wind and wave contours').
+    def _alpha3(self, x):
+        return (self.a + self.b * x ** self.c) \
+               / 2.0445 ** (1 / self._logistics4(x, self.C1, self.C2, self.C3, self.C4))
 
     def _value(self, x):
         return self._wrapper(self._func(x))
@@ -184,6 +204,11 @@ class FunctionParam(Param):
             function_string = "" + str(self.a) + " + " + str(self.b) + \
                               " / {1 + e^[-" + str(self.c) + \
                               " * (x - " + str(self.c) + ")]}"
+        elif self.func_name == "alpha3":
+            function_string =  "(" + str(self.a) + " + " + str(self.b) + \
+                "x^" + str(self.c) + ") / 2.0445^(1 / logistics4(" + \
+                str(self.C1) + ", " + str(self.C2) + ", " + str(self.C3) + \
+                ", " + str(self.C4) + ")"
         if isinstance(self._wrapper.func, np.ufunc):
             function_string += " with _wrapper: " + str(self._wrapper)
         return function_string

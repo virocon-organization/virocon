@@ -123,11 +123,11 @@ class ContourCreationTest(unittest.TestCase):
         #    self.assertAlmostEqual(result0.loc[g, h], contour_coordinates.loc[g, h], places=8)
 
 
-    def test_HDC2d_LogisticsFunction(self):
+    def test_omae2020_wind_wave_contour(self):
         """
         Contour similar to the wind-wave contour in 'Global hierararchical models
         for wind and wave contours', dataset D. First variable = wind speed,
-        second variable = sig. wave height
+        second variable = significant wave height.
         """
 
         # Define dependency tuple.
@@ -143,8 +143,11 @@ class ContourCreationTest(unittest.TestCase):
 
         hs_shape = FunctionParam('logistics4', 0.582, 1.90, 0.248, 8.49)
         hs_loc = None
-        divide_by = 2.0445**(1/2.5)
-        hs_scale = FunctionParam('power3', 0.394 / divide_by, 0.0178 / divide_by, 1.88)
+        #divide_by = 2.0445**(1/2.5)
+        #hs_scale = FunctionParam('power3', 0.394 / divide_by, 0.0178 / divide_by, 1.88)
+        hs_scale = FunctionParam('alpha3', 0.394, 0.0178, 1.88,
+                                 C1=0.582, C2=1.90, C3=0.248, C4=8.49)
+
         hs_shape2 = ConstantParam(5)
         par2 = (hs_shape, hs_loc, hs_scale, hs_shape2)
 
@@ -161,11 +164,12 @@ class ContourCreationTest(unittest.TestCase):
         n_years = 50
         limits = [(0, 40), (0, 20)]
         deltas = [0.1, 0.1]
-        test_contour_HDC = HighestDensityContour(mul_dist, n_years, 3,
+        test_contour_HDC = HighestDensityContour(mul_dist, n_years, 1,
                                                  limits, deltas)
+        max_v = max(test_contour_HDC.coordinates[0][0])
+        self.assertAlmostEqual(max_v, 29.5, delta=0.5)  # Should be about 29.5, see Fig. 8 in 'Global...'
         max_hs = max(test_contour_HDC.coordinates[0][1])
-        self.assertGreater(max_hs, 12) # Should be about 15, see Fig. 8 in 'Global...'
-        self.assertLess(max_hs, 20) # Should be about 15, see Fig. 8 in 'Global...'
+        self.assertAlmostEqual(max_hs, 14.5, delta=0.5) # Should be about 15, see Fig. 8 in 'Global...'
 
 
     def test_HDC3d_WLL(self):
