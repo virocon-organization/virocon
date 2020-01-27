@@ -143,8 +143,6 @@ class ContourCreationTest(unittest.TestCase):
 
         hs_shape = FunctionParam('logistics4', 0.582, 1.90, 0.248, 8.49)
         hs_loc = None
-        #divide_by = 2.0445**(1/2.5)
-        #hs_scale = FunctionParam('power3', 0.394 / divide_by, 0.0178 / divide_by, 1.88)
         hs_scale = FunctionParam('alpha3', 0.394, 0.0178, 1.88,
                                  C1=0.582, C2=1.90, C3=0.248, C4=8.49)
 
