@@ -1150,7 +1150,10 @@ class Fit():
                                 param_popt, param_pcov = curve_fit(
                                 Fit._get_function(functions[i]),
                                 interval_centers, fit_points, bounds=bounds)
-                            else: # Special case, this is the wind wave model of OMAE2020
+                            else: # alpha3 is handled differently, since it
+                                # depends on a prevously fitted logistics4
+                                # function.
+
                                 # Get the fitted coefficients for the shape parameter,
                                 # which is modelled with a logistics4 function
                                 f = params[0]
@@ -1162,9 +1165,11 @@ class Fit():
                                     # Thanks to: https://stackoverflow.com/questions/
                                     # 47884910/fixing-fit-parameters-in-curve-fit
                                     param_popt, param_pcov = \
-                                        curve_fit(lambda x, a, b,
-                                                  c: Fit._get_function(functions[i])(x, a, b, c, C1=C1, C2=C2, C3=C3, C4=C4),
-                                                  interval_centers, fit_points, bounds=bounds)
+                                        curve_fit(
+                                            lambda x, a, b,
+                                            c: Fit._get_function(functions[i])(x, a, b, c,
+                                                                               C1=C1, C2=C2, C3=C3, C4=C4),
+                                            interval_centers, fit_points, bounds=bounds)
                                 else:
                                     err_msg = \
                                         "The alpha3 function is only " \
@@ -1221,8 +1226,6 @@ class Fit():
                         name == WEIBULL_3P_KEYWORD_ALTERNATIVE:
             distribution = WeibullDistribution(*params[:3])
         elif name == WEIBULL_EXP_KEYWORD:
-            print('Creating an exp. Weibull distirbution with params, printing params:')
-            print(params)
             distribution = ExponentiatedWeibullDistribution(*params)
         elif name == LOGNORMAL_MU_PARAMETER_KEYWORD:
             distribution = LognormalDistribution(sigma=params[0], mu=params[2])
