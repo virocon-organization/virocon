@@ -162,25 +162,35 @@ class FitInspectionData():
         The actually number of intervals this dimension is divided for other dependent dimensions.
 
     shape_at : list of float
-        This list contains the values of the divided dimension the shape parameter depends on.
+        Values of the interval centers of the parent variable that were used to
+        fit the shape parameter.
 
     shape_value : list of float
         The associated values of the parameter shape to the divided dimension the shape
         parameter depends on.
 
     loc_at : list of float
-        This list contains the values of the divided dimension the location parameter depends on.
+        Values of the interval centers of the parent variable that were used to
+        fit the location parameter.
 
     loc_value : list of float
         The associated values of the parameter loc to the divided dimension the location
         parameter depends on.
 
     scale_at : list of float
-        This list contains the values of the divided dimension the scale parameter depends on.
+        Values of the interval centers of the parent variable that were used to
+        fit the scale parameter.
 
     scale_value : list of float
         The associated values of the parameter scale to the divided dimension the scale
         parameter depends on.
+
+    shape2_at : list of float
+        Values of the interval centers of the parent variable that were used to
+        fit the shape2 parameter.
+
+    shape2_value : list of float
+        Values of the parameter shape2 at the nth interval.
 
     shape_samples : list of list
         This list with the length of the number of used intervals for the shape parameter
