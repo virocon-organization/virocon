@@ -44,8 +44,8 @@ class ContourCreationTest(unittest.TestCase):
         scale = ConstantParam(2.776)
         par1 = (shape, loc, scale)
 
-        mu = FunctionParam(0.1000, 1.489, 0.1901, 'power3')
-        sigma = FunctionParam(0.0400, 0.1748, -0.2243, 'exp3')
+        mu = FunctionParam('power3', 0.1000, 1.489, 0.1901)
+        sigma = FunctionParam('exp3', 0.0400, 0.1748, -0.2243)
 
         #del shape, loc, scale
 
@@ -82,8 +82,8 @@ class ContourCreationTest(unittest.TestCase):
         """
 
         # Define dependency tuple.
-        dep1 = (None, None, None, None)
-        dep2 = (None, None, 0, None)
+        dep1 = (None, None, None, None) # shape, location, scale, shape2
+        dep2 = (None, None, 0, None) # shape, location, scale, shape2
 
         # Define parameters.
         v_shape = ConstantParam(11)
@@ -94,7 +94,7 @@ class ContourCreationTest(unittest.TestCase):
 
         hs_shape = ConstantParam(1.4)
         hs_loc = None
-        hs_scale = FunctionParam(0.15, 0.0033, 2.45, 'power3')
+        hs_scale = FunctionParam('power3', 0.15, 0.0033, 2.45)
         hs_shape2 = ConstantParam(5)
         par2 = (hs_shape, hs_loc, hs_scale, hs_shape2)
 
@@ -123,6 +123,56 @@ class ContourCreationTest(unittest.TestCase):
         #    self.assertAlmostEqual(result0.loc[g, h], contour_coordinates.loc[g, h], places=8)
 
 
+    def test_omae2020_wind_wave_contour(self):
+        """
+        Contour similar to the wind-wave contour in 'Global hierararchical models
+        for wind and wave contours', dataset D. First variable = wind speed,
+        second variable = significant wave height.
+        """
+
+        # Define dependency tuple.
+        dep1 = (None, None, None, None) # shape, location, scale, shape2
+        dep2 = (0, None, 0, None) # shape, location, scale, shape2
+
+        # Define parameters.
+        v_shape = ConstantParam(2.42)
+        v_loc = None
+        v_scale = ConstantParam(10)
+        v_shape2 = ConstantParam(0.761)
+        par1 = (v_shape, v_loc, v_scale, v_shape2)
+
+        hs_shape = FunctionParam('logistics4', 0.582, 1.90, 0.248, 8.49)
+        hs_loc = None
+        hs_scale = FunctionParam('alpha3', 0.394, 0.0178, 1.88,
+                                 C1=0.582, C2=1.90, C3=0.248, C4=8.49)
+
+        hs_shape2 = ConstantParam(5)
+        par2 = (hs_shape, hs_loc, hs_scale, hs_shape2)
+
+        # Create distributions.
+        dist1 = ExponentiatedWeibullDistribution(*par1)
+        dist2 = ExponentiatedWeibullDistribution(*par2)
+
+        distributions = [dist1, dist2]
+        dependencies = [dep1, dep2]
+
+        mul_dist = MultivariateDistribution(distributions, dependencies)
+
+        # Calculate the contour.
+        n_years = 50
+        limits = [(0, 40), (0, 20)]
+        deltas = [0.1, 0.1]
+        test_contour_HDC = HighestDensityContour(mul_dist, n_years, 1,
+                                                 limits, deltas)
+
+        # Compare the computed contours to the contours published in
+        # 'Global hierarchical models for wind and wave contours', Figure 8.
+        max_v = max(test_contour_HDC.coordinates[0][0])
+        self.assertAlmostEqual(max_v, 29.5, delta=0.5) # Should be about 29.5
+        max_hs = max(test_contour_HDC.coordinates[0][1])
+        self.assertAlmostEqual(max_hs, 14.5, delta=0.5) # Should be about 15
+
+
     def test_HDC3d_WLL(self):
         """
         Creating Contour example for 3-d HDC with Weibull, Lognormal and
@@ -139,8 +189,8 @@ class ContourCreationTest(unittest.TestCase):
         scale = ConstantParam(2.776)
         par1 = (shape, loc, scale)
 
-        mu = FunctionParam(0.1000, 1.489, 0.1901, "power3")
-        sigma = FunctionParam(0.0400, 0.1748, -0.2243, "exp3")
+        mu = FunctionParam('power3', 0.1000, 1.489, 0.1901)
+        sigma = FunctionParam('exp3', 0.0400, 0.1748, -0.2243)
 
 
         #del shape, loc, scale
@@ -192,8 +242,8 @@ class ContourCreationTest(unittest.TestCase):
         scale = ConstantParam(0.8888)
         par1 = (shape, loc, scale)
 
-        mu = FunctionParam(0.1000, 1.489, 0.1901, "power3")
-        sigma = FunctionParam(0.0400, 0.1748, -0.2243, "exp3")
+        mu = FunctionParam('power3', 0.1000, 1.489, 0.1901)
+        sigma = FunctionParam('exp3', 0.0400, 0.1748, -0.2243)
 
         #create distributions
         dist1 = WeibullDistribution(*par1)
@@ -235,8 +285,8 @@ class ContourCreationTest(unittest.TestCase):
         par1 = (shape, loc, scale)
 
         shape = None
-        loc = FunctionParam(4, 10, 0.02, "power3")
-        scale = FunctionParam(0.1, 0.02, -0.1, "exp3")
+        loc = FunctionParam('power3', 4, 10, 0.02)
+        scale = FunctionParam('exp3', 0.1, 0.02, -0.1)
         par2 = (shape, loc, scale)
 
         #del shape, loc, scale
@@ -281,12 +331,12 @@ class ContourCreationTest(unittest.TestCase):
         par1 = (shape, loc, scale)
 
         shape = None
-        loc = FunctionParam(4, 10, 0.02, "power3")
-        scale = FunctionParam(0.1, 0.02, -0.1, "exp3")
+        loc = FunctionParam('power3', 4, 10, 0.02)
+        scale = FunctionParam('exp3', 0.1, 0.02, -0.1)
         par2 = (shape, loc, scale)
 
-        mu = FunctionParam(0.1, 1.5, 0.2, "power3")
-        sigma = FunctionParam(0.1, 0.2, -0.2, "exp3")
+        mu = FunctionParam('power3', 0.1, 1.5, 0.2)
+        sigma = FunctionParam('exp3', 0.1, 0.2, -0.2)
 
         #create distributions
         dist1 = WeibullDistribution(*par1)
@@ -335,8 +385,8 @@ class ContourCreationTest(unittest.TestCase):
         scale = ConstantParam(2.776)
         par1 = (shape, loc, scale)
 
-        mu = FunctionParam(0.1000, 1.489, 0.1901, "power3")
-        sigma = FunctionParam(0.0400, 0.1748, -0.2243, "exp3")
+        mu = FunctionParam('power3', 0.1000, 1.489, 0.1901)
+        sigma = FunctionParam('exp3', 0.0400, 0.1748, -0.2243)
 
         # Create distributions
         dist1 = WeibullDistribution(*par1)
@@ -373,8 +423,8 @@ class ContourCreationTest(unittest.TestCase):
         par1 = (shape, loc, scale)
 
         shape = None
-        loc = FunctionParam(7, 1.489, 0.1901, "power3")
-        scale = FunctionParam(1.5, 0.1748, -0.2243, "exp3")
+        loc = FunctionParam('power3', 7, 1.489, 0.1901)
+        scale = FunctionParam('exp3', 1.5, 0.1748, -0.2243)
         par2 = (shape, loc, scale)
 
         # Create distributions.
@@ -412,8 +462,8 @@ class ContourCreationTest(unittest.TestCase):
         scale = ConstantParam(2.776)
         par1 = (shape, loc, scale)
 
-        mu = FunctionParam(0.1000, 1.489, 0.1901, "power3")
-        sigma = FunctionParam(0.0400, 0.1748, -0.2243, "exp3")
+        mu = FunctionParam('power3', 0.1000, 1.489, 0.1901)
+        sigma = FunctionParam('exp3', 0.0400, 0.1748, -0.2243)
 
         #del shape, loc, scale
 
@@ -446,8 +496,8 @@ class ContourCreationTest(unittest.TestCase):
         scale = ConstantParam(2.776)
         par1 = (shape, loc, scale)
 
-        mu = FunctionParam(0.1000, 1.489, 0.1901, "power3")
-        sigma = FunctionParam(0.0400, 0.1748, -0.2243, "exp3")
+        mu = FunctionParam('power3', 0.1000, 1.489, 0.1901)
+        sigma = FunctionParam('exp3', 0.0400, 0.1748, -0.2243)
 
         # Create distributions
         dist1 = WeibullDistribution(*par1)
@@ -474,8 +524,8 @@ class HDCTest(unittest.TestCase):
                 n_years = 25, dep1=(None, None, None), dep2=(0, None, 0),
                 par1=(ConstantParam(1.471), ConstantParam(0.8888),
                 ConstantParam(2.776)),
-                par2=(FunctionParam(0.0400, 0.1748, -0.2243, "exp3"), None,
-                FunctionParam(0.1, 1.489, 0.1901, "power3"))):
+                par2=(FunctionParam('exp3', 0.0400, 0.1748, -0.2243), None,
+                FunctionParam('power3', 0.1, 1.489, 0.1901))):
         """
         Creating Contour example
         """
