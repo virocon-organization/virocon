@@ -203,7 +203,7 @@ class FunctionParam(Param):
         elif self.func_name == "logistics4":
             function_string = "" + str(self.a) + " + " + str(self.b) + \
                               " / {1 + e^[-" + str(self.c) + \
-                              " * (x - " + str(self.c) + ")]}"
+                              " * (x - " + str(self.d) + ")]}"
         elif self.func_name == "alpha3":
             function_string =  "(" + str(self.a) + " + " + str(self.b) + \
                 "x^" + str(self.c) + ") / 2.0445^(1 / logistics4(" + \
