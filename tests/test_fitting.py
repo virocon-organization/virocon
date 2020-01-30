@@ -358,15 +358,18 @@ class FittingTest(unittest.TestCase):
 
         # Shift the wave data with -1 m and fit again.
         sample_hs = sample_hs - 2
-        fit = Fit((sample_hs, ),
-                  (dist_description_hs, ))
-        dist0 = fit.mul_var_dist.distributions[0]
-        self.assertAlmostEqual(dist0.shape(0) / 10, 1.48 / 10, places=1)
+        # Negative location values will be set to zero instead and a
+        # warning will be raised.
+        with self.assertWarns(RuntimeWarning):
+            fit = Fit((sample_hs, ),
+                      (dist_description_hs, ))
+            dist0 = fit.mul_var_dist.distributions[0]
+            self.assertAlmostEqual(dist0.shape(0) / 10, 1.48 / 10, places=1)
 
-        # Should be estimated to be  0.0981 - 2 and corrected to be 0.
-        self.assertEqual(dist0.loc(0), 0)
+            # Should be estimated to be  0.0981 - 2 and corrected to be 0.
+            self.assertEqual(dist0.loc(0), 0)
 
-        self.assertAlmostEqual(dist0.scale(0), 0.944, places=1)
+            self.assertAlmostEqual(dist0.scale(0), 0.944, places=1)
 
     def test_omae2020_wind_wave_model(self):
         """

@@ -230,13 +230,13 @@ class ContourCreationTest(unittest.TestCase):
         Lognormal and Lognormal distribution
         """
 
-        #define dependency tuple
+        # Define dependency tuple.
         dep1 = (None, None, None)
         dep2 = (0, None, 0)
         dep3 = (0, None, 0)
         dep4 = (0, None, 0)
 
-        #define parameters
+        # Define parameters.
         shape = ConstantParam(2.776)
         loc = ConstantParam(1.471)
         scale = ConstantParam(0.8888)
@@ -245,7 +245,7 @@ class ContourCreationTest(unittest.TestCase):
         mu = FunctionParam('power3', 0.1000, 1.489, 0.1901)
         sigma = FunctionParam('exp3', 0.0400, 0.1748, -0.2243)
 
-        #create distributions
+        # Create distributions.
         dist1 = WeibullDistribution(*par1)
         dist2 = LognormalDistribution(mu=mu, sigma=sigma)
         dist3 = LognormalDistribution(mu=mu, sigma=sigma)
@@ -257,8 +257,7 @@ class ContourCreationTest(unittest.TestCase):
 
         mul_dist = MultivariateDistribution(distributions, dependencies)
 
-        #del dist1, dist2, par1, par2, dep1, dep2, dependencies, distributions
-        #calc contour
+        # Compute contour.
         n_years = 50
         limits = [(0, 20), (0, 18), (0, 18), (0, 18)]
         deltas = [1, 1, 1, 1]
@@ -270,15 +269,15 @@ class ContourCreationTest(unittest.TestCase):
 
     def test_HDC2d_WN(self):
         """
-        Creating Contour example
+        Creating a contour example.
         """
 
 
-        #define dependency tuple
+        # Define dependency tuple.
         dep1 = (None, None, None)
         dep2 = (None, 0, 0)
 
-        #define parameters
+        # Define parameters.
         shape = ConstantParam(1.471)
         loc = ConstantParam(0.8888)
         scale = ConstantParam(2.776)
@@ -289,9 +288,7 @@ class ContourCreationTest(unittest.TestCase):
         scale = FunctionParam('exp3', 0.1, 0.02, -0.1)
         par2 = (shape, loc, scale)
 
-        #del shape, loc, scale
-
-        #create distributions
+        # Create distributions.
         dist1 = WeibullDistribution(*par1)
         dist2 = NormalDistribution(*par2)
 
@@ -300,8 +297,7 @@ class ContourCreationTest(unittest.TestCase):
 
         mul_dist = MultivariateDistribution(distributions, dependencies)
 
-        #del dist1, dist2, par1, par2, dep1, dep2, dependencies, distributions
-        #calc contour
+        # Compute the contour.
         n_years = 50
         limits = [(0, 20), (0, 20)]
         deltas = [0.05, 0.01]
@@ -324,7 +320,7 @@ class ContourCreationTest(unittest.TestCase):
         dep2 = (0, None, 0)
         dep3 = (None, 0, 0)
 
-        #define parameters
+        # Define parameters.
         shape = ConstantParam(1.471)
         loc = ConstantParam(0.8888)
         scale = ConstantParam(2.776)
@@ -372,14 +368,14 @@ class ContourCreationTest(unittest.TestCase):
         2-d IFORM contour.
 
         The used probabilistic model is described in Vanem and Bitner-Gregersen
-        (2012), DOI: 10.1016/j.apor.2012.05.006
+        (2012), DOI: 10.1016/j.apor.2012.05.006 .
         """
 
-        # Define dependency tuple
+        # Define dependency tuple.
         dep1 = (None, None, None)
         dep2 = (0, None, 0)
 
-        # Define parameters
+        # Define parameters.
         shape = ConstantParam(1.471)
         loc = ConstantParam(0.8888)
         scale = ConstantParam(2.776)
@@ -388,7 +384,7 @@ class ContourCreationTest(unittest.TestCase):
         mu = FunctionParam('power3', 0.1000, 1.489, 0.1901)
         sigma = FunctionParam('exp3', 0.0400, 0.1748, -0.2243)
 
-        # Create distributions
+        # Create distributions.
         dist1 = WeibullDistribution(*par1)
         dist2 = LognormalDistribution(mu=mu, sigma=sigma)
 
@@ -451,12 +447,12 @@ class ContourCreationTest(unittest.TestCase):
         3-dimensional IFORM contour.
         """
 
-        #define dependency tuple
+        # Define dependency tuple.
         dep1 = (None, None, None)
         dep2 = (0, None, 0)
         dep3 = (0, None, 0)
 
-        #define parameters
+        # Define parameters.
         shape = ConstantParam(1.471)
         loc = ConstantParam(0.8888)
         scale = ConstantParam(2.776)
@@ -467,7 +463,7 @@ class ContourCreationTest(unittest.TestCase):
 
         #del shape, loc, scale
 
-        #create distributions
+        # Create distributions.
         dist1 = WeibullDistribution(*par1)
         dist2 = LognormalDistribution(mu=mu, sigma=sigma)
         dist3 = LognormalDistribution(mu=mu, sigma=sigma)
@@ -520,29 +516,34 @@ class ContourCreationTest(unittest.TestCase):
 
 class HDCTest(unittest.TestCase):
 
-    def _setup(self, limits=[(0, 20), (0, 20)], deltas=[0.05, 0.05],
-                n_years = 25, dep1=(None, None, None), dep2=(0, None, 0),
-                par1=(ConstantParam(1.471), ConstantParam(0.8888),
-                ConstantParam(2.776)),
-                par2=(FunctionParam('exp3', 0.0400, 0.1748, -0.2243), None,
-                FunctionParam('power3', 0.1, 1.489, 0.1901))):
+    def _setup(self,
+               limits=[(0, 20), (0, 20)],
+               deltas=[0.05, 0.05],
+               n_years = 25,
+               dep1=(None, None, None),
+               dep2=(0, None, 0),
+               par1=(ConstantParam(1.471), ConstantParam(0.8888),
+                     ConstantParam(2.776)),
+               par2=(FunctionParam('exp3', 0.0400, 0.1748, -0.2243), None,
+                     FunctionParam('power3', 0.1, 1.489, 0.1901))
+               ):
         """
-        Creating Contour example
+        Creating a contour (same as in DOI: 10.1016/j.coastaleng.2017.03.002).
         """
 
         self.limits = limits
         self.deltas = deltas
         self.n_years = n_years
 
-        #define dependency tuple
+        # Define dependency tuple.
         self.dep1 = dep1
         self.dep2 = dep2
 
-        #define parameters
+        # Define parameters.
         self.par1 = par1
         self.par2 = par2
 
-        #create distributions
+        # Create distributions.
         dist1 = WeibullDistribution(*par1)
         dist2 = LognormalDistribution(*par2)
 
@@ -551,7 +552,7 @@ class HDCTest(unittest.TestCase):
 
         mul_dist = MultivariateDistribution(distributions, dependencies)
 
-        #calc contour
+        # Compute contour.
         test_contour_HDC = HighestDensityContour(mul_dist, n_years, 3,
                                                  limits, deltas)
         return test_contour_HDC
@@ -559,7 +560,7 @@ class HDCTest(unittest.TestCase):
 
     def test_cumsum(self):
         """
-        tests if the return values of cumsum_biggest_until are correct
+        Tests if the return values of cumsum_biggest_until are correct.
         """
 
         test_contour_HDC = self._setup()
@@ -577,7 +578,7 @@ class HDCTest(unittest.TestCase):
 
     def test_cumsum_nan_entry(self):
         """
-        tests if ValueError is raised when the array has a 'nan' entry
+        Tests if ValueError is raised when the array has a 'nan' entry.
         """
 
         test_contour_HDC = self._setup()
@@ -588,8 +589,8 @@ class HDCTest(unittest.TestCase):
 
     def test_setup_HDC_deltas_single(self):
         """
-        tests if contour is created with a single float for deltas
-        as the exception should handle
+        Tests if contour is created with a single float for deltas
+        as the exception should handle.
         """
 
         try:
@@ -601,7 +602,7 @@ class HDCTest(unittest.TestCase):
 
     def test_setup_HDC_deltas_none(self):
         """
-        tests error when length of deltas is not equal with number of dimensions
+        Tests error when length of deltas is not equal with number of dimensions.
         """
 
         test_contour_HDC = self._setup(deltas=None)
@@ -611,7 +612,7 @@ class HDCTest(unittest.TestCase):
 
     def test_setup_HDC_deltas_value(self):
         """
-        tests error when length of deltas is not equal with number of dimensions
+        Tests error when length of deltas is not equal with number of dimensions.
         """
 
         with self.assertRaises(ValueError):
@@ -620,7 +621,7 @@ class HDCTest(unittest.TestCase):
 
     def test_setup_HDC_limits_length(self):
         """
-        tests error when length of limits is not equal with number of dimensions
+        Tests error when length of limits is not equal with number of dimensions.
         """
 
         with self.assertRaises(ValueError):
@@ -629,17 +630,17 @@ class HDCTest(unittest.TestCase):
 
     def test_setup_HDC_limits_none(self):
         """
-        tests error when length of limits is not equal with number of dimensions
+        Tests error when length of limits is not equal with number of dimensions.
         """
-
-        test_contour_HDC = self._setup(limits=None)
-        self.assertEqual(test_contour_HDC.limits, [(0, 10)] *
-                                    test_contour_HDC.distribution.n_dim)
+        with self.assertWarns(RuntimeWarning):
+            test_contour_HDC = self._setup(limits=None)
+            self.assertEqual(test_contour_HDC.limits,
+                             [(0, 10)] * test_contour_HDC.distribution.n_dim)
 
 
     def test_setup_HDC_limits_Tuple_length(self):
         """
-        tests error when length of limits_tuples is not two
+        Tests error when length of limits_tuples is not two.
         """
 
         with self.assertRaises(ValueError):
