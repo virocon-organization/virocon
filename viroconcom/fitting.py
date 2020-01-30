@@ -60,7 +60,7 @@ def _asymdecrease3(x, a, b, c):
 
 # A 4-parameter logististics function (a dependence function).
 def _logistics4(x, a, b, c, d):
-    return a + b / (1 + np.exp(c * (x - d)))
+    return a + b / (1 + np.exp(-1 * c * (x - d)))
 
 
 # A 3-parameter function designed for the scale parameter (alpha) of an

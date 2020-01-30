@@ -409,13 +409,13 @@ class FittingTest(unittest.TestCase):
         self.assertAlmostEqual(inspection_data1.shape_value[0], 0.8, delta=0.5) # interval centered at 1
         self.assertAlmostEqual(inspection_data1.shape_value[4], 1.5, delta=0.5)  # interval centered at 9
         self.assertAlmostEqual(inspection_data1.shape_value[9], 2.5, delta=1)  # interval centered at 19
-        self.assertAlmostEqual(dist1.shape(0), 0.8, delta=1)
-        self.assertAlmostEqual(dist1.shape(10), 1.5, delta=1)
-        self.assertAlmostEqual(dist1.shape(20), 2.5, delta=1)
-        self.assertAlmostEqual(dist1.shape.a, 0.582, delta=2)
-        self.assertAlmostEqual(dist1.shape.b, 1.90, delta=2)
-        self.assertAlmostEqual(dist1.shape.c, 0.248, delta=5)
-        self.assertAlmostEqual(dist1.shape.d, 8.49, delta=20)
+        self.assertAlmostEqual(dist1.shape(0), 0.8, delta=0.3)
+        self.assertAlmostEqual(dist1.shape(10), 1.6, delta=0.5)
+        self.assertAlmostEqual(dist1.shape(20), 2.3, delta=0.7)
+        self.assertAlmostEqual(dist1.shape.a, 0.582, delta=0.5)
+        self.assertAlmostEqual(dist1.shape.b, 1.90, delta=1)
+        self.assertAlmostEqual(dist1.shape.c, 0.248, delta=0.5)
+        self.assertAlmostEqual(dist1.shape.d, 8.49, delta=5)
         self.assertAlmostEqual(inspection_data1.scale_value[0], 0.15, delta=0.2) # interval centered at 1
         self.assertAlmostEqual(inspection_data1.scale_value[4], 1, delta=0.5)  # interval centered at 9
         self.assertAlmostEqual(inspection_data1.scale_value[9], 4, delta=1)  # interval centered at 19
@@ -424,7 +424,7 @@ class FittingTest(unittest.TestCase):
         self.assertAlmostEqual(dist1.scale(20), 4, delta=1)
         self.assertAlmostEqual(dist1.scale.a, 0.394, delta=0.5)
         self.assertAlmostEqual(dist1.scale.b, 0.0178, delta=0.1)
-        self.assertAlmostEqual(dist1.scale.c, 1.88, delta=0.5)
+        self.assertAlmostEqual(dist1.scale.c, 1.88, delta=0.8)
 
     def test_wrong_model(self):
         """
