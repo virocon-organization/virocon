@@ -415,6 +415,11 @@ class WeibullDistribution(ParametricDistribution):
     def _scipy_i_cdf(self, probabilities, shape, loc, scale):
         return sts.weibull_min.ppf(probabilities, c=shape, loc=loc, scale=scale)
 
+    # datapoints is the amount of data you want to calculate, for example 1000 gives you one thousands datapoints back
+    def _calculate_data(self, datapoints, shape, loc, scale):
+        probabilities = np.random.rand(datapoints)
+        return sts.weibull_min.ppf(probabilities, c=shape, loc=loc, scale=scale)
+
 
 class ExponentiatedWeibullDistribution(ParametricDistribution):
     """
@@ -453,6 +458,11 @@ class ExponentiatedWeibullDistribution(ParametricDistribution):
         # In Matlab syntax: x = scale .* (-1 .* log(1 - p.^(1 ./ shape2))).^(1 ./ shape);
         x = np.multiply(scale, np.power(np.multiply(-1, np.log(1 - np.power(p, np.divide(1, shape2)))), np.divide(1, shape)))
         return x
+
+        # datapoints is the amount of data you want to calculate, for example 1000 gives you one thousands datapoints back
+    def _calculate_data(self, datapoints, shape, loc, scale, shape2):
+        probabilities = np.random.rand(datapoints)
+        return self._scipy_i_cdf(probabilities, shape, loc, scale, shape2)
 
     def _scipy_pdf(self, x, shape, loc, scale, shape2):
         """
@@ -684,6 +694,11 @@ class LognormalDistribution(ParametricDistribution):
     def _scipy_i_cdf(self, probabilities, shape, _, scale):
         return sts.lognorm.ppf(probabilities, s=shape, scale=scale)
 
+    # datapoints is the amount of data you want to calculate, for example 1000 gives you one thousands datapoints back
+    def _calculate_data(self, datapoints, shape, _, scale):
+        probabilities = np.random.rand(datapoints)
+        return sts.lognorm.ppf(probabilities, s=shape, scale=scale)
+
     def __str__(self):
         if hasattr(self, "mu"):
             return  "LognormalDistribution with shape={}, loc={}," \
@@ -726,6 +741,11 @@ class NormalDistribution(ParametricDistribution):
         return sts.norm.cdf(x, loc=loc, scale=scale)
 
     def _scipy_i_cdf(self, probabilities, _, loc, scale):
+        return sts.norm.ppf(probabilities, loc=loc, scale=scale)
+
+    # datapoints is the amount of data you want to calculate, for example 1000 gives you one thousands datapoints back
+    def _calculate_data(self, datapoints, _, loc, scale):
+        probabilities = np.random.rand(datapoints)
         return sts.norm.ppf(probabilities, loc=loc, scale=scale)
 
 
