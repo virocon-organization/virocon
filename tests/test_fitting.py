@@ -509,7 +509,7 @@ class FittingTest(unittest.TestCase):
                               'dependency': (None, None, None, None),
                               'width_of_intervals': 2}
         dist_description_hs = {'name': 'Weibull_Exp',
-                              'fixed_parameters' :  (None,         None, 5,     None), # shape, location, scale, shape2
+                              'fixed_parameters' :  (None,        None, 5,        None), # shape, location, scale, shape2
                               'dependency':        (0,            None, 0,        None), # shape, location, scale, shape2
                               'functions':         ('logistics4', None, 'alpha3', None), # shape, location, scale, shape2
                               'min_datapoints_for_fit': 20}
@@ -517,3 +517,53 @@ class FittingTest(unittest.TestCase):
             # Fit the model to the data.
             fit = Fit((sample_v, sample_hs),
                       (dist_description_v, dist_description_hs))
+
+
+    def test_weighting_of_dependence_function(self):
+        """
+        Tests if using weights when the dependence function is fitted works
+        correctly.
+        """
+
+        sample_v, sample_hs, label_v, label_hs = read_benchmark_dataset(path='tests/testfiles/1year_dataset_D.txt')
+
+
+        # Define the structure of the probabilistic model that will be fitted to the
+        # dataset.
+        dist_description_v = {'name': 'Weibull_Exp',
+                              'dependency': (None, None, None, None),
+                              'width_of_intervals': 2}
+        dist_description_hs = {'name': 'Weibull_Exp',
+                              'fixed_parameters' :  (None,        None, None,     5), # shape, location, scale, shape2
+                              'dependency':        (0,            None, 0,        None), # shape, location, scale, shape2
+                              'functions':         ('logistics4', None, 'alpha3', None), # shape, location, scale, shape2
+                              'min_datapoints_for_fit': 20,
+                              'do_use_weights_for_dependence_function': False}
+
+        # Fit the model to the data.
+        fit = Fit((sample_v, sample_hs),
+                  (dist_description_v, dist_description_hs))
+        dist1_no_weights = fit.mul_var_dist.distributions[1]
+
+
+        # Now perform a fit with weights.
+        dist_description_hs = {'name': 'Weibull_Exp',
+                              'fixed_parameters' :  (None,        None, None,     5), # shape, location, scale, shape2
+                              'dependency':        (0,            None, 0,        None), # shape, location, scale, shape2
+                              'functions':         ('logistics4', None, 'alpha3', None), # shape, location, scale, shape2
+                              'min_datapoints_for_fit': 20,
+                              'do_use_weights_for_dependence_function': True}
+        # Fit the model to the data.
+        fit = Fit((sample_v, sample_hs),
+                  (dist_description_v, dist_description_hs))
+        dist1_with_weights = fit.mul_var_dist.distributions[1]
+
+        # Make sure the two fitted dependnece functions are different.
+        d = np.abs(dist1_with_weights.scale(0) - dist1_no_weights.scale(0)) / \
+            np.abs(dist1_no_weights.scale(0))
+        self.assertGreater(d, 0.01)
+
+        # Make sure they are not too different.
+        d = np.abs(dist1_with_weights.scale(20) - dist1_no_weights.scale(20)) / \
+            np.abs(dist1_no_weights.scale(20))
+        self.assertLess(d, 0.5)

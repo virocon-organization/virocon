@@ -577,6 +577,10 @@ class Fit():
             they can be specified with this key. Floats are interpeted in the
             order (shape, location, scale, shape2).
 
+        do_use_weights_for_dependence_function : Boolean, defaults to False
+            If true the dependence function is fitted using weights. The weights
+            are 1 / parameter_value such that a normalization is performed.
+
         and either number_of_intervals or width_of_intervals:
 
         number_of_intervals : int
@@ -1034,6 +1038,7 @@ class Fit():
         list_width_of_intervals = kwargs.get('list_width_of_intervals')
         min_datapoints_for_fit = kwargs.get('min_datapoints_for_fit', 20)
         fixed_parameters = kwargs.get('fixed_parameters', (None, None, None, None))
+        do_use_weights_for_dependence_function = kwargs.get('do_use_weights_for_dependence_function', False)
 
         # Fit inspection data for current dimension
         fit_inspection_data = FitInspectionData()
@@ -1159,29 +1164,45 @@ class Fit():
                             bounds = (bLower, bUpper)
 
                             if functions[i] != "alpha3":
-                                param_popt, param_pcov = curve_fit(
-                                Fit._get_function(functions[i]),
-                                interval_centers, fit_points, bounds=bounds)
+                                if do_use_weights_for_dependence_function:
+                                    param_popt, param_pcov = curve_fit(
+                                    Fit._get_function(functions[i]),
+                                    interval_centers, fit_points,
+                                        sigma=fit_points, bounds=bounds)
+                                else:
+                                    param_popt, param_pcov = curve_fit(
+                                    Fit._get_function(functions[i]),
+                                    interval_centers, fit_points, bounds=bounds)
                             else: # alpha3 is handled differently, since it
                                 # depends on a prevously fitted logistics4
                                 # function.
 
                                 # Get the fitted coefficients for the shape parameter,
-                                # which is modelled with a logistics4 function
+                                # which is modelled with a logistics4 function.
                                 f = params[0]
                                 C1 = f.a
                                 C2 = f.b
                                 C3 = f.c
                                 C4 = f.d
+
+                                # The lambda function was used based on https://stackoverflow.com/
+                                # questions/47884910/fixing-fit-parameters-in-curve-fit
                                 if f.func_name == "logistics4":
-                                    # Thanks to: https://stackoverflow.com/questions/
-                                    # 47884910/fixing-fit-parameters-in-curve-fit
-                                    param_popt, param_pcov = \
-                                        curve_fit(
-                                            lambda x, a, b,
-                                            c: Fit._get_function(functions[i])(x, a, b, c,
-                                                                               C1=C1, C2=C2, C3=C3, C4=C4),
-                                            interval_centers, fit_points, bounds=bounds)
+                                    if do_use_weights_for_dependence_function:
+                                        param_popt, param_pcov = \
+                                            curve_fit(
+                                                lambda x, a, b,
+                                                c: Fit._get_function(functions[i])(x, a, b, c,
+                                                                                   C1=C1, C2=C2, C3=C3, C4=C4),
+                                                interval_centers, fit_points,
+                                                sigma=fit_points, bounds=bounds)
+                                    else:
+                                        param_popt, param_pcov = \
+                                            curve_fit(
+                                                lambda x, a, b,
+                                                c: Fit._get_function(functions[i])(x, a, b, c,
+                                                                                   C1=C1, C2=C2, C3=C3, C4=C4),
+                                                interval_centers, fit_points, bounds=bounds)
                                 else:
                                     err_msg = \
                                         "The alpha3 function is only " \
