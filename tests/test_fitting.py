@@ -509,7 +509,7 @@ class FittingTest(unittest.TestCase):
                               'dependency': (None, None, None, None),
                               'width_of_intervals': 2}
         dist_description_hs = {'name': 'Weibull_Exp',
-                              'fixed_parameters' :  (None,         None, 5,     None), # shape, location, scale, shape2
+                              'fixed_parameters' :  (None,        None, 5,        None), # shape, location, scale, shape2
                               'dependency':        (0,            None, 0,        None), # shape, location, scale, shape2
                               'functions':         ('logistics4', None, 'alpha3', None), # shape, location, scale, shape2
                               'min_datapoints_for_fit': 20}
@@ -534,7 +534,7 @@ class FittingTest(unittest.TestCase):
                               'dependency': (None, None, None, None),
                               'width_of_intervals': 2}
         dist_description_hs = {'name': 'Weibull_Exp',
-                              'fixed_parameters' :  (None,         None, None,     5), # shape, location, scale, shape2
+                              'fixed_parameters' :  (None,        None, None,     5), # shape, location, scale, shape2
                               'dependency':        (0,            None, 0,        None), # shape, location, scale, shape2
                               'functions':         ('logistics4', None, 'alpha3', None), # shape, location, scale, shape2
                               'min_datapoints_for_fit': 20,
@@ -548,7 +548,7 @@ class FittingTest(unittest.TestCase):
 
         # Now perform a fit with weights.
         dist_description_hs = {'name': 'Weibull_Exp',
-                              'fixed_parameters' :  (None,         None, None,     5), # shape, location, scale, shape2
+                              'fixed_parameters' :  (None,        None, None,     5), # shape, location, scale, shape2
                               'dependency':        (0,            None, 0,        None), # shape, location, scale, shape2
                               'functions':         ('logistics4', None, 'alpha3', None), # shape, location, scale, shape2
                               'min_datapoints_for_fit': 20,
@@ -559,9 +559,11 @@ class FittingTest(unittest.TestCase):
         dist1_with_weights = fit.mul_var_dist.distributions[1]
 
         # Make sure the two fitted dependnece functions are different.
-        d = np.abs(dist1_with_weights.scale(0) - dist1_no_weights.scale(0)) / np.abs(dist1_no_weights.scale(0))
+        d = np.abs(dist1_with_weights.scale(0) - dist1_no_weights.scale(0)) / \
+            np.abs(dist1_no_weights.scale(0))
         self.assertGreater(d, 0.01)
 
         # Make sure they are not too different.
-        d = np.abs(dist1_with_weights.scale(20) - dist1_no_weights.scale(20)) / np.abs(dist1_no_weights.scale(20))
+        d = np.abs(dist1_with_weights.scale(20) - dist1_no_weights.scale(20)) / \
+            np.abs(dist1_no_weights.scale(20))
         self.assertLess(d, 0.5)
