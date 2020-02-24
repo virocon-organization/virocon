@@ -142,6 +142,10 @@ class ParametricDistribution(Distribution, ABC):
     def _scipy_i_cdf(self, probabilities, shape, loc, scale):
         """Overwrite with appropriate i_cdf function from scipy package. """
 
+    @abstractmethod
+    def _draw_sample(self, samples, shape, loc, scale):
+        """Draws given number of samples from i_cdf functions"""
+
     def cdf(self, x, rv_values=None, dependencies=None):
         """
         Calculate the cumulative distribution function.
@@ -415,9 +419,8 @@ class WeibullDistribution(ParametricDistribution):
     def _scipy_i_cdf(self, probabilities, shape, loc, scale):
         return sts.weibull_min.ppf(probabilities, c=shape, loc=loc, scale=scale)
 
-    # datapoints is the amount of data you want to calculate, for example 1000 gives you one thousands datapoints back
-    def _calculate_data(self, datapoints, shape, loc, scale):
-        probabilities = np.random.rand(datapoints)
+    def _draw_sample(self, samples, shape, loc, scale):
+        probabilities = np.random.rand(samples)
         return sts.weibull_min.ppf(probabilities, c=shape, loc=loc, scale=scale)
 
 
@@ -459,9 +462,8 @@ class ExponentiatedWeibullDistribution(ParametricDistribution):
         x = np.multiply(scale, np.power(np.multiply(-1, np.log(1 - np.power(p, np.divide(1, shape2)))), np.divide(1, shape)))
         return x
 
-        # datapoints is the amount of data you want to calculate, for example 1000 gives you one thousands datapoints back
-    def _calculate_data(self, datapoints, shape, loc, scale, shape2):
-        probabilities = np.random.rand(datapoints)
+    def _draw_sample(self, samples, shape, loc, scale, shape2):
+        probabilities = np.random.rand(samples)
         return self._scipy_i_cdf(probabilities, shape, loc, scale, shape2)
 
     def _scipy_pdf(self, x, shape, loc, scale, shape2):
@@ -694,9 +696,8 @@ class LognormalDistribution(ParametricDistribution):
     def _scipy_i_cdf(self, probabilities, shape, _, scale):
         return sts.lognorm.ppf(probabilities, s=shape, scale=scale)
 
-    # datapoints is the amount of data you want to calculate, for example 1000 gives you one thousands datapoints back
-    def _calculate_data(self, datapoints, shape, _, scale):
-        probabilities = np.random.rand(datapoints)
+    def _draw_sample(self, samples, shape, _, scale):
+        probabilities = np.random.rand(samples)
         return sts.lognorm.ppf(probabilities, s=shape, scale=scale)
 
     def __str__(self):
@@ -743,9 +744,8 @@ class NormalDistribution(ParametricDistribution):
     def _scipy_i_cdf(self, probabilities, _, loc, scale):
         return sts.norm.ppf(probabilities, loc=loc, scale=scale)
 
-    # datapoints is the amount of data you want to calculate, for example 1000 gives you one thousands datapoints back
-    def _calculate_data(self, datapoints, _, loc, scale):
-        probabilities = np.random.rand(datapoints)
+    def _draw_sample(self, samples, _, loc, scale):
+        probabilities = np.random.rand(samples)
         return sts.norm.ppf(probabilities, loc=loc, scale=scale)
 
 
