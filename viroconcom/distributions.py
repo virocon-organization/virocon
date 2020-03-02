@@ -54,6 +54,8 @@ class ParametricDistribution(Distribution, ABC):
         The cumulative distribution function from scipy. (sts.weibull_min.cdf, ...)
     _scipy_i_cdf : function
         The inverse cumulative distribution (or percent-point) function.(sts.weibull_min.ppf, ...)
+    _draw_sample : function
+        Uses the i_cdf to draw a sample
     _default_shape : float
         The default shape parameter.
     _default_loc : float
@@ -143,8 +145,8 @@ class ParametricDistribution(Distribution, ABC):
         """Overwrite with appropriate i_cdf function from scipy package. """
 
     @abstractmethod
-    def _draw_sample(self, samples, shape, loc, scale):
-        """Draws given number of samples from i_cdf functions"""
+    def _draw_sample(self, points, shape, loc, scale):
+        """Draws given number of points from i_cdf functions. """
 
     def cdf(self, x, rv_values=None, dependencies=None):
         """
@@ -211,6 +213,8 @@ class ParametricDistribution(Distribution, ABC):
             params = (shape_val, loc_val, scale_val, shape2_val)
 
         return self._scipy_i_cdf(probabilities, *params)
+
+
 
     def ppf(self, probabilities, rv_values=None, dependencies=None):
         # Synsynom for i_cdf. Implemented that in external code a ParametricDistribution
@@ -419,8 +423,8 @@ class WeibullDistribution(ParametricDistribution):
     def _scipy_i_cdf(self, probabilities, shape, loc, scale):
         return sts.weibull_min.ppf(probabilities, c=shape, loc=loc, scale=scale)
 
-    def _draw_sample(self, samples, shape, loc, scale):
-        probabilities = np.random.rand(samples)
+    def _draw_sample(self, points, shape, loc, scale):
+        probabilities = np.random.rand(points)
         return sts.weibull_min.ppf(probabilities, c=shape, loc=loc, scale=scale)
 
 
@@ -462,8 +466,8 @@ class ExponentiatedWeibullDistribution(ParametricDistribution):
         x = np.multiply(scale, np.power(np.multiply(-1, np.log(1 - np.power(p, np.divide(1, shape2)))), np.divide(1, shape)))
         return x
 
-    def _draw_sample(self, samples, shape, loc, scale, shape2):
-        probabilities = np.random.rand(samples)
+    def _draw_sample(self, points, shape, loc, scale, shape2):
+        probabilities = np.random.rand(points)
         return self._scipy_i_cdf(probabilities, shape, loc, scale, shape2)
 
     def _scipy_pdf(self, x, shape, loc, scale, shape2):
@@ -696,8 +700,8 @@ class LognormalDistribution(ParametricDistribution):
     def _scipy_i_cdf(self, probabilities, shape, _, scale):
         return sts.lognorm.ppf(probabilities, s=shape, scale=scale)
 
-    def _draw_sample(self, samples, shape, _, scale):
-        probabilities = np.random.rand(samples)
+    def _draw_sample(self, points, shape, _, scale):
+        probabilities = np.random.rand(points)
         return sts.lognorm.ppf(probabilities, s=shape, scale=scale)
 
     def __str__(self):
@@ -744,8 +748,8 @@ class NormalDistribution(ParametricDistribution):
     def _scipy_i_cdf(self, probabilities, _, loc, scale):
         return sts.norm.ppf(probabilities, loc=loc, scale=scale)
 
-    def _draw_sample(self, samples, _, loc, scale):
-        probabilities = np.random.rand(samples)
+    def _draw_sample(self, points, _, loc, scale):
+        probabilities = np.random.rand(points)
         return sts.norm.ppf(probabilities, loc=loc, scale=scale)
 
 
