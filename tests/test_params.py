@@ -69,8 +69,8 @@ class ParamsTest(unittest.TestCase):
         Tests if function asymdecrease3 calculates the correct value.
         """
 
-        test_func = FunctionParam('asymdecrease3', 1, 4, 2)
-        self.assertEqual(test_func._value(0), 1.125)
+        test_func = FunctionParam('asymdecrease3', 1, 4, 3)
+        self.assertEqual(test_func._value(0), 2)
         self.assertEqual(test_func.func_name, 'asymdecrease3')
         self.assertEqual(str(test_func)[0:1], '1')
 

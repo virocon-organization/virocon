@@ -248,14 +248,10 @@ class FittingTest(unittest.TestCase):
 
         # Check whether the logarithmic square fit worked correctly.
         dist1 = fit.mul_var_dist.distributions[1]
-        self.assertGreater(dist1.shape.a, -0.1) # Should be about 0
-        self.assertLess(dist1.shape.a, 0.1)  # Should be about 0
-        self.assertGreater(dist1.shape.b, 1) # Should be about 1-2.5
-        self.assertLess(dist1.shape.b, 2.5)  # Should be about 1-2.5
-        self.assertGreater(np.abs(dist1.shape.c), 1.5) # Should be about 1.5 - 4
-        self.assertLess(np.abs(dist1.shape.c), 4)  # Should be about 1.1
-        self.assertGreater(dist1.shape(0), 0.25) # Should be about 0.35
-        self.assertLess(dist1.shape(0), 0.4) # Should be about 0.35
+        self.assertAlmostEqual(dist1.shape.a, 0, delta=0.1) # Should be about 0
+        self.assertAlmostEqual(dist1.shape.b, 0.35, delta=0.5) # Should be about 0.35
+        self.assertAlmostEqual(np.abs(dist1.shape.c), 2.5, delta=2) # Should be about 2.5
+        self.assertAlmostEquals(dist1.shape(0), 0.35, delta=0.2) # Should be about 0.35
 
     def test_min_number_datapoints_for_fit(self):
         """
