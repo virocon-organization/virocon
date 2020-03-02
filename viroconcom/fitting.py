@@ -55,7 +55,7 @@ def _powerdecrease3(x, a, b, c):
 
 # 3-parameter function that asymptotically decreases (a dependence function).
 def _asymdecrease3(x, a, b, c):
-    return a + b / (1 + x + np.abs(c))
+    return a + b / (1 + c * x)
 
 
 # A 4-parameter logististics function (a dependence function).
@@ -565,8 +565,7 @@ class Fit():
             - :exp3: :math:`a + b * e^{x * c}`
             - :lnsquare2: :math:`ln[a + b * sqrt(x / 9.81)`
             - :powerdecrease3: :math:`a + 1 / (x + b)^c`
-            - :asymdecrease3: :math:`a + b / (1 + x + |c|)`
-            - :asymdecrease3: :math:`a + 1 / (b * (x + c))`
+            - :asymdecrease3: :math:`a + b / (1 + c * x)`
             - :logistics4: :math:`a + b / [1 + e^{-c * (x - d)}]`
             - remark : in case of Lognormal_SigmaMu it is (sigma, None, mu)
 

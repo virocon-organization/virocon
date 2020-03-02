@@ -249,8 +249,8 @@ class FittingTest(unittest.TestCase):
         # Check whether the logarithmic square fit worked correctly.
         dist1 = fit.mul_var_dist.distributions[1]
         self.assertAlmostEqual(dist1.shape.a, 0, delta=0.1) # Should be about 0
-        self.assertAlmostEqual(dist1.shape.b, 0.35, delta=0.5) # Should be about 0.35
-        self.assertAlmostEqual(np.abs(dist1.shape.c), 2.5, delta=2) # Should be about 2.5
+        self.assertAlmostEqual(dist1.shape.b, 0.35, delta=0.4) # Should be about 0.35
+        self.assertAlmostEqual(np.abs(dist1.shape.c), 0.45, delta=0.2) # Should be about 0.45
         self.assertAlmostEquals(dist1.shape(0), 0.35, delta=0.2) # Should be about 0.35
 
     def test_min_number_datapoints_for_fit(self):
