@@ -85,7 +85,7 @@ class FunctionParam(Param):
                 :exp3: :math:`a + b * e^{x * c}`
                 :lnsquare2: :math:`\ln[a + b * \sqrt(x / 9.81)`
                 :powerdecrease3: :math:`a + 1 / (x + b)^c`
-                :asymdecrease3: :math:`a + 1 / (b * (x + c))`
+                :asymdecrease3: :math:`a + b / (1 + x + |c|)`
                 :logistics4: :math:`a + b / [1 + e^{-c * (x - d)}]`
         a,b,c : float
             The function parameters.
@@ -165,7 +165,7 @@ class FunctionParam(Param):
 
     # A 3-parameter function that asymptotically decreases (a dependence function).
     def _asymdecrease3(self, x):
-        return self.a + 1.0 / (self.b * (x + np.abs(self.c)))
+        return self.a + self.b / (1 +  x + np.abs(self.c))
 
     # A 4-parameter logististics function (a dependence function).
     def _logistics4(self, x, a=None, b=None, c=None, d=None):
@@ -198,8 +198,8 @@ class FunctionParam(Param):
             function_string = "" + str(self.a) + " + 1 / (x + " + str(self.b) + \
                                ")^" + str(self.c)
         elif self.func_name == "asymdecrease3":
-            function_string = "" + str(self.a) + " + 1 / [" + str(self.b) + \
-                               "(x + " + str(self.c) + ")]"
+            function_string = "" + str(self.a) + " + " + str(self.b) + \
+                               "/ (1 + x + |" + str(self.c) + "|)"
         elif self.func_name == "logistics4":
             function_string = "" + str(self.a) + " + " + str(self.b) + \
                               " / {1 + e^[-" + str(self.c) + \
