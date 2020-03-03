@@ -175,8 +175,8 @@ class ContourCreationTest(unittest.TestCase):
 
     def test_HDC3d_WLL(self):
         """
-        Creating Contour example for 3-d HDC with Weibull, Lognormal and
-        Lognormal distribution
+        Contour example for 3-d HDC with Weibull, Lognormal and
+        Lognormal distribution.
         """
 
         dep1 = (None, None, None)
@@ -226,8 +226,8 @@ class ContourCreationTest(unittest.TestCase):
 
     def test_HDC4d_WLLL(self):
         """
-        Creating contour example for 4-d HDC with Weibull, Lognormal,
-        Lognormal and Lognormal distribution
+        Contour example for a 4-dimensinal HDC with Weibull, Lognormal,
+        Lognormal and Lognormal distribution.
         """
 
         # Define dependency tuple.

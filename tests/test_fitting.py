@@ -99,6 +99,43 @@ class FittingTest(unittest.TestCase):
         self.assertEqual(str(my_fit)[0:5], 'Fit()')
 
 
+    def test_2d_benchmark_case(self):
+        """
+        Reproduces the baseline results presented in doi: 10.1115/OMAE2019-96523 .
+        """
+
+        sample_hs, sample_tz, label_hs, label_tz = read_benchmark_dataset(
+            path='tests/testfiles/allyears_dataset_A.txt')
+
+        # Describe the distribution that should be fitted to the sample.
+        dist_description_0 = {'name': 'Weibull_3p',
+                              'dependency': (None, None, None),
+                              'width_of_intervals': 0.5}
+        dist_description_1 = {'name': 'Lognormal_SigmaMu',
+                              'dependency': (0, None, 0),
+                              'functions': ('exp3', None, 'power3')} # Shape, location, scale.
+
+        # Compute the fit.
+        my_fit = Fit((sample_hs, sample_tz),
+                     (dist_description_0, dist_description_1))
+
+        # Evaluate the fitted parameters.
+        dist0 = my_fit.mul_var_dist.distributions[0]
+        dist1 = my_fit.mul_var_dist.distributions[1]
+        self.assertAlmostEqual(dist0.shape(0), 1.48, delta=0.02)
+        self.assertAlmostEqual(dist0.scale(0), 0.944, delta=0.01)
+        self.assertAlmostEqual(dist0.loc(0), 0.0981, delta=0.001)
+        self.assertAlmostEqual(dist1.shape.a, 0, delta=0.001)
+        self.assertAlmostEqual(dist1.shape.b, 0.308, delta=0.002)
+        self.assertAlmostEqual(dist1.shape.c, -0.250, delta=0.002)
+        self.assertAlmostEqual(dist1.scale.a, 1.47 , delta=0.02)
+        self.assertAlmostEqual(dist1.scale.b, 0.214, delta=0.002)
+        self.assertAlmostEqual(dist1.scale.c, 0.641, delta=0.002)
+        self.assertAlmostEqual(dist1.scale(0), 4.3 , delta=0.1)
+        self.assertAlmostEqual(dist1.scale(2), 6, delta=0.1)
+        self.assertAlmostEqual(dist1.scale(5), 8, delta=0.1)
+
+
     def test_2d_exponentiated_wbl_fit(self):
         """
         Tests if a 2D fit that includes an exp. Weibull distribution works.

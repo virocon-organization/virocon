@@ -75,8 +75,8 @@ def _alpha3(x, a, b, c, C1=None, C2=None, C3=None, C4=None):
 # 0 < a < inf
 # 0 < b < inf
 # -inf < c < inf
-# 0 < d < inf
-_bounds = ([np.finfo(np.float64).tiny, np.finfo(np.float64).tiny, np.finfo(np.float64).tiny, -np.inf],
+# -inf < d < inf
+_bounds = ([np.finfo(np.float64).tiny, np.finfo(np.float64).tiny, -np.inf, -np.inf],
           [np.inf, np.inf, np.inf, np.inf])
 
 
