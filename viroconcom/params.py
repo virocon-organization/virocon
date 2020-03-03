@@ -172,7 +172,7 @@ class FunctionParam(Param):
         if a == None:
             return self.a + self.b / (1 + np.exp(-1 * np.abs(self.c) * (x - self.d)))
         else:
-            return a + b / (1 + np.exp(-1 * c * (x - d)))
+            return a + b / (1 + np.exp(-1 * np.abs(c) * (x - d)))
 
     # A 3-parameter function designed for the scale parameter (alpha) of an
     # exponentiated Weibull distribution with shape2=5 (see 'Global hierarchical
@@ -207,8 +207,8 @@ class FunctionParam(Param):
         elif self.func_name == "alpha3":
             function_string =  "(" + str(self.a) + " + " + str(self.b) + \
                 "x^" + str(self.c) + ") / 2.0445^(1 / logistics4(" + \
-                str(self.C1) + ", " + str(self.C2) + ", " + str(self.C3) + \
-                ", " + str(self.C4) + ")"
+                str(self.C1) + ", " + str(self.C2) + ", |" + str(self.C3) + \
+                "|, " + str(self.C4) + ")"
         if isinstance(self._wrapper.func, np.ufunc):
             function_string += " with _wrapper: " + str(self._wrapper)
         return function_string
