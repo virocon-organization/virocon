@@ -60,7 +60,7 @@ def _asymdecrease3(x, a, b, c):
 
 # A 4-parameter logististics function (a dependence function).
 def _logistics4(x, a, b, c, d):
-    return a + b / (1 + np.exp(-1 * c * (x - d)))
+    return a + b / (1 + np.exp(-1 * np.abs(c) * (x - d)))
 
 
 # A 3-parameter function designed for the scale parameter (alpha) of an
@@ -566,7 +566,7 @@ class Fit():
             - :lnsquare2: :math:`ln[a + b * sqrt(x / 9.81)`
             - :powerdecrease3: :math:`a + 1 / (x + b)^c`
             - :asymdecrease3: :math:`a + b / (1 + c * x)`
-            - :logistics4: :math:`a + b / [1 + e^{-c * (x - d)}]`
+            - :logistics4: :math:`a + b / [1 + e^{-1 * |c| * (x - d)}]`
             - remark : in case of Lognormal_SigmaMu it is (sigma, None, mu)
 
         Optional:

@@ -86,7 +86,7 @@ class FunctionParam(Param):
                 :lnsquare2: :math:`\ln[a + b * \sqrt(x / 9.81)`
                 :powerdecrease3: :math:`a + 1 / (x + b)^c`
                 :asymdecrease3: :math:`a + b / (1 + c * x)`
-                :logistics4: :math:`a + b / [1 + e^{-c * (x - d)}]`
+                :logistics4: :math:`a + b / [1 + e^{-1 * |c| * (x - d)}]`
         a,b,c : float
             The function parameters.
         d : float, defaults to None
@@ -170,7 +170,7 @@ class FunctionParam(Param):
     # A 4-parameter logististics function (a dependence function).
     def _logistics4(self, x, a=None, b=None, c=None, d=None):
         if a == None:
-            return self.a + self.b / (1 + np.exp(-1 * self.c * (x - self.d)))
+            return self.a + self.b / (1 + np.exp(-1 * np.abs(self.c) * (x - self.d)))
         else:
             return a + b / (1 + np.exp(-1 * c * (x - d)))
 
@@ -202,8 +202,8 @@ class FunctionParam(Param):
                                "/ (1 + " + str(self.c) + " * x)"
         elif self.func_name == "logistics4":
             function_string = "" + str(self.a) + " + " + str(self.b) + \
-                              " / {1 + e^[-" + str(self.c) + \
-                              " * (x - " + str(self.d) + ")]}"
+                              " / {1 + e^[-1 * |" + str(self.c) + \
+                              "| * (x - " + str(self.d) + ")]}"
         elif self.func_name == "alpha3":
             function_string =  "(" + str(self.a) + " + " + str(self.b) + \
                 "x^" + str(self.c) + ") / 2.0445^(1 / logistics4(" + \
