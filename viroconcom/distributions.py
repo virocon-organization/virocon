@@ -92,14 +92,14 @@ class ParametricDistribution(Distribution, ABC):
         Their scale, shape, and loc values corerspond to the variables
         in the probability density function in the following manner:
 
-        ============  ===================  =================  ================
-        distribution  scale                shape              loc (or shape2)
-        ============  ===================  =================  ================
-        normal        σ                    --                 μ
-        Weibull       α                    β                  γ
-        log-normal    e^μ                  σ                  --
-        exp. Weibull  α                    β                  -- instead: γ
-        ============  ===================  =================  ================
+        ============  ===================  =================  ================  ================
+        distribution  scale                shape              loc               shape2
+        ============  ===================  =================  ================  ================
+        normal        σ                    --                 μ                 --
+        Weibull       α                    β                  γ                 --
+        log-normal    e^μ                  σ                  --                --
+        exp. Weibull  α                    β                  --                δ
+        ============  ===================  =================  ================  ================
 
         Parameters
         ----------
