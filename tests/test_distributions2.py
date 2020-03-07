@@ -22,7 +22,7 @@ def weibull_scale(request):
     return ConstantParam(request.param)
 
 @pytest.fixture(params=[100, 1000, 5000])
-def weibull_points(request):
+def weibull_number(request):
     return request.param
 
 
@@ -40,10 +40,10 @@ def test_weibull_i_cdf(weibull_shape, weibull_loc, weibull_scale):
     my_cdf = dist.i_cdf(x, x, (None, None, None))
     assert np.allclose(ref_cdf, my_cdf)
 
-def test_weibull_draw_sample(weibull_points, weibull_shape=1, weibull_loc=1, weibull_scale=1):
-    ref_points = weibull_points
+def test_weibull_draw_sample(weibull_number, weibull_shape=1, weibull_loc=1, weibull_scale=1):
+    ref_points = weibull_number
     dist = WeibullDistribution(weibull_shape, weibull_loc, weibull_scale)
-    my_points = dist._draw_sample(weibull_points, weibull_shape, weibull_loc, weibull_scale)
+    my_points = dist._draw_sample(weibull_number, weibull_shape, weibull_loc, weibull_scale)
     my_points = my_points.size
     assert ref_points == my_points
 

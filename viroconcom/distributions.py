@@ -145,7 +145,7 @@ class ParametricDistribution(Distribution, ABC):
         """Overwrite with appropriate i_cdf function from scipy package. """
 
     @abstractmethod
-    def _draw_sample(self, points, shape, loc, scale):
+    def draw_sample(self, number, shape, loc, scale):
         """Draws given number of points from i_cdf functions. """
 
     def cdf(self, x, rv_values=None, dependencies=None):
@@ -423,8 +423,8 @@ class WeibullDistribution(ParametricDistribution):
     def _scipy_i_cdf(self, probabilities, shape, loc, scale):
         return sts.weibull_min.ppf(probabilities, c=shape, loc=loc, scale=scale)
 
-    def _draw_sample(self, points, shape, loc, scale):
-        probabilities = np.random.rand(points)
+    def draw_sample(self, number, shape, loc, scale):
+        probabilities = np.random.rand(number)
         return sts.weibull_min.ppf(probabilities, c=shape, loc=loc, scale=scale)
 
 
@@ -466,8 +466,8 @@ class ExponentiatedWeibullDistribution(ParametricDistribution):
         x = np.multiply(scale, np.power(np.multiply(-1, np.log(1 - np.power(p, np.divide(1, shape2)))), np.divide(1, shape)))
         return x
 
-    def _draw_sample(self, points, shape, loc, scale, shape2):
-        probabilities = np.random.rand(points)
+    def draw_sample(self, number, shape, loc, scale, shape2):
+        probabilities = np.random.rand(number)
         return self._scipy_i_cdf(probabilities, shape, loc, scale, shape2)
 
     def _scipy_pdf(self, x, shape, loc, scale, shape2):
@@ -700,8 +700,8 @@ class LognormalDistribution(ParametricDistribution):
     def _scipy_i_cdf(self, probabilities, shape, _, scale):
         return sts.lognorm.ppf(probabilities, s=shape, scale=scale)
 
-    def _draw_sample(self, points, shape, _, scale):
-        probabilities = np.random.rand(points)
+    def draw_sample(self, number, shape, _, scale):
+        probabilities = np.random.rand(number)
         return sts.lognorm.ppf(probabilities, s=shape, scale=scale)
 
     def __str__(self):
@@ -748,8 +748,8 @@ class NormalDistribution(ParametricDistribution):
     def _scipy_i_cdf(self, probabilities, _, loc, scale):
         return sts.norm.ppf(probabilities, loc=loc, scale=scale)
 
-    def _draw_sample(self, points, _, loc, scale):
-        probabilities = np.random.rand(points)
+    def draw_sample(self, number, _, loc, scale):
+        probabilities = np.random.rand(number)
         return sts.norm.ppf(probabilities, loc=loc, scale=scale)
 
 
