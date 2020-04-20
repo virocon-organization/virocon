@@ -22,6 +22,8 @@ distributions = [dist0, dist1]
 dependencies = [dep0, dep1]
 mul_dist = MultivariateDistribution(distributions, dependencies)
 
+print(mul_dist.draw_multivariate_sample(10000))
+
 # Compute an IFORM contour with a return period of 25 years, a sea state
 # duration of 3 hours and 100 points along the contour.
 iform_contour = IFormContour(mul_dist, 25, 3, 100)

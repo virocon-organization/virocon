@@ -810,8 +810,9 @@ class MultivariateDistribution():
             elif self.dependencies[i][2] is not None:
                 sample.append(self.distributions[i].i_cdf(np.random.rand(n), sample[self.dependencies[i][2]], self.dependencies[i]))
                 i = i+1
-
-
+            else:
+                sample.append(self.distributions[i].draw_sample(n))
+                i = i+1
         return sample
 
     def add_distributions(self, distributions, dependencies):

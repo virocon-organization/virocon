@@ -40,10 +40,10 @@ def test_weibull_i_cdf(weibull_shape, weibull_loc, weibull_scale):
     my_cdf = dist.i_cdf(x, x, (None, None, None))
     assert np.allclose(ref_cdf, my_cdf)
 
-def test_weibull_draw_sample(weibull_number, weibull_shape=1, weibull_loc=1, weibull_scale=1):
+def test_weibull_draw_sample(weibull_number, weibull_shape, weibull_loc, weibull_scale):
     ref_points = weibull_number
     dist = WeibullDistribution(weibull_shape, weibull_loc, weibull_scale)
-    my_points = dist._draw_sample(weibull_number, weibull_shape, weibull_loc, weibull_scale)
+    my_points = dist.draw_sample(weibull_number)
     my_points = my_points.size
     assert ref_points == my_points
 
