@@ -1,5 +1,5 @@
-
 from api import ECMWFDataServer
+
 
 server = ECMWFDataServer(url="https://api.ecmwf.int/v1",key="5779c25ba27168b4e35275198c308319",email="lbekov@uni-bremen.de")
 
@@ -32,3 +32,6 @@ def getData(date, time, grid, area):
         "target": "test.nc"
     })
 getData("2017-08-01/to/2017-08-30", "00:00:00", "0.75/0.75", "75/-20/10/60"   )
+
+
+
