@@ -800,20 +800,72 @@ class MultivariateDistribution():
                 i = i+1
 
             elif self.dependencies[i][0] is not None:
-                sample.append(self.distributions[i].i_cdf(np.random.rand(n), sample[self.dependencies[i][0]], self.dependencies[i]))
+                sample.append(self.distributions[i].i_cdf(np.random.rand(n), sample, self.dependencies[i]))
                 i = i+1
 
             elif self.dependencies[i][1] is not None:
-                sample.append(self.distributions[i].i_cdf(np.random.rand(n), sample[self.dependencies[i][1]], self.dependencies[i]))
+                sample.append(self.distributions[i].i_cdf(np.random.rand(n), sample, self.dependencies[i]))
                 i = i+1
 
             elif self.dependencies[i][2] is not None:
-                sample.append(self.distributions[i].i_cdf(np.random.rand(n), sample[self.dependencies[i][2]], self.dependencies[i]))
+                sample.append(self.distributions[i].i_cdf(np.random.rand(n), sample, self.dependencies[i]))
                 i = i+1
+
+            elif len(self.dependencies[i]) == 4 and self.dependencies[i][3] is not None:
+                sample.append(self.distributions[i].i_cdf(np.random.rand(n), sample, self.dependencies[i]))
+                i = i+1
+
             else:
                 sample.append(self.distributions[i].draw_sample(n))
                 i = i+1
+
         return sample
+
+    def direct_sampling_contour(self, x, y, probability, d_s_deg):
+        """
+        calculates direct sampling contour
+
+        Parameters
+        ----------
+        x,y : array like
+            sample of data
+        probability :
+            non exceedance probability of contour
+        d_s_deg :
+            directional step in degrees
+
+        Returns
+        -------
+        x_con, y_con :
+            contour of sample
+        """
+        dt = d_s_deg * np.pi / 180
+        transposed = np.transpose(np.arange(dt, 2 * np.pi, dt))
+        length_x = len(x)
+        length_t = len(transposed)
+        length_probability = np.random.rand(length_x)
+        r = np.zeros((length_t, length_probability))
+        x_cont = np.zeros((length_t, length_probability))
+        y_cont = np.zeros((length_t, length_probability))
+
+        # find radius for each angle
+        for i in transposed:
+            if length_x >= 1000000:
+                print('angle wrong')
+            z = x * np.cos(transposed[i]) + y * np.sin(transposed[i])
+            r[i, :] = np.quantile(z, probability)
+
+        # find intersection of lines
+        t = np.array([[transposed], [dt]])
+        r = np.array([[r], [r[1, :]]])
+
+        denominator = np.sin(t[2:]) * np.cos(t[1:]) - np.sin(t[1:]) * np.cos(t[2:])
+        j = 1
+        while j < len(length_probability):
+            j = j+1
+            x_cont[:, j] = (np.sin(t[2:]) * r[1:, j] - np.sin(t[1:]) * r[2:, j]) / denominator
+            y_cont[:, j] = (np.arccos(t[2:]) * r[1:, j] + np.cos(t[1:]) * r[2:, j]) / denominator
+        return x_cont, y_cont
 
     def add_distributions(self, distributions, dependencies):
         """
