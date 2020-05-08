@@ -285,7 +285,7 @@ def plot_contour(x, y, ax, contour_label=None, x_label=None, y_label=None,
         Alpha value (transparency) for the contour's line.
     plotted_sample : PlottedSample, optional (defaults to None)
         The sample that should be plotted and its meta information.
-    x_lim : float, optional (defaults to None)
+    x_lim : tuple of floats, optional (defaults to None)
         x-Axis limit.
     upper_ylim : float, optional (defaults to None)
         y-Axis limit.
