@@ -42,7 +42,7 @@ def plot_marginal_fit(sample, dist, fig, ax=None, label=None, color_sample='k',
 
     Parameters
     ----------
-    sample : ndarray of doubles
+    sample : ndarray of floats
         The environmental data sample that should plotted against the fit.
     dist : Distribution
         The distribution that has been fitted.
@@ -267,24 +267,36 @@ def plot_contour(x, y, ax, contour_label=None, x_label=None, y_label=None,
 
     Parameters
     ----------
-    x : ndarray of doubles
+    x : ndarray of floats
         The contour's coordinates in the x-direction.
-    y : ndarray of doubles
+    y : ndarray of floats
         The contour's coordiantes in the y-direction.
     ax : Axes
         Axes of the figure where the contour should be plotted.
-    contour_label : str, optional
+    contour_label : str, optional (defaults to None)
         The environmental contour's label that will be used in the legend.
-    x_label : str, optional
+    x_label : str, optional (defaults to None)
         Label for the x-axis.
-    y_label : str, optional
+    y_label : str, optional (defaults to None)
         Label for the y-axis.
-    line_style : str, optional
+    line_style : str, optional (defaults to 'b-')
         Matplotlib line style.
-    alpha : float, optional
+    alpha : float, optional (default to 1)
         Alpha value (transparency) for the contour's line.
-    plotted_sample : PlottedSample,
+    plotted_sample : PlottedSample, optional (defaults to None)
         The sample that should be plotted and its meta information.
+    x_lim : float, optional (defaults to None)
+        x-Axis limit.
+    upper_ylim : float, optional (defaults to None)
+        y-Axis limit.
+    median_x : ndarray of floats, optional (defaults to None)
+        If the median of x2|x1 should be plotted, these are the x-values.
+    median_y : ndarray of floats, optional (defaults to None)
+        If the median of x2|x1 should be plotted, these are the y-values.
+    median_style : str, optional (defaults to 'r-')
+        Matplotlib line style for plotting the median of x2|x1.
+    median_label : str, optional (defaults to 'median of x2|x1')
+        Label for the legend of the plotted median line.
     """
 
     # For generating a closed contour: add the first coordinate at the end.
@@ -336,6 +348,7 @@ def plot_contour(x, y, ax, contour_label=None, x_label=None, y_label=None,
 class PlottedSample():
     """
     Class that holds a plotted sample and its meta information.
+
     Attributes
     ----------
     x : ndarray of floats
@@ -370,17 +383,17 @@ class PlottedSample():
             The sample's second environmental variable.
         ax : Axes
             Axes of the figure where the scatter plot should be drawn.
-        label : str
+        label : str, optional (defaults to None)
             Label that will be used in the legend for the sample.
-        x_inside : ndarray of floats
+        x_inside : ndarray of floats, optional (defaults to None)
             Values in the first dimension of the points inside the contour.
-        y_inside : ndarray of floats
+        y_inside : ndarray of floats, optional (defaults to None)
             Values in the second dimension of the points inside the contour.
-        x_outside : ndarray of floats
+        x_outside : ndarray of floats, optional (defaults to None)
             Values in the first dimension of the points outside the contour.
-        y_outside : ndarray of floats
+        y_outside : ndarray of floats, optional (defaults to None)
             Values in the second dimension of the points outside the contour.
-        return_period : int, optional
+        return_period : int, optional (defaults to None)
             Return period in years. Is used in legend for describing the inside and
             outside datapoints.
         """
@@ -403,28 +416,28 @@ def plot_confidence_interval(x_median, y_median, x_bottom, y_bottom, x_upper,
     appearance.
     Parameters
     ----------
-    x_median : ndarray of doubles
+    x_median : ndarray of floats
         The 50-percentile contour's coordinates in the x-direction.
-    y_median : ndarray of doubles
+    y_median : ndarray of floats
         The 50-percentile contour's coordinates in the y-direction.
-    x_bottom : ndarray of doubles
+    x_bottom : ndarray of floats
         The bottom percentile contour's coordinates in the x-direction.
-    y_bottom : ndarray of doubles
+    y_bottom : ndarray of floats
         The bottom percentile contour's coordinates in the y-direction.
-    x_upper : ndarray of doubles
+    x_upper : ndarray of floats
         The upper percentile contour's coordinates in the x-direction.
-    y_upper : ndarray of doubles
+    y_upper : ndarray of floats
         The upper percentile contour's coordinates in the y-direction.
     ax : Axes
         Axes of the figure where the contour should be plotted.
-    x_label : str, optional
+    x_label : str, optional (defaults to None)
         Label for the x-axis.
-    y_label : str, optional
+    y_label : str, optional (defaults to None)
         Label for the y-axis.
-    contour_labels : list of str, optional
-        Label for th environmental contours that will be used in the legend.
+    contour_labels : list of str, optional (defaults to [None, None, None])
+        Label for the environmental contours that will be used in the legend.
     plotted_sample : PlottedSample, optional
-        If provided, this sample is drawn together with the contours.
+        If provided, this sample is plotted together with the contours.
     """
     plot_contour(x=x_median,
                  y=y_median,
@@ -449,15 +462,17 @@ def plot_confidence_interval(x_median, y_median, x_bottom, y_bottom, x_upper,
 def plot_wave_breaking_limit(ax, bottom_tz=0, upper_tz=20, steps=100):
     """
     Plots the wave breaking limit on a given axes.
+
     Assumes that x = zero-up-crossing period and y = sig. wave height.
+
     Parameters
     ----------
     ax : Axes
-    bottom_tz : float
+    bottom_tz : float (defaults to 0)
         Bottom limit for the curve.
-    upper_tz : float
+    upper_tz : float (defaults to 20)
         Upper limit for the curve.
-    steps : int
+    steps : int (defaults to 100)
         Number of points that are plotted on the curve.
     """
     tz_lim = np.linspace(bottom_tz, upper_tz, steps)
@@ -468,15 +483,17 @@ def plot_wave_breaking_limit(ax, bottom_tz=0, upper_tz=20, steps=100):
 def hs_from_limiting_sig_wave_steepness(tz):
     """
     Calculates highest Hs value for a given Tz based on wave steepness.
+
     The calculaion uses the 'limiting significant wave steepness' described in
     DNV GL's DNV-GL-RP-C205:2017 (section 3.5.3.5. and 3.5.4)
+
     Parameters
     ----------
-    tz : ndarray of doubles
+    tz : ndarray of floats
         Zero-up-crossing period in seconds.
     Returns
     -------
-    hs : ndarray of doubles
+    hs : ndarray of floats
         Significant wave height in meters.
     """
     TZLOW_STEEPNESS_VALUE = 0.1 # is 1/10 in DNVG-GL-RP-C205:2017, 3.5.4
