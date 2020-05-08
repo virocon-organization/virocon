@@ -26,7 +26,10 @@ class ReadWriteTest(unittest.TestCase):
 
 class PlottingTest(unittest.TestCase):
 
-    def plot_contour_without_sample(self):
+    def test_plot_contour_without_sample(self):
+        """
+        Plots a contour in the most basic way.
+        """
 
         # Define dependency tuple.
         dep1 = (None, None, None)
@@ -51,14 +54,25 @@ class PlottingTest(unittest.TestCase):
         mul_dist = MultivariateDistribution(distributions, dependencies)
 
         test_contour_IForm = IFormContour(mul_dist, 50, 3, 50)
+        contour_hs = test_contour_IForm.coordinates[0][0]
+        contour_tz = test_contour_IForm.coordinates[0][1]
 
         fig = plt.figure()
         ax = fig.add_subplot(111)
 
-        plot_contour(test_contour_IForm.coordinates[0],
-                     test_contour_IForm.coordinates[1], ax)
+        plot_contour(contour_hs, contour_tz, ax)
+        #plt.show()
 
-    def plot_contour_and_sample(self):
+        x_plot, y_plot = ax.lines[0].get_xydata().T
+        self.assertAlmostEqual(y_plot[0], contour_tz[0],
+                               delta=0.001)
+
+    def test_plot_contour_and_sample(self):
+        """
+        Plots a contour together with the dataset that has been used to
+        fit a distribution for the contour.
+        """
+
         sample_hs, sample_tz, label_hs, label_tz = read_dataset()
 
         # Define the structure of the probabilistic model that will be fitted to the
@@ -80,8 +94,8 @@ class PlottingTest(unittest.TestCase):
             dist_description_hs, dist_description_tz))
 
         contour = IFormContour(fit.mul_var_dist, 20, 1, 50)
-        contour_hs_20 = contour.coordinates[0]
-        contour_tz_20 = contour.coordinates[1]
+        contour_hs_20 = contour.coordinates[0][0]
+        contour_tz_20 = contour.coordinates[0][1]
 
         # Find datapoints that exceed the 20-yr contour.
         hs_outside, tz_outside, hs_inside, tz_inside = \
@@ -123,8 +137,15 @@ class PlottingTest(unittest.TestCase):
                      median_x=tz,
                      median_y=hs,
                      median_label='median of $T_z | H_s$')
+        #plt.show()
 
-    def plot_fit(self):
+    def test_plot_fit(self):
+        """
+        Plots goodness of fit graphs, for the marginal distribution of X1 and
+        for the dependence function of X2|X1.
+
+        """
+
         sample_hs, sample_tz, label_hs, label_tz = read_dataset()
 
         # Define the structure of the probabilistic model that will be fitted to the
@@ -152,4 +173,6 @@ class PlottingTest(unittest.TestCase):
         ax3 = fig.add_subplot(133)
         plot_marginal_fit(sample_hs, dist0, fig=fig, ax=ax1, label='$h_s$ (m)',
                           dataset_char='A')
-        plot_dependence_functions(fit=fit, fig=fig, ax1=ax2, ax2=ax3, unconditonal_variable_label=label_hs)
+        plot_dependence_functions(fit=fit, fig=fig, ax1=ax2, ax2=ax3,
+                                  unconditonal_variable_label=label_hs)
+        #plt.show()

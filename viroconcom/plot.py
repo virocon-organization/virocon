@@ -139,7 +139,7 @@ def plot_dependence_functions(
     """
 
     supported_dists = ['ExponentiatedWeibull', 'Lognormal', 'Weibull']
-    if fit.mul_var_dist.distributions[1] not in supported_dists:
+    if fit.mul_var_dist.distributions[1].name not in supported_dists:
         raise NotImplementedError(
             'The distribution you tried to plot is not not supported in '
             'plot_dependence_functions. You used the distribution {}'
