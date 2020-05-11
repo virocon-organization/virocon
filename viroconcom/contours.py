@@ -585,7 +585,7 @@ class HighestDensityContour(Contour):
         return summed_fields, last_summed
 
 
-class MonteCarloContour(Contour):
+class DirectSamplingContour(Contour):
     def __init__(self, mul_var_distribution, deltas=None):
         None
 
@@ -617,7 +617,7 @@ class MonteCarloContour(Contour):
         i = 0
         while i < length_t:
             if length_x >= 10000000:
-                print('angle wrong')
+                print('too large data')
             z = x * np.cos(transposed[i]) + y * np.sin(transposed[i])
             r[i] = np.quantile(z, probability)
             i = i + 1

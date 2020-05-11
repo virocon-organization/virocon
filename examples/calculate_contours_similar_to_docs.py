@@ -1,7 +1,7 @@
 from viroconcom.params import ConstantParam, FunctionParam
 from viroconcom.distributions import WeibullDistribution, LognormalDistribution, \
     MultivariateDistribution
-from viroconcom.contours import IFormContour, HighestDensityContour, MonteCarloContour
+from viroconcom.contours import IFormContour, HighestDensityContour, DirectSamplingContour
 import matplotlib.pyplot as plt
 
 # Define a Weibull distribution representing significant wave height.
@@ -21,17 +21,6 @@ dep1 = (0, None, 0) # Parameter one and three depend on dist0.
 distributions = [dist0, dist1]
 dependencies = [dep0, dep1]
 mul_dist = MultivariateDistribution(distributions, dependencies)
-
-#print(mul_dist.draw_multivariate_sample(100))
-import numpy as np
-x, y = mul_dist.draw_multivariate_sample(100000)
-
-x, y = MonteCarloContour.direct_sampling_contour(mul_dist, x, y, 0.01, 0.1)
-#print(x, y)
-
-plt.scatter(x, y)
-plt.show()
-
 
 # Compute an IFORM contour with a return period of 25 years, a sea state
 # duration of 3 hours and 100 points along the contour.
