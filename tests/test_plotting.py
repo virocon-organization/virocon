@@ -1,10 +1,12 @@
 import unittest
+import os
 import numpy as np
 import matplotlib.pyplot as plt
 
-from viroconcom.read_write import read_dataset, read_contour
-from viroconcom.plot import plot_contour, plot_marginal_fit, \
-    plot_dependence_functions, plot_confidence_interval, PlottedSample
+from viroconcom.read_write import read_dataset, read_contour, write_contour
+from viroconcom.plot import plot_contour, plot_wave_breaking_limit, \
+    plot_marginal_fit, plot_dependence_functions, plot_confidence_interval, \
+    PlottedSample
 
 from viroconcom.params import ConstantParam, FunctionParam
 from viroconcom.distributions import LognormalDistribution, WeibullDistribution, \
@@ -23,6 +25,18 @@ class ReadWriteTest(unittest.TestCase):
         sample_hs, sample_tz, label_hs, label_tz = read_dataset()
         self.assertAlmostEqual(sample_hs[0], 0.2845, delta=0.00001)
 
+    def test_read_write_contour(self):
+        """
+        Read a contour, then writes this contour to a new file.
+        """
+        folder_name = 'contour-coordinates/'
+        file_name_median = 'doe_john_years_25_median.txt'
+        (contour_v_median, contour_hs_median) = read_contour(
+            folder_name + file_name_median)
+        new_file_path = folder_name + 'test_contour.txt'
+        write_contour(contour_v_median, contour_hs_median, new_file_path,
+                      'Wind speed (m/s)', 'Significant wave height (m)')
+        os.remove(new_file_path)
 
 class PlottingTest(unittest.TestCase):
 
@@ -137,12 +151,13 @@ class PlottingTest(unittest.TestCase):
                      median_x=tz,
                      median_y=hs,
                      median_label='median of $T_z | H_s$')
+        plot_wave_breaking_limit(ax)
         #plt.show()
 
     def test_plot_seastate_fit(self):
         """
         Plots goodness of fit graphs, for the marginal distribution of X1 and
-        for the dependence function of X2|X1.
+        for the dependence function of X2|X1. Uses sea state data.
 
         """
 
@@ -180,8 +195,7 @@ class PlottingTest(unittest.TestCase):
     def test_plot_windwave_fit(self):
         """
         Plots goodness of fit graphs, for the marginal distribution of X1 and
-        for the dependence function of X2|X1.
-
+        for the dependence function of X2|X1. Uses wind and wave data.
         """
 
         sample_v, sample_hs, label_v, label_hs = \
@@ -220,6 +234,9 @@ class PlottingTest(unittest.TestCase):
         #plt.show()
 
     def test_plot_confidence_interval(self):
+        """
+        Plots a contour's confidence interval.
+        """
         dataset_d_v, dataset_d_hs, label_v, label_hs = \
             read_dataset('datasets/1year_dataset_D.txt')
 
@@ -252,4 +269,4 @@ class PlottingTest(unittest.TestCase):
             x_label=label_v,
             y_label=label_hs, contour_labels=contour_labels,
             plotted_sample=plotted_sample)
-        plt.show()
+        #plt.show()
