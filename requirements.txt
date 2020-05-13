@@ -15,6 +15,7 @@ kiwisolver==1.0.1
 MarkupSafe==1.0
 matplotlib==2.2.2
 more-itertools==4.1.0
+networkx==2.4
 numpy==1.17.4
 packaging==17.1
 pandas==0.25.3
