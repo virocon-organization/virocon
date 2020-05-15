@@ -12,7 +12,8 @@ from sklearn.neighbors import NearestNeighbors
 
 def points_outside(contour_x, contour_y, x, y):
     """
-    Determines the observations outside the region enclosed by the contour.
+    Determines the observations outside the region enclosed by a 2D contour.
+
     Parameters
     ----------
     contour_x : ndarray of doubles
@@ -25,10 +26,14 @@ def points_outside(contour_x, contour_y, x, y):
         The sample's second environmental variable.
     Returns
     -------
-    outside_x : nparray
+    x_outside : nparray
         The observations that are outside of the contour of variable 1.
-    outside_y : nparray
+    y_outside : nparray
         The observations that are outside of the contour of variable 2.
+    x_inside : nparray
+        The observations that are inside of the contour of variable 1.
+    y_inside : nparray
+        The observations that are inside of the contour of variable 2.
     """
     contour_path = mpl.path.Path(np.column_stack((contour_x, contour_y)))
     is_inside_contour = contour_path.contains_points(np.column_stack((x, y)))
