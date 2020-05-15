@@ -52,8 +52,8 @@ def read_dataset(path='datasets/1year_dataset_A.txt'):
     return (x, y, x_label, y_label)
 
 
-def write_contour(x, y, path, label_x='Significant wave height (m)',
-                  label_y='Zero-up-crossing period (s)'):
+def write_contour(x, y, path, label_x='Variable x (unit)',
+                  label_y='Variable y (unit)'):
     """
     Writes 2D contour coordinates in an ASCI format with ';' as a seperator.
 
@@ -67,10 +67,12 @@ def write_contour(x, y, path, label_x='Significant wave height (m)',
         Path including folder and file name where the contour should be saved.
     label_x : str
         Name and unit of the first environmental variable,
-        defaults to 'Significant wave height (m)'.
+        defaults to 'Variable x (unit), could be, for exmaple,
+        'Significant wave height (m)'.
     label_y : str
         Name and unit of the second environmental variable,
-        defaults to 'Zero-up-crossing period (s)'.
+        defaults to 'Variable y (unit)', could be, for example,
+         'Zero-up-crossing period (s)'.
     """
     with open(path, mode='w', newline='') as contour_file:
         contour_writer = csv.writer(contour_file, delimiter=';', quotechar='"', quoting=csv.QUOTE_MINIMAL)
