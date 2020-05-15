@@ -19,7 +19,7 @@ def points_outside(contour_x, contour_y, x, y):
     contour_x : ndarray of doubles
         The contour's coordinates in the x-direction.
     contour_y : ndarray of doubles
-        The contour's coordiantes in the y-direction.
+        The contour's coordinates in the y-direction.
     x : ndarray of doubles
         The sample's first environmental variable.
     y : ndarray of doubles
