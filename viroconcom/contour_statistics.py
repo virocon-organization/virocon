@@ -51,8 +51,8 @@ def sort_points_to_form_continous_line(x, y, do_search_for_optimal_start=False):
     """
     Sorts contour points to form a a continous line / contour.
 
-    Thanks to https://stackoverflow.com/questions/37742358/
-    sorting-points-to-form-a-continuous-line
+    Thanks to https://stackoverflow.com/questions/37742358/sorting-points-to-
+    form-a-continuous-line/37744549#37744549
 
     Parameters
     ----------
