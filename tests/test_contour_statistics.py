@@ -13,7 +13,7 @@ class ContourStatisticsTest(unittest.TestCase):
 
     def test_sort_coordinates(self):
         """
-        Sorts the points of a contour and plots them.
+        Sorts the points of a highest density contour and plots them.
         """
 
         # Define dependency tuple.
