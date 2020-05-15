@@ -48,7 +48,7 @@ def plot_marginal_fit(sample, dist, fig, ax=None, label=None, color_sample='k',
     Parameters
     ----------
     sample : ndarray of floats
-        The environmental data sample that should plotted against the fit.
+        The environmental data sample that should be plotted against the fit.
     dist : Distribution
         The distribution that has been fitted.
     fig : matplotlib Figure
