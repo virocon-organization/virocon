@@ -1,3 +1,9 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Analyzes contours, for example sorts the coordintaes or checks whether a
+datapoint is inside or outside a contour.
+"""
 import numpy as np
 import matplotlib as mpl
 import networkx as nx

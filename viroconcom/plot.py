@@ -1,3 +1,8 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Plots datasets, model fits and contour coordinates.
+"""
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy import stats

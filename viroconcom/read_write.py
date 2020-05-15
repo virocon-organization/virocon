@@ -1,3 +1,8 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Reads datasets, reads and writes contour coordinates.
+"""
 import numpy as np
 import csv
 
