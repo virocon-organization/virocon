@@ -4,15 +4,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from viroconcom.read_write import read_dataset, read_contour, write_contour
-from viroconcom.plot import plot_contour, plot_wave_breaking_limit, \
+from viroconcom.plot import (plot_contour, plot_wave_breaking_limit, \
     plot_marginal_fit, plot_dependence_functions, plot_confidence_interval, \
-    PlottedSample
-from viroconcom.contour_statistics import points_outside, \
-    sort_points_to_form_continous_line
+    PlottedSample)
+from viroconcom.contour_statistics import (points_outside, \
+    sort_points_to_form_continous_line)
 
 from viroconcom.params import ConstantParam, FunctionParam
-from viroconcom.distributions import LognormalDistribution, WeibullDistribution, \
-    MultivariateDistribution
+from viroconcom.distributions import (LognormalDistribution, WeibullDistribution, \
+    MultivariateDistribution)
 from viroconcom.fitting import Fit
 from viroconcom.contours import IFormContour, HighestDensityContour
 
