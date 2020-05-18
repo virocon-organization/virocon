@@ -7,7 +7,7 @@ import numpy as np
 import csv
 
 
-def read_dataset(path='datasets/1year_dataset_A.txt'):
+def read_ecbenchmark_dataset(path='datasets/1year_dataset_A.txt'):
     """
     Reads a 2D dataset that uses a an ASCI format with ';' as a seperator.
 

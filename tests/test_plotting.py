@@ -2,7 +2,7 @@ import unittest
 import numpy as np
 import matplotlib.pyplot as plt
 
-from viroconcom.read_write import read_dataset, read_contour
+from viroconcom.read_write import read_ecbenchmark_dataset, read_contour
 from viroconcom.plot import (plot_contour, plot_wave_breaking_limit, \
     plot_marginal_fit, plot_dependence_functions, plot_confidence_interval, \
     PlottedSample)
@@ -64,7 +64,7 @@ class PlottingTest(unittest.TestCase):
         fit a distribution for the contour.
         """
 
-        sample_hs, sample_tz, label_hs, label_tz = read_dataset()
+        sample_hs, sample_tz, label_hs, label_tz = read_ecbenchmark_dataset()
 
         # Define the structure of the probabilistic model that will be fitted to the
         # dataset.
@@ -138,7 +138,7 @@ class PlottingTest(unittest.TestCase):
 
         """
 
-        sample_hs, sample_tz, label_hs, label_tz = read_dataset()
+        sample_hs, sample_tz, label_hs, label_tz = read_ecbenchmark_dataset()
 
         # Define the structure of the probabilistic model that will be fitted to the
         # dataset.
@@ -176,7 +176,7 @@ class PlottingTest(unittest.TestCase):
         """
 
         sample_v, sample_hs, label_v, label_hs = \
-            read_dataset('datasets/1year_dataset_D.txt')
+            read_ecbenchmark_dataset('datasets/1year_dataset_D.txt')
         label_v = 'v (m s$^{-1}$)'
 
         # Define the structure of the probabilistic model that will be fitted to the
@@ -215,7 +215,7 @@ class PlottingTest(unittest.TestCase):
         Plots a contour's confidence interval.
         """
         dataset_d_v, dataset_d_hs, label_v, label_hs = \
-            read_dataset('datasets/1year_dataset_D.txt')
+            read_ecbenchmark_dataset('datasets/1year_dataset_D.txt')
 
         # Read the contours that have beem computed previously from csv files.
         folder_name = 'contour-coordinates/'

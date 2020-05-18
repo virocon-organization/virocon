@@ -1,7 +1,7 @@
 import unittest
 import os
 
-from viroconcom.read_write import read_dataset, read_contour, write_contour
+from viroconcom.read_write import read_ecbenchmark_dataset, read_contour, write_contour
 
 class ReadWriteTest(unittest.TestCase):
 
@@ -9,7 +9,7 @@ class ReadWriteTest(unittest.TestCase):
         """
         Reads the provided dataset "1year_dataset_A.txt".
         """
-        sample_hs, sample_tz, label_hs, label_tz = read_dataset()
+        sample_hs, sample_tz, label_hs, label_tz = read_ecbenchmark_dataset()
         self.assertAlmostEqual(sample_hs[0], 0.2845, delta=0.00001)
 
     def test_read_write_contour(self):
