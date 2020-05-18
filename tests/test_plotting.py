@@ -6,7 +6,7 @@ from viroconcom.read_write import read_dataset, read_contour
 from viroconcom.plot import (plot_contour, plot_wave_breaking_limit, \
     plot_marginal_fit, plot_dependence_functions, plot_confidence_interval, \
     PlottedSample)
-from viroconcom.contour_statistics import points_outside
+from viroconcom.contour_analysis import points_outside
 
 from viroconcom.params import ConstantParam, FunctionParam
 from viroconcom.distributions import (LognormalDistribution, WeibullDistribution, \

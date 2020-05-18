@@ -2,7 +2,7 @@ import unittest
 import matplotlib.pyplot as plt
 
 from viroconcom.plot import plot_contour
-from viroconcom.contour_statistics import sort_points_to_form_continous_line
+from viroconcom.contours import sort_points_to_form_continous_line
 
 from viroconcom.params import ConstantParam, FunctionParam
 from viroconcom.distributions import (LognormalDistribution, WeibullDistribution, \
