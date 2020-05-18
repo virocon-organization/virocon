@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 
 from viroconcom.read_write import read_ecbenchmark_dataset, read_contour
 from viroconcom.plot import (plot_contour, plot_wave_breaking_limit, \
-    plot_marginal_fit, plot_dependence_functions, plot_confidence_interval, \
-    PlottedSample)
+                             plot_marginal_fit, plot_dependence_functions, plot_confidence_interval, \
+                             SamplePlotData)
 from viroconcom.contour_analysis import points_outside
 
 from viroconcom.params import ConstantParam, FunctionParam
@@ -106,14 +106,14 @@ class PlottingTest(unittest.TestCase):
         ax = fig.add_subplot(111)
 
         # Plot the 20-year contour and the sample.
-        plotted_sample = PlottedSample(x=np.asarray(sample_tz),
-                                       y=np.asarray(sample_hs),
-                                       ax=ax,
-                                       x_inside=tz_inside,
-                                       y_inside=hs_inside,
-                                       x_outside=tz_outside,
-                                       y_outside=hs_outside,
-                                       return_period=20)
+        plotted_sample = SamplePlotData(x=np.asarray(sample_tz),
+                                        y=np.asarray(sample_hs),
+                                        ax=ax,
+                                        x_inside=tz_inside,
+                                        y_inside=hs_inside,
+                                        x_outside=tz_outside,
+                                        y_outside=hs_outside,
+                                        return_period=20)
 
         plot_contour(x=contour_tz_20,
                      y=contour_hs_20,
@@ -232,10 +232,10 @@ class PlottingTest(unittest.TestCase):
         # Plot the sample, the median contour and the confidence interval.
         fig = plt.figure(figsize=(5, 5), dpi=150)
         ax = fig.add_subplot(111)
-        plotted_sample = PlottedSample(x=np.asarray(dataset_d_v),
-                                       y=np.asarray(dataset_d_hs),
-                                       ax=ax,
-                                       label='dataset D')
+        plotted_sample = SamplePlotData(x=np.asarray(dataset_d_v),
+                                        y=np.asarray(dataset_d_hs),
+                                        ax=ax,
+                                        label='dataset D')
         contour_labels = ['50th percentile contour',
                           '2.5th percentile contour',
                           '97.5th percentile contour']

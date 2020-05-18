@@ -3,9 +3,14 @@
 """
 Plots datasets, model fits and contour coordinates.
 """
+
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy import stats
+
+__all__ = ["plot_sample", "plot_marginal_fit", "plot_dependence_functions",
+           "plot_contour", "SamplePlotData", "plot_confidence_interval",
+           "plot_wave_breaking_limit", "hs_from_limiting_sig_wave_steepness"]
 
 
 def plot_sample(plotted_sample, ax=None, do_plot_rasterized=True):
@@ -14,7 +19,7 @@ def plot_sample(plotted_sample, ax=None, do_plot_rasterized=True):
 
     Parameters
     ----------
-    plotted_sample : PlottedSample,
+    plotted_sample : SamplePlotData,
         The sample that should be plotted and its meta information.
     """
     if ax is None:
@@ -288,7 +293,7 @@ def plot_contour(x, y, ax, contour_label=None, x_label=None, y_label=None,
         Matplotlib line style.
     alpha : float, optional (default to 1)
         Alpha value (transparency) for the contour's line.
-    plotted_sample : PlottedSample, optional (defaults to None)
+    plotted_sample : SamplePlotData, optional (defaults to None)
         The sample that should be plotted and its meta information.
     x_lim : tuple of floats, optional (defaults to None)
         x-Axis limit.
@@ -350,7 +355,7 @@ def plot_contour(x, y, ax, contour_label=None, x_label=None, y_label=None,
     ax.xaxis.set_ticks_position('bottom')
 
 
-class PlottedSample():
+class SamplePlotData():
     """
     Class that holds a plotted sample and its meta information.
 
@@ -441,7 +446,7 @@ def plot_confidence_interval(x_median, y_median, x_bottom, y_bottom, x_upper,
         Label for the y-axis.
     contour_labels : list of str, optional (defaults to [None, None, None])
         Label for the environmental contours that will be used in the legend.
-    plotted_sample : PlottedSample, optional
+    plotted_sample : SamplePlotData, optional
         If provided, this sample is plotted together with the contours.
     """
     plot_contour(x=x_median,
