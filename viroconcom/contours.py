@@ -11,10 +11,13 @@ from multiprocessing import Pool, TimeoutError
 import numpy as np
 import scipy.stats as sts
 import scipy.ndimage as ndi
+import networkx as nx
+from sklearn.neighbors import NearestNeighbors
 
 from ._n_sphere import NSphere
 
-__all__ = ["Contour", "IFormContour", "HighestDensityContour"]
+__all__ = ["Contour", "IFormContour", "ISormContour", "HighestDensityContour",
+           "sort_points_to_form_continous_line"]
 
 
 class Contour(ABC):
@@ -583,6 +586,54 @@ class HighestDensityContour(Contour):
 
 
         return summed_fields, last_summed
+
+
+def sort_points_to_form_continous_line(x, y, do_search_for_optimal_start=False):
+    """
+    Sorts contour points to form a a continous line / contour.
+
+    Thanks to https://stackoverflow.com/questions/37742358/sorting-points-to-
+    form-a-continuous-line/37744549#37744549
+
+    Parameters
+    ----------
+    x : array_like
+    y : array_like
+    Returns
+    -------
+    sorted_points : tuple of array_like floats
+        The sorted points.
+    """
+    points = np.c_[x, y]
+    clf = NearestNeighbors(2).fit(points)
+    G = clf.kneighbors_graph()
+    T = nx.from_scipy_sparse_matrix(G)
+    order = list(nx.dfs_preorder_nodes(T, 0))
+
+    xx = x[order]
+    yy = y[order]
+
+    if do_search_for_optimal_start:
+        paths = [list(nx.dfs_preorder_nodes(T, i)) for i in range(len(points))]
+        mindist = np.inf
+        minidx = 0
+
+        for i in range(len(points)):
+            p = paths[i]  # Order of nodes.
+            ordered = points[p]  # Ordered nodes.
+            # Find cost of that order by the sum of euclidean distances
+            # between points (i) and (i + 1).
+            cost = (((ordered[:-1] - ordered[1:]) ** 2).sum(1)).sum()
+            if cost < mindist:
+                mindist = cost
+                minidx = i
+
+        opt_order = paths[minidx]
+
+        xx = x[opt_order]
+        yy = y[opt_order]
+
+    return (xx, yy)
 
 
 if __name__ == "__main__":
