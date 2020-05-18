@@ -501,8 +501,8 @@ def hs_from_limiting_sig_wave_steepness(tz):
     hs : ndarray of floats
         Significant wave height in meters.
     """
-    TZLOW_STEEPNESS_VALUE = 0.1 # is 1/10 in DNVG-GL-RP-C205:2017, 3.5.4
-    TZHIGH_STEEPNESS_VALUE = 0.0666666  # is 1/15 in DNVG-GL-RP-C205:2017, 3.5.4
+    TZLOW_STEEPNESS_VALUE = 0.1 # From DNVG-GL-RP-C205:2017, 3.5.4 .
+    TZHIGH_STEEPNESS_VALUE = 0.0666666  # From DNVG-GL-RP-C205:2017, 3.5.4 .
 
     G = 9.81
 
@@ -516,7 +516,8 @@ def hs_from_limiting_sig_wave_steepness(tz):
         elif tz[i] < 12:
             ss[i] = \
                 TZLOW_STEEPNESS_VALUE\
-                + (TZHIGH_STEEPNESS_VALUE - TZLOW_STEEPNESS_VALUE) / 6.0 * (tz[i] - 6)
+                + (TZHIGH_STEEPNESS_VALUE - TZLOW_STEEPNESS_VALUE) \
+                  / 6.0 * (tz[i] - 6)
         else:
             ss[i] = TZHIGH_STEEPNESS_VALUE
 
