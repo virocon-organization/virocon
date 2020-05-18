@@ -54,6 +54,8 @@ class ParametricDistribution(Distribution, ABC):
         The cumulative distribution function from scipy. (sts.weibull_min.cdf, ...)
     _scipy_i_cdf : function
         The inverse cumulative distribution (or percent-point) function.(sts.weibull_min.ppf, ...)
+    _draw_sample : function
+        Uses the i_cdf to draw a sample
     _default_shape : float
         The default shape parameter.
     _default_loc : float
@@ -143,8 +145,8 @@ class ParametricDistribution(Distribution, ABC):
         """Overwrite with appropriate i_cdf function from scipy package. """
 
     @abstractmethod
-    def _draw_sample(self, samples, shape, loc, scale):
-        """Draws given number of samples from i_cdf functions"""
+    def draw_sample(self, number):
+        """Draws given number of points from i_cdf functions. """
 
     def cdf(self, x, rv_values=None, dependencies=None):
         """
@@ -211,6 +213,8 @@ class ParametricDistribution(Distribution, ABC):
             params = (shape_val, loc_val, scale_val, shape2_val)
 
         return self._scipy_i_cdf(probabilities, *params)
+
+
 
     def ppf(self, probabilities, rv_values=None, dependencies=None):
         # Synsynom for i_cdf. Implemented that in external code a ParametricDistribution
@@ -419,9 +423,9 @@ class WeibullDistribution(ParametricDistribution):
     def _scipy_i_cdf(self, probabilities, shape, loc, scale):
         return sts.weibull_min.ppf(probabilities, c=shape, loc=loc, scale=scale)
 
-    def _draw_sample(self, samples, shape, loc, scale):
-        probabilities = np.random.rand(samples)
-        return sts.weibull_min.ppf(probabilities, c=shape, loc=loc, scale=scale)
+    def draw_sample(self, number):
+        probabilities = np.random.rand(number)
+        return self.i_cdf(probabilities)
 
 
 class ExponentiatedWeibullDistribution(ParametricDistribution):
@@ -462,9 +466,9 @@ class ExponentiatedWeibullDistribution(ParametricDistribution):
         x = np.multiply(scale, np.power(np.multiply(-1, np.log(1 - np.power(p, np.divide(1, shape2)))), np.divide(1, shape)))
         return x
 
-    def _draw_sample(self, samples, shape, loc, scale, shape2):
-        probabilities = np.random.rand(samples)
-        return self._scipy_i_cdf(probabilities, shape, loc, scale, shape2)
+    def draw_sample(self, number):
+        probabilities = np.random.rand(number)
+        return self.i_cdf(probabilities)
 
     def _scipy_pdf(self, x, shape, loc, scale, shape2):
         """
@@ -696,9 +700,9 @@ class LognormalDistribution(ParametricDistribution):
     def _scipy_i_cdf(self, probabilities, shape, _, scale):
         return sts.lognorm.ppf(probabilities, s=shape, scale=scale)
 
-    def _draw_sample(self, samples, shape, _, scale):
-        probabilities = np.random.rand(samples)
-        return sts.lognorm.ppf(probabilities, s=shape, scale=scale)
+    def draw_sample(self, number):
+        probabilities = np.random.rand(number)
+        return self.i_cdf(probabilities)
 
     def __str__(self):
         if hasattr(self, "mu"):
@@ -744,9 +748,9 @@ class NormalDistribution(ParametricDistribution):
     def _scipy_i_cdf(self, probabilities, _, loc, scale):
         return sts.norm.ppf(probabilities, loc=loc, scale=scale)
 
-    def _draw_sample(self, samples, _, loc, scale):
-        probabilities = np.random.rand(samples)
-        return sts.norm.ppf(probabilities, loc=loc, scale=scale)
+    def draw_sample(self, number):
+        probabilities = np.random.rand(number)
+        return self.i_cdf(probabilities)
 
 
 class MultivariateDistribution():
@@ -779,6 +783,43 @@ class MultivariateDistribution():
         if not distributions is None:
             self.add_distributions(distributions, dependencies)
 
+    def draw_multivariate_sample(self, n):
+        """
+        Parameters
+        ----------
+        n : number of ...
+            int
+        
+        """
+        sample = []
+        i = 0
+
+        while i < len(self.distributions):
+            if i == 0:
+                sample.append(self.distributions[i].draw_sample(n))
+                i = i+1
+
+            elif self.dependencies[i][0] is not None:
+                sample.append(self.distributions[i].i_cdf(np.random.rand(n), sample, self.dependencies[i]))
+                i = i+1
+
+            elif self.dependencies[i][1] is not None:
+                sample.append(self.distributions[i].i_cdf(np.random.rand(n), sample, self.dependencies[i]))
+                i = i+1
+
+            elif self.dependencies[i][2] is not None:
+                sample.append(self.distributions[i].i_cdf(np.random.rand(n), sample, self.dependencies[i]))
+                i = i+1
+
+            elif len(self.dependencies[i]) == 4 and self.dependencies[i][3] is not None:
+                sample.append(self.distributions[i].i_cdf(np.random.rand(n), sample, self.dependencies[i]))
+                i = i+1
+
+            else:
+                sample.append(self.distributions[i].draw_sample(n))
+                i = i+1
+
+        return sample
 
     def add_distributions(self, distributions, dependencies):
         """
