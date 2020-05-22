@@ -1,7 +1,7 @@
 from viroconcom.params import ConstantParam, FunctionParam
 from viroconcom.distributions import WeibullDistribution, LognormalDistribution, \
     MultivariateDistribution
-from viroconcom.contours import IFormContour, HighestDensityContour, DirectSamplingContour
+from viroconcom.contours import IFormContour, HighestDensityContour
 import matplotlib.pyplot as plt
 
 # Define a Weibull distribution representing significant wave height.
