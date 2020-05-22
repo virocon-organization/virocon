@@ -616,8 +616,8 @@ class DirectSamplingContour(Contour):
         # find radius for each angle
         i = 0
         while i < length_t:
-            if length_x >= 10000000:
-                print('too large data')
+            if length_x >= 1000001:
+                raise RuntimeWarning('Takes longer then normal. Maybe use fewer data.')
             z = x * np.cos(transposed[i]) + y * np.sin(transposed[i])
             r[i] = np.quantile(z, probability)
             i = i + 1
