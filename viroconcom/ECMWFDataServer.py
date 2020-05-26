@@ -31,6 +31,6 @@ def getData(date, time, grid, area):
         # set an output file name
         "target": "test.nc"
     })
-getData("2017-08-01/to/2017-08-30", "00:00:00", "0.75/0.75", "75/-20/10/60"   )
+getData("2018-06-01/to/2018-06-30", "00:00:00", "0.75/0.75", "75/-20/10/60"   )
 
 
