@@ -1,11 +1,13 @@
-import numpy as np
+
 import matplotlib.pyplot as plt
 import seaborn as sns
-import viroconcom.buoypy as bp
+import viroconcom.NDBCImport as ndbc
+
+#Bsp1
 buoy = 46071
 year = 2004
 
-H = bp.Historic_Data()
+H = ndbc.HistoricData()
 df = H.get_stand_meteo(buoy,year)
 
 # plotting
@@ -19,12 +21,12 @@ ax[1].set_xlabel('')
 sns.despine()
 plt.show()
 
+#Bsp2
 
+buoy = 41108
+year_range = (2013,2018)
 
-buoy = 46071
-year_range = (2004,2005)
-
-H = bp.Historic_Data()
+H = ndbc.HistoricData()
 X = H.get_all_stand_meteo(buoy, year_range)
 print(X)
 #plotting
