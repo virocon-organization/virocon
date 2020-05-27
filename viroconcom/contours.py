@@ -628,7 +628,7 @@ class DirectSamplingContour(Contour):
 
         denominator = np.sin(t[2:]) * np.cos(t[1:len(t)-1]) - np.sin(t[1:len(t)-1]) * np.cos(t[2:])
 
-        x_cont = (np.sin(t[2:]) * r[1:len(t)-1] - np.sin(t[1:len(t)-1]) * r[2:]) / denominator
+        x_cont = (np.sin(t[2:]) * r[1:len(r)-1] - np.sin(t[1:len(t)-1]) * r[2:]) / denominator
         y_cont = (-np.cos(t[2:]) * r[1:len(r)-1] + np.cos(t[1:len(t)-1]) * r[2:]) / denominator
 
         return x_cont, y_cont
