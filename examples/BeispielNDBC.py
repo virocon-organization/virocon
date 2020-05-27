@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import viroconcom.buoypy as bp
 buoy = 46071
-year = 2006
+year = 2004
 
 H = bp.Historic_Data()
 df = H.get_stand_meteo(buoy,year)
