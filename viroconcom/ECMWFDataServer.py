@@ -1,7 +1,7 @@
-from viroconcom.api import ECMWFDataServer
+from ecmwfapi import ECMWFDataServer
 
 
-server = ECMWFDataServer(url="https://api.ecmwf.int/v1",key="5779c25ba27168b4e35275198c308319",email="lbekov@uni-bremen.de")
+server = ECMWFDataServer(url="https://api.ecmwf.int/v1",key="7dd8e0c0b0c38254477bddc7c080f6e7",email="adi97@t-online.de")
 
 
 #Methodenaufruf für das Ziehen der Daten, bezogen auf das Date, Area, Time und Grid
