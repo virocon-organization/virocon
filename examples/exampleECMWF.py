@@ -18,6 +18,7 @@ Here is a short list of things you will need to do for this script to work:
 
 import netCDF4
 from viroconcom.dataECMWF import ECMWF
+from matplotlib import pyplot as plt
 
 
 # Get the data and write them into a file.
@@ -60,3 +61,9 @@ for vat in var_attrs:
 # Now print the slice of data.
 data = var_s[var][1:2]
 print(data)
+# And plot part of it against 'mwp' data.
+plt.scatter(data[0], var_s['mwp'][1:2][0], marker='.')
+plt.xlabel('significant height of combined wind waves and swell (m)')
+plt.ylabel('mean wave period (s)')
+plt.show()
+
