@@ -197,6 +197,8 @@ class ParametricDistribution(Distribution, ABC):
 
         return self._scipy_i_cdf(probabilities, *params)
 
+
+
     def ppf(self, probabilities, rv_values=None, dependencies=None):
         # Synsynom for i_cdf. Implemented that in external code a ParametricDistribution
         # object can be used when scipy.stats.rv_continuous.ppf is meant.
@@ -738,35 +740,35 @@ class MultivariateDistribution():
         ----------
         n : number of ...
             int
-
         """
+        
         sample = []
         i = 0
 
         while i < len(self.distributions):
             if i == 0:
                 sample.append(self.distributions[i].draw_sample(n))
-                i = i + 1
+                i = i+1
 
             elif self.dependencies[i][0] is not None:
                 sample.append(self.distributions[i].i_cdf(np.random.rand(n), sample, self.dependencies[i]))
-                i = i + 1
+                i = i+1
 
             elif self.dependencies[i][1] is not None:
                 sample.append(self.distributions[i].i_cdf(np.random.rand(n), sample, self.dependencies[i]))
-                i = i + 1
+                i = i+1
 
             elif self.dependencies[i][2] is not None:
                 sample.append(self.distributions[i].i_cdf(np.random.rand(n), sample, self.dependencies[i]))
-                i = i + 1
+                i = i+1
 
             elif len(self.dependencies[i]) == 4 and self.dependencies[i][3] is not None:
                 sample.append(self.distributions[i].i_cdf(np.random.rand(n), sample, self.dependencies[i]))
-                i = i + 1
+                i = i+1
 
             else:
                 sample.append(self.distributions[i].draw_sample(n))
-                i = i + 1
+                i = i+1
 
         return sample
 
