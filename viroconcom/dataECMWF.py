@@ -20,7 +20,7 @@ from ecmwfapi import ECMWFDataServer
 
 # For this to work, you must have an ecmwf account and put your key and E-Mail in this form.
 server = ECMWFDataServer(url="https://api.ecmwf.int/v1",
-                         key="7dd8e0c0b0c38254477bddc7c080f6e7", email="adi97@t-online.de")
+                         key="", email="")
 
 
 class ECMWF():
