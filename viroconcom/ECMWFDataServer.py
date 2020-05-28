@@ -1,4 +1,4 @@
-from api import ECMWFDataServer
+from viroconcom.api import ECMWFDataServer
 
 
 server = ECMWFDataServer(url="https://api.ecmwf.int/v1",key="5779c25ba27168b4e35275198c308319",email="lbekov@uni-bremen.de")
