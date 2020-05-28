@@ -1,7 +1,7 @@
 from ecmwfapi import ECMWFDataServer
 
 
-server = ECMWFDataServer(url="https://api.ecmwf.int/v1",key="7dd8e0c0b0c38254477bddc7c080f6e7",email="adi97@t-online.de")
+server = ECMWFDataServer(url="https://api.ecmwf.int/v1",key="",email="")
 
 
 #Methodenaufruf für das Ziehen der Daten, bezogen auf das Date, Area, Time und Grid
