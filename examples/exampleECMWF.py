@@ -14,6 +14,8 @@ Here is a short list of things you will need to do for this script to work:
         Install it.
     7. Run the Code again. it will fail and gives you a link, You have to accept the agreement.
     8. Now the code should run. If you have further troubles see ecmwf website for troubleshooting.
+
+    Note: Go to viroconcom/dataECMWF.py to put your credentials in the server form.
 """
 
 import netCDF4
