@@ -32,7 +32,7 @@ X = H.get_all_stand_meteo(buoy, year_range)
 # Plotting.
 fig, ax = plt.subplots(2)
 X.WVHT.plot(ax=ax[0])
-ax[0].set_ylabel('Wave Height (m)', fontsize=14)
+ax[0].set_ylabel('Significant Wave Height (m)', fontsize=14)
 X.APD.plot(ax=ax[1])
 ax[1].set_ylabel('Average Wave Period (s)', fontsize=14)
 ax[1].set_xlabel('')
