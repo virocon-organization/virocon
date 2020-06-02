@@ -11,8 +11,8 @@ dist0 = WeibullDistribution(shape, loc, scale)
 dep0 = (None, None, None) # All three parameters are independent.
 
 # Define a Lognormal distribution representing spectral peak period.
-my_sigma = FunctionParam(0.05, 0.2, -0.2, "exp3")
-my_mu = FunctionParam(0.1, 1.5, 0.2, "power3")
+my_sigma = FunctionParam("exp3", 0.05, 0.2, -0.2)
+my_mu = FunctionParam("power3", 0.1, 1.5, 0.2)
 dist1 = LognormalDistribution(sigma=my_sigma, mu=my_mu)
 dep1 = (0, None, 0) # Parameter one and three depend on dist0.
 
