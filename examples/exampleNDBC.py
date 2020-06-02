@@ -16,7 +16,7 @@ df.WVHT.plot(ax=ax[0])
 ax[0].set_ylabel('Wave Height (m)', fontsize=14)
 
 df.APD.plot(ax=ax[1])
-ax[1].set_ylabel('Average Wave Period (s)',fontsize=14)
+ax[1].set_ylabel('Average Wave Period (s)', fontsize=14)
 ax[1].set_xlabel('')
 sns.despine()
 plt.show()

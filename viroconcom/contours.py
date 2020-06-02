@@ -14,7 +14,7 @@ import scipy.ndimage as ndi
 
 from ._n_sphere import NSphere
 
-__all__ = ["Contour", "IFormContour", "HighestDensityContour"]
+__all__ = ["Contour", "IFormContour", "HighestDensityContour", "DirectSamplingContour"]
 
 
 class Contour(ABC):

@@ -27,7 +27,8 @@ sample = mul_dist.draw_multivariate_sample(n)
 
 # Compute a direct sampling contour
 # probability of 1 percent, step of 5 degrees
-direct_sampling_contour = DirectSamplingContour.direct_sampling_contour(DirectSamplingContour, sample[0], sample[1], 00.1, 5)
+direct_sampling_contour = DirectSamplingContour.direct_sampling_contour(
+    DirectSamplingContour, sample[0], sample[1], 00.1, 5)
 
 # Plot the contour
 plt.plot(direct_sampling_contour[0], direct_sampling_contour[1])

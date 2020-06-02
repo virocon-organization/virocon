@@ -68,8 +68,8 @@ class HistoricData:
 
         #combine the first five date columns YY MM DD hh and make index
         try:
-            df = pd.read_csv(link, header=0, delim_whitespace=True, dtype=object,
-                            na_values=[99, 999, 9999, 99., 999., 9999.])
+            df = pd.read_csv(link, header=0, delim_whitespace=True, dtype=object, na_values={99, 999, 9999, 99., 999.,
+																							9999.})
         except:
             return Warning(print('You are trying to get data that does not exists or is not usable from buoy: '
                           + str(buoy) + ' in year ' + str(year)
@@ -164,7 +164,7 @@ class WriteData(HistoricData):
 
         """
 
-        #hist = self.historic_data(self.buoy,self.year,year_range=self.year_range)
+
         df = self.get_all_stand_meteo()
 
         #write the df to disk
@@ -233,8 +233,8 @@ class Formatter:
 		Format the standard Meteorological data.
 		"""
 
-		df = pd.read_csv(self.link,delim_whitespace=True,
-			na_values=[99,999,9999,99.,999.,9999.])
+		df = pd.read_csv(self.link, delim_whitespace=True,
+			na_values=[99, 999, 9999, 99.00, 999.0, 9999.0])
 
 		#2007 and on format
 		if df.iloc[0,0] =='#yr':
@@ -284,8 +284,8 @@ class Formatter:
 
 		# all data should be floats
 		df = df.astype('float')
-		nvals = [99,999,9999,99.0,999.0,9999.0]
-		df.replace(nvals,np.nan,inplace=True)
+		nvals = [99, 999, 9999, 99.0, 999.0, 9999.0]
+		df.replace(nvals, np.nan, inplace=True)
 
 		return df
 
@@ -397,7 +397,7 @@ class GetHistoric(Formatter):
 			link = base + str(self.buoy) + 'h' + str(self.year) + '.txt.gz&dir=data/historical/stdmet/'
 
 		#combine the first five date columns YY MM DD hh and make index
-		df = pd.read_csv(link,delim_whitespace=True,na_values=[99,999,9999,99.,999.,9999.])
+		df = pd.read_csv(link,delim_whitespace=True,na_values=[99, 999, 9999 ,99.0, 999.0, 9999.0])
 
 		#2007 and on format
 		if df.iloc[0,0] =='#yr':
