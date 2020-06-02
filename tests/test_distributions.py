@@ -27,9 +27,9 @@ class MultivariateDistributionTest(unittest.TestCase):
     scale = ConstantParam(2.776)
     par1 = (shape, loc, scale)
 
-    shape = FunctionParam(0.0400, 0.1748, -0.2243, "exp3")
+    shape = FunctionParam('exp3', 0.0400, 0.1748, -0.2243)
     loc = None
-    scale = FunctionParam(0.1, 1.489, 0.1901, "power3")
+    scale = FunctionParam('power3', 0.1, 1.489, 0.1901)
     par2 = (shape, loc, scale)
 
     del shape, loc, scale

@@ -96,6 +96,45 @@ class FittingTest(unittest.TestCase):
         my_fit = Fit((sample_1, sample_2),
                      (dist_description_0, dist_description_1))
 
+        self.assertEqual(str(my_fit)[0:5], 'Fit()')
+
+
+    def test_2d_benchmark_case(self):
+        """
+        Reproduces the baseline results presented in doi: 10.1115/OMAE2019-96523 .
+        """
+
+        sample_hs, sample_tz, label_hs, label_tz = read_benchmark_dataset(
+            path='tests/testfiles/allyears_dataset_A.txt')
+
+        # Describe the distribution that should be fitted to the sample.
+        dist_description_0 = {'name': 'Weibull_3p',
+                              'dependency': (None, None, None),
+                              'width_of_intervals': 0.5}
+        dist_description_1 = {'name': 'Lognormal_SigmaMu',
+                              'dependency': (0, None, 0),
+                              'functions': ('exp3', None, 'power3')} # Shape, location, scale.
+
+        # Compute the fit.
+        my_fit = Fit((sample_hs, sample_tz),
+                     (dist_description_0, dist_description_1))
+
+        # Evaluate the fitted parameters.
+        dist0 = my_fit.mul_var_dist.distributions[0]
+        dist1 = my_fit.mul_var_dist.distributions[1]
+        self.assertAlmostEqual(dist0.shape(0), 1.48, delta=0.02)
+        self.assertAlmostEqual(dist0.scale(0), 0.944, delta=0.01)
+        self.assertAlmostEqual(dist0.loc(0), 0.0981, delta=0.001)
+        self.assertAlmostEqual(dist1.shape.a, 0, delta=0.001)
+        self.assertAlmostEqual(dist1.shape.b, 0.308, delta=0.002)
+        self.assertAlmostEqual(dist1.shape.c, -0.250, delta=0.002)
+        self.assertAlmostEqual(dist1.scale.a, 1.47 , delta=0.02)
+        self.assertAlmostEqual(dist1.scale.b, 0.214, delta=0.002)
+        self.assertAlmostEqual(dist1.scale.c, 0.641, delta=0.002)
+        self.assertAlmostEqual(dist1.scale(0), 4.3 , delta=0.1)
+        self.assertAlmostEqual(dist1.scale(2), 6, delta=0.1)
+        self.assertAlmostEqual(dist1.scale(5), 8, delta=0.1)
+
 
     def test_2d_exponentiated_wbl_fit(self):
         """
@@ -134,7 +173,6 @@ class FittingTest(unittest.TestCase):
                   (dist_description_hs, dist_description_tz))
 
         dist0 = fit.mul_var_dist.distributions[0]
-        dist1 = fit.mul_var_dist.distributions[1]
 
         self.assertGreater(dist0.shape(0), 1) # Should be about 1.5.
         self.assertLess(dist0.shape(0), 2)
@@ -247,23 +285,10 @@ class FittingTest(unittest.TestCase):
 
         # Check whether the logarithmic square fit worked correctly.
         dist1 = fit.mul_var_dist.distributions[1]
-        print('Printing shape.a')
-        print(dist1.shape.a)
-        print('Printing shape.b')
-        print(dist1.shape.b)
-        print('Printing shape.c')
-        print(dist1.shape.c)
-        print('Printing shape')
-        print(dist1.shape)
-
-        self.assertGreater(dist1.shape.a, -0.1) # Should be about 0
-        self.assertLess(dist1.shape.a, 0.1)  # Should be about 0
-        self.assertGreater(dist1.shape.b, 1) # Should be about 1-2.5
-        self.assertLess(dist1.shape.b, 2.5)  # Should be about 1-2.5
-        self.assertGreater(np.abs(dist1.shape.c), 1.5) # Should be about 1.5 - 4
-        self.assertLess(np.abs(dist1.shape.c), 4)  # Should be about 1.1
-        self.assertGreater(dist1.shape(0), 0.25) # Should be about 0.35
-        self.assertLess(dist1.shape(0), 0.4) # Should be about 0.35
+        self.assertAlmostEqual(dist1.shape.a, 0, delta=0.1) # Should be about 0
+        self.assertAlmostEqual(dist1.shape.b, 0.35, delta=0.4) # Should be about 0.35
+        self.assertAlmostEqual(np.abs(dist1.shape.c), 0.45, delta=0.2) # Should be about 0.45
+        self.assertAlmostEquals(dist1.shape(0), 0.35, delta=0.2) # Should be about 0.35
 
     def test_min_number_datapoints_for_fit(self):
         """
@@ -336,3 +361,242 @@ class FittingTest(unittest.TestCase):
         my_fit = Fit((sample_1, sample_2),
                      (dist_description_0, dist_description_1),
                      timeout=10)
+
+    def test_wbl_fit_with_negative_location(self):
+        """
+        Tests fitting a translated Weibull distribution which would result
+        in a negative location parameter.
+        """
+
+        sample_hs, sample_tz, label_hs, label_tz = read_benchmark_dataset()
+
+
+        # Define the structure of the probabilistic model that will be fitted to the
+        # dataset.
+        dist_description_hs = {'name': 'Weibull_3p',
+                               'dependency': (None, None, None)}
+
+        # Fit the model to the data.
+        fit = Fit((sample_hs, ),
+                  (dist_description_hs, ))
+
+
+        # Correct values for 10 years of data can be found in
+        # 10.1115/OMAE2019-96523 . Here we used 1 year of data.
+        dist0 = fit.mul_var_dist.distributions[0]
+        self.assertAlmostEqual(dist0.shape(0) / 10, 1.48 / 10, places=1)
+        self.assertGreater(dist0.loc(0), 0.0) # Should be 0.0981
+        self.assertLess(dist0.loc(0), 0.3)  # Should be 0.0981
+        self.assertAlmostEqual(dist0.scale(0), 0.944, places=1)
+
+        # Shift the wave data with -1 m and fit again.
+        sample_hs = sample_hs - 2
+        # Negative location values will be set to zero instead and a
+        # warning will be raised.
+        with self.assertWarns(RuntimeWarning):
+            fit = Fit((sample_hs, ),
+                      (dist_description_hs, ))
+            dist0 = fit.mul_var_dist.distributions[0]
+            self.assertAlmostEqual(dist0.shape(0) / 10, 1.48 / 10, places=1)
+
+            # Should be estimated to be  0.0981 - 2 and corrected to be 0.
+            self.assertEqual(dist0.loc(0), 0)
+
+            self.assertAlmostEqual(dist0.scale(0), 0.944, places=1)
+
+    def test_omae2020_wind_wave_model(self):
+        """
+        Tests fitting the wind-wave model that was used in the publication
+        'Global hierarchical models for wind and wave contours' on dataset D.
+        """
+
+        sample_v, sample_hs, label_v, label_hs = read_benchmark_dataset(path='tests/testfiles/1year_dataset_D.txt')
+
+
+        # Define the structure of the probabilistic model that will be fitted to the
+        # dataset.
+        dist_description_v = {'name': 'Weibull_Exp',
+                              'dependency': (None, None, None, None),
+                              'width_of_intervals': 2}
+        dist_description_hs = {'name': 'Weibull_Exp',
+                              'fixed_parameters' :  (None,         None, None,     5), # shape, location, scale, shape2
+                              'dependency':        (0,            None, 0,        None), # shape, location, scale, shape2
+                              'functions':         ('logistics4', None, 'alpha3', None), # shape, location, scale, shape2
+                              'min_datapoints_for_fit': 20}
+
+        # Fit the model to the data.
+        fit = Fit((sample_v, sample_hs),
+                  (dist_description_v, dist_description_hs))
+
+
+
+        dist0 = fit.mul_var_dist.distributions[0]
+        self.assertAlmostEqual(dist0.shape(0), 2.42, delta=1)
+        self.assertAlmostEqual(dist0.scale(0), 10.0, delta=2)
+        self.assertAlmostEqual(dist0.shape2(0), 0.761, delta=0.5)
+
+        dist1 = fit.mul_var_dist.distributions[1]
+        self.assertEqual(dist1.shape2(0), 5)
+        inspection_data1 = fit.multiple_fit_inspection_data[1]
+        self.assertEqual(inspection_data1.shape2_value[0], 5)
+        self.assertAlmostEqual(inspection_data1.shape_value[0], 0.8, delta=0.5) # interval centered at 1
+        self.assertAlmostEqual(inspection_data1.shape_value[4], 1.5, delta=0.5)  # interval centered at 9
+        self.assertAlmostEqual(inspection_data1.shape_value[9], 2.5, delta=1)  # interval centered at 19
+        self.assertAlmostEqual(dist1.shape(0), 0.8, delta=0.3)
+        self.assertAlmostEqual(dist1.shape(10), 1.6, delta=0.5)
+        self.assertAlmostEqual(dist1.shape(20), 2.3, delta=0.7)
+        self.assertAlmostEqual(dist1.shape.a, 0.582, delta=0.5)
+        self.assertAlmostEqual(dist1.shape.b, 1.90, delta=1)
+        self.assertAlmostEqual(dist1.shape.c, 0.248, delta=0.5)
+        self.assertAlmostEqual(dist1.shape.d, 8.49, delta=5)
+        self.assertAlmostEqual(inspection_data1.scale_value[0], 0.15, delta=0.2) # interval centered at 1
+        self.assertAlmostEqual(inspection_data1.scale_value[4], 1, delta=0.5)  # interval centered at 9
+        self.assertAlmostEqual(inspection_data1.scale_value[9], 4, delta=1)  # interval centered at 19
+        self.assertAlmostEqual(dist1.scale(0), 0.15, delta=0.5)
+        self.assertAlmostEqual(dist1.scale(10), 1, delta=0.5)
+        self.assertAlmostEqual(dist1.scale(20), 4, delta=1)
+        self.assertAlmostEqual(dist1.scale.a, 0.394, delta=0.5)
+        self.assertAlmostEqual(dist1.scale.b, 0.0178, delta=0.1)
+        self.assertAlmostEqual(dist1.scale.c, 1.88, delta=0.8)
+
+    def test_wrong_model(self):
+        """
+        Tests wheter errors are raised when incorrect fitting models are
+        specified.
+        """
+
+        sample_v, sample_hs, label_v, label_hs = read_benchmark_dataset(path='tests/testfiles/1year_dataset_D.txt')
+
+
+        # This structure is incorrect as there is not distribution called 'something'.
+        dist_description_v = {'name': 'something',
+                              'dependency': (None, None, None, None),
+                              'fixed_parameters': (None, None, None, None), # shape, location, scale, shape2
+                              'width_of_intervals': 2}
+        with self.assertRaises(ValueError):
+            # Fit the model to the data.
+            fit = Fit((sample_v, ),
+                      (dist_description_v, ))
+
+
+        # This structure is incorrect as there is not dependence function called 'something'.
+        dist_description_v = {'name': 'Weibull_Exp',
+                              'dependency': (None, None, None, None),
+                              'width_of_intervals': 2}
+        dist_description_hs = {'name': 'Weibull_Exp',
+                              'dependency':        (0, None, 0,  None), # shape, location, scale, shape2
+                              'functions':         ('something', None, 'alpha3', None), # shape, location, scale, shape2
+                              'min_datapoints_for_fit': 20}
+        with self.assertRaises(ValueError):
+            # Fit the model to the data.
+            fit = Fit((sample_v, sample_hs),
+                      (dist_description_v, dist_description_hs))
+
+
+        # This structure is incorrect as there will be only 1 or 2 intervals
+        # that fit 2000 datapoints.
+        dist_description_v = {'name': 'Weibull_Exp',
+                              'dependency': (None, None, None, None),
+                              'width_of_intervals': 2}
+        dist_description_hs = {'name': 'Weibull_Exp',
+                              'dependency':        (0, None, 0,  None), # shape, location, scale, shape2
+                              'functions':         ('logistics4', None, 'alpha3', None), # shape, location, scale, shape2
+                              'min_datapoints_for_fit': 2000}
+        with self.assertRaises(RuntimeError):
+            # Fit the model to the data.
+            fit = Fit((sample_v, sample_hs),
+                      (dist_description_v, dist_description_hs))
+
+
+
+        # This structure is incorrect as alpha3 is only compatible with
+        # logistics4 .
+        dist_description_v = {'name': 'Weibull_Exp',
+                              'dependency': (None, None, None, None),
+                              'width_of_intervals': 2}
+        dist_description_hs = {'name': 'Weibull_Exp',
+                              'fixed_parameters' :  (None,         None, None,     5), # shape, location, scale, shape2
+                              'dependency':        (0,            None, 0,        None), # shape, location, scale, shape2
+                              'functions':         ('power3', None, 'alpha3', None), # shape, location, scale, shape2
+                              'min_datapoints_for_fit': 20}
+        with self.assertRaises(TypeError):
+            # Fit the model to the data.
+            fit = Fit((sample_v, sample_hs),
+                      (dist_description_v, dist_description_hs))
+
+
+        # This structure is incorrect as only shape2 of an exponentiated Weibull
+        # distribution can be fixed at the moment.
+        dist_description_v = {'name': 'Lognormal',
+                              'dependency': (None, None, None, None),
+                              'fixed_parameters': (None, None, 5, None), # shape, location, scale, shape2
+                              'width_of_intervals': 2}
+        with self.assertRaises(NotImplementedError):
+            # Fit the model to the data.
+            fit = Fit((sample_v, ),
+                      (dist_description_v, ))
+
+        # This structure is incorrect as only shape2 of an exponentiated Weibull
+        # distribution can be fixed at the moment.
+        dist_description_v = {'name': 'Weibull_Exp',
+                              'dependency': (None, None, None, None),
+                              'width_of_intervals': 2}
+        dist_description_hs = {'name': 'Weibull_Exp',
+                              'fixed_parameters' :  (None,        None, 5,        None), # shape, location, scale, shape2
+                              'dependency':        (0,            None, 0,        None), # shape, location, scale, shape2
+                              'functions':         ('logistics4', None, 'alpha3', None), # shape, location, scale, shape2
+                              'min_datapoints_for_fit': 20}
+        with self.assertRaises(NotImplementedError):
+            # Fit the model to the data.
+            fit = Fit((sample_v, sample_hs),
+                      (dist_description_v, dist_description_hs))
+
+
+    def test_weighting_of_dependence_function(self):
+        """
+        Tests if using weights when the dependence function is fitted works
+        correctly.
+        """
+
+        sample_v, sample_hs, label_v, label_hs = read_benchmark_dataset(path='tests/testfiles/1year_dataset_D.txt')
+
+
+        # Define the structure of the probabilistic model that will be fitted to the
+        # dataset.
+        dist_description_v = {'name': 'Weibull_Exp',
+                              'dependency': (None, None, None, None),
+                              'width_of_intervals': 2}
+        dist_description_hs = {'name': 'Weibull_Exp',
+                              'fixed_parameters' :  (None,        None, None,     5), # shape, location, scale, shape2
+                              'dependency':        (0,            None, 0,        None), # shape, location, scale, shape2
+                              'functions':         ('logistics4', None, 'alpha3', None), # shape, location, scale, shape2
+                              'min_datapoints_for_fit': 20,
+                              'do_use_weights_for_dependence_function': False}
+
+        # Fit the model to the data.
+        fit = Fit((sample_v, sample_hs),
+                  (dist_description_v, dist_description_hs))
+        dist1_no_weights = fit.mul_var_dist.distributions[1]
+
+
+        # Now perform a fit with weights.
+        dist_description_hs = {'name': 'Weibull_Exp',
+                              'fixed_parameters' :  (None,        None, None,     5), # shape, location, scale, shape2
+                              'dependency':        (0,            None, 0,        None), # shape, location, scale, shape2
+                              'functions':         ('logistics4', None, 'alpha3', None), # shape, location, scale, shape2
+                              'min_datapoints_for_fit': 20,
+                              'do_use_weights_for_dependence_function': True}
+        # Fit the model to the data.
+        fit = Fit((sample_v, sample_hs),
+                  (dist_description_v, dist_description_hs))
+        dist1_with_weights = fit.mul_var_dist.distributions[1]
+
+        # Make sure the two fitted dependnece functions are different.
+        d = np.abs(dist1_with_weights.scale(0) - dist1_no_weights.scale(0)) / \
+            np.abs(dist1_no_weights.scale(0))
+        self.assertGreater(d, 0.01)
+
+        # Make sure they are not too different.
+        d = np.abs(dist1_with_weights.scale(20) - dist1_no_weights.scale(20)) / \
+            np.abs(dist1_no_weights.scale(20))
+        self.assertLess(d, 0.5)

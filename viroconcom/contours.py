@@ -11,10 +11,13 @@ from multiprocessing import Pool, TimeoutError
 import numpy as np
 import scipy.stats as sts
 import scipy.ndimage as ndi
+import networkx as nx
+from sklearn.neighbors import NearestNeighbors
 
 from ._n_sphere import NSphere
 
-__all__ = ["Contour", "IFormContour", "HighestDensityContour", "DirectSamplingContour"]
+__all__ = ["Contour", "IFormContour", "ISormContour", "HighestDensityContour",
+           "sort_points_to_form_continous_line"]
 
 
 class Contour(ABC):
@@ -124,8 +127,8 @@ class IFormContour(Contour):
         >>> loc = ConstantParam(0.8888)
         >>> scale = ConstantParam(2.776)
         >>> par1 = (shape, loc, scale)
-        >>> mu = FunctionParam(0.1000, 1.489, 0.1901, "power3")
-        >>> sigma = FunctionParam(0.0400, 0.1748, -0.2243, "exp3")
+        >>> mu = FunctionParam('power3', 0.1000, 1.489, 0.1901)
+        >>> sigma = FunctionParam('exp3', 0.0400, 0.1748, -0.2243)
         >>> #Create distributions
         >>> dist1 = WeibullDistribution(*par1)
         >>> dist2 = LognormalDistribution(mu=mu, sigma=sigma)
@@ -245,8 +248,8 @@ class ISormContour(Contour):
         >>> loc = ConstantParam(0.8888)
         >>> scale = ConstantParam(2.776)
         >>> par1 = (shape, loc, scale)
-        >>> mu = FunctionParam(0.1000, 1.489, 0.1901, "power3")
-        >>> sigma = FunctionParam(0.0400, 0.1748, -0.2243, "exp3")
+        >>> mu = FunctionParam('power3', 0.1000, 1.489, 0.1901)
+        >>> sigma = FunctionParam('exp3', 0.0400, 0.1748, -0.2243)
         >>> #Create distributions
         >>> dist1 = WeibullDistribution(*par1)
         >>> dist2 = LognormalDistribution(mu=mu, sigma=sigma)
@@ -379,8 +382,8 @@ class HighestDensityContour(Contour):
         >>> loc = ConstantParam(0.8888)
         >>> scale = ConstantParam(2.776)
         >>> par1 = (shape, loc, scale)
-        >>> mu = FunctionParam(0.1000, 1.489, 0.1901, 'power3')
-        >>> sigma = FunctionParam(0.0400, 0.1748, -0.2243, 'exp3')
+        >>> mu = FunctionParam('power3', 0.1000, 1.489, 0.1901)
+        >>> sigma = FunctionParam('exp3', 0.0400, 0.1748, -0.2243)
         >>> #Create distributions
         >>> dist1 = WeibullDistribution(*par1)
         >>> dist2 = LognormalDistribution(mu=mu, sigma=sigma)
@@ -577,62 +580,60 @@ class HighestDensityContour(Contour):
 
         summed_fields = np.zeros(array.shape)
 
-        summed_fields[np.unravel_index(summed_flat_inds, dims=array.shape)] = 1
+        summed_fields[np.unravel_index(summed_flat_inds, shape=array.shape)] = 1
 
-        last_summed = array[np.unravel_index(summed_flat_inds[-1], dims=array.shape)]
+        last_summed = array[np.unravel_index(summed_flat_inds[-1], shape=array.shape)]
 
 
         return summed_fields, last_summed
 
 
-class DirectSamplingContour(Contour):
-    def __init__(self, mul_var_distribution, deltas=None):
-        None
+def sort_points_to_form_continous_line(x, y, do_search_for_optimal_start=False):
+    """
+    Sorts contour points to form a a continous line / contour.
 
-    def direct_sampling_contour(self, x, y, probability, d_s_deg):
-        """
-        calculates direct sampling contour
-        for fast compution, the data should be 100000 points or less
-        Parameters
-        ----------
-        x,y : array like
-            sample of data
-        probability : float
-            non exceedance probability of contour
-        d_s_deg : float
-            directional step in degrees
+    Thanks to https://stackoverflow.com/questions/37742358/sorting-points-to-
+    form-a-continuous-line/37744549#37744549
 
-        Returns
-        -------
-        x_con, y_con :
-            contour of sample
-        """
-        dt = d_s_deg * np.pi / 180
-        transposed = np.transpose(np.arange(dt, 2 * np.pi, dt))
-        length_x = len(x)
-        length_t = len(transposed)
-        r = np.zeros(length_t)
+    Parameters
+    ----------
+    x : array_like
+    y : array_like
+    Returns
+    -------
+    sorted_points : tuple of array_like floats
+        The sorted points.
+    """
+    points = np.c_[x, y]
+    clf = NearestNeighbors(2).fit(points)
+    G = clf.kneighbors_graph()
+    T = nx.from_scipy_sparse_matrix(G)
+    order = list(nx.dfs_preorder_nodes(T, 0))
 
-        # find radius for each angle
-        i = 0
-        while i < length_t:
-            if length_x >= 1000001:
-                raise RuntimeWarning('Takes longer then normal. Maybe use fewer data.')
-            z = x * np.cos(transposed[i]) + y * np.sin(transposed[i])
-            r[i] = np.quantile(z, probability)
-            i = i + 1
+    xx = x[order]
+    yy = y[order]
 
-        # find intersection of lines
-        t = np.array(np.concatenate((transposed, [dt]), axis=0))
-        r = np.array(np.concatenate((r, [r[0]]), axis=0))
+    if do_search_for_optimal_start:
+        paths = [list(nx.dfs_preorder_nodes(T, i)) for i in range(len(points))]
+        mindist = np.inf
+        minidx = 0
 
-        denominator = np.sin(t[2:]) * np.cos(t[1:len(t)-1]) - np.sin(t[1:len(t)-1]) * np.cos(t[2:])
+        for i in range(len(points)):
+            p = paths[i]  # Order of nodes.
+            ordered = points[p]  # Ordered nodes.
+            # Find cost of that order by the sum of euclidean distances
+            # between points (i) and (i + 1).
+            cost = (((ordered[:-1] - ordered[1:]) ** 2).sum(1)).sum()
+            if cost < mindist:
+                mindist = cost
+                minidx = i
 
-        x_cont = (np.sin(t[2:]) * r[1:len(r)-1] - np.sin(t[1:len(t)-1]) * r[2:]) / denominator
-        y_cont = (-np.cos(t[2:]) * r[1:len(r)-1] + np.cos(t[1:len(t)-1]) * r[2:]) / denominator
+        opt_order = paths[minidx]
 
-        return x_cont, y_cont
+        xx = x[opt_order]
+        yy = y[opt_order]
 
+    return (xx, yy)
 
 
 if __name__ == "__main__":
