@@ -17,7 +17,7 @@ from sklearn.neighbors import NearestNeighbors
 from ._n_sphere import NSphere
 
 __all__ = ["Contour", "IFormContour", "ISormContour", "HighestDensityContour",
-           "sort_points_to_form_continous_line"]
+           "sort_points_to_form_continous_line", "DirectSamplingContour"]
 
 
 class Contour(ABC):
