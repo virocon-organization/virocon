@@ -746,6 +746,10 @@ class NormalDistribution(ParametricDistribution):
     def _scipy_i_cdf(self, probabilities, _, loc, scale):
         return sts.norm.ppf(probabilities, loc=loc, scale=scale)
 
+    def draw_sample(self, number):
+        probabilities = np.random.rand(number)
+        return self.i_cdf(probabilities)
+
 
 class MultivariateDistribution():
     """
