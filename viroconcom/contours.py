@@ -635,9 +635,8 @@ def sort_points_to_form_continous_line(x, y, do_search_for_optimal_start=False):
 
     return (xx, yy)
 
-class DirectSamplingContour(Contour):
-    def __init__(self, mul_var_distribution, deltas=None):
-        None
+
+class DirectSamplingContour:
 
     def direct_sampling_contour(self, x, y, probability, d_s_deg):
         """

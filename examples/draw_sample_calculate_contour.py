@@ -27,8 +27,8 @@ sample = mul_dist.draw_sample(n)
 
 # Compute a direct sampling contour.
 # Non-exceedance probability of 0.96 (25-year return period), step of 5 degrees.
-direct_sampling_contour = DirectSamplingContour.direct_sampling_contour(
-    DirectSamplingContour, sample[0], sample[1], 0.96, 5)
+dsc = DirectSamplingContour
+direct_sampling_contour = dsc.direct_sampling_contour(dsc, sample[0], sample[1], 0.96, 5)
 
 # Plot the contour and the sample.
 plt.scatter(sample[0], sample[1], marker='.')
