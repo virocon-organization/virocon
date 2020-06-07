@@ -648,7 +648,7 @@ class DirectSamplingContour(Contour):
         x,y : array like
             sample of data
         probability : float
-            non exceedance probability of contour
+            non-exceedance probability of contour
         d_s_deg : float
             directional step in degrees
         Returns
