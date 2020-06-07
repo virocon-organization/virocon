@@ -60,18 +60,10 @@ Install the latest version of viroconcom from PyPI by typing
 
 .. code:: console
 
-   pip install viroconcom
+   pip install https://github.com/adrdrew/viroconcom/archive/master.zip
 
 in your shell.
 
-Alternatively, you can install from viroconcom repository’s Master branch
-by typing
-
-.. code:: console
-
-   pip install https://github.com/virocon-organization/viroconcom/archive/master.zip
-
-in your shell.
 
 Usage
 ~~~~~
