@@ -54,8 +54,6 @@ class ParametricDistribution(Distribution, ABC):
         The cumulative distribution function from scipy. (sts.weibull_min.cdf, ...)
     _scipy_i_cdf : function
         The inverse cumulative distribution (or percent-point) function.(sts.weibull_min.ppf, ...)
-    _draw_sample : function
-        Uses the i_cdf to draw a sample
     _default_shape : float
         The default shape parameter.
     _default_loc : float
@@ -144,7 +142,6 @@ class ParametricDistribution(Distribution, ABC):
     def _scipy_i_cdf(self, probabilities, shape, loc, scale):
         """Overwrite with appropriate i_cdf function from scipy package. """
 
-    @abstractmethod
     def draw_sample(self, number):
         """Draws given number of points from i_cdf functions. """
 
@@ -781,7 +778,7 @@ class MultivariateDistribution():
         if not distributions is None:
             self.add_distributions(distributions, dependencies)
 
-    def draw_multivariate_sample(self, n):
+    def draw_sample(self, n):
         """
         Parameters
         ----------

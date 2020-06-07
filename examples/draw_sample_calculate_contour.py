@@ -23,7 +23,7 @@ mul_dist = MultivariateDistribution(distributions, dependencies)
 
 # Draw sample from multivariate distribution with given number.
 n = 100000 # Number of how many data is to be drawn for the sample.
-sample = mul_dist.draw_multivariate_sample(n)
+sample = mul_dist.draw_sample(n)
 
 # Compute a direct sampling contour
 # probability of 1 percent, step of 5 degrees
