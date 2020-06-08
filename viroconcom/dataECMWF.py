@@ -76,5 +76,5 @@ class ECMWF():
                 # Definition of the format.
             "format": "netcdf",
                 # Set an output file name.
-            "target": "ecmwf.nc"
+            "target": '../examples/datasets/ecmwf.nc'
         })

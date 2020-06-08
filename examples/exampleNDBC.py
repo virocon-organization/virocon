@@ -11,20 +11,22 @@ H = ndbc.HistoricData()
 df = H.get_data(buoy, date)
 
 # Plotting three subplots.
-fig, ax = plt.subplots(3)
-
 # Plot significant wave height.
-df.WVHT.plot(ax=ax[0])
-ax[0].set_ylabel('Significant wave height (m)', fontsize=14)
+sub1 = plt.subplot(2, 2, 1)
+df.WVHT.plot()
+sub1.set_ylabel('Significant wave height (m)', fontsize=14)
+sub1.set_xlabel('Date')
 
 # Plot average wave period.
-df.APD.plot(ax=ax[1])
-ax[1].set_ylabel('Average wave period (s)', fontsize=14)
-ax[1].set_xlabel('')
+sub2 = plt.subplot(2, 2, 3)
+df.APD.plot()
+sub2.set_ylabel('Average wave period (s)', fontsize=14)
+sub2.set_xlabel('Date')
 
 # Scatterplot of the data.
+sub3 = plt.subplot(2, 2, (2, 4))
 plt.scatter(df.WVHT, df.APD)
-ax[2].set_xlabel('Significant wave height (m)', fontsize=14)
-ax[2].set_ylabel('Average wave period (s)', fontsize=14)
+sub3.set_xlabel('Significant wave height (m)', fontsize=14)
+sub3.set_ylabel('Average wave period (s)', fontsize=14)
 sns.despine()
 plt.show()
