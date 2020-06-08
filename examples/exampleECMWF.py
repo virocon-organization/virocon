@@ -1,19 +1,15 @@
 """
 You must follow the steps on: https://confluence.ecmwf.int/display/WEBAPI/Access+ECMWF+Public+Datasets
-You will probably face some problems, but ecmwf provides reasons and solutions on their website for any problem.
+If you will face some problems, ecmwf provides reasons and solutions on their website for any problem.
 Here is a short list of things you will need to do for this script to work:
     1. Make an account on ecmwf.
-    2. Save your api credentials. You can get them from ecmwf website: https://api.ecmwf.int/v1/key/
-    3. Make them to environment variables on your computer. This is important since the api will check them,
+    2. Make your credentials to environment variables on your computer. This is important since the api will check them,
         see: https://confluence.ecmwf.int/display/WEBAPI/How+to+retrieve+ECMWF+Public+Datasets
-        Note: You have to be logged in to see how to set environment variables
-    4. Install package ecmwf-api-client recommended using pip
-    5. Now you can run the code, after the 10th try, it will give you an Error.
-        To solve this you have to do the following steps.
-    6. There is a certificate in viroconcom the file is named: quovadis_rca2g3_der.cer
+        Note: You have to be logged in on ecmwf to see how to set environment variables
+    3. Install package ecmwf-api-client recommended using pip
+    4. There is a certificate in viroconcom the file is named: quovadis_rca2g3_der.cer
         Install it.
-    7. Run the Code again. it will fail and gives you a link, You have to accept the agreement.
-    8. Now the code should run. If you have further troubles see ecmwf website for troubleshooting.
+    5. Now the code should run. If you have further troubles see ecmwf website for troubleshooting.
 
     Note: Go to viroconcom/dataECMWF.py to put your credentials in the server form.
 """
@@ -34,14 +30,12 @@ for key in dims:
     print("dimension: ["+key+"] = "+str(len(dims[key])))
 # Print number of global attributes.
 glob_attrs = nc.ncattrs()
-##################################num_gattrs = len(gattrs)
 print("Number of global attributes = "+str(len(glob_attrs)))
 # Print global attributes.
 for key in glob_attrs:
     print("Global attribute: ["+key+"]= "+str(getattr(nc, key)))
 # Print number of variables.
 var_s = nc.variables
-####################################nvars = len(vars)
 print("Number of variables = "+str(len(var_s)))
 # Print which variables are available.
 for var in var_s:
