@@ -1,7 +1,6 @@
 import netCDF4
 from viroconcom.dataECMWF import ECMWF
 from matplotlib import pyplot as plt
-from viroconcom.fitting import Fit
 from viroconcom.contours import DirectSamplingContour
 
 # Get the data and write them into a file.

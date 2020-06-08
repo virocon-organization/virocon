@@ -4,9 +4,9 @@ from viroconcom.contours import DirectSamplingContour
 import matplotlib.pyplot as plt
 
 # Define a Weibull distribution representing significant wave height.
-shape = ConstantParam(2.776)
-loc = ConstantParam(1.471)
-scale = ConstantParam(0.8888)
+shape = ConstantParam(1.471)
+loc = ConstantParam(0.8888)
+scale = ConstantParam(2.776)
 dist0 = WeibullDistribution(shape, loc, scale)
 dep0 = (None, None, None)  # All three parameters are independent.
 

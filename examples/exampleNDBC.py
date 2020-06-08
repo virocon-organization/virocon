@@ -24,7 +24,7 @@ ax[1].set_xlabel('')
 
 # Scatterplot of the data.
 plt.scatter(df.WVHT, df.APD)
-ax[2].set_xlabel('Significant wave height (m)')
-ax[2].set_ylabel('Average wave period (s)')
+ax[2].set_xlabel('Significant wave height (m)', fontsize=14)
+ax[2].set_ylabel('Average wave period (s)', fontsize=14)
 sns.despine()
 plt.show()
