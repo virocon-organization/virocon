@@ -97,8 +97,6 @@ in your shell.
 Documentation
 -------------
 
-**Code.** The code’s documentation can be found `here`_.
-
 **Paper.** Our `SoftwareX paper`_ "ViroCon: A software to compute multivariate
 extremes using the environmental contour method." provides a concise
 description of the software.
