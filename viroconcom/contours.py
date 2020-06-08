@@ -638,16 +638,19 @@ def sort_points_to_form_continous_line(x, y, do_search_for_optimal_start=False):
 
 class DirectSamplingContour:
 
-    def direct_sampling_contour(self, x, y, probability, d_s_deg):
+    def direct_sampling_contour(self, x, y, return_period=25, state_duration=3, d_s_deg=5):
         """
-        calculates direct sampling contour
-        for fast compution, the data should be 100000 points or less
+        Calculates direct sampling contour.
+        For fast compution, the data should be 100000 points or less
         Parameters
         ----------
         x,y : array like
             sample of data
-        probability : float
-            non-exceedance probability of contour
+        return_period : float
+            The years to consider for calculation.
+        state_duration : float
+            Time period for which an environmental state is measured,
+            expressed in hours.
         d_s_deg : float
             directional step in degrees
         Returns
@@ -655,6 +658,9 @@ class DirectSamplingContour:
         x_con, y_con :
             contour of sample
         """
+        # Calculate Non-exceedance probability
+        p = 1 - (1 / (return_period * 365.25 * 24 / state_duration))
+
         dt = d_s_deg * np.pi / 180
         transposed = np.transpose(np.arange(dt, 2 * np.pi, dt))
         length_x = len(x)
@@ -667,7 +673,7 @@ class DirectSamplingContour:
             if length_x >= 1000001:
                 raise RuntimeWarning('Takes longer then normal. Maybe use fewer data.')
             z = x * np.cos(transposed[i]) + y * np.sin(transposed[i])
-            r[i] = np.quantile(z, probability)
+            r[i] = np.quantile(z, p)
             i = i + 1
 
         # find intersection of lines
