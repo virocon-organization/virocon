@@ -8,13 +8,13 @@ shape = ConstantParam(2.776)
 loc = ConstantParam(1.471)
 scale = ConstantParam(0.8888)
 dist0 = WeibullDistribution(shape, loc, scale)
-dep0 = (None, None, None) # All three parameters are independent.
+dep0 = (None, None, None)  # All three parameters are independent.
 
 # Define a Lognormal distribution representing spectral peak period.
 my_sigma = FunctionParam("exp3", 0.0400, 0.1748, -0.2243)
 my_mu = FunctionParam("power3", 0.1, 1.489, 0.1901)
 dist1 = LognormalDistribution(sigma=my_sigma, mu=my_mu)
-dep1 = (0, None, 0) # Parameter one and three depend on dist0.
+dep1 = (0, None, 0)  # Parameter one and three depend on dist0.
 
 # Create a multivariate distribution by bundling the two distributions.
 distributions = [dist0, dist1]

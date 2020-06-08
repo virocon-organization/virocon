@@ -30,14 +30,12 @@ for key in dims:
     print("dimension: ["+key+"] = "+str(len(dims[key])))
 # Print number of global attributes.
 glob_attrs = nc.ncattrs()
-##################################num_gattrs = len(gattrs)
 print("Number of global attributes = "+str(len(glob_attrs)))
 # Print global attributes.
 for key in glob_attrs:
     print("Global attribute: ["+key+"]= "+str(getattr(nc, key)))
 # Print number of variables.
 var_s = nc.variables
-####################################nvars = len(vars)
 print("Number of variables = "+str(len(var_s)))
 # Print which variables are available.
 for var in var_s:
