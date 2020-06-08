@@ -26,7 +26,7 @@ n = 10000  # Number of how many data is to be drawn for the sample.
 sample = mul_dist.draw_sample(n)
 
 # Compute a direct sampling contour.
-# Non-exceedance probability of 0.96 (25-year return period), step of 5 degrees.
+# Annual non-exceedance probability of 0.96 (25-year return period), step of 5 degrees.
 dsc = DirectSamplingContour
 direct_sampling_contour = dsc.direct_sampling_contour(dsc, sample[0], sample[1], 0.96, 5)
 
