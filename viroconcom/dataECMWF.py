@@ -13,6 +13,7 @@ Here is a short list of things you will need to do for this script to work:
 """
 
 from ecmwfapi import ECMWFDataServer
+import numpy as np
 
 # For this to work, you must have an ecmwf account and put your key and E-Mail in this form.
 server = ECMWFDataServer(url="https://api.ecmwf.int/v1",
@@ -54,27 +55,28 @@ class ECMWF():
 
         """
         server.retrieve({
-                # Specify the ERA-Interim data archive. Don't change.
+            # Specify the ERA-Interim data archive. Don't change.
             "class": "ei",
             "dataset": "interim",
             "expver": "1",
             "stream": "wave",
-                # Forecast (type:fc), from both daily forecast runs (time)
-                # with all available forecast steps (step, in hours).
+            # Forecast (type:fc), from both daily forecast runs (time)
+            # with all available forecast steps (step, in hours).
             "type": "fc",
             "levtype": "sfc",
-                # All available parameters, for codes see http://apps.ecmwf.int/codes/grib/param-db .
-                # 229.140/232.140 means mean wave period / significant height of combined wind waves and swell.
+            # All available parameters, for codes see http://apps.ecmwf.int/codes/grib/param-db .
+            # 229.140/232.140 means mean wave period / significant height of combined wind waves and swell.
             "param": param,
-                # Days worth of data.
+            # Days worth of data.
             "date": date,
             "time": time,
             "step": "0",
             "grid": grid,
-                # Optionally restrict area to Europe (in N/W/S/E).
+            # Specify as North/West/South/East in Geographic lat/long degrees.
+            # Southern latitudes and Western longitudes must be given as negative numbers.
             "area": area,
-                # Definition of the format.
+            # Definition of the format.
             "format": "netcdf",
-                # Set an output file name.
+            # Set an output file name.
             "target": '../examples/datasets/ecmwf.nc'
         })

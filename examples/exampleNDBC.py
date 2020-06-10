@@ -1,14 +1,13 @@
 
 import matplotlib.pyplot as plt
 import seaborn as sns
-import viroconcom.dataNDBC as ndbc
+from viroconcom.dataNDBC import NDBC
 
 # Example for one year.
 buoy = 41108
 date = "2017-02-11/to/2018-11-27"
 
-H = ndbc.HistoricData()
-df = H.get_data(buoy, date)
+df = NDBC(buoy).get_data(date)
 
 # Plotting three subplots.
 # Plot significant wave height.

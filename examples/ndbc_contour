@@ -8,7 +8,7 @@ import viroconcom.dataNDBC as ndbc
 buoy = 41108
 date = "2017-02-11/to/2018-11-27"
 
-H = ndbc.HistoricData()
+H = ndbc.NDBC()
 df = H.get_data(buoy, date)
 sample_1 = df.WVHT
 sample_2 = df.APD

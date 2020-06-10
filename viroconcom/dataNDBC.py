@@ -28,20 +28,23 @@ import urllib.request
 from sqlalchemy import create_engine
 
 
-class HistoricData:
+class NDBC():
 
-    def __init__(self):
-        None
+    def __init__(self, buoy):
+        """
+        buoy : int
+            Buoy number from ndbc.
+        """
 
-    def get_data(self, buoy, date):
+        self.buoy = buoy
+
+    def get_data(self, date):
         """
         Parameters
         ----------
         date : str
             Form: "year-month-day/to/year-month-day"
             Gives you data from this time period.
-        buoy : int
-            Buoy number from ndbc.
 
         Returns
         -------
@@ -57,7 +60,7 @@ class HistoricData:
         month_stop = date[19:21]
         day_stop = date[22:24]
         year_range = (year_start, year_stop)
-        df = self.get_year_range(buoy, year_range)
+        df = self.get_year_range(year_range)
 
         while str(df.index[0])[0:10] != str(year_start) + "-" + str(month_start) + "-" + str(day_start):
             df = df.drop(df.index[0], axis=0)
@@ -67,14 +70,12 @@ class HistoricData:
 
         return df
 
-    def get_year(self, buoy, year):
+    def get_year(self, year):
         """
         Parameters
         ----------
         year : int
             Year from which the data comes from.
-        buoy : int
-            Buoy number from ndbc.
 
         Returns
         -------
@@ -83,7 +84,7 @@ class HistoricData:
         """
 
         link = 'http://www.ndbc.noaa.gov/view_text_file.php?filename='
-        link += '{}h{}.txt.gz&dir=data/historical/'.format(buoy, year)
+        link += '{}h{}.txt.gz&dir=data/historical/'.format(self.buoy, year)
         link = link + 'stdmet/'
 
         try:
@@ -91,7 +92,7 @@ class HistoricData:
                                                                                              9999.})
         except:
             return Warning(print('You are trying to get data that does not exists or is not usable from buoy: '
-                                 + str(buoy) + ' in year ' + str(year)
+                                 + str(self.buoy) + ' in year ' + str(year)
                                  + '. Please try a different year or year range without year: ' + str(year)))
 
         # 2007 and on format.
@@ -123,12 +124,10 @@ class HistoricData:
         df = df.astype('float')
         return df
 
-    def get_year_range(self, buoy, year_range):
+    def get_year_range(self, year_range):
         """
         Parameters
         ----------
-        buoy : int
-            Buoy, which the data comes from.
         year_range : tuple
             From year to year.
         Returns
@@ -141,7 +140,7 @@ class HistoricData:
         start, stop = year_range
         df = pd.DataFrame()  # initialize empty df
         for i in range(start, stop + 1):
-            data = self.get_year(buoy, i)
+            data = self.get_year(i)
             new_df = data
             df = df.append(new_df)
         return df
