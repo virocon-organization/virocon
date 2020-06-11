@@ -140,7 +140,7 @@ class MultivariateDistributionTest(unittest.TestCase):
              '0.1+1.489h_{s}^{0.1901},',
              '\\quad\\qquad\\;\\; \\tilde{\\sigma}_{t_{p}}='
              '0.04+0.1748e^{-0.2243h_{s}}.']
-        assert(computed_latex, correct_latex)
+        assert computed_latex, correct_latex
 
 
 class ParametricDistributionTest(unittest.TestCase):
