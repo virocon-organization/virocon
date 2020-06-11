@@ -1,11 +1,9 @@
 import pytest
 
 import numpy as np
-import scipy.stats as sts
 import datetime
 
 from viroconcom.dataNDBC import NDBC
-import viroconcom.dataECMWF
 
 
 # NDBC test.
@@ -19,6 +17,7 @@ def test_get_data(date="2017-01-01/to/2017-12-31", buoy=41108):
     assert np.allclose(ref_average_wvht, average_wvht) and \
            np.allclose(ref_average_apd, average_apd)
 
+
 def test_get_data2(date="2017-01-14/to/2017-05-22", buoy=41108):
     start = datetime.datetime.strptime(date[:10], '%Y-%m-%d')
     end = datetime.datetime.strptime(date[14:], '%Y-%m-%d')
@@ -27,3 +26,8 @@ def test_get_data2(date="2017-01-14/to/2017-05-22", buoy=41108):
     count = len(NDBC(buoy).get_data(date).WVHT)
     # print(ref_count, count)
     assert count + 200 >= ref_count >= count - 200
+
+
+def test_get_data3(date="2003-11-14/to/2004-02-22", buoy=46084):
+    data = NDBC(buoy).get_data(date)
+    assert len(data) > 0
