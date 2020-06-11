@@ -13,7 +13,6 @@ Here is a short list of things you will need to do for this script to work:
 """
 
 from ecmwfapi import ECMWFDataServer
-import numpy as np
 
 # For this to work, you must have an ecmwf account and put your key and E-Mail in this form.
 server = ECMWFDataServer(url="https://api.ecmwf.int/v1",
