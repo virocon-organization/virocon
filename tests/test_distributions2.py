@@ -8,18 +8,22 @@ from viroconcom.distributions import (WeibullDistribution, NormalDistribution,
                                       LognormalDistribution)
 from viroconcom.params import ConstantParam
 
+
 # Weibull tests
 @pytest.fixture(params=[1, 5, 100])
 def weibull_shape(request):
     return ConstantParam(request.param)
 
+
 @pytest.fixture(params=[0, 1, 100])
 def weibull_loc(request):
     return ConstantParam(request.param)
 
+
 @pytest.fixture(params=[1, 5, 100])
 def weibull_scale(request):
     return ConstantParam(request.param)
+
 
 @pytest.fixture(params=[100, 1000, 5000])
 def weibull_number(request):
@@ -33,12 +37,14 @@ def test_weibull_cdf(weibull_shape, weibull_loc, weibull_scale):
     my_cdf = dist.cdf(x, x, (None, None, None))
     assert np.allclose(ref_cdf, my_cdf)
 
+
 def test_weibull_i_cdf(weibull_shape, weibull_loc, weibull_scale):
     x = np.linspace(0, 1)
     ref_cdf = sts.weibull_min.ppf(x, weibull_shape(None), weibull_loc(None), weibull_scale(None))
     dist = WeibullDistribution(weibull_shape, weibull_loc, weibull_scale)
     my_cdf = dist.i_cdf(x, x, (None, None, None))
     assert np.allclose(ref_cdf, my_cdf)
+
 
 def test_weibull_draw_sample(weibull_number, weibull_shape, weibull_loc, weibull_scale):
     ref_points = weibull_number
@@ -47,9 +53,11 @@ def test_weibull_draw_sample(weibull_number, weibull_shape, weibull_loc, weibull
     my_points = my_points.size
     assert ref_points == my_points
 
+
 @pytest.fixture(params=["shape", "loc", "scale"])
 def weibull_param_name(request):
     return request.param
+
 
 def test_weibull_param_out_of_bounds(weibull_param_name):
     dist = WeibullDistribution()
@@ -68,9 +76,16 @@ def test_weibull_param_out_of_bounds(weibull_param_name):
 def normal_loc(request):
     return ConstantParam(request.param)
 
+
 @pytest.fixture(params=[1, 5, 100])
 def normal_scale(request):
     return ConstantParam(request.param)
+
+
+@pytest.fixture(params=[100, 1000, 5000])
+def normal_number(request):
+    return request.param
+
 
 def test_normal_cdf(normal_loc, normal_scale):
     x = np.linspace(-20, 20)
@@ -79,6 +94,7 @@ def test_normal_cdf(normal_loc, normal_scale):
     my_cdf = dist.cdf(x, x, (None, None, None))
     assert np.allclose(ref_cdf, my_cdf)
 
+
 def test_normal_i_cdf(normal_loc, normal_scale):
     x = np.linspace(0, 1)
     ref_cdf = sts.norm.ppf(x, normal_loc(None), normal_scale(None))
@@ -86,9 +102,19 @@ def test_normal_i_cdf(normal_loc, normal_scale):
     my_cdf = dist.i_cdf(x, x, (None, None, None))
     assert np.allclose(ref_cdf, my_cdf)
 
+
+def test_normal_draw_sample(normal_number, normal_loc, normal_scale):
+    ref_points = normal_number
+    dist = NormalDistribution(normal_loc, normal_scale)
+    my_points = dist.draw_sample(normal_number)
+    my_points = my_points.size
+    assert ref_points == my_points
+
+
 @pytest.fixture(params=["shape", "loc", "scale"])
 def normal_param_name(request):
     return request.param
+
 
 def test_normal_param_out_of_bounds(normal_param_name):
     dist = NormalDistribution()
@@ -107,9 +133,16 @@ def test_normal_param_out_of_bounds(normal_param_name):
 def lognormal_shape(request):
     return ConstantParam(request.param)
 
+
 @pytest.fixture(params=[1, 5, 100])
 def lognormal_scale(request):
     return ConstantParam(request.param)
+
+
+@pytest.fixture(params=[100, 1000, 5000])
+def lognormal_number(request):
+    return request.param
+
 
 def test_lognormal_cdf(lognormal_shape, lognormal_scale):
     x = np.linspace(0, 20)
@@ -117,6 +150,7 @@ def test_lognormal_cdf(lognormal_shape, lognormal_scale):
     dist = LognormalDistribution(lognormal_shape, None, lognormal_scale)
     my_cdf = dist.cdf(x, x, (None, None, None))
     assert np.allclose(ref_cdf, my_cdf)
+
 
 def test_lognormal_i_cdf(lognormal_shape, lognormal_scale):
     x = np.linspace(0, 1)
@@ -126,9 +160,18 @@ def test_lognormal_i_cdf(lognormal_shape, lognormal_scale):
     assert np.allclose(ref_cdf, my_cdf)
 
 
+def test_lognormal_draw_sample(lognormal_number, lognormal_shape, lognormal_scale):
+    ref_points = lognormal_number
+    dist = LognormalDistribution(lognormal_shape, lognormal_scale)
+    my_points = dist.draw_sample(lognormal_number)
+    my_points = my_points.size
+    assert ref_points == my_points
+
+
 @pytest.fixture(params=["shape", "scale"])
 def lognormal_param_name(request):
     return request.param
+
 
 def test_lognormal_param_out_of_bounds(lognormal_param_name):
     dist = LognormalDistribution()
@@ -140,4 +183,3 @@ def test_lognormal_param_out_of_bounds(lognormal_param_name):
     setattr(dist, lognormal_param_name, ConstantParam(np.inf))
     with pytest.raises(ValueError):
         dist.cdf([0, 100], [0, 100], (None, None, None))
-

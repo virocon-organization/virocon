@@ -27,6 +27,3 @@ def test_get_data2(date="2017-01-14/to/2017-05-22", buoy=41108):
     count = len(NDBC(buoy).get_data(date).WVHT)
     # print(ref_count, count)
     assert count + 200 >= ref_count >= count - 200
-
-
-#
