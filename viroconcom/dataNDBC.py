@@ -21,11 +21,7 @@ http://www.ndbc.noaa.gov/measdes.shtml
         PTDY    Pressure Tendency.
         TIDE    The water level in feet above or below Mean Lower Low Water (MLLW).
 """
-import datetime
-import numpy as np
 import pandas as pd
-import urllib.request
-from sqlalchemy import create_engine
 
 
 class NDBC():
