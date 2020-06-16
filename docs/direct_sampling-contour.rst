@@ -102,10 +102,10 @@ But the class :class:`~viroconcom.distribution.LognormalDistribution` has also a
 The dependency can be described as follows, where :math:`x` is a realization of RV :math:`X`:
 
 .. math::
-    sigma(x) = 0.05 + 0.2 * e^{-0.2}
+    sigma(x) = 0.0400 + 0.1748 * e^{-0.2243}
 
 .. math::
-    mu(x) = 0.1 + 1.5^{x * 0.2}
+    mu(x) = 0.1 + 1.489^{x * 0.1901}
 
 First we create the parameters as :class:`~viroconcom.params.FunctionParam`::
 
