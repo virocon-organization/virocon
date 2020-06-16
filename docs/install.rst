@@ -16,20 +16,13 @@ Consider using the python version management `pyenv`_.
 
 Install
 ~~~~~~~
-Install the latest version of viroconcom from PyPI by typing
 
-.. code:: console
-
-   pip install viroconcom
-
-in your shell.
-
-Alternatively, you can install from viroconcom repository’s Master branch
+Install viroconcom from repository’s Master branch
 by typing
 
 .. code:: console
 
-   pip install https://github.com/virocon-organization/viroconcom/archive/master.zip
+   pip install https://github.com/adrdrew/viroconcom/archive/master.zip
 
 in your shell.
 
