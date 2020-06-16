@@ -22,18 +22,19 @@ dependencies = [dep0, dep1]
 mul_dist = MultivariateDistribution(distributions, dependencies)
 
 # Draw sample from multivariate distribution with given number.
-n = 100000  # Number of how many data is to be drawn for the sample.
+n = 1000000  # Number of how many data is to be drawn for the sample.
 sample = mul_dist.draw_sample(n)
 
 # Compute a direct sampling contour.
-# Return period of 1 year, state duration of 6 hours, step of 5 degrees.
+# Return period of 25 year, state duration of 6 hours, step of 6 degrees.
 dsc = DirectSamplingContour
-direct_sampling_contour = dsc.direct_sampling_contour(dsc, sample[0], sample[1], 1, 6, 5)
+direct_sampling_contour = dsc.direct_sampling_contour(dsc, sample[0], sample[1], 25, 6, 6)
 
 # Plot the contour and the sample.
-plt.scatter(sample[0], sample[1], marker='.')
-plt.plot(direct_sampling_contour[0], direct_sampling_contour[1], color='red')
+plt.scatter(sample[1], sample[0], marker='.')
+plt.plot(direct_sampling_contour[1], direct_sampling_contour[0], color='red')
 plt.title('Direct sampling contour')
-plt.xlabel('Significant wave height (m)')
-plt.ylabel('Zero-upcrossing period (s)')
+plt.ylabel('Significant wave height (m)')
+plt.xlabel('Zero-upcrossing period (s)')
+plt.grid(True)
 plt.show()
