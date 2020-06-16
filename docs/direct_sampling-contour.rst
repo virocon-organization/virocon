@@ -144,7 +144,7 @@ The :class:`~viroconcom.distributions.MultivariateDistribution` can now simply b
 Monte Carlo simulate the sample
 ===============================
 
-Now, you can get a sample. You have to define how many datapoints it should contain.::
+Now, you can get a sample. You have to define how many datapoints it should contain::
 
     n = 1000000
     sample = mul_dist.draw_sample(n)
