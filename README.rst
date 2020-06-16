@@ -28,8 +28,9 @@ The following methods are implemented in viroconcom:
 - Computing an environmental contour using either the
 
   - inverse first-order reliability method (IFORM),
-  - inverse second-order reliability method (ISORM) or the
-  - highest density contour (HDC) method
+  - inverse second-order reliability method (ISORM),
+  - highest density contour (HDC) method or the
+  - direct sampling contour method
 
 
 ViroCon is written in Python 3.6.4. The software is seperated in two
