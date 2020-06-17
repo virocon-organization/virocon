@@ -23,7 +23,7 @@ are available or go on NDBC website, simply call in this case::
     df.WVHT
     df.APD
 
-This will give you the significant wave height with WVHT and the average wave period.
+This will give you the significant wave height with WVHT and the average wave period with APD.
 
 Plot the data from NDBC
 -----------------------
