@@ -27,8 +27,8 @@ sample = mul_dist.draw_sample(n)
 
 # Compute a direct sampling contour.
 # Return period of 25 year, state duration of 6 hours, step of 6 degrees.
-dsc = DirectSamplingContour
-direct_sampling_contour = dsc.direct_sampling_contour(dsc, sample[0], sample[1], 25, 6, 6)
+dsc = DirectSamplingContour(sample[0], sample[1], 25, 6, 6)
+direct_sampling_contour = dsc.direct_sampling_contour()
 
 # Plot the contour and the sample.
 plt.scatter(sample[1], sample[0], marker='.')

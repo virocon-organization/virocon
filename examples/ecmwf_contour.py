@@ -16,8 +16,8 @@ var2 = 'mwp'
 data1 = var_s[var][:]
 data2 = var_s[var2][:]
 
-dsc = DirectSamplingContour()
-direct_sampling_contour = dsc.direct_sampling_contour(data1, data2, 1, 0.5, 1)
+dsc = DirectSamplingContour(data1, data2, 1, 0.5, 1)
+direct_sampling_contour = dsc.direct_sampling_contour()
 
 # Plot the contour and the sample.
 plt.scatter(data1, data2, marker='.')
