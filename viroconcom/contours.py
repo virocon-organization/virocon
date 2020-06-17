@@ -637,14 +637,16 @@ def sort_points_to_form_continous_line(x, y, do_search_for_optimal_start=False):
 
 
 class DirectSamplingContour:
-    def __init__(self, sample, return_period=25, state_duration=3, d_s_deg=5):
+    def __init__(self, mul_var_dist, n, return_period=25, state_duration=3, d_s_deg=5):
         '''
         Calculates direct sampling contour.
         For fast compution, the data should be 100000 points or less
         Parameters
         ----------
-        sample : array like
-            2 dimensional sample of data with two lists containing the data.
+        mul_var_dist : MultivariateDistribution
+            2 dimensional distribution.
+        n : int
+            Number of datapoints to be sampled.
         return_period : float
             The years to consider for calculation.
         state_duration : float
@@ -653,11 +655,13 @@ class DirectSamplingContour:
         d_s_deg : float
             directional step in degrees
         '''
-        self.x = sample[0]
-        self.y = sample[1]
+
+        self.mul_var_dist = mul_var_dist
+        self.n = n
         self.return_period = return_period
         self.state_duration = state_duration
         self.d_s_deg = d_s_deg
+        self.data = self.mul_var_dist.draw_sample(n)
 
     def direct_sampling_contour(self):
         """
@@ -667,18 +671,20 @@ class DirectSamplingContour:
             contour of sample
         """
         # Calculate Non-exceedance probability
+        x, y = self.data
+
         p = 1 - (1 / (self.return_period * 365.25 * 24 / self.state_duration))
 
         dt = self.d_s_deg * np.pi / 180
         transposed = np.transpose(np.arange(dt, 2 * np.pi, dt))
-        length_x = len(self.x)
+        length_x = len(x)
         length_t = len(transposed)
         r = np.zeros(length_t)
 
         # find radius for each angle
         i = 0
         while i < length_t:
-            z = self.x * np.cos(transposed[i]) + self.y * np.sin(transposed[i])
+            z = x * np.cos(transposed[i]) + y * np.sin(transposed[i])
             r[i] = np.quantile(z, p)
             i = i + 1
 
