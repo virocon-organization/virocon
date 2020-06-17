@@ -12,6 +12,7 @@ set up, by looking at NDBC`s website (https://www.ndbc.noaa.gov/), otherwise you
 
 Once you have done this, you can make an instance of :class:`~viroconcom.dataNDBC.NDBC` and pass your buoy number.
 Then call the method get_data as following::
+
     buoy = 41108
     date = "2017-02-11/to/2018-11-27"
 
@@ -20,6 +21,7 @@ Then call the method get_data as following::
 That is basically it. Now, to get a specific variable, you can look in dataNDBC_ file for what variables
 .. _dataNDBC: https://github.com/adrdrew/viroconcom/blob/master/viroconcom/dataNDBC.py
 are available or go on NDBC website, simply call in this case::
+
     df.WVHT
     df.APD
 
@@ -29,6 +31,7 @@ Plot the data from NDBC
 -----------------------
 This is straight forward, you got two lists of data.
 To plot them each, follow this code::
+
     # Plot significant wave height.
     sub1 = plt.subplot(2, 2, 1)
     df.WVHT.plot()
@@ -43,6 +46,7 @@ To plot them each, follow this code::
     plt.show()
 
 And to perform a scatter-plot, follow this code::
+
     # Scatter-plot of the data.
     sub3 = plt.subplot(2, 2, (2, 4))
     plt.scatter(df.WVHT, df.APD)
