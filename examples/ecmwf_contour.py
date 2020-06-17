@@ -4,8 +4,8 @@ from matplotlib import pyplot as plt
 from viroconcom.contours import DirectSamplingContour
 
 # Get the sample and write them into a file.
-ecmwf = ECMWF()
-ecmwf.get_data("2018-09-01/to/2018-09-30", "00:00:00", "0.75/0.75", "75/-20/10/60", "229.140/232.140")
+ecmwf = ECMWF("00:00:00", "0.75/0.75", "75/-20/10/60", "229.140/232.140")
+ecmwf.get_data("2018-09-01/to/2018-09-30")
 # Open the file for reading.
 test_nc_file = '../examples/datasets/ecmwf.nc'
 nc = netCDF4.Dataset(test_nc_file, mode='r')
