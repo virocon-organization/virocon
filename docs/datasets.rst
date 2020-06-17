@@ -7,29 +7,30 @@ Get data from NDBC server
 =========================
 
 To load data from NDBC first thing to do is to choose a buoy and set a variable with the number of it.
-Next, set up a start and end date, this has to be in a specific form. Make sure that your buoy has data in the time you
-set up, by looking at NDBC`s website (https://www.ndbc.noaa.gov/), otherwise you will get an error.
+Next, set up a start and end date, this has to be in a specific form. Make sure that the buoy has data in the time frame
+that is set up, by looking at NDBC`s website (https://www.ndbc.noaa.gov/), otherwise an error will occur.
 
-Once you have done this, you can make an instance of :class:`~viroconcom.dataNDBC.NDBC` and pass your buoy number.
-Then call the method get_data as following::
+Once this is done, an instance of :class:`~viroconcom.dataNDBC.NDBC` will be made and passed the buoy number to.
+Then the method get_data gets called as following::
 
     buoy = 41108
     date = "2017-02-11/to/2018-11-27"
 
     df = NDBC(buoy).get_data(date)
 
-That is basically it. Now, to get a specific variable, you can look in dataNDBC_ file for what variables
-.. _dataNDBC: https://github.com/adrdrew/viroconcom/blob/master/viroconcom/dataNDBC.py
-are available or go on NDBC website, simply call in this case::
+That is basically it. Now, to get a specific variable, simply call in this case::
 
     df.WVHT
     df.APD
 
-This will give you the significant wave height with WVHT and the average wave period with APD.
+This gives the significant wave height with WVHT and the average wave period with APD.
+Have a look in dataNDBC_ file for what variables are available or go on NDBC website.
+.. _dataNDBC: https://github.com/adrdrew/viroconcom/blob/master/viroconcom/dataNDBC.py
+
 
 Plot the data from NDBC
 -----------------------
-This is straight forward, you got two lists of data.
+This is straight forward, there are two lists of data.
 To plot them each, follow this code::
 
     # Plot significant wave height.
@@ -55,7 +56,7 @@ And to perform a scatter-plot, follow this code::
     sns.despine()
     plt.show()
 
-If you do all the plotting you will get:
+After plotting, this will show up:
 
 .. figure:: exampleNDBC.png
     :scale: 50 %
@@ -63,5 +64,34 @@ If you do all the plotting you will get:
 
     Plot of the data from NDBC.
 
-You can find the used code in exampleNDBC_
+The code used: exampleNDBC_
 .. _exampleNDBC: https://github.com/adrdrew/viroconcom/blob/master/examples/exampleNDBC.py
+
+
+Get data from ECMWF server
+==========================
+
+Here is a small instruction what to do before using ECMWF:
+
+To pull data from ECMWF (https://www.ecmwf.int/en/forecasts/datasets/reanalysis-datasets/era-interim) you must have
+an account on their website, put your key and E-Mail in :class:`~viroconcom.dataECMWF` and although save them as
+environment variables on your computer as following::
+
+    export ECMWF_API_URL="https://api.ecmwf.int/v1"
+    export ECMWF_API_KEY="key"
+    export ECMWF_API_EMAIL="email"
+
+.. note::
+
+    You have to put the key you get from ECMWF in "key" and your E-Mail you used to login in ECMWF as "email".
+
+For further Information visit: https://confluence.ecmwf.int/display/WEBAPI/Access+ECMWF+Public+Datasets
+The ecmwf-api-client will be installed with the requirements. Also, it is important to install the
+certificate: quovadis_rca2g3_der.cer_
+.. _quovadis_rca2g3_der.cer: https://github.com/adrdrew/viroconcom/blob/master/quovadis_rca2g3_der.cer
+
+This is all needed, to run the following:
+
+
+
+
