@@ -6,7 +6,7 @@ This will show you how you can get data from either NDBC or ECMWF(Era-Interim).
 Get data from NDBC server
 =========================
 
-To load data from NDBC first thing to do is to chosse a buoy and set a variable with the number of it.
+To load data from NDBC first thing to do is to choose a buoy and set a variable with the number of it.
 Next, set up a start and end date, this has to be in a specific form. Make sure that your buoy has data in the time you
 set up, by looking at NDBC`s website (https://www.ndbc.noaa.gov/), otherwise you will get an error.
 
@@ -27,7 +27,7 @@ This will give you the significant wave height with WVHT and the average wave pe
 
 Plot the data from NDBC
 -----------------------
-This is straight foreward, you got two lists of data.
+This is straight forward, you got two lists of data.
 To plot them each, follow this code::
     # Plot significant wave height.
     sub1 = plt.subplot(2, 2, 1)
