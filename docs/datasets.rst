@@ -87,11 +87,74 @@ environment variables on your computer as following::
 
 For further Information visit: https://confluence.ecmwf.int/display/WEBAPI/Access+ECMWF+Public+Datasets
 The ecmwf-api-client will be installed with the requirements. Also, it is important to install the
-certificate: quovadis_rca2g3_der.cer_
-.. _quovadis_rca2g3_der.cer: https://github.com/adrdrew/viroconcom/blob/master/quovadis_rca2g3_der.cer
+certificate: https://github.com/adrdrew/viroconcom/blob/master/quovadis_rca2g3_der.cer
 
 This is all needed, to run the following:
 
+Setup the :class:`~viroconcom.dataECMWF.ECMWF` by giving it the Argument required::
 
+    # Gets the sample and writes it into a file.
+    ecmwf = ECMWF("00:00:00", "0.75/0.75", "75/-20/10/60", "229.140/232.140")
+    ecmwf.get_data("2018-09-01/to/2018-09-30")
 
+This writes the asked data of specific area into a file that is saved in ../examples/datasets after running the code.
+Now, open the file for reading::
 
+    # Open the file for reading.
+    test_nc_file = '../examples/datasets/ecmwf.nc'
+    nc = netCDF4.Dataset(test_nc_file, mode='r')
+
+Since this is a complex data structure, dimensions, attributes and variables should be printed, to navigate in
+the structure::
+
+    # Print the Dimensions.
+    dims = nc.dimensions
+    for key in dims:
+        print("dimension: ["+key+"] = "+str(len(dims[key])))
+    # Print number of global attributes.
+    glob_attrs = nc.ncattrs()
+    print("Number of global attributes = "+str(len(glob_attrs)))
+    # Print global attributes.
+    for key in glob_attrs:
+        print("Global attribute: ["+key+"]= "+str(getattr(nc, key)))
+    # Print number of variables.
+    var_s = nc.variables
+    print("Number of variables = "+str(len(var_s)))
+    # Print which variables are available.
+    for var in var_s:
+        print("--------Variable "+var+"--------")
+        print("Shape = "+str(var_s[var].shape))
+        var_dims = var_s[var].dimensions
+        for vd in var_dims:
+            print("Dimension ["+vd+"]= " + str(len(dims[vd])))
+
+To see what the data is like, it is obvious to print a slice of the data::
+
+    # Now, if you want to print a slice of the data, choose the variable, here we choose 'swh'
+    # which means significant height of combined wind waves and swell.
+
+    # First print attributes.
+    var = 'swh'
+    var_attrs = var_s[var].ncattrs()
+    print("Number of attributes = "+str(len(var_attrs)))
+    for vat in var_attrs:
+        print("Attribute ["+vat+"]= " + str(getattr(var_s[var], vat)))
+    # Now print the slice of data.
+    data = var_s[var][1:2]
+    print(data)
+
+Finally, it is handy to plot the data to see its full range::
+
+    # And plot part of it against 'mwp' data.
+    plt.scatter(data[0], var_s['mwp'][1:2][0], marker='.')
+    plt.xlabel('significant height of combined wind waves and swell (m)')
+    plt.ylabel('mean wave period (s)')
+    plt.show()
+
+The plot shows this picture:
+
+.. figure:: exampleECMWF.png
+    :scale: 50 %
+    :alt: example data plot
+
+    Plot of the data from ECMWF.
