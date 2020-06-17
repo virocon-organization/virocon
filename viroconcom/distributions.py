@@ -778,11 +778,11 @@ class MultivariateDistribution():
         if not distributions is None:
             self.add_distributions(distributions, dependencies)
 
-    def draw_sample(self, n):
+    def draw_sample(self, number):
         """
         Parameters
         ----------
-        n : number of ...
+        number : number of ...
             int
 
         """
@@ -791,27 +791,27 @@ class MultivariateDistribution():
 
         while i < len(self.distributions):
             if i == 0:
-                sample.append(self.distributions[i].draw_sample(n))
+                sample.append(self.distributions[i].draw_sample(number))
                 i = i + 1
 
             elif self.dependencies[i][0] is not None:
-                sample.append(self.distributions[i].i_cdf(np.random.rand(n), sample, self.dependencies[i]))
+                sample.append(self.distributions[i].i_cdf(np.random.rand(number), sample, self.dependencies[i]))
                 i = i + 1
 
             elif self.dependencies[i][1] is not None:
-                sample.append(self.distributions[i].i_cdf(np.random.rand(n), sample, self.dependencies[i]))
+                sample.append(self.distributions[i].i_cdf(np.random.rand(number), sample, self.dependencies[i]))
                 i = i + 1
 
             elif self.dependencies[i][2] is not None:
-                sample.append(self.distributions[i].i_cdf(np.random.rand(n), sample, self.dependencies[i]))
+                sample.append(self.distributions[i].i_cdf(np.random.rand(number), sample, self.dependencies[i]))
                 i = i + 1
 
             elif len(self.dependencies[i]) == 4 and self.dependencies[i][3] is not None:
-                sample.append(self.distributions[i].i_cdf(np.random.rand(n), sample, self.dependencies[i]))
+                sample.append(self.distributions[i].i_cdf(np.random.rand(number), sample, self.dependencies[i]))
                 i = i + 1
 
             else:
-                sample.append(self.distributions[i].draw_sample(n))
+                sample.append(self.distributions[i].draw_sample(number))
                 i = i + 1
 
         return sample
