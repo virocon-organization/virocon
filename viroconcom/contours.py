@@ -637,13 +637,13 @@ def sort_points_to_form_continous_line(x, y, do_search_for_optimal_start=False):
 
 
 class DirectSamplingContour:
-    def __init__(self, mul_var_dist, n, return_period=25, state_duration=3, d_s_deg=5):
+    def __init__(self, mul_var_distribution, n, return_period=25, state_duration=3, d_s_deg=5):
         '''
         Calculates direct sampling contour.
         For fast compution, the data should be 100000 points or less
         Parameters
         ----------
-        mul_var_dist : MultivariateDistribution
+        mul_var_distribution : MultivariateDistribution
             2 dimensional distribution.
         n : int
             Number of datapoints to be sampled.
@@ -656,7 +656,7 @@ class DirectSamplingContour:
             directional step in degrees
         '''
 
-        self.mul_var_dist = mul_var_dist
+        self.mul_var_dist = mul_var_distribution
         self.n = n
         self.return_period = return_period
         self.state_duration = state_duration
