@@ -56,9 +56,10 @@ And to perform a scatter-plot, follow this code::
     plt.show()
 
 If you do all the plotting you will get:
+
 .. figure:: exampleNDBC.png
     :scale: 50 %
-    :alt: example contour plot
+    :alt: example data plot
 
     Plot of the data from NDBC.
 
