@@ -5,7 +5,7 @@ import numpy as np
 import scipy.stats as sts
 
 from .context import viroconcom
-
+from viroconcom.fitting import Fit
 from viroconcom.params import ConstantParam, FunctionParam
 from viroconcom.distributions import (
     WeibullDistribution, ExponentiatedWeibullDistribution,
@@ -51,6 +51,86 @@ class MultivariateDistributionTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             MultivariateDistribution(self.distributions, self.dependencies)
 
+    def test_multivariate_draw_sample(self):
+        """
+            Create an example MultivariateDistribution (Vanem2012 model).
+            """
+
+        # Define dependency tuple.
+        dep1 = (None, None, None)
+        dep2 = (0, None, 0)
+
+        # Define parameters.
+        shape = ConstantParam(1.471)
+        loc = ConstantParam(0.8888)
+        scale = ConstantParam(2.776)
+        par1 = (shape, loc, scale)
+
+        shape = FunctionParam('exp3', 0.0400, 0.1748, -0.2243)
+        loc = None
+        scale = FunctionParam('power3', 0.1, 1.489, 0.1901)
+        par2 = (shape, loc, scale)
+
+        del shape, loc, scale
+
+        # Create distributions.
+        dist1 = WeibullDistribution(*par1)
+        dist2 = LognormalDistribution(*par2)
+
+        distributions = [dist1, dist2]
+        dependencies = [dep1, dep2]
+        ref_points = 99119
+        mul_var_dist = MultivariateDistribution(distributions, dependencies)
+        my_points = mul_var_dist.draw_sample(ref_points)
+        my_points0 = my_points[0].size
+        my_points1 = my_points[1].size
+        assert ref_points == my_points0
+        assert ref_points == my_points1
+
+    def test_draw_sample_distribution(self):
+        """
+            Create an example MultivariateDistribution (Vanem2012 model).
+            """
+
+        # Define dependency tuple.
+        dep1 = (None, None, None)
+        dep2 = (0, None, 0)
+
+        # Define parameters.
+        shape = ConstantParam(1.471)
+        loc = ConstantParam(0.8888)
+        scale = ConstantParam(2.776)
+        par1 = (shape, loc, scale)
+
+        shape = FunctionParam('exp3', 0.0400, 0.1748, -0.2243)
+        loc = None
+        scale = FunctionParam('power3', 0.1, 1.489, 0.1901)
+        par2 = (shape, loc, scale)
+
+        del shape, loc, scale
+
+        # Create distributions.
+        dist1 = WeibullDistribution(*par1)
+        dist2 = LognormalDistribution(*par2)
+
+        distributions = [dist1, dist2]
+        dependencies = [dep1, dep2]
+        points = 1000000
+        mul_var_dist = MultivariateDistribution(distributions, dependencies)
+        my_points = mul_var_dist.draw_sample(points)
+
+        #Fit the sample
+        # Describe the distribution that should be fitted to the sample.
+        dist_description_0 = {'name': 'Weibull',
+                              'dependency': (None, None, None),
+                              'width_of_intervals': 2}
+        dist_description_1 = {'name': 'Lognormal',
+                              'dependency': (0, None, 0),
+                              'functions': ('exp3', None, 'power3')}
+        my_fit = Fit([my_points[0], my_points[1]], [dist_description_0, dist_description_1])
+        print(my_fit.mul_var_dist.distributions[0].shape(0))
+        print(mul_var_dist.distributions[0].shape(0))
+        assert np.round(my_fit.mul_var_dist.distributions[0].shape(0), 2) == np.round(mul_var_dist.distributions[0].shape(0), 2)
 
     def test_add_distribution_iter(self):
         """
