@@ -742,8 +742,8 @@ class DirectSamplingTest(unittest.TestCase):
 
         # Calculate contour
         sample = mul_dist.draw_sample(10000000)
-        dsc = DirectSamplingContour
-        test_contour_dsc = dsc.direct_sampling_contour(dsc, sample[0], sample[1], 25, 6, 6)
+        dsc = DirectSamplingContour(sample, 25, 6, 6)
+        test_contour_dsc = dsc.direct_sampling_contour()
         return test_contour_dsc
 
     def test_contour(self):

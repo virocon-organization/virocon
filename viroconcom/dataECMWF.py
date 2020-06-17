@@ -29,15 +29,10 @@ class ECMWF():
 
     """
 
-    def get_data(self, date, time, grid, area, param):
+    def __init__(self, time, grid, area, param):
         """
-        Gets specific data.
-
-        Parameters
-        ----------
-        date : str
-            Form: "year-month-day/to/year-month-day"
-            You will get the data for this time period.
+        Paramters
+        ---------
         time : str
             Form: "00:00:00"
             This gives you one measurement per day.
@@ -51,7 +46,22 @@ class ECMWF():
             Form: "229.140/232.140"
             There are different codes for different parameter. See: http://apps.ecmwf.int/codes/grib/param-db
             These: "229.140/232.140" are for mean wave period / significant height of combined wind, waves and swell
+        """
+        self.time = time
+        self.grid = grid
+        self.area = area
+        self.param = param
 
+
+    def get_data(self, date):
+        """
+        Gets specific sample.
+
+        Parameters
+        ----------
+        date : str
+            Form: "year-month-day/to/year-month-day"
+            You will get the sample for this time period.
         """
         server.retrieve({
             # Specify the ERA-Interim data archive. Don't change.
@@ -65,15 +75,15 @@ class ECMWF():
             "levtype": "sfc",
             # All available parameters, for codes see http://apps.ecmwf.int/codes/grib/param-db .
             # 229.140/232.140 means mean wave period / significant height of combined wind waves and swell.
-            "param": param,
+            "param": self.param,
             # Days worth of data.
             "date": date,
-            "time": time,
+            "time": self.time,
             "step": "0",
-            "grid": grid,
+            "grid": self.grid,
             # Specify as North/West/South/East in Geographic lat/long degrees.
             # Southern latitudes and Western longitudes must be given as negative numbers.
-            "area": area,
+            "area": self.area,
             # Definition of the format.
             "format": "netcdf",
             # Set an output file name.
