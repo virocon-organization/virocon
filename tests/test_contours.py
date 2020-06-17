@@ -741,8 +741,7 @@ class DirectSamplingTest(unittest.TestCase):
         mul_dist = MultivariateDistribution(distributions, dependencies)
 
         # Calculate contour
-        sample = mul_dist.draw_sample(10000000)
-        dsc = DirectSamplingContour(sample, 25, 6, 6)
+        dsc = DirectSamplingContour(mul_dist, 10000000, 25, 6, 6)
         test_contour_dsc = dsc.direct_sampling_contour()
         return test_contour_dsc
 
