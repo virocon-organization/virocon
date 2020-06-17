@@ -22,12 +22,12 @@ dependencies = [dep0, dep1]
 mul_dist = MultivariateDistribution(distributions, dependencies)
 
 # Draw sample from multivariate distribution with given number.
-n = 1000000  # Number of how many data is to be drawn for the sample.
+n = 1000000  # Number of how many sample is to be drawn for the sample.
 sample = mul_dist.draw_sample(n)
 
 # Compute a direct sampling contour.
 # Return period of 25 year, state duration of 6 hours, step of 6 degrees.
-dsc = DirectSamplingContour(sample[0], sample[1], 25, 6, 6)
+dsc = DirectSamplingContour(sample, 25, 6, 6)
 direct_sampling_contour = dsc.direct_sampling_contour()
 
 # Plot the contour and the sample.

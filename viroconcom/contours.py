@@ -637,14 +637,14 @@ def sort_points_to_form_continous_line(x, y, do_search_for_optimal_start=False):
 
 
 class DirectSamplingContour:
-    def __init__(self, x, y, return_period=25, state_duration=3, d_s_deg=5):
+    def __init__(self, sample, return_period=25, state_duration=3, d_s_deg=5):
         '''
         Calculates direct sampling contour.
         For fast compution, the data should be 100000 points or less
         Parameters
         ----------
-        x,y : array like
-            sample of data
+        sample : array like
+            2 dimensional sample of data with two lists containing the data.
         return_period : float
             The years to consider for calculation.
         state_duration : float
@@ -653,8 +653,8 @@ class DirectSamplingContour:
         d_s_deg : float
             directional step in degrees
         '''
-        self.x = x
-        self.y = y
+        self.x = sample[0]
+        self.y = sample[1]
         self.return_period = return_period
         self.state_duration = state_duration
         self.d_s_deg = d_s_deg
