@@ -1,9 +1,8 @@
-
 import matplotlib.pyplot as plt
 import seaborn as sns
 from viroconcom.dataNDBC import NDBC
 
-# Example for one year.
+# Example to get and plot data from NDBC.
 buoy = 41108
 date = "2017-02-11/to/2018-11-27"
 
@@ -22,7 +21,7 @@ df.APD.plot()
 sub2.set_ylabel('Average wave period (s)', fontsize=14)
 sub2.set_xlabel('Date')
 
-# Scatterplot of the data.
+# Scatter-plot of the data.
 sub3 = plt.subplot(2, 2, (2, 4))
 plt.scatter(df.WVHT, df.APD)
 sub3.set_xlabel('Significant wave height (m)', fontsize=14)
