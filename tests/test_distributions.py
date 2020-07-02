@@ -361,8 +361,8 @@ class ParametricDistributionTest(unittest.TestCase):
         # which represents significant wave height.
         hs = sts.weibull_min.rvs(1.5, loc=0, scale=3, size=1000, random_state=42)
 
-        # Add a zero to the dataset.
-        hs = np.append(hs, 0)
+        # Add zero-elements to the dataset.
+        hs = np.append(hs, [0, 0, 1.3])
 
         params = dist.fit(hs)
 

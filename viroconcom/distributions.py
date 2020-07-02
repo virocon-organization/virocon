@@ -546,6 +546,13 @@ class ExponentiatedWeibullDistribution(ParametricDistribution):
             pi = np.array(pi)
 
 
+            # As xi = 0 causes problems when xstar is calculated, zero-elements
+            # are not considered in the parameter estimation.
+            indices = np.nonzero(xi)
+            xi = xi[indices]
+            pi = pi[indices]
+
+
             # First, transform xi and pi to get a lienar relationship.
             xstar_i = np.log10(xi)
             power_term = np.power(pi, np.divide(1.0, delta))
