@@ -349,6 +349,28 @@ class ParametricDistributionTest(unittest.TestCase):
         self.assertGreater(dist.cdf(2), 0)
         self.assertGreater(dist.pdf(2), 0)
 
+    def test_fit_exponentiated_weibull_with_zero(self):
+        """
+        Tests fitting the exponentiated Weibull distribution if the dataset
+        contains 0s.
+        """
+
+        dist = ExponentiatedWeibullDistribution()
+
+        # Draw 1000 samples from a Weibull distribution with shape=1.5 and scale=3,
+        # which represents significant wave height.
+        hs = sts.weibull_min.rvs(1.5, loc=0, scale=3, size=1000, random_state=42)
+
+        # Add zero-elements to the dataset.
+        hs = np.append(hs, [0, 0, 1.3])
+
+        params = dist.fit(hs)
+
+        self.assertAlmostEquals(params[0], 1.5, delta=0.5)
+        self.assertIsNone(params[1], 2) # location parameter should be None.
+        self.assertAlmostEquals(params[2], 3, delta=1)
+        self.assertAlmostEquals(params[3], 1, delta=0.5)
+
 
 if __name__ == '__main__':
     unittest.main()
