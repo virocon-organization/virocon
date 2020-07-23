@@ -28,7 +28,8 @@ The following methods are implemented in viroconcom:
 - Computing an environmental contour using either the
 
   - inverse first-order reliability method (IFORM),
-  - inverse second-order reliability method (ISORM) or the
+  - inverse second-order reliability method (ISORM),
+  - the direct sampling contour method or the
   - highest density contour method.
 
 
