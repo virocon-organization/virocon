@@ -33,7 +33,7 @@ The following methods are implemented in viroconcom:
   - highest density contour method.
 
 
-ViroCon is written in Python 3.6.4. The software is seperated in two
+ViroCon is written in Python 3.7.4. The software is seperated in two
 main packages, viroconweb and viroconcom. This is the repository of
 viroconcom, which is the numerical core. It handles the statistical
 computations. viroconweb builds on viroconcom and is a web-based
