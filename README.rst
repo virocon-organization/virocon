@@ -23,13 +23,13 @@ environmental contour method.
 
 The following methods are implemented in viroconcom:
 
-- Fitting a probabilistic model to measurement data using maximum likelihood estimation
-- Defining a probabilistic model with the conditonal modeling approach (CMA)
+- Defining a joint probability distributions using a global hierarchical model structure
+- Estimating the parameters of a global hierarchical model ("Fitting")
 - Computing an environmental contour using either the
 
   - inverse first-order reliability method (IFORM),
   - inverse second-order reliability method (ISORM) or the
-  - highest density contour (HDC) method
+  - highest density contour method.
 
 
 ViroCon is written in Python 3.6.4. The software is seperated in two
