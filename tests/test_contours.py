@@ -765,8 +765,8 @@ class DirectSamplingTest(unittest.TestCase):
         #                13.44, 13.17, 13.12, 12.97, 12.99, 13.26, 13.05, 12.87, 12.77, 12.60, 12.18, 10.17, 3.39],
         #               [12.41, 13.57, 13.99, 13.99, 14.17, 14.44, 14.40, 14.46, 14.49, 14.66, 14.49, 14.63, 14.58,
         #                14.54, 14.60, 14.60, 14.60, 14.60, 14.66, 14.59, 14.51, 14.46, 14.33, 13.96, 12.33, 2.24])
-        np.testing.assert_allclose(contour.coordinates[0][0:26], ref_contour_hs_1, atol=0.2)
-        np.testing.assert_allclose(contour.coordinates[1][0:26], ref_contour_tz_1, atol=0.2)
+        np.testing.assert_allclose(contour.coordinates[0][0:26], ref_contour_hs_1, atol=0.3)
+        np.testing.assert_allclose(contour.coordinates[1][0:26], ref_contour_tz_1, atol=0.3)
 
 
 if __name__ == '__main__':
