@@ -16,8 +16,8 @@ from sklearn.neighbors import NearestNeighbors
 
 from ._n_sphere import NSphere
 
-__all__ = ["Contour", "IFormContour", "ISormContour", "HighestDensityContour",
-           "sort_points_to_form_continous_line"]
+__all__ = ["Contour", "IFormContour", "ISormContour", "DirectSamplingContour",
+           "HighestDensityContour", "sort_points_to_form_continous_line"]
 
 
 class Contour(ABC):
@@ -324,6 +324,93 @@ class ISormContour(Contour):
         self.beta = computed[0]
         self.sphere_points = computed[1]
         self.coordinates = computed[2]
+
+
+class DirectSamplingContour(Contour):
+    def __init__(self, mul_var_dist, return_period=25, state_duration=3,
+                 n=100000, deg_step=5, data=None, timeout=None):
+        '''
+        Drect sampling contour as introduced by Huseby et al. (2013), see
+        doi.org/10.1016/j.oceaneng.2012.12.034 .
+
+        This implementation only works frwo two-dimensional distributions.
+
+        Parameters
+        ----------
+        mul_var_dist : MultivariateDistribution
+            Must be 2-dimensional.
+        n : int
+            Number of datapoints to be sampled.
+        return_period : int
+            The years to consider for calculation.
+        state_duration : int
+            Time period for which an environmental state is measured,
+            expressed in hours.
+        deg_step : float
+            Directional step in degrees.
+        '''
+
+        # Calls _setup
+        super().__init__(mul_var_dist, return_period, state_duration, timeout,
+                         n, deg_step, data)
+
+    def _setup(self, n, deg_step, data):
+        """
+        Returns
+        -------
+        x_con, y_con :
+            contour of sample
+        """
+
+        if data is None:
+            data = self.distribution.draw_sample(n)
+        x, y = data
+
+        # Calculate non-exceedance probability.
+        alpha = 1 - (1 / (self.return_period * 365.25 * 24 / self.state_duration))
+
+        # Define the angles such the coordinates[0] and coordinates[1] will
+        # be based on the exceedance plane with angle 0 deg if 0 deg is along
+        # the x-axis. Angles will increase counterclockwise in a xy-plot. Not
+        # enirely sure why the + 2*rad_step is required, but tests show it.
+        rad_step = deg_step * np.pi / 180
+        angles = np.arange(0.5 * np.pi + 2 * rad_step, -1.5 * np.pi + rad_step, -1 * rad_step)
+
+        length_t = len(angles)
+        r = np.zeros(length_t)
+
+        # Find radius for each angle.
+        i = 0
+        while i < length_t:
+            z = x * np.cos(angles[i]) + y * np.sin(angles[i])
+            r[i] = np.quantile(z, alpha)
+            i = i + 1
+
+        # Find intersection of lines.
+        t = np.array(np.concatenate((angles, [angles[0]]), axis=0))
+        r = np.array(np.concatenate((r, [r[0]]), axis=0))
+
+        denominator = np.sin(t[2:]) * np.cos(t[1:len(t)-1]) - np.sin(t[1:len(t)-1]) * np.cos(t[2:])
+
+        x_cont = (np.sin(t[2:]) * r[1:len(r)-1] - np.sin(t[1:len(t)-1]) * r[2:]) / denominator
+        y_cont = (-np.cos(t[2:]) * r[1:len(r)-1] + np.cos(t[1:len(t)-1]) * r[2:]) / denominator
+
+        coordinates = [x_cont, y_cont]
+
+
+        return (data, coordinates)
+
+    def _save(self, computed):
+        """
+        Save the computed parameters.
+
+        Parameters
+        ----------
+        computed : tuple of objects
+            The computed results to be saved.
+        """
+        self.data = computed[0]
+        self.coordinates = computed[1]
 
 
 class HighestDensityContour(Contour):

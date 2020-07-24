@@ -22,7 +22,6 @@ __all__ = ["Distribution", "ParametricDistribution", "WeibullDistribution",
 class Distribution(ABC):
     """
     Abstract base class for distributions.
-
     """
 
     @abstractmethod
@@ -33,6 +32,9 @@ class Distribution(ABC):
     def i_cdf(self, probabilities, rv_values, dependency):
         """Calculate percent-point function. (inverse cumulative distribution function)"""
 
+    def draw_sample(self, n):
+        probabilities = np.random.rand(n)
+        return self.i_cdf(probabilities)
 
 class ParametricDistribution(Distribution, ABC):
     """
@@ -835,6 +837,42 @@ class MultivariateDistribution():
             elif len(self.dependencies) < 3:
                 return ("The length of dependencies was less than three.")
         return None
+
+    def draw_sample(self, n):
+        """
+        Parameters
+        ----------
+        n : number of observations that shall be drawn.
+        """
+        sample = []
+        i = 0
+
+        while i < len(self.distributions):
+            if i == 0:
+                sample.append(self.distributions[i].draw_sample(n))
+                i = i + 1
+
+            elif self.dependencies[i][0] is not None:
+                sample.append(self.distributions[i].i_cdf(np.random.rand(n), sample, self.dependencies[i]))
+                i = i + 1
+
+            elif self.dependencies[i][1] is not None:
+                sample.append(self.distributions[i].i_cdf(np.random.rand(n), sample, self.dependencies[i]))
+                i = i + 1
+
+            elif self.dependencies[i][2] is not None:
+                sample.append(self.distributions[i].i_cdf(np.random.rand(n), sample, self.dependencies[i]))
+                i = i + 1
+
+            elif len(self.dependencies[i]) == 4 and self.dependencies[i][3] is not None:
+                sample.append(self.distributions[i].i_cdf(np.random.rand(n), sample, self.dependencies[i]))
+                i = i + 1
+
+            else:
+                sample.append(self.distributions[i].draw_sample(n))
+                i = i + 1
+
+        return sample
 
     def cell_averaged_joint_pdf(self, coords):
         """

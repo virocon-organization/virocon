@@ -17,7 +17,8 @@ from viroconcom.params import ConstantParam, FunctionParam
 from viroconcom.distributions import (
     WeibullDistribution, ExponentiatedWeibullDistribution, LognormalDistribution,
     NormalDistribution, MultivariateDistribution)
-from viroconcom.contours import IFormContour, ISormContour, HighestDensityContour
+from viroconcom.contours import IFormContour, ISormContour, \
+    HighestDensityContour, DirectSamplingContour
 
 
 _here = os.path.dirname(__file__)
@@ -710,6 +711,63 @@ class HDCTest(unittest.TestCase):
     #                  line_style='b-')
     #     ax2.title.set_text('Sorted')
     #     #plt.show()
+
+
+class DirectSamplingTest(unittest.TestCase):
+    def _setup(self,
+               dep1=(None, None, None),
+               dep2=(0, None, 0),
+               par1=(ConstantParam(1.471), ConstantParam(0.8888),
+                     ConstantParam(2.776)),
+               par2=(FunctionParam('exp3', 0.0400, 0.1748, -0.2243), None,
+                     FunctionParam('power3', 0.1, 1.489, 0.1901))
+               ):
+        """
+        Create a 50-year contour (same as in DOI: 10.1016/j.oceaneng.2012.12.034).
+        """
+
+        # Define dependency tuple.
+        self.dep1 = dep1
+        self.dep2 = dep2
+
+        # Define parameters.
+        self.par1 = par1
+        self.par2 = par2
+
+        # Create distributions.
+        dist1 = WeibullDistribution(*par1)
+        dist2 = LognormalDistribution(sigma=par2[0], mu=par2[2])
+
+        distributions = [dist1, dist2]
+        dependencies = [dep1, dep2]
+
+        mul_dist = MultivariateDistribution(distributions, dependencies)
+
+        # Calculate contour.
+        ds_contour = DirectSamplingContour(mul_dist, 1, 6, 1000000, 6)
+        return ds_contour
+
+    def test_direct_sampling_contour(self):
+        """
+        Compures a direct sampling contour and compares it with results
+        presented in the literature (DOI: 10.1016/j.oceaneng.2012.12.034).
+        """
+        contour = self._setup()
+        ref_contour_hs_1 = \
+            [9.99, 10.65, 10.99, 11.25, 11.25, 11.41, 11.42, 11.46, 11.48,
+             11.54, 11.57, 11.56, 11.58, 11.59, 11.59, 11.60, 11.60, 11.59,
+             11.59, 11.56, 11.53, 11.46, 11.26, 10.88, 7.44, 2.05]
+        ref_contour_tz_1 = \
+            [12.34, 12.34, 12.31, 12.25, 12.25, 12.18, 12.17, 12.15, 12.13,
+             12.06, 12.02, 12.03, 12.00, 11.96, 11.95, 11.86, 11.84, 11.77,
+             11.76, 11.67, 11.60, 11.47, 11.20, 10.77, 7.68, 3.76]
+        #ref_contour_25 = ([13.68, 13.68, 13.63, 13.63, 13.57, 13.45, 13.47, 13.43, 13.41, 13.22, 13.45, 13.21, 13.32,
+        #                13.44, 13.17, 13.12, 12.97, 12.99, 13.26, 13.05, 12.87, 12.77, 12.60, 12.18, 10.17, 3.39],
+        #               [12.41, 13.57, 13.99, 13.99, 14.17, 14.44, 14.40, 14.46, 14.49, 14.66, 14.49, 14.63, 14.58,
+        #                14.54, 14.60, 14.60, 14.60, 14.60, 14.66, 14.59, 14.51, 14.46, 14.33, 13.96, 12.33, 2.24])
+        np.testing.assert_allclose(contour.coordinates[0][0:26], ref_contour_hs_1, atol=0.2)
+        np.testing.assert_allclose(contour.coordinates[1][0:26], ref_contour_tz_1, atol=0.2)
+
 
 if __name__ == '__main__':
     unittest.main()
