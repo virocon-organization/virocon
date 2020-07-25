@@ -843,34 +843,26 @@ class MultivariateDistribution():
         Parameters
         ----------
         n : number of observations that shall be drawn.
+
+        Returns
+        -------
+        sample : 2-dimensional ndarray
+            Array is of shape (d, n) with d being the number of variables and
+            n being the number of observations.
         """
         sample = []
-        i = 0
-
+        if len(self.distributions) > 0:
+            sample.append(self.distributions[0].draw_sample(n))
+        i = 1
         while i < len(self.distributions):
-            if i == 0:
-                sample.append(self.distributions[i].draw_sample(n))
-                i = i + 1
-
-            elif self.dependencies[i][0] is not None:
-                sample.append(self.distributions[i].i_cdf(np.random.rand(n), sample, self.dependencies[i]))
-                i = i + 1
-
-            elif self.dependencies[i][1] is not None:
-                sample.append(self.distributions[i].i_cdf(np.random.rand(n), sample, self.dependencies[i]))
-                i = i + 1
-
-            elif self.dependencies[i][2] is not None:
-                sample.append(self.distributions[i].i_cdf(np.random.rand(n), sample, self.dependencies[i]))
-                i = i + 1
-
-            elif len(self.dependencies[i]) == 4 and self.dependencies[i][3] is not None:
-                sample.append(self.distributions[i].i_cdf(np.random.rand(n), sample, self.dependencies[i]))
-                i = i + 1
-
+            # If this dimension is independent the parameters are directly available.
+            if all(d is None for d in self.dependencies[i]):
+                sample.append(self.distributions[0].draw_sample(n))
+            # Otherwise, the conditioning random variables need to be evaluated.
             else:
-                sample.append(self.distributions[i].draw_sample(n))
-                i = i + 1
+                sample.append(self.distributions[i].i_cdf(
+                    np.random.rand(n), sample, self.dependencies[i]))
+            i = i + 1
 
         return sample
 

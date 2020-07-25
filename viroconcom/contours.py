@@ -333,7 +333,7 @@ class DirectSamplingContour(Contour):
         Drect sampling contour as introduced by Huseby et al. (2013), see
         doi.org/10.1016/j.oceaneng.2012.12.034 .
 
-        This implementation only works frwo two-dimensional distributions.
+        This implementation only works for two-dimensional distributions.
 
         Parameters
         ----------
@@ -367,7 +367,7 @@ class DirectSamplingContour(Contour):
 
     def _setup(self, n, deg_step, sample):
         """
-        Calculates the coordintes of the DS contour.
+        Calculates the coordinates of the DS contour.
 
         Parameters
         ----------
@@ -375,11 +375,14 @@ class DirectSamplingContour(Contour):
             Number of data points that shall be Monte Carlo simulated.
         deg_step : float
             Directional step in degrees.
-        sample
+        sample : 2-dimensional ndarray, optional
+            Array is of shape (d, n) with d being the number of variables and
+            n being the number of observations.
 
         Returns
         -------
-
+        tuple of objects
+            The computed results (sample, contour coordinates).
         """
 
         if sample is None:
@@ -390,11 +393,12 @@ class DirectSamplingContour(Contour):
         alpha = 1 - (1 / (self.return_period * 365.25 * 24 / self.state_duration))
 
         # Define the angles such the coordinates[0] and coordinates[1] will
-        # be based on the exceedance plane with angle 0 deg if 0 deg is along
-        # the x-axis. Angles will increase counterclockwise in a xy-plot. Not
-        # enirely sure why the + 2*rad_step is required, but tests show it.
+        # be based on the exceedance plane with angle 0 deg, with 0 deg being
+        # along the x-axis. Angles will increase counterclockwise in a xy-plot.
+        # Not enirely sure why the + 2*rad_step is required, but tests show it.
         rad_step = deg_step * np.pi / 180
-        angles = np.arange(0.5 * np.pi + 2 * rad_step, -1.5 * np.pi + rad_step, -1 * rad_step)
+        angles = np.arange(0.5 * np.pi + 2 * rad_step, -1.5 * np.pi + rad_step,
+                           -1 * rad_step)
 
         length_t = len(angles)
         r = np.zeros(length_t)
@@ -407,13 +411,16 @@ class DirectSamplingContour(Contour):
             i = i + 1
 
         # Find intersection of lines.
-        t = np.array(np.concatenate((angles, [angles[0]]), axis=0))
+        a = np.array(np.concatenate((angles, [angles[0]]), axis=0))
         r = np.array(np.concatenate((r, [r[0]]), axis=0))
 
-        denominator = np.sin(t[2:]) * np.cos(t[1:len(t)-1]) - np.sin(t[1:len(t)-1]) * np.cos(t[2:])
+        denominator = np.sin(a[2:]) * np.cos(a[1:len(a)-1]) - \
+                      np.sin(a[1:len(a)-1]) * np.cos(a[2:])
 
-        x_cont = (np.sin(t[2:]) * r[1:len(r)-1] - np.sin(t[1:len(t)-1]) * r[2:]) / denominator
-        y_cont = (-np.cos(t[2:]) * r[1:len(r)-1] + np.cos(t[1:len(t)-1]) * r[2:]) / denominator
+        x_cont = (np.sin(a[2:]) * r[1:len(r)-1]
+                  - np.sin(a[1:len(a)-1]) * r[2:]) / denominator
+        y_cont = (-np.cos(a[2:]) * r[1:len(r)-1]
+                  + np.cos(a[1:len(a)-1]) * r[2:]) / denominator
 
         coordinates = [x_cont, y_cont]
 
@@ -427,7 +434,7 @@ class DirectSamplingContour(Contour):
         Parameters
         ----------
         computed : tuple of objects
-            The computed results to be saved.
+            The computed results to be saved (sample, contour coordinates).
         """
         self.sample = computed[0]
         self.coordinates = computed[1]
