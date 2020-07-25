@@ -348,6 +348,18 @@ class DirectSamplingContour(Contour):
             Number of data points that shall be Monte Carlo simulated.
         deg_step : float, optional
             Directional step in degrees. Defaults to 5.
+        sample : 2-dimensional ndarray, optional
+            Array is of shape (d, n) with d being the number of variables and
+            n being the number of observations.
+        timeout : int, optional
+            The maximum time in seconds there the contour has to be computed.
+            This parameter also controls multiprocessing. If timeout is None
+            serial processing is performed, if it is not None multiprocessing
+            is used. Defaults to None.
+        Raises
+        ------
+        TimeoutError,
+            If the calculation takes too long and the given value for timeout is exceeded.
         """
         # Calls _setup
         super().__init__(mul_var_dist, return_period, state_duration, timeout,
@@ -417,7 +429,7 @@ class DirectSamplingContour(Contour):
         computed : tuple of objects
             The computed results to be saved.
         """
-        self.data = computed[0]
+        self.sample = computed[0]
         self.coordinates = computed[1]
 
 
@@ -493,8 +505,6 @@ class HighestDensityContour(Contour):
                                                      limits, deltas)
 
         """
-        # TODO document sampling
-        # TODO document alpha
         # calls _setup
         super().__init__(mul_var_distribution, return_period, state_duration,
                          timeout, limits, deltas)

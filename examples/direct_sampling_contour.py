@@ -1,5 +1,6 @@
 from viroconcom.params import ConstantParam, FunctionParam
-from viroconcom.distributions import WeibullDistribution, LognormalDistribution, MultivariateDistribution
+from viroconcom.distributions import WeibullDistribution, LognormalDistribution, \
+    MultivariateDistribution
 from viroconcom.contours import DirectSamplingContour
 import matplotlib.pyplot as plt
 
