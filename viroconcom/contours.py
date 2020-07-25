@@ -704,6 +704,10 @@ def sort_points_to_form_continous_line(x, y, do_search_for_optimal_start=False):
     ----------
     x : array_like
     y : array_like
+    do_search_for_optimal_start : boolean, optional
+     If true, the algorithm also searches for the ideal starting node, see the
+     stackoverflow link for more info.
+
     Returns
     -------
     sorted_points : tuple of array_like floats

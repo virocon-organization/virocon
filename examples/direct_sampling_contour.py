@@ -22,7 +22,7 @@ distributions = [dist0, dist1]
 dependencies = [dep0, dep1]
 mul_dist = MultivariateDistribution(distributions, dependencies)
 
-# Compute a 1-year direct sampling contour by drawing 10^6 observations.
+# Compute a 1-year direct sampling contour based on drawing 10^6 observations.
 contour = DirectSamplingContour(mul_var_dist=mul_dist, return_period=1,
                                 state_duration=6, n=1000000, deg_step=6)
 
@@ -34,5 +34,4 @@ plt.plot([contour.coordinates[1][-1], contour.coordinates[1][0]],
 plt.title('1-year direct sampling contour')
 plt.ylabel('Significant wave height (m)')
 plt.xlabel('Zero-up-crossing period (s)')
-plt.grid(True)
 plt.show()
