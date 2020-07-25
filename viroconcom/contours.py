@@ -327,9 +327,9 @@ class ISormContour(Contour):
 
 
 class DirectSamplingContour(Contour):
-    def __init__(self, mul_var_dist, return_period=25, state_duration=3,
-                 n=100000, deg_step=5, data=None, timeout=None):
-        '''
+    def __init__(self, mul_var_dist, return_period=1, state_duration=3,
+                 n=100000, deg_step=5, sample=None, timeout=None):
+        """
         Drect sampling contour as introduced by Huseby et al. (2013), see
         doi.org/10.1016/j.oceaneng.2012.12.034 .
 
@@ -339,32 +339,40 @@ class DirectSamplingContour(Contour):
         ----------
         mul_var_dist : MultivariateDistribution
             Must be 2-dimensional.
-        n : int
-            Number of datapoints to be sampled.
-        return_period : int
-            The years to consider for calculation.
-        state_duration : int
+        return_period : int, optional
+            Return period given in years.. Defaults to 1.
+        state_duration : int, optional
             Time period for which an environmental state is measured,
-            expressed in hours.
-        deg_step : float
-            Directional step in degrees.
-        '''
-
+            expressed in hours. Defaults to 3.
+        n : int, optional
+            Number of data points that shall be Monte Carlo simulated.
+        deg_step : float, optional
+            Directional step in degrees. Defaults to 5.
+        """
         # Calls _setup
         super().__init__(mul_var_dist, return_period, state_duration, timeout,
-                         n, deg_step, data)
+                         n, deg_step, sample)
 
-    def _setup(self, n, deg_step, data):
+    def _setup(self, n, deg_step, sample):
         """
+        Calculates the coordintes of the DS contour.
+
+        Parameters
+        ----------
+        n : int
+            Number of data points that shall be Monte Carlo simulated.
+        deg_step : float
+            Directional step in degrees.
+        sample
+
         Returns
         -------
-        x_con, y_con :
-            contour of sample
+
         """
 
-        if data is None:
-            data = self.distribution.draw_sample(n)
-        x, y = data
+        if sample is None:
+            sample = self.distribution.draw_sample(n)
+        x, y = sample
 
         # Calculate non-exceedance probability.
         alpha = 1 - (1 / (self.return_period * 365.25 * 24 / self.state_duration))
@@ -398,7 +406,7 @@ class DirectSamplingContour(Contour):
         coordinates = [x_cont, y_cont]
 
 
-        return (data, coordinates)
+        return (sample, coordinates)
 
     def _save(self, computed):
         """
@@ -414,8 +422,8 @@ class DirectSamplingContour(Contour):
 
 
 class HighestDensityContour(Contour):
-    def __init__(self, mul_var_distribution, return_period=25, state_duration=3, limits=None,
-                 deltas=None, timeout=None):
+    def __init__(self, mul_var_distribution, return_period=25, state_duration=3,
+                 limits=None, deltas=None, timeout=None):
         """
         Contour based on highest density contour method.
 
