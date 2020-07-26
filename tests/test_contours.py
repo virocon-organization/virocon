@@ -723,8 +723,10 @@ class DirectSamplingTest(unittest.TestCase):
                      FunctionParam('power3', 0.1, 1.489, 0.1901))
                ):
         """
-        Create a 50-year contour (same as in DOI: 10.1016/j.oceaneng.2012.12.034).
+        Create a 1-year contour (same as in DOI: 10.1016/j.oceaneng.2012.12.034).
         """
+        return_period = 1 # years
+        state_duration = 6 # hours
 
         # Define dependency tuple.
         self.dep1 = dep1
@@ -744,7 +746,8 @@ class DirectSamplingTest(unittest.TestCase):
         mul_dist = MultivariateDistribution(distributions, dependencies)
 
         # Calculate contour.
-        ds_contour = DirectSamplingContour(mul_dist, 1, 6, 500000, 6)
+        ds_contour = DirectSamplingContour(
+            mul_dist, return_period, state_duration, 500000, 6)
         return ds_contour
 
     def test_direct_sampling_contour(self):
