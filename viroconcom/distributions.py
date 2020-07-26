@@ -740,7 +740,8 @@ class NormalDistribution(ParametricDistribution):
 
 class MultivariateDistribution():
     """
-    A Multivariate distribution consisting of multiple univariate distributions and dependencies.
+    A multivariate distribution that is structured as a hierarchical model.
+    It consists of of multiple univariate distributions and dependencies.
 
     Attributes
     ----------
