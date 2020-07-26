@@ -749,7 +749,7 @@ class DirectSamplingTest(unittest.TestCase):
 
     def test_direct_sampling_contour(self):
         """
-        Compures a direct sampling contour and compares it with results
+        Computes a direct sampling contour and compares it with results
         presented in the literature (DOI: 10.1016/j.oceaneng.2012.12.034).
         """
         contour = self._setup()
