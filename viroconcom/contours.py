@@ -340,7 +340,7 @@ class DirectSamplingContour(Contour):
         mul_var_dist : MultivariateDistribution
             Must be 2-dimensional.
         return_period : int, optional
-            Return period given in years.. Defaults to 1.
+            Return period given in years. Defaults to 1.
         state_duration : int, optional
             Time period for which an environmental state is measured,
             expressed in hours. Defaults to 3.
@@ -349,8 +349,9 @@ class DirectSamplingContour(Contour):
         deg_step : float, optional
             Directional step in degrees. Defaults to 5.
         sample : 2-dimensional ndarray, optional
-            Array is of shape (d, n) with d being the number of variables and
-            n being the number of observations.
+            Monte Carlo simulated environmental states. Array is of shape (d, n)
+            with d being the number of variables and n being the number of
+            observations.
         timeout : int, optional
             The maximum time in seconds there the contour has to be computed.
             This parameter also controls multiprocessing. If timeout is None
@@ -361,7 +362,7 @@ class DirectSamplingContour(Contour):
         TimeoutError,
             If the calculation takes too long and the given value for timeout is exceeded.
         """
-        # Calls _setup
+        # Call _setup .
         super().__init__(mul_var_dist, return_period, state_duration, timeout,
                          n, deg_step, sample)
 
@@ -384,6 +385,9 @@ class DirectSamplingContour(Contour):
         tuple of objects
             The computed results (sample, contour coordinates).
         """
+        if self.distribution.n_dim != 2:
+            raise NotImplementedError("DirectSamplingContour is currently only "
+                                      "implemented for two dimensions.")
 
         if sample is None:
             sample = self.distribution.draw_sample(n)

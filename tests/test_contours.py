@@ -767,6 +767,18 @@ class DirectSamplingTest(unittest.TestCase):
         np.testing.assert_allclose(contour.coordinates[0][0:26], ref_contour_hs_1, atol=0.5)
         np.testing.assert_allclose(contour.coordinates[1][0:26], ref_contour_tz_1, atol=0.5)
 
+    def test_3d_ds_contour(self):
+        par = (ConstantParam(1.471), ConstantParam(0.8888),
+                ConstantParam(2.776))
+        dist = WeibullDistribution(*par)
+        dep = (None, None, None)
+        distributions = (dist, dist, dist)
+        dependencies = (dep, dep, dep)
+        mul_dist = MultivariateDistribution(distributions, dependencies)
+
+        # Calculate a 3D contour, which should raise an error.
+        self.assertRaises(NotImplementedError,
+                          DirectSamplingContour, mul_dist, 1, 3, 500000, 6)
 
 if __name__ == '__main__':
     unittest.main()
