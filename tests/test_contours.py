@@ -768,6 +768,9 @@ class DirectSamplingTest(unittest.TestCase):
         np.testing.assert_allclose(contour.coordinates[1][0:26], ref_contour_tz_1, atol=0.5)
 
     def test_3d_ds_contour(self):
+        """
+        Tests whether calculating a 3D DS contour raises the right error.
+        """
         par = (ConstantParam(1.471), ConstantParam(0.8888),
                 ConstantParam(2.776))
         dist = WeibullDistribution(*par)
