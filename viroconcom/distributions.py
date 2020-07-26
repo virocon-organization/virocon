@@ -768,6 +768,39 @@ class MultivariateDistribution():
         if not distributions is None:
             self.add_distributions(distributions, dependencies)
 
+    def cdf(self):
+        raise NotImplementedError
+
+    def pdf(self):
+        raise NotImplementedError
+
+    def draw_sample(self, n):
+        """
+        Parameters
+        ----------
+        n : number of observations that shall be drawn.
+
+        Returns
+        -------
+        sample : 2-dimensional ndarray
+            Array is of shape (d, n) with d being the number of variables and
+            n being the number of observations.
+        """
+        sample = []
+        if len(self.distributions) > 0:
+            sample.append(self.distributions[0].draw_sample(n))
+        i = 1
+        while i < len(self.distributions):
+            # If this dimension is independent the parameters are directly available.
+            if all(d is None for d in self.dependencies[i]):
+                sample.append(self.distributions[0].draw_sample(n))
+            # Otherwise, the conditioning random variables need to be evaluated.
+            else:
+                sample.append(self.distributions[i].i_cdf(
+                    np.random.rand(n), sample, self.dependencies[i]))
+            i = i + 1
+
+        return sample
 
     def add_distributions(self, distributions, dependencies):
         """
@@ -837,34 +870,6 @@ class MultivariateDistribution():
             elif len(self.dependencies) < 3:
                 return ("The length of dependencies was less than three.")
         return None
-
-    def draw_sample(self, n):
-        """
-        Parameters
-        ----------
-        n : number of observations that shall be drawn.
-
-        Returns
-        -------
-        sample : 2-dimensional ndarray
-            Array is of shape (d, n) with d being the number of variables and
-            n being the number of observations.
-        """
-        sample = []
-        if len(self.distributions) > 0:
-            sample.append(self.distributions[0].draw_sample(n))
-        i = 1
-        while i < len(self.distributions):
-            # If this dimension is independent the parameters are directly available.
-            if all(d is None for d in self.dependencies[i]):
-                sample.append(self.distributions[0].draw_sample(n))
-            # Otherwise, the conditioning random variables need to be evaluated.
-            else:
-                sample.append(self.distributions[i].i_cdf(
-                    np.random.rand(n), sample, self.dependencies[i]))
-            i = i + 1
-
-        return sample
 
     def cell_averaged_joint_pdf(self, coords):
         """
