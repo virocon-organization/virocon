@@ -138,11 +138,20 @@ class MultivariateDistributionTest(unittest.TestCase):
         """
          Tests the cdf() function of MulvariateDistribution.
          """
-        p = self.mul_var_dist.cdf([2, 2])
+        p = self.mul_var_dist.cdf([2, 2], lower_integration_limit=[0, 0])
         self.assertAlmostEqual(p, 0, delta=0.01)
 
-        p = self.mul_var_dist.cdf([[2, 20], [2, 16]])
+        p = self.mul_var_dist.cdf([[2, 20], [2, 16]], lower_integration_limit=[0, 0])
         np.testing.assert_allclose(p, [0, 1], atol=0.01)
+
+        # Create a bivariate normal distribution, where we know that at the
+        # peak, the CDF must evaluate to 0.25.
+        dist = NormalDistribution(shape=None, loc=ConstantParam(1), scale=ConstantParam(1))
+        dep = (None, None, None)
+        bivariate_dist = MultivariateDistribution([dist, dist], [dep, dep])
+
+        p = bivariate_dist.cdf([1, 1])
+        self.assertAlmostEqual(p, 0.25, delta=0.001)
 
     def test_multivariate_pdf(self):
         """

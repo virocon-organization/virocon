@@ -782,7 +782,7 @@ class MultivariateDistribution():
         if not distributions is None:
             self.add_distributions(distributions, dependencies)
 
-    def cdf(self, x):
+    def cdf(self, x, lower_integration_limit=(-np.inf, -np.inf)):
         """
         Joint cumulative distribution function.
 
@@ -792,6 +792,9 @@ class MultivariateDistribution():
             Points at which to calculate the cdf.
             Array is of shape (d, n) with d being the number of variables and
             n being the number of points.
+        lower_integration_limit : array_like, optional
+            Lower limits for the ingration of the pdf. Must have a length of n.
+            Defaults to (-np.inf, -np.inf).
         Returns
         -------
         p : array_like
@@ -805,14 +808,14 @@ class MultivariateDistribution():
             p = np.empty(x1.size)
             if x0.size == 1:
                 p, error = scipy.integrate.nquad(self.pdf_2d, [
-                    [0, x0],
-                    [0, x1]
+                    [lower_integration_limit[0], x0],
+                    [lower_integration_limit[1], x1]
                 ])
             else:
                 for i in range(x0.size):
                     p[i], error = scipy.integrate.nquad(self.pdf_2d, [
-                        [0, x0[i]],
-                        [0, x1[i]]
+                        [lower_integration_limit[0], x0[i]],
+                        [lower_integration_limit[1], x1[i]]
                     ])
         else:
             raise NotImplementedError('CDF is currently only implemented for '
