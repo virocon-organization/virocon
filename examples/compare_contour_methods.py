@@ -33,15 +33,15 @@ deltas = [0.005, 0.005] # Dimensions of the grid cells
 hdens_contour = HighestDensityContour(
     mul_dist, return_period, sea_state_duration, limits, deltas)
 hdc_coordinates = sort_points_to_form_continous_line(
-    hdens_contour.coordinates[0][0], hdens_contour.coordinates[0][1])
+    hdens_contour.coordinates[0], hdens_contour.coordinates[1])
 
 # Plot the four contours (a similar plot was presented in the paper by
 # Haselsteiner et al. (2017; 10.1016/j.coastaleng.2017.03.002), Fig. 8 c).
 fig = plt.figure(figsize=(5, 5), dpi=150)
 ax = fig.add_subplot(111)
-plot_contour(iform_contour.coordinates[0][1], iform_contour.coordinates[0][0],
+plot_contour(iform_contour.coordinates[1], iform_contour.coordinates[0],
              ax, line_style='b-', contour_label='IFORM contour')
-plot_contour(isorm_contour.coordinates[0][1], isorm_contour.coordinates[0][0],
+plot_contour(isorm_contour.coordinates[1], isorm_contour.coordinates[0],
              ax, line_style='r-', contour_label='ISORM contour')
 plot_contour(ds_contour.coordinates[1], ds_contour.coordinates[0], ax,
              line_style='g-', contour_label='Direct sampling contour')

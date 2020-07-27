@@ -127,9 +127,9 @@ class MultivariateDistributionTest(unittest.TestCase):
         fit = Fit(sample, [dist_description_0, dist_description_1])
         fitted_dist0 = fit.mul_var_dist.distributions[0]
         fitted_dist1 = fit.mul_var_dist.distributions[1]
-        self.assertAlmostEqual(fitted_dist0.shape(0), self.shape(0), delta=0.1)
-        self.assertAlmostEqual(fitted_dist0.loc(0), self.loc(0), delta=0.1)
-        self.assertAlmostEqual(fitted_dist0.scale(0), self.scale(0), delta=0.1)
+        self.assertAlmostEqual(fitted_dist0.shape(0), self.shape(0), delta=0.15)
+        self.assertAlmostEqual(fitted_dist0.loc(0), self.loc(0), delta=0.15)
+        self.assertAlmostEqual(fitted_dist0.scale(0), self.scale(0), delta=0.15)
         self.assertAlmostEqual(fitted_dist1.shape.a, 0.04, delta=0.1)
         self.assertAlmostEqual(fitted_dist1.shape.b, 0.1748, delta=0.1)
         self.assertAlmostEqual(fitted_dist1.shape.c, -0.2243, delta=0.15)

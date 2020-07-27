@@ -185,7 +185,7 @@ class IFormContour(Contour):
             data[index] = distribution.i_cdf(norm_cdf_per_dimension[index], rv_values=data,
                                              dependencies=self.distribution.dependencies[index])
 
-        coordinates = [data]
+        coordinates = data
 
         return (beta, sphere_points, coordinates)
 
@@ -308,7 +308,7 @@ class ISormContour(Contour):
             data[index] = distribution.i_cdf(norm_cdf_per_dimension[index], rv_values=data,
                                              dependencies=self.distribution.dependencies[index])
 
-        coordinates = [data]
+        coordinates = data
 
         return (beta, sphere_points, coordinates)
 
@@ -631,6 +631,9 @@ class HighestDensityContour(Contour):
                 partial_coordinates.append(sample_coords[dimension][indice])
 
             coordinates.append(partial_coordinates)
+
+        if len(coordinates) == 1:
+            coordinates = coordinates[0]
 
         return (deltas, limits, sample_coords, fm, coordinates)
         

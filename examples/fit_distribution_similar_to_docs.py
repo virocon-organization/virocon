@@ -19,8 +19,8 @@ sample_2 = [0.1 + 1.5 * np.exp(0.2 * point) +
             prng.lognormal(2, 0.2) for point in sample_1]
 
 plt.scatter(sample_1, sample_2)
-plt.xlabel('significant wave height [m]')
-plt.ylabel('spectral peak period [s]')
+plt.xlabel('Significant wave height (m)')
+plt.ylabel('Spectral peak period (s)')
 plt.show()
 
 # Describe the distribution that should be fitted to the sample.
@@ -48,8 +48,8 @@ plt.plot(np.linspace(0, 20, 100),
          sts.weibull_min.pdf(np.linspace(0, 20, 100), c=shape, loc=0,
                              scale=scale),
          label='fitted Weibull distribution')
-plt.xlabel('significant wave height [m]')
-plt.ylabel('probability density [-]')
+plt.xlabel('Significant wave height (m)')
+plt.ylabel('Probability density (-)')
 plt.legend()
 # For panel B: use a Q-Q plot.
 ax_2 = fig.add_subplot(122)
@@ -59,8 +59,8 @@ ax_2.get_lines()[0].set_markerfacecolor('#1f77ba') # Adapt to v2.0 colors
 ax_2.get_lines()[0].set_markeredgecolor('#1f77ba') # Adapt to v2.0 colors
 ax_2.get_lines()[1].set_color('#ff7f02') # Adapt to v2.0 colors
 plt.title("")
-plt.xlabel('theoretical quantiles [m]')
-plt.ylabel('data quantiles [m]')
+plt.xlabel('Theoretical quantiles (m)')
+plt.ylabel('Data quantiles (m)')
 plt.show()
 
 # Plot the fits for the spectreal peak period, Tp.
@@ -94,18 +94,18 @@ ax4_hist = ax_4.hist(my_fit.multiple_fit_inspection_data[1].scale_samples[3], de
 shape = my_fit.mul_var_dist.distributions[1].shape(0)
 scale = my_fit.mul_var_dist.distributions[1].scale(param_grid[3])
 ax4_plot = ax_4.plot(np.linspace(0, 20, 100), sts.lognorm.pdf(np.linspace(0, 20, 100), s=shape, scale=scale))
-ax_4.set_xlabel('spectral peak period [s]')
+ax_4.set_xlabel('Spectral peak period (s)')
 plt.show()
 
 # Plot the fit of the dependency function of scale.
 fig = plt.figure()
 x_1 = np.linspace(0, 12, 100)
 plt.plot(param_grid, my_fit.multiple_fit_inspection_data[1].scale_value, 'x',
-         label='discrete scale values')
+         label='Discrete scale values')
 plt.plot(x_1, my_fit.mul_var_dist.distributions[1].scale(x_1),
-         label='fitted dependency function')
-plt.xlabel('significant wave height [m]')
-plt.ylabel('scale parameter (Tp-distribution) [-]')
+         label='Fitted dependency function')
+plt.xlabel('Significant wave height (m)')
+plt.ylabel('Scale parameter of the Tp distribution (-)')
 plt.legend()
 plt.show()
 
@@ -113,9 +113,9 @@ plt.show()
 # Compute a contour based on the fit and plot it together with the sample.
 iform_contour = IFormContour(my_fit.mul_var_dist, 25, 3, 100)
 plt.scatter(sample_1, sample_2, label='sample')
-plt.plot(iform_contour.coordinates[0][0], iform_contour.coordinates[0][1],
+plt.plot(iform_contour.coordinates[0], iform_contour.coordinates[1],
             '-k', label='IFORM contour')
-plt.xlabel('significant wave height [m]')
-plt.ylabel('spectral peak period [s]')
+plt.xlabel('Significant wave height (m)')
+plt.ylabel('Spectral peak period (s)')
 plt.legend()
 plt.show()

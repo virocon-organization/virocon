@@ -33,11 +33,11 @@ deltas = [0.4, 0.4] # The dimensions of the grid cells.
 hdens_contour = HighestDensityContour(mul_dist, 25, 3, limits, deltas)
 
 # Plot the two contours.
-plt.scatter(hdens_contour.coordinates[0][0], hdens_contour.coordinates[0][1],
-            label='highest density contour')
-plt.scatter(iform_contour.coordinates[0][0], iform_contour.coordinates[0][1],
+plt.scatter(hdens_contour.coordinates[0], hdens_contour.coordinates[1],
+            label='Highest density contour')
+plt.scatter(iform_contour.coordinates[0], iform_contour.coordinates[1],
             label='IFORM contour')
-plt.xlabel('significant wave height [m]')
-plt.ylabel('spectral peak period [s]')
+plt.xlabel('Significant wave height (m)')
+plt.ylabel('Spectral peak period (s)')
 plt.legend()
 plt.show()
