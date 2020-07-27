@@ -9,7 +9,7 @@ from abc import ABC, abstractmethod
 
 import numpy as np
 import scipy.stats as sts
-import scipy.optimize
+import scipy.optimize, scipy.integrate
 
 from .settings import SHAPE_STRING, LOCATION_STRING, SCALE_STRING, SHAPE2_STRING
 from .params import FunctionParam, ConstantParam, Wrapper
@@ -788,15 +788,37 @@ class MultivariateDistribution():
 
         Parameters
         ----------
-        x : array_like
+        x : 2-dimensional ndarray
             Points at which to calculate the cdf.
-
+            Array is of shape (d, n) with d being the number of variables and
+            n being the number of points.
         Returns
         -------
         p : array_like
             Probabilities.
         """
-        raise NotImplementedError
+        x = np.array(x)
+
+        if x.shape[0] == 2:
+            x0 = x[0]
+            x1 = x[1]
+            p = np.empty(x1.size)
+            if x0.size == 1:
+                p, error = scipy.integrate.nquad(self.pdf_2d, [
+                    [0, x0],
+                    [0, x1]
+                ])
+            else:
+                for i in range(x0.size):
+                    p[i], error = scipy.integrate.nquad(self.pdf_2d, [
+                        [0, x0[i]],
+                        [0, x1[i]]
+                    ])
+        else:
+            raise NotImplementedError('CDF is currently only implemented for '
+                                      'two-dimensional joint distributions.')
+
+        return p
 
     def pdf(self, x):
         """
@@ -827,6 +849,21 @@ class MultivariateDistribution():
                     dependencies=self.dependencies[i])
                 f = np.multiply(f, univariate_f)
 
+        return f
+
+    def pdf_2d(self, x, y):
+        """
+        Probability density function for a 2D joint distribution.
+
+        x : ndarray
+        y : ndarray
+
+        Returns
+        -------
+        f : ndarray of floats
+            Probabilitiy densities.
+        """
+        f = self.pdf([x, y])
         return f
 
     def draw_sample(self, n):
