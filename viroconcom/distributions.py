@@ -155,7 +155,7 @@ class ParametricDistribution(Distribution, ABC):
         Parameters
         ----------
         x : array_like
-            Points at which to calculate the cdf.
+            Points at which the cdf is evaluated.
         rv_values : array_like
             Values of all random variables in variable space in correct order.
             This can be a 1-dimensional array with length equal to the number of
@@ -188,7 +188,7 @@ class ParametricDistribution(Distribution, ABC):
         Parameters
         ----------
         probabilities : array_like
-            Probabilities for which to calculate the i_cdf.
+            Probabilities for which the i_cdf is evaluated.
         rv_values : array_like
             Values of all random variables in variable space in correct order.
             This can be a 1-dimensional array with length equal to the number of
@@ -789,7 +789,7 @@ class MultivariateDistribution():
         Parameters
         ----------
         x : 2-dimensional ndarray
-            Points at which to calculate the cdf.
+            Points at which the cdf is evaluated.
             Array is of shape (d, n) with d being the number of variables and
             n being the number of points.
         lower_integration_limit : array_like, optional
@@ -830,7 +830,7 @@ class MultivariateDistribution():
         Parameters
         ----------
         x : 2-dimensional ndarray
-            Points at which to calculate the pdf.
+            Points at which the pdf is evaluated.
             Array is of shape (d, n) with d being the number of variables and
             n being the number of points.
 
@@ -1038,10 +1038,10 @@ class MultivariateDistribution():
             for i in range(len(coords)):
                 if i < len(multi_index):
                     current_point[i] = coords[i][multi_index[i]]
-                else:  # random variable must be independent of this dimensions, so set to 0
+                else:  # Random variable must be independent of this dimensions, so set to 0.
                     current_point[i] = 0
 
-            # calculate averaged pdf
+            # Calculate averaged pdf.
             lower = cdf(coords[dist_index] - 0.5 * dx, current_point, dependency)
             upper = cdf(coords[dist_index] + 0.5 * dx, current_point, dependency)
             fbar[f_index] = (upper - lower)  # / dx
@@ -1281,7 +1281,7 @@ class KernelDensityDistribution(Distribution):
         Parameters
         ----------
         x : array_like
-            Points at which to calculate the cdf.
+            Points at which the cdf is evaluated.
         rv_values : array_like
             Values of all random variables in variable space in correct order.
             This can be a 1-dimensional array with length equal to the number of
@@ -1317,7 +1317,7 @@ class KernelDensityDistribution(Distribution):
         Parameters
         ----------
         probabilities : array_like
-            Probabilities for which to calculate the i_cdf.
+            Probabilities for which the i_cdf is evaluated.
         rv_values : array_like
             Values of all random variables in variable space in correct order.
             This can be a 1-dimensional array with length equal to the number of
