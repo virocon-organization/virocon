@@ -45,8 +45,8 @@ class PlottingTest(unittest.TestCase):
         mul_dist = MultivariateDistribution(distributions, dependencies)
 
         test_contour_IForm = IFormContour(mul_dist, 50, 3, 50)
-        contour_hs = test_contour_IForm.coordinates[0][0]
-        contour_tz = test_contour_IForm.coordinates[0][1]
+        contour_hs = test_contour_IForm.coordinates[0]
+        contour_tz = test_contour_IForm.coordinates[1]
 
         fig = plt.figure()
         ax = fig.add_subplot(111)
@@ -85,8 +85,8 @@ class PlottingTest(unittest.TestCase):
             dist_description_hs, dist_description_tz))
 
         contour = IFormContour(fit.mul_var_dist, 20, 1, 50)
-        contour_hs_20 = contour.coordinates[0][0]
-        contour_tz_20 = contour.coordinates[0][1]
+        contour_hs_20 = contour.coordinates[0]
+        contour_tz_20 = contour.coordinates[1]
 
         # Find datapoints that exceed the 20-yr contour.
         hs_outside, tz_outside, hs_inside, tz_inside = \
