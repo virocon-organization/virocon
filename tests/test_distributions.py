@@ -16,29 +16,27 @@ class MultivariateDistributionTest(unittest.TestCase):
     Create an example MultivariateDistribution (Vanem2012 model).
     """
 
-    # Define dependency tuple.
-    dep1 = (None, 0, None)
-    dep2 = (0, None, 0)
-
-    # Define parameters.
+    # Create a MultivariateDistribution, the joint distribution for Hs-Tz
+    # presented in Vanem et al. (2012).
+    # Start with a Weibull distribution for wave height, Hs.
     shape = ConstantParam(1.471)
     loc = ConstantParam(0.8888)
     scale = ConstantParam(2.776)
-    par1 = (shape, loc, scale)
+    par0 = (shape, loc, scale)
+    dist0 = WeibullDistribution(*par0)
 
-    shape = FunctionParam('exp3', 0.0400, 0.1748, -0.2243)
-    loc = None
-    scale = FunctionParam('power3', 0.1, 1.489, 0.1901)
-    par2 = (shape, loc, scale)
+    # Conditional lognormal distribution for period, Tz.
+    mu = FunctionParam('power3', 0.1, 1.489, 0.1901)
+    sigma = FunctionParam('exp3', 0.0400, 0.1748, -0.2243)
+    dist1 = LognormalDistribution(mu=mu, sigma=sigma)
 
-    del shape, loc, scale
+    distributions = [dist0, dist1]
 
-    # Create distributions.
-    dist1 = WeibullDistribution(*par1)
-    dist2 = LognormalDistribution(*par2)
+    dep0 = (None, None, None)
+    dep1 = (0, None, 0)
+    dependencies = [dep0, dep1]
 
-    distributions = [dist1, dist2]
-    dependencies = [dep1, dep2]
+    mul_var_dist = MultivariateDistribution(distributions, dependencies)
 
 
     def test_add_distribution_err_msg(self):
@@ -47,8 +45,10 @@ class MultivariateDistributionTest(unittest.TestCase):
         dependency.
         """
 
+        dep0 = (None, 0, None)
+        dependencies = [dep0, self.dep1]
         with self.assertRaises(ValueError):
-            MultivariateDistribution(self.distributions, self.dependencies)
+            MultivariateDistribution(self.distributions, dependencies)
 
 
     def test_add_distribution_iter(self):
@@ -70,8 +70,8 @@ class MultivariateDistributionTest(unittest.TestCase):
         are of unequal length.
         """
 
-        dep3 = (0, None, None)
-        dependencies = [self.dep1, self.dep2, dep3]
+        dep2 = (0, None, None)
+        dependencies = [self.dep0, self.dep1, dep2]
         with self.assertRaises(ValueError):
             MultivariateDistribution(self.distributions, dependencies)
 
@@ -81,8 +81,8 @@ class MultivariateDistributionTest(unittest.TestCase):
         has not length 3.
         """
 
-        dep1 = (None, None)
-        dependencies = [dep1, self.dep2]
+        dep0 = (None, None)
+        dependencies = [dep0, self.dep1]
         with self.assertRaises(ValueError):
             MultivariateDistribution(self.distributions, dependencies)
 
@@ -91,8 +91,8 @@ class MultivariateDistributionTest(unittest.TestCase):
         Tests if an exception is raised when dependencies has an invalid value.
         """
 
-        dep1 = (-3, None, None)
-        dependencies = [dep1, self.dep2]
+        dep0 = (-3, None, None)
+        dependencies = [dep0, self.dep1]
         with self.assertRaises(ValueError):
             MultivariateDistribution(self.distributions, dependencies)
 
@@ -111,33 +111,8 @@ class MultivariateDistributionTest(unittest.TestCase):
         """
         Tests the draw_sample() function of MulvariateDistribution.
         """
-
-        # Create a MultivariateDistribution, the joint distribution for Hs-Tz
-        # presented in Vanem et al. (2012).
-        # Start with a Weibull distribution for wave height, Hs.
-        shape = ConstantParam(1.471)
-        loc = ConstantParam(0.8888)
-        scale = ConstantParam(2.776)
-        par0 = (shape, loc, scale)
-        dist0 = WeibullDistribution(*par0)
-
-        # Conditonal lognormal distribution for period, Tz.
-        dist1_shape = FunctionParam('exp3', 0.0400, 0.1748, -0.2243)
-        dist1_loc = None
-        dist1_scale = FunctionParam('power3', 0.1, 1.489, 0.1901)
-        par1 = (dist1_shape, dist1_loc, dist1_scale)
-        dist1 = LognormalDistribution(*par1)
-
-        distributions = [dist0, dist1]
-
-        dep0 = (None, None, None)
-        dep1 = (0, None, 0)
-        dependencies = [dep0, dep1]
-
-        mul_var_dist = MultivariateDistribution(distributions, dependencies)
-
         n=10000
-        sample = mul_var_dist.draw_sample(n)
+        sample = self.mul_var_dist.draw_sample(n)
         self.assertEqual(n, sample[0].size)
         self.assertEqual(n, sample[1].size)
 
@@ -152,47 +127,70 @@ class MultivariateDistributionTest(unittest.TestCase):
         fit = Fit(sample, [dist_description_0, dist_description_1])
         fitted_dist0 = fit.mul_var_dist.distributions[0]
         fitted_dist1 = fit.mul_var_dist.distributions[1]
-        self.assertAlmostEqual(fitted_dist0.shape(0), shape(0), delta=0.1)
-        self.assertAlmostEqual(fitted_dist0.loc(0), loc(0), delta=0.1)
-        self.assertAlmostEqual(fitted_dist0.scale(0), scale(0), delta=0.1)
+        self.assertAlmostEqual(fitted_dist0.shape(0), self.shape(0), delta=0.1)
+        self.assertAlmostEqual(fitted_dist0.loc(0), self.loc(0), delta=0.1)
+        self.assertAlmostEqual(fitted_dist0.scale(0), self.scale(0), delta=0.1)
         self.assertAlmostEqual(fitted_dist1.shape.a, 0.04, delta=0.1)
         self.assertAlmostEqual(fitted_dist1.shape.b, 0.1748, delta=0.1)
         self.assertAlmostEqual(fitted_dist1.shape.c, -0.2243, delta=0.15)
-        self.assertAlmostEqual(fitted_dist1.scale(1), dist1_scale(1), delta=0.1)
-        self.assertAlmostEqual(fitted_dist1.scale(2), dist1_scale(2), delta=0.1)
 
+    def test_multivariate_cdf(self):
+        """
+         Tests the cdf() function of MulvariateDistribution.
+         """
+        p = self.mul_var_dist.cdf([2, 2], lower_integration_limit=[0, 0])
+        self.assertAlmostEqual(p, 0, delta=0.01)
+
+        p = self.mul_var_dist.cdf([[2, 20], [2, 16]], lower_integration_limit=[0, 0])
+        np.testing.assert_allclose(p, [0, 1], atol=0.01)
+
+        # Create a bivariate normal distribution, where we know that at the
+        # peak, the CDF must evaluate to 0.25.
+        dist = NormalDistribution(shape=None, loc=ConstantParam(1), scale=ConstantParam(1))
+        dep = (None, None, None)
+        bivariate_dist = MultivariateDistribution([dist, dist], [dep, dep])
+
+        p = bivariate_dist.cdf([1, 1])
+        self.assertAlmostEqual(p, 0.25, delta=0.001)
+
+    def test_multivariate_pdf(self):
+        """
+        Tests the pdf() function of MulvariateDistribution.
+        """
+        # Let's compare the density values with density values presented in
+        # Haselsteiner et al. (2017), Fig. 5, DOI: 10.1016/j.coastaleng.2017.03.002
+        f = self.mul_var_dist.pdf([10, 13])
+        self.assertAlmostEqual(f, 0.000044, delta=0.00002)
+
+        f = self.mul_var_dist.pdf([[8, 10, 12], [12.5, 13, 13.4]])
+        np.testing.assert_allclose(f, [0.000044, 0.000044, 0.000044], atol=0.00002)
 
     def test_latex_representation(self):
         """
         Tests if the latex representation is correct.
         """
-        dep1 = (None, None, None)
-        dep2 = (0, None, 0)
-        dependencies = [dep1, dep2]
-        m = MultivariateDistribution(self.distributions, dependencies)
+        m = self.mul_var_dist
         computed_latex = m.latex_repr(['Hs', 'Tp'])
         correct_latex = \
-            ['\\text{ joint PDF: }',
-             'f(h_{s},t_{p})=f_{H_{s}}(h_{s})f_{T_{p}|H_{s}}(t_{p}|h_{s})',
-             '',
-             '1\\text{. variable, }H_{s}: ',
-             'f_{H_{s}}(h_{s})=\\dfrac{\\beta_{h_{s}}}{\\alpha_{h_{s}}}'
-             '\\left(\\dfrac{h_{s}-\\gamma_{h_{s}}}{\\alpha_{h_{s}}}'
-             '\\right)^{\\beta_{h_{s}}-1}\\exp\\left[-\\left(\\dfrac{h_{s}-'
-             '\\gamma_{h_{s}}}{\\alpha_{h_{s}}}\\right)^{\\beta_{h_{s}}}\\right]',
-             '\\quad\\text{ with }\\alpha_{h_{s}}=2.776,',
-             '\\quad\\qquad\\;\\; \\beta_{h_{s}}=1.471,',
-             '\\quad\\qquad\\;\\; \\gamma_{h_{s}}=0.8888.',
-             '',
-             '2\\text{. variable, }T_{p}: ',
-             'f_{T_{p}|H_{s}}(t_{p}|h_{s})=\\dfrac{1}{t_{p}\\tilde{\\sigma}_'
-             '{t_{p}}\\sqrt{2\\pi}}\\exp\\left[-\\dfrac{(\\ln t_{p}-\\tilde{'
-             '\\mu}_{t_{p}})^2}{2\\tilde{\\sigma}_{t_{p}}^2}\\right]',
-             '\\quad\\text{ with }\\exp{\\tilde{\\mu}}_{t_{p}}='
-             '0.1+1.489h_{s}^{0.1901},',
-             '\\quad\\qquad\\;\\; \\tilde{\\sigma}_{t_{p}}='
-             '0.04+0.1748e^{-0.2243h_{s}}.']
-        assert(computed_latex, correct_latex)
+        ['\\text{ joint PDF: }',
+         'f(h_{s},t_{p})=f_{H_{s}}(h_{s})f_{T_{p}|H_{s}}(t_{p}|h_{s})', '',
+         '1\\text{. variable, }H_{s}: ',
+         'f_{H_{s}}(h_{s})=\\dfrac{\\beta_{h_{s}}}{\\alpha_{h_{s}}}'
+         '\\left(\\dfrac{h_{s}-\\gamma_{h_{s}}}{\\alpha_{h_{s}}}\\right)^'
+         '{\\beta_{h_{s}}-1}\\exp\\left[-\\left(\\dfrac{h_{s}-'
+         '\\gamma_{h_{s}}}{\\alpha_{h_{s}}}\\right)^{\\beta_{h_{s}}}'
+         '\\right]', '\\quad\\text{ with }\\alpha_{h_{s}}=2.776,',
+         '\\quad\\qquad\\;\\; \\beta_{h_{s}}=1.471,',
+         '\\quad\\qquad\\;\\; \\gamma_{h_{s}}=0.8888.', '',
+         '2\\text{. variable, }T_{p}: ',
+         'f_{T_{p}|H_{s}}(t_{p}|h_{s})=\\dfrac{1}'
+         '{t_{p}\\tilde{\\sigma}_{t_{p}}\\sqrt{2\\pi}}\\exp\\left[-'
+         '\\dfrac{(\\ln t_{p}-\\tilde{\\mu}_{t_{p}})^2}'
+         '{2\\tilde{\\sigma}_{t_{p}}^2}\\right]',
+         '\\quad\\text{ with }\\tilde{\\mu}_{t_{p}}=0.1 + 1.489h_{s}^(0.1901),',
+         '\\quad\\qquad\\;\\; \\tilde{\\sigma}_{t_{p}}=0.04 + 0.1748e^{-0.2243h_{s}}.']
+
+        self.assertEqual(computed_latex, correct_latex)
 
 
 class ParametricDistributionTest(unittest.TestCase):

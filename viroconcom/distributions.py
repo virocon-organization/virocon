@@ -9,7 +9,7 @@ from abc import ABC, abstractmethod
 
 import numpy as np
 import scipy.stats as sts
-import scipy.optimize
+import scipy.optimize, scipy.integrate
 
 from .settings import SHAPE_STRING, LOCATION_STRING, SCALE_STRING, SHAPE2_STRING
 from .params import FunctionParam, ConstantParam, Wrapper
@@ -144,6 +144,10 @@ class ParametricDistribution(Distribution, ABC):
     def _scipy_i_cdf(self, probabilities, shape, loc, scale):
         """Overwrite with appropriate i_cdf function from scipy package. """
 
+    @abstractmethod
+    def _scipy_pdf(self, x, shape, loc, scale):
+        """Overwrite with appropriate pdf from scipy package."""
+
     def cdf(self, x, rv_values=None, dependencies=None):
         """
         Calculate the cumulative distribution function.
@@ -151,7 +155,7 @@ class ParametricDistribution(Distribution, ABC):
         Parameters
         ----------
         x : array_like
-            Points at which to calculate the cdf.
+            Points at which the cdf is evaluated.
         rv_values : array_like
             Values of all random variables in variable space in correct order.
             This can be a 1-dimensional array with length equal to the number of
@@ -184,7 +188,7 @@ class ParametricDistribution(Distribution, ABC):
         Parameters
         ----------
         probabilities : array_like
-            Probabilities for which to calculate the i_cdf.
+            Probabilities for which the i_cdf is evaluated.
         rv_values : array_like
             Values of all random variables in variable space in correct order.
             This can be a 1-dimensional array with length equal to the number of
@@ -416,6 +420,9 @@ class WeibullDistribution(ParametricDistribution):
 
     def _scipy_i_cdf(self, probabilities, shape, loc, scale):
         return sts.weibull_min.ppf(probabilities, c=shape, loc=loc, scale=scale)
+
+    def _scipy_pdf(self, x, shape, loc, scale):
+        return sts.weibull_min.pdf(x, c=shape, loc=loc, scale=scale)
 
 
 class ExponentiatedWeibullDistribution(ParametricDistribution):
@@ -693,6 +700,9 @@ class LognormalDistribution(ParametricDistribution):
     def _scipy_i_cdf(self, probabilities, shape, _, scale):
         return sts.lognorm.ppf(probabilities, s=shape, scale=scale)
 
+    def _scipy_pdf(self, x, shape, loc, scale):
+        return sts.lognorm.pdf(x, s=shape, scale=scale)
+
     def __str__(self):
         if hasattr(self, "mu"):
             return  "LognormalDistribution with shape={}, loc={}," \
@@ -737,6 +747,9 @@ class NormalDistribution(ParametricDistribution):
     def _scipy_i_cdf(self, probabilities, _, loc, scale):
         return sts.norm.ppf(probabilities, loc=loc, scale=scale)
 
+    def _scipy_pdf(self, x, shape, loc, scale):
+        return sts.norm.pdf(x, loc=loc, scale=scale)
+
 
 class MultivariateDistribution():
     """
@@ -769,11 +782,92 @@ class MultivariateDistribution():
         if not distributions is None:
             self.add_distributions(distributions, dependencies)
 
-    def cdf(self):
-        raise NotImplementedError
+    def cdf(self, x, lower_integration_limit=(-np.inf, -np.inf)):
+        """
+        Joint cumulative distribution function.
 
-    def pdf(self):
-        raise NotImplementedError
+        Parameters
+        ----------
+        x : 2-dimensional ndarray
+            Points at which the cdf is evaluated.
+            Array is of shape (d, n) with d being the number of variables and
+            n being the number of points.
+        lower_integration_limit : array_like, optional
+            Lower limits for the ingration of the pdf. Must have a length of n.
+            Defaults to (-np.inf, -np.inf).
+        Returns
+        -------
+        p : array_like
+            Probabilities.
+        """
+        x = np.array(x)
+
+        if x.shape[0] == 2:
+            x0 = x[0]
+            x1 = x[1]
+            p = np.empty(x1.size)
+            if x0.size == 1:
+                p, error = scipy.integrate.nquad(self.pdf_2d, [
+                    [lower_integration_limit[0], x0],
+                    [lower_integration_limit[1], x1]
+                ])
+            else:
+                for i in range(x0.size):
+                    p[i], error = scipy.integrate.nquad(self.pdf_2d, [
+                        [lower_integration_limit[0], x0[i]],
+                        [lower_integration_limit[1], x1[i]]
+                    ])
+        else:
+            raise NotImplementedError('CDF is currently only implemented for '
+                                      'two-dimensional joint distributions.')
+
+        return p
+
+    def pdf(self, x):
+        """
+        Joint probability density function.
+
+        Parameters
+        ----------
+        x : 2-dimensional ndarray
+            Points at which the pdf is evaluated.
+            Array is of shape (d, n) with d being the number of variables and
+            n being the number of points.
+
+        Returns
+        -------
+        f : ndarray of floats
+            Probability densities.
+        """
+        x = np.array(x)
+        f = np.empty(x[0].size)
+
+        for i in range(self.n_dim):
+            if i == 0:
+                f = self.distributions[i].pdf(x[i])
+            else:
+                univariate_f = self.distributions[i].pdf(
+                    x=x[i],
+                    rv_values=x[0:i],
+                    dependencies=self.dependencies[i])
+                f = np.multiply(f, univariate_f)
+
+        return f
+
+    def pdf_2d(self, x, y):
+        """
+        Probability density function for a 2D joint distribution.
+
+        x : ndarray
+        y : ndarray
+
+        Returns
+        -------
+        f : ndarray of floats
+            Probability densities.
+        """
+        f = self.pdf([x, y])
+        return f
 
     def draw_sample(self, n):
         """
@@ -944,10 +1038,10 @@ class MultivariateDistribution():
             for i in range(len(coords)):
                 if i < len(multi_index):
                     current_point[i] = coords[i][multi_index[i]]
-                else:  # random variable must be independent of this dimensions, so set to 0
+                else:  # Random variable must be independent of this dimensions, so set to 0.
                     current_point[i] = 0
 
-            # calculate averaged pdf
+            # Calculate averaged pdf.
             lower = cdf(coords[dist_index] - 0.5 * dx, current_point, dependency)
             upper = cdf(coords[dist_index] + 0.5 * dx, current_point, dependency)
             fbar[f_index] = (upper - lower)  # / dx
@@ -1187,7 +1281,7 @@ class KernelDensityDistribution(Distribution):
         Parameters
         ----------
         x : array_like
-            Points at which to calculate the cdf.
+            Points at which the cdf is evaluated.
         rv_values : array_like
             Values of all random variables in variable space in correct order.
             This can be a 1-dimensional array with length equal to the number of
@@ -1223,7 +1317,7 @@ class KernelDensityDistribution(Distribution):
         Parameters
         ----------
         probabilities : array_like
-            Probabilities for which to calculate the i_cdf.
+            Probabilities for which the i_cdf is evaluated.
         rv_values : array_like
             Values of all random variables in variable space in correct order.
             This can be a 1-dimensional array with length equal to the number of
