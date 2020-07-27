@@ -837,7 +837,7 @@ class MultivariateDistribution():
         Returns
         -------
         f : ndarray of floats
-            Probabilitiy densities.
+            Probability densities.
         """
         x = np.array(x)
         f = np.empty(x[0].size)
@@ -864,7 +864,7 @@ class MultivariateDistribution():
         Returns
         -------
         f : ndarray of floats
-            Probabilitiy densities.
+            Probability densities.
         """
         f = self.pdf([x, y])
         return f
