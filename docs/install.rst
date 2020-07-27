@@ -3,7 +3,7 @@ Installation
 ************
 Requirements
 ~~~~~~~~~~~~
-Make sure you have installed Python `3.6.4`_ by typing
+Make sure you have installed Python `3.7.4`_ by typing
 
 .. code:: console
 
@@ -22,8 +22,6 @@ Install the latest version of viroconcom from PyPI by typing
 
    pip install viroconcom
 
-in your shell.
-
 Alternatively, you can install from viroconcom repository’s Master branch
 by typing
 
@@ -31,8 +29,7 @@ by typing
 
    pip install https://github.com/virocon-organization/viroconcom/archive/master.zip
 
-in your shell.
 
-.. _3.6.4: https://www.python.org/downloads/release/python-364
+.. _3.7.4: https://www.python.org/downloads/release/python-374
 .. _shell: https://en.wikipedia.org/wiki/Command-line_interface#Modern_usage_as_an_operating_system_shell
 .. _pyenv: https://github.com/pyenv/pyenv
