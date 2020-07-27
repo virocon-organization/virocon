@@ -607,8 +607,13 @@ class Fit():
         list_number_of_intervals = []
         list_width_of_intervals = []
         for dist_description in dist_descriptions:
+            if dist_description.get(
+                    'number_of_intervals') == None and dist_description.get(
+                    'width_of_intervals') == None:
+                dist_description['number_of_intervals'] = 15
             list_number_of_intervals.append(dist_description.get('number_of_intervals'))
             list_width_of_intervals.append(dist_description.get('width_of_intervals'))
+
         for dist_description in dist_descriptions:
             dist_description['list_number_of_intervals'] = list_number_of_intervals
             dist_description['list_width_of_intervals'] = list_width_of_intervals
