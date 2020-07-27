@@ -13,8 +13,9 @@ ViroCon is a software to compute environmental contours.
 About
 -----
 
-viroconcom is a package belonging to the software ViroCon. The package viroconcom
-handles the statistical computations.
+viroconcom is a software package to compute environmental contours. It
+is written in Python 3.7.4 and belongs to the software ViroCon, which also
+offers a GUI.
 
 ViroCon helps you to design marine structures, which need to withstand
 load combinations based on wave, wind and current. It lets you define
@@ -31,14 +32,6 @@ The following methods are implemented in viroconcom:
   - inverse second-order reliability method (ISORM),
   - the direct sampling contour method or the
   - highest density contour method.
-
-
-ViroCon is written in Python 3.7.4. The software is seperated in two
-main packages, viroconweb and viroconcom. This is the repository of
-viroconcom, which is the numerical core. It handles the statistical
-computations. viroconweb builds on viroconcom and is a web-based
-application with a graphical user interface. It has its own
-`repository`_.
 
 How to use viroconcom
 ---------------------
@@ -63,7 +56,6 @@ Install the latest version of viroconcom from PyPI by typing
 
    pip install viroconcom
 
-in your shell.
 
 Alternatively, you can install from viroconcom repository’s Master branch
 by typing
@@ -72,7 +64,6 @@ by typing
 
    pip install https://github.com/virocon-organization/viroconcom/archive/master.zip
 
-in your shell.
 
 Usage
 ~~~~~
@@ -93,15 +84,11 @@ that you have installed the python package matplotlib or install it by typing
 
    pip install matplotlib
 
-in your shell.
-
 Now run the Python file by typing
 
 .. code:: console
 
    python calculate_contours_similar_to_docs.py
-
-in your shell.
 
 Documentation
 -------------
@@ -114,13 +101,6 @@ description of the software.
 
 Contributing
 ------------
-
-There are various ways you can contribute. You could
-
-- improve the code,
-- improve the documentation,
-- add a feature or
-- report a bug or an improvement and leave it to us to implement it.
 
 **Issue.** If you spotted a bug, have an idea for an improvement or a
 new feature, please open a issue. Please open an issue in both cases: If
@@ -152,7 +132,6 @@ License
 This software is licensed under the MIT license. For more information,
 read the file `LICENSE`_.
 
-.. _repository: https://github.com/virocon-organization/viroconweb
 .. _3.7.4: https://www.python.org/downloads/release/python-374/
 .. _shell: https://en.wikipedia.org/wiki/Command-line_interface#Modern_usage_as_an_operating_system_shell
 .. _pyenv: https://github.com/pyenv/pyenv
