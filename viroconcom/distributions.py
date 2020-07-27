@@ -144,6 +144,10 @@ class ParametricDistribution(Distribution, ABC):
     def _scipy_i_cdf(self, probabilities, shape, loc, scale):
         """Overwrite with appropriate i_cdf function from scipy package. """
 
+    @abstractmethod
+    def _scipy_pdf(self, x, shape, loc, scale):
+        """Overwrite with appropriate pdf from scipy package."""
+
     def cdf(self, x, rv_values=None, dependencies=None):
         """
         Calculate the cumulative distribution function.
@@ -416,6 +420,9 @@ class WeibullDistribution(ParametricDistribution):
 
     def _scipy_i_cdf(self, probabilities, shape, loc, scale):
         return sts.weibull_min.ppf(probabilities, c=shape, loc=loc, scale=scale)
+
+    def _scipy_pdf(self, x, shape, loc, scale):
+        return sts.weibull_min.pdf(x, c=shape, loc=loc, scale=scale)
 
 
 class ExponentiatedWeibullDistribution(ParametricDistribution):
@@ -693,6 +700,9 @@ class LognormalDistribution(ParametricDistribution):
     def _scipy_i_cdf(self, probabilities, shape, _, scale):
         return sts.lognorm.ppf(probabilities, s=shape, scale=scale)
 
+    def _scipy_pdf(self, x, shape, loc, scale):
+        return sts.lognorm.pdf(x, s=shape, scale=scale)
+
     def __str__(self):
         if hasattr(self, "mu"):
             return  "LognormalDistribution with shape={}, loc={}," \
@@ -737,6 +747,9 @@ class NormalDistribution(ParametricDistribution):
     def _scipy_i_cdf(self, probabilities, _, loc, scale):
         return sts.norm.ppf(probabilities, loc=loc, scale=scale)
 
+    def _scipy_pdf(self, x, shape, loc, scale):
+        return sts.norm.pdf(x, loc=loc, scale=scale)
+
 
 class MultivariateDistribution():
     """
@@ -769,11 +782,52 @@ class MultivariateDistribution():
         if not distributions is None:
             self.add_distributions(distributions, dependencies)
 
-    def cdf(self):
+    def cdf(self, x):
+        """
+        Joint cumulative distribution function.
+
+        Parameters
+        ----------
+        x : array_like
+            Points at which to calculate the cdf.
+
+        Returns
+        -------
+        p : array_like
+            Probabilities.
+        """
         raise NotImplementedError
 
-    def pdf(self):
-        raise NotImplementedError
+    def pdf(self, x):
+        """
+        Joint probability density function.
+
+        Parameters
+        ----------
+        x : 2-dimensional ndarray
+            Points at which to calculate the pdf.
+            Array is of shape (d, n) with d being the number of variables and
+            n being the number of points.
+
+        Returns
+        -------
+        f : ndarray of floats
+            Probabilitiy densities.
+        """
+        x = np.array(x)
+        f = np.empty(x[0].size)
+
+        for i in range(self.n_dim):
+            if i == 0:
+                f = self.distributions[i].pdf(x[i])
+            else:
+                univariate_f = self.distributions[i].pdf(
+                    x=x[i],
+                    rv_values=x[0:i],
+                    dependencies=self.dependencies[i])
+                f = np.multiply(f, univariate_f)
+
+        return f
 
     def draw_sample(self, n):
         """

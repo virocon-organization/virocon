@@ -16,29 +16,27 @@ class MultivariateDistributionTest(unittest.TestCase):
     Create an example MultivariateDistribution (Vanem2012 model).
     """
 
-    # Define dependency tuple.
-    dep1 = (None, 0, None)
-    dep2 = (0, None, 0)
-
-    # Define parameters.
+    # Create a MultivariateDistribution, the joint distribution for Hs-Tz
+    # presented in Vanem et al. (2012).
+    # Start with a Weibull distribution for wave height, Hs.
     shape = ConstantParam(1.471)
     loc = ConstantParam(0.8888)
     scale = ConstantParam(2.776)
-    par1 = (shape, loc, scale)
+    par0 = (shape, loc, scale)
+    dist0 = WeibullDistribution(*par0)
 
-    shape = FunctionParam('exp3', 0.0400, 0.1748, -0.2243)
-    loc = None
-    scale = FunctionParam('power3', 0.1, 1.489, 0.1901)
-    par2 = (shape, loc, scale)
+    # Conditional lognormal distribution for period, Tz.
+    mu = FunctionParam('power3', 0.1, 1.489, 0.1901)
+    sigma = FunctionParam('exp3', 0.0400, 0.1748, -0.2243)
+    dist1 = LognormalDistribution(mu=mu, sigma=sigma)
 
-    del shape, loc, scale
+    distributions = [dist0, dist1]
 
-    # Create distributions.
-    dist1 = WeibullDistribution(*par1)
-    dist2 = LognormalDistribution(*par2)
+    dep0 = (None, None, None)
+    dep1 = (0, None, 0)
+    dependencies = [dep0, dep1]
 
-    distributions = [dist1, dist2]
-    dependencies = [dep1, dep2]
+    mul_var_dist = MultivariateDistribution(distributions, dependencies)
 
 
     def test_add_distribution_err_msg(self):
@@ -47,8 +45,10 @@ class MultivariateDistributionTest(unittest.TestCase):
         dependency.
         """
 
+        dep0 = (None, 0, None)
+        dependencies = [dep0, self.dep1]
         with self.assertRaises(ValueError):
-            MultivariateDistribution(self.distributions, self.dependencies)
+            MultivariateDistribution(self.distributions, dependencies)
 
 
     def test_add_distribution_iter(self):
@@ -70,8 +70,8 @@ class MultivariateDistributionTest(unittest.TestCase):
         are of unequal length.
         """
 
-        dep3 = (0, None, None)
-        dependencies = [self.dep1, self.dep2, dep3]
+        dep2 = (0, None, None)
+        dependencies = [self.dep0, self.dep1, dep2]
         with self.assertRaises(ValueError):
             MultivariateDistribution(self.distributions, dependencies)
 
@@ -81,8 +81,8 @@ class MultivariateDistributionTest(unittest.TestCase):
         has not length 3.
         """
 
-        dep1 = (None, None)
-        dependencies = [dep1, self.dep2]
+        dep0 = (None, None)
+        dependencies = [dep0, self.dep1]
         with self.assertRaises(ValueError):
             MultivariateDistribution(self.distributions, dependencies)
 
@@ -91,8 +91,8 @@ class MultivariateDistributionTest(unittest.TestCase):
         Tests if an exception is raised when dependencies has an invalid value.
         """
 
-        dep1 = (-3, None, None)
-        dependencies = [dep1, self.dep2]
+        dep0 = (-3, None, None)
+        dependencies = [dep0, self.dep1]
         with self.assertRaises(ValueError):
             MultivariateDistribution(self.distributions, dependencies)
 
@@ -121,12 +121,10 @@ class MultivariateDistributionTest(unittest.TestCase):
         par0 = (shape, loc, scale)
         dist0 = WeibullDistribution(*par0)
 
-        # Conditonal lognormal distribution for period, Tz.
-        dist1_shape = FunctionParam('exp3', 0.0400, 0.1748, -0.2243)
-        dist1_loc = None
-        dist1_scale = FunctionParam('power3', 0.1, 1.489, 0.1901)
-        par1 = (dist1_shape, dist1_loc, dist1_scale)
-        dist1 = LognormalDistribution(*par1)
+        # Conditional lognormal distribution for period, Tz.
+        mu = FunctionParam('power3', 0.1, 1.489, 0.1901)
+        sigma = FunctionParam('exp3', 0.0400, 0.1748, -0.2243)
+        dist1 = LognormalDistribution(mu=mu, sigma=sigma)
 
         distributions = [dist0, dist1]
 
@@ -158,9 +156,41 @@ class MultivariateDistributionTest(unittest.TestCase):
         self.assertAlmostEqual(fitted_dist1.shape.a, 0.04, delta=0.1)
         self.assertAlmostEqual(fitted_dist1.shape.b, 0.1748, delta=0.1)
         self.assertAlmostEqual(fitted_dist1.shape.c, -0.2243, delta=0.15)
-        self.assertAlmostEqual(fitted_dist1.scale(1), dist1_scale(1), delta=0.1)
-        self.assertAlmostEqual(fitted_dist1.scale(2), dist1_scale(2), delta=0.1)
 
+    def test_multivariate_pdf(self):
+        """
+        Tests the pdf() function of MulvariateDistribution.
+        """
+
+        # Create a MultivariateDistribution, the joint distribution for Hs-Tz
+        # presented in Vanem et al. (2012).
+        # Start with a Weibull distribution for wave height, Hs.
+        shape = ConstantParam(1.471)
+        loc = ConstantParam(0.8888)
+        scale = ConstantParam(2.776)
+        par0 = (shape, loc, scale)
+        dist0 = WeibullDistribution(*par0)
+
+        # Conditional lognormal distribution for period, Tz.
+        mu = FunctionParam('power3', 0.1, 1.489, 0.1901)
+        sigma = FunctionParam('exp3', 0.0400, 0.1748, -0.2243)
+        dist1 = LognormalDistribution(mu=mu, sigma=sigma)
+
+        distributions = [dist0, dist1]
+
+        dep0 = (None, None, None)
+        dep1 = (0, None, 0)
+        dependencies = [dep0, dep1]
+
+        mul_var_dist = MultivariateDistribution(distributions, dependencies)
+
+        # Let's compare the density values with density values presented in
+        # Haselsteiner et al. (2017), Fig. 5, DOI: 10.1016/j.coastaleng.2017.03.002
+        f = mul_var_dist.pdf([10, 13])
+        self.assertAlmostEqual(f, 0.000044, delta=0.00002)
+
+        f = mul_var_dist.pdf([[8, 10, 12], [12.5, 13, 13.4]])
+        np.testing.assert_allclose(f, [0.000044, 0.000044, 0.000044], atol=0.00002)
 
     def test_latex_representation(self):
         """
