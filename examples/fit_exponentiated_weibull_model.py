@@ -3,21 +3,21 @@ import matplotlib.pyplot as plt
 from viroconcom.fitting import Fit
 from viroconcom.contours import IFormContour
 from viroconcom.read_write import read_ecbenchmark_dataset
+from viroconcom.plot import plot_contour
 
 
-sample_hs, sample_tz, label_hs, label_tz = read_ecbenchmark_dataset()
+sample_hs, sample_tz, label_hs, label_tz = \
+    read_ecbenchmark_dataset('datasets/1year_dataset_A.txt')
 
 # Define the structure of the probabilistic model that will be fitted to the
 # dataset. This model structure has been proposed in the paper "Global
 # hierarchical models for wind and wave contours: Physical interpretations
 # of the dependence functions" by Haselsteiner et al. (2020).
 dist_description_hs = {'name': 'Weibull_Exp',
-                      'dependency': (None, None, None, None),
                       'width_of_intervals': 0.5}
 dist_description_tz = {'name': 'Lognormal_SigmaMu',
                       'dependency': (0,  None, 0), #Shape, Location, Scale
-                      'functions': ('asymdecrease3', None, 'lnsquare2'), #Shape, Location, Scale
-                      'min_datapoints_for_fit': 50
+                      'functions': ('asymdecrease3', None, 'lnsquare2'),
                       }
 
 # Fit the model to the data.
@@ -37,17 +37,15 @@ print('Second variable: ' + str(fit.mul_var_dist.distributions[1]))
 # state duration of 1 hour.
 tr = 50 # Return period in years.
 ts = 1 # Sea state duration in hours.
-limits = [(0, 20), (0, 20)] # Limits of the computational domain.
-deltas = [0.01, 0.01] # Dimensions of the grid cells.
 contour = IFormContour(mul_dist, tr, ts, 200)
 
 # Plot the data and the contour.
 plt.scatter(sample_tz, sample_hs, c='black')
-plt.plot(contour.coordinates[0][1], contour.coordinates[0][0])
+plt.plot(contour.coordinates[1], contour.coordinates[0])
 plt.xlim(left=0)
 plt.ylim(bottom=0)
-plt.xlabel('Zero-up-crossing period (s)')
-plt.ylabel('Significant wave height (m)')
-
-plt.legend()
+plt.xlabel(label_tz)
+plt.ylabel(label_hs)
 plt.show()
+
+#plot_contour(contour.coordinates[1], contour.coordinates[0])

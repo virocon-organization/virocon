@@ -266,7 +266,7 @@ def plot_dependence_functions(
     plt.ylabel(ylabel)
 
 
-def plot_contour(x, y, ax, contour_label=None, x_label=None, y_label=None,
+def plot_contour(x, y, ax=None, contour_label=None, x_label=None, y_label=None,
                  line_style='b-', alpha=1, plotted_sample=None, x_lim = None,
                  upper_ylim=None, median_x=None, median_y=None, median_style='r-',
                  median_label='median of x2|x1'):
@@ -281,8 +281,9 @@ def plot_contour(x, y, ax, contour_label=None, x_label=None, y_label=None,
         The contour's coordinates in the x-direction.
     y : ndarray of floats
         The contour's coordiantes in the y-direction.
-    ax : Axes
+    ax : Axes, optional (defaults to None)
         Axes of the figure where the contour should be plotted.
+        If None a figure is created here.
     contour_label : str, optional (defaults to None)
         The environmental contour's label that will be used in the legend.
     x_label : str, optional (defaults to None)
@@ -308,6 +309,10 @@ def plot_contour(x, y, ax, contour_label=None, x_label=None, y_label=None,
     median_label : str, optional (defaults to 'median of x2|x1')
         Label for the legend of the plotted median line.
     """
+
+    if ax is None:
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
 
     # For generating a closed contour: add the first coordinate at the end.
     xplot = x.tolist()
