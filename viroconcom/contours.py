@@ -16,8 +16,8 @@ from sklearn.neighbors import NearestNeighbors
 
 from ._n_sphere import NSphere
 
-__all__ = ["Contour", "IFormContour", "ISormContour", "HighestDensityContour",
-           "sort_points_to_form_continous_line"]
+__all__ = ["Contour", "IFormContour", "ISormContour", "DirectSamplingContour",
+           "HighestDensityContour", "sort_points_to_form_continous_line"]
 
 
 class Contour(ABC):
@@ -326,9 +326,127 @@ class ISormContour(Contour):
         self.coordinates = computed[2]
 
 
+class DirectSamplingContour(Contour):
+    def __init__(self, mul_var_dist, return_period=1, state_duration=3,
+                 n=100000, deg_step=5, sample=None, timeout=None):
+        """
+        Drect sampling contour as introduced by Huseby et al. (2013), see
+        doi.org/10.1016/j.oceaneng.2012.12.034 .
+
+        This implementation only works for two-dimensional distributions.
+
+        Parameters
+        ----------
+        mul_var_dist : MultivariateDistribution
+            Must be 2-dimensional.
+        return_period : int, optional
+            Return period given in years. Defaults to 1.
+        state_duration : int, optional
+            Time period for which an environmental state is measured,
+            expressed in hours. Defaults to 3.
+        n : int, optional
+            Number of data points that shall be Monte Carlo simulated.
+        deg_step : float, optional
+            Directional step in degrees. Defaults to 5.
+        sample : 2-dimensional ndarray, optional
+            Monte Carlo simulated environmental states. Array is of shape (d, n)
+            with d being the number of variables and n being the number of
+            observations.
+        timeout : int, optional
+            The maximum time in seconds there the contour has to be computed.
+            This parameter also controls multiprocessing. If timeout is None
+            serial processing is performed, if it is not None multiprocessing
+            is used. Defaults to None.
+        Raises
+        ------
+        TimeoutError,
+            If the calculation takes too long and the given value for timeout is exceeded.
+        """
+        # Call _setup .
+        super().__init__(mul_var_dist, return_period, state_duration, timeout,
+                         n, deg_step, sample)
+
+    def _setup(self, n, deg_step, sample):
+        """
+        Calculates the coordinates of the DS contour.
+
+        Parameters
+        ----------
+        n : int
+            Number of data points that shall be Monte Carlo simulated.
+        deg_step : float
+            Directional step in degrees.
+        sample : 2-dimensional ndarray, optional
+            Array is of shape (d, n) with d being the number of variables and
+            n being the number of observations.
+
+        Returns
+        -------
+        tuple of objects
+            The computed results (sample, contour coordinates).
+        """
+        if self.distribution.n_dim != 2:
+            raise NotImplementedError("DirectSamplingContour is currently only "
+                                      "implemented for two dimensions.")
+
+        if sample is None:
+            sample = self.distribution.draw_sample(n)
+        x, y = sample
+
+        # Calculate non-exceedance probability.
+        alpha = 1 - (1 / (self.return_period * 365.25 * 24 / self.state_duration))
+
+        # Define the angles such the coordinates[0] and coordinates[1] will
+        # be based on the exceedance plane with angle 0 deg, with 0 deg being
+        # along the x-axis. Angles will increase counterclockwise in a xy-plot.
+        # Not enirely sure why the + 2*rad_step is required, but tests show it.
+        rad_step = deg_step * np.pi / 180
+        angles = np.arange(0.5 * np.pi + 2 * rad_step, -1.5 * np.pi + rad_step,
+                           -1 * rad_step)
+
+        length_t = len(angles)
+        r = np.zeros(length_t)
+
+        # Find radius for each angle.
+        i = 0
+        while i < length_t:
+            z = x * np.cos(angles[i]) + y * np.sin(angles[i])
+            r[i] = np.quantile(z, alpha)
+            i = i + 1
+
+        # Find intersection of lines.
+        a = np.array(np.concatenate((angles, [angles[0]]), axis=0))
+        r = np.array(np.concatenate((r, [r[0]]), axis=0))
+
+        denominator = np.sin(a[2:]) * np.cos(a[1:len(a)-1]) - \
+                      np.sin(a[1:len(a)-1]) * np.cos(a[2:])
+
+        x_cont = (np.sin(a[2:]) * r[1:len(r)-1]
+                  - np.sin(a[1:len(a)-1]) * r[2:]) / denominator
+        y_cont = (-np.cos(a[2:]) * r[1:len(r)-1]
+                  + np.cos(a[1:len(a)-1]) * r[2:]) / denominator
+
+        coordinates = [x_cont, y_cont]
+
+
+        return (sample, coordinates)
+
+    def _save(self, computed):
+        """
+        Save the computed parameters.
+
+        Parameters
+        ----------
+        computed : tuple of objects
+            The computed results to be saved (sample, contour coordinates).
+        """
+        self.sample = computed[0]
+        self.coordinates = computed[1]
+
+
 class HighestDensityContour(Contour):
-    def __init__(self, mul_var_distribution, return_period=25, state_duration=3, limits=None,
-                 deltas=None, timeout=None):
+    def __init__(self, mul_var_distribution, return_period=25, state_duration=3,
+                 limits=None, deltas=None, timeout=None):
         """
         Contour based on highest density contour method.
 
@@ -398,8 +516,6 @@ class HighestDensityContour(Contour):
                                                      limits, deltas)
 
         """
-        # TODO document sampling
-        # TODO document alpha
         # calls _setup
         super().__init__(mul_var_distribution, return_period, state_duration,
                          timeout, limits, deltas)
@@ -599,6 +715,10 @@ def sort_points_to_form_continous_line(x, y, do_search_for_optimal_start=False):
     ----------
     x : array_like
     y : array_like
+    do_search_for_optimal_start : boolean, optional
+     If true, the algorithm also searches for the ideal starting node, see the
+     stackoverflow link for more info.
+
     Returns
     -------
     sorted_points : tuple of array_like floats

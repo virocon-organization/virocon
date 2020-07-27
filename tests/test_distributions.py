@@ -4,13 +4,12 @@ import unittest
 import numpy as np
 import scipy.stats as sts
 
-from .context import viroconcom
-
 from viroconcom.params import ConstantParam, FunctionParam
 from viroconcom.distributions import (
     WeibullDistribution, ExponentiatedWeibullDistribution,
     LognormalDistribution, NormalDistribution,
     MultivariateDistribution)
+from viroconcom.fitting import Fit
 
 class MultivariateDistributionTest(unittest.TestCase):
     """
@@ -97,8 +96,6 @@ class MultivariateDistributionTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             MultivariateDistribution(self.distributions, dependencies)
 
-
-
     def test_add_distribution_not_iterable(self):
         """
         Tests the function when both distributions and dependencies
@@ -109,6 +106,61 @@ class MultivariateDistributionTest(unittest.TestCase):
         dependencies = 2
         with self.assertRaises(ValueError):
             MultivariateDistribution(distributions, dependencies)
+
+    def test_multivariate_draw_sample(self):
+        """
+        Tests the draw_sample() function of MulvariateDistribution.
+        """
+
+        # Create a MultivariateDistribution, the joint distribution for Hs-Tz
+        # presented in Vanem et al. (2012).
+        # Start with a Weibull distribution for wave height, Hs.
+        shape = ConstantParam(1.471)
+        loc = ConstantParam(0.8888)
+        scale = ConstantParam(2.776)
+        par0 = (shape, loc, scale)
+        dist0 = WeibullDistribution(*par0)
+
+        # Conditonal lognormal distribution for period, Tz.
+        dist1_shape = FunctionParam('exp3', 0.0400, 0.1748, -0.2243)
+        dist1_loc = None
+        dist1_scale = FunctionParam('power3', 0.1, 1.489, 0.1901)
+        par1 = (dist1_shape, dist1_loc, dist1_scale)
+        dist1 = LognormalDistribution(*par1)
+
+        distributions = [dist0, dist1]
+
+        dep0 = (None, None, None)
+        dep1 = (0, None, 0)
+        dependencies = [dep0, dep1]
+
+        mul_var_dist = MultivariateDistribution(distributions, dependencies)
+
+        n=10000
+        sample = mul_var_dist.draw_sample(n)
+        self.assertEqual(n, sample[0].size)
+        self.assertEqual(n, sample[1].size)
+
+        # Fit the sample to the correct model structure and compare the
+        # estimated parameters with the true parameters.
+        dist_description_0 = {'name': 'Weibull',
+                              'dependency': (None, None, None),
+                              'width_of_intervals': 0.5}
+        dist_description_1 = {'name': 'Lognormal',
+                              'dependency': (0, None, 0),
+                              'functions': ('exp3', None, 'power3')}
+        fit = Fit(sample, [dist_description_0, dist_description_1])
+        fitted_dist0 = fit.mul_var_dist.distributions[0]
+        fitted_dist1 = fit.mul_var_dist.distributions[1]
+        self.assertAlmostEqual(fitted_dist0.shape(0), shape(0), delta=0.1)
+        self.assertAlmostEqual(fitted_dist0.loc(0), loc(0), delta=0.1)
+        self.assertAlmostEqual(fitted_dist0.scale(0), scale(0), delta=0.1)
+        self.assertAlmostEqual(fitted_dist1.shape.a, 0.04, delta=0.1)
+        self.assertAlmostEqual(fitted_dist1.shape.b, 0.1748, delta=0.1)
+        self.assertAlmostEqual(fitted_dist1.shape.c, -0.2243, delta=0.15)
+        self.assertAlmostEqual(fitted_dist1.scale(1), dist1_scale(1), delta=0.1)
+        self.assertAlmostEqual(fitted_dist1.scale(2), dist1_scale(2), delta=0.1)
+
 
     def test_latex_representation(self):
         """
