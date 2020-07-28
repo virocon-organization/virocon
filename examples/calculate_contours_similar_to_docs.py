@@ -1,8 +1,11 @@
+import matplotlib.pyplot as plt
+
 from viroconcom.params import ConstantParam, FunctionParam
 from viroconcom.distributions import WeibullDistribution, LognormalDistribution, \
     MultivariateDistribution
 from viroconcom.contours import IFormContour, HighestDensityContour
-import matplotlib.pyplot as plt
+from viroconcom.plot import plot_contour
+
 
 # Define a Weibull distribution representing significant wave height.
 shape = ConstantParam(1.5)
@@ -33,11 +36,15 @@ deltas = [0.4, 0.4] # The dimensions of the grid cells.
 hdens_contour = HighestDensityContour(mul_dist, 25, 3, limits, deltas)
 
 # Plot the two contours.
-plt.scatter(hdens_contour.coordinates[0], hdens_contour.coordinates[1],
-            label='Highest density contour')
-plt.scatter(iform_contour.coordinates[0], iform_contour.coordinates[1],
+plt.scatter(iform_contour.coordinates[1], iform_contour.coordinates[0],
             label='IFORM contour')
-plt.xlabel('Significant wave height (m)')
-plt.ylabel('Spectral peak period (s)')
+plt.scatter(hdens_contour.coordinates[1], hdens_contour.coordinates[0],
+            label='Highest density contour')
+plt.xlabel('Spectral peak period, Tp (s)')
+plt.ylabel('Significant wave height, Hs (m)')
 plt.legend()
+plt.show()
+
+plot_contour(iform_contour.coordinates[1], iform_contour.coordinates[0],
+             x_label='Tp (s)', y_label='Hs (m)')
 plt.show()
