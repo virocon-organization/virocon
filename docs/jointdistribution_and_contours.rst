@@ -20,11 +20,7 @@ contour with viroconcom can be summarized as:
 
 5. Define the contour's return period and environmental state duration.
 
-6. Choose a type of contour:
-:class:`~viroconcom.contours.IFormContour`,
-:class:`~viroconcom.contours.ISormContour`,
-:class:`~viroconcom.contours.DirectSamplingContour` or
-:class:`~viroconcom.contours.HighestDensityContour`.
+6. Choose a type of contour: :class:`~viroconcom.contours.IFormContour`, :class:`~viroconcom.contours.ISormContour`, :class:`~viroconcom.contours.DirectSamplingContour` or :class:`~viroconcom.contours.HighestDensityContour`.
 
 7. Initiate the calculation.
 
