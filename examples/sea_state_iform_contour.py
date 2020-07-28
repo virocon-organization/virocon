@@ -28,7 +28,7 @@ fitted_distribution = fit.mul_var_dist
 # Compute an IFORM contour with a return period of 50 years.
 tr = 50 # Return period in years.
 ts = 1 # Sea state duration in hours.
-contour = IFormContour(fitted_distribution, tr, ts, 200)
+contour = IFormContour(fitted_distribution, tr, ts)
 
 # Plot the data and the contour.
 fig = plt.figure()

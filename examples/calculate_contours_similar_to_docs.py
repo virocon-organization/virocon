@@ -25,9 +25,9 @@ distributions = [dist0, dist1]
 dependencies = [dep0, dep1]
 mul_dist = MultivariateDistribution(distributions, dependencies)
 
-# Compute an IFORM contour with a return period of 25 years, a sea state
-# duration of 3 hours and 100 points along the contour.
-iform_contour = IFormContour(mul_dist, 25, 3, 100)
+# Compute an IFORM contour with a return period of 25 years and a sea state
+# duration of 3 hours.
+iform_contour = IFormContour(mul_dist, 25, 3)
 
 # Compute a highest density contour with the same settings (25 years return
 # period, 3 hour sea state duration).

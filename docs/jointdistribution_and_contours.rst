@@ -241,11 +241,10 @@ In addition, to create an IFORM contour we need to specify the number of points
 along the contour that shall be calculated.
 
 So with the :ref:`previously created <bundle-multvar-dist>` ``mul_dist`` a
-contour with a ``return_period`` of ``25`` years , a
-``state_duration`` of ``3`` hours and ``n_samples=100`` sampling points can
-be created like this::
+contour with a ``return_period`` of ``25`` years  and  a
+``state_duration`` of ``3`` hours can be created like this::
 
-    iform_contour = IFormContour(mul_dist, 25, 3, 100)
+    iform_contour = IFormContour(mul_dist, 25, 3)
 
 
 .. _hdc:

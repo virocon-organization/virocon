@@ -85,7 +85,7 @@ class Contour(ABC):
 
 class IFormContour(Contour):
     def __init__(self, mul_var_distribution, return_period=25, state_duration=3,
-                 n_points=20, timeout=None):
+                 n_points=180, timeout=None):
         """
         Contour based on the inverse first-order reliability method.
 
@@ -101,7 +101,7 @@ class IFormContour(Contour):
             Time period for which an environmental state is measured,
             expressed in hours. Defaults to 3.
         n_points : int, optional
-            Number of points on the contour. Defaults to 20.
+            Number of points on the contour. Defaults to 180.
         timeout : int, optional
             The maximum time in seconds there the contour has to be computed.
             This parameter also controls multiprocessing. If timeout is None
@@ -205,7 +205,7 @@ class IFormContour(Contour):
 
 class ISormContour(Contour):
     def __init__(self, mul_var_distribution, return_period=25, state_duration=3,
-                 n_points=20, timeout=None):
+                 n_points=180, timeout=None):
         """
         Contour based on the inverse second-order reliability method.
 
@@ -222,7 +222,7 @@ class ISormContour(Contour):
             Time period for which an environmental state is measured,
             expressed in hours. Defaults to 3.
         n_points : int, optional
-            Number of points on the contour. Defaults to 20.
+            Number of points on the contour. Defaults to 180.
         timeout : int, optional
             The maximum time in seconds there the contour has to be computed.
             This parameter also controls multiprocessing. If timeout is None
