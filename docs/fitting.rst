@@ -11,19 +11,27 @@ parameter values of a joint distribution.
 To fit a model structure to a dataset, we need to build an object of the class ``Fit`` in this module.
 Exemplary call::
 
-    example_fit = Fit((sample_0, sample_1), (dist_description_0, dist_description_1), timeout=None)
+    example_fit = Fit((sample_0, sample_1), (dist_description_0, dist_description_1))
 
 It is important that the parameter ``samples`` is in the form (sample_0, sample_1, ...).
 Each sample is a collection of data from type *list* and also all samples have the same length. The parameter ``dist_descriptions``
 describes the structure of the probabilistic model that should be fitted to the sample. It should be from type *list* and should
 contain a dictionary for each dimension in the same sequence of the samples. It should accordingly have the same length as ``samples``.
 
-Each ``dist_description`` describes one dimension of the probabilistic model structure. It contains the name of the current distribution (i.e. ``"Weibull"``).
-Then it contains the dependency for this dimension from type *list*. In the sequence of ``shape, loc, scale`` it contains integers for the dependency
-of the current parameter or *None* if it has no dependency. It is important that the dependency is less than the index of the current dimension.
-The list for the parameter ``functions`` also has length of three and contains information about the used functions for fitting.
+Each ``dist_description`` dictionary describes one dimension of the probabilistic model structure.
+It must contain the name of the current distribution under the key *name*, which
+could be, for example, ``"Lognormal"``. If the distribution is conditional, it
+also must contain the keys ``dependency`` and ``functions``. The ``dependency`` value
+must be of type *list*. In the sequence of ``shape, loc, scale``, it contains
+integers for the dependency of the current parameter or *None* if it has no
+dependency. An entry of 0 means that the parameter depends upon the variable with
+index 0, for example :math:`X_2|X_0`). The ``functions`` value is of type *list*
+too, and is interpreted in the sequence ``shape, loc, scale``. Its entries define,
+which dependence functions are fitted. Additional keys such as
+``width_of_intervals`` or ``min_datapoints_for_fit`` are optional and can be used
+to control the fitting procedure.
 
-The following distributions are available (keyword and meaning):
+The following distributions are available under the given key values:
 
 - **Weibull_2p** :  2-parameter Weibull distribution
 - **Weibull_3p** :  translated Weibull distribution (sometimes simply called 3-parameter Weibull distribution)
@@ -32,7 +40,7 @@ The following distributions are available (keyword and meaning):
 - **Lognormal_SigmaMu** :  lognormal distribution parametrized with mu and sigma
 - **Normal** :  normal distribution
 
-The following dependence functions are available (keyword and meaning):
+The following dependence functions are available under the given key values:
 
 - **power3** :  :math:`a + b * x^c`
 - **exp3** : :math:`a + b * e^{x * c}`
@@ -43,13 +51,22 @@ The following dependence functions are available (keyword and meaning):
 - **alpha3** : :math:`(a + b * x^c) / 2.0445^{1 / logistics4(x, c_1, c_2, c_3, c_4)}`
 - **None** : no dependency
 
-Example for a ``dist_description``, that could represent the marginal
+The following optional keys and values are available:
+
+- **number_of_intervals** : int. The sample of this variable will be divided into the given number of intervals. Intervals will be equally spaced.
+- **width_of_intervals** : float. The sample of htis variable will be divided into intervals with the given width.
+- **min_datapoints_for_fit** : int. A marginal distribution will only be fitted to an interval if the interval contains at least the given number of observations.
+- **do_use_weights_for_dependence_function** : boolean. If true the dependence function is fitted used weights that normalize each parameter value.
+- **fixed_parameters** : list with one entry for each parameter. *None* is interpreted as the parameter is free. If a number is given, the parameter is fixed to that number and not estimated.
+
+
+Example for a ``dist_description`` that could represent the marginal
 distribution of significant wave height::
 
     dist_description_0 = {'name': 'Weibull_Exp',
                           'width_of_intervals': 1}
 
-Example for a ``dist_description``, that could represent the conditonal
+Example for a ``dist_description`` that could represent the conditonal
 distribution of zero-up-crossiong period::
 
     dist_description_1 = {'name': 'Lognormal_SigmaMu',
