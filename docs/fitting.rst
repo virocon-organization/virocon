@@ -99,7 +99,7 @@ The code snipped will create this plot:
     :scale: 100 %
     :alt: example contours plot
 
-    Plot of a randomly drawn sample.
+    1 year of measurements from NDBC's buoy 44007.
 
 Now we describe the type of multivariate distribution that we want to fit to this data ::
 
@@ -130,7 +130,7 @@ Now, let us plot the fit for the first variable using a QQ-plot ::
     :scale: 100 %
     :alt: fit of first variable
 
-    Fit of the first variable, Hs.
+    QQ-plot showing the fitted exponentiated Weibull distribution and the empirical wave height data..
 
 For our second variable, we need some more plots to inspect it properly.
 Let us start with the marginal distributions that were fitted to Hs-intervals ::
@@ -148,12 +148,12 @@ Let us start with the marginal distributions that were fitted to Hs-intervals ::
 
 
 .. figure:: fitting_fig3.png
-    :scale: 100 %
+    :scale: 50 %
     :alt: individual fits of second variable
 
-    Individual fits of second variable, Tp.
+    Fitted marginal distributions at different Hs intervals.
 
-Let us now inspect how well our dependence functions fit to the marginal
+Now, let us analyze how well our dependence functions fit to the marginal
 distributions' four scale and shape values ::
 
     fig = plt.figure()
@@ -172,18 +172,16 @@ distributions' four scale and shape values ::
     :scale: 100 %
     :alt: fit of the dependence function
 
-    Fit of the dependence function.
+    Fitted dependence function.
 
 Finally, let us use the fitted joint distribution to compute an environmental
 contour ::
 
-    iform_contour = IFormContour(my_fit.mul_var_dist, 25, 3, 100)
-    plt.scatter(sample_0, sample_1, label='sample')
-    plt.plot(iform_contour.coordinates[0][0], iform_contour.coordinates[0][1],
-                '-k', label='IFORM contour')
-    plt.xlabel('significant wave height [m]')
-    plt.ylabel('spectral peak period [s]')
-    plt.legend()
+    iform_contour = IFormContour(my_fit.mul_var_dist, 50, 1)
+    fig, ax = plt.subplots(1, 1, figsize=(5, 4.5))
+    plot_contour(iform_contour.coordinates[1], iform_contour.coordinates[0],
+                 ax=ax, x_label=label_tz, y_label=label_hs,
+                 sample_plot_data=sample_plot_data, upper_ylim=13)
     plt.show()
 
 
@@ -191,4 +189,4 @@ contour ::
     :scale: 100 %
     :alt: environmental contour based on the fitted distribution
 
-    Environmental contour based on the fitted distribution.
+    50-year environmental contour based on the fitted distribution.
