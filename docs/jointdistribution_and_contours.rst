@@ -1,25 +1,34 @@
 ***************************************************
 Define a joint distribution and calculate a contour
 ***************************************************
-The main use of this package is to create environmental contours. For this purpose one has to define a multivariate distribution, choose one of two calculation methods, and initiate the calculation.
+To create an environmental contours, we need to define a joint distribution first.
+Then, we can choose a specific contour method and initiate the calculation.
+viroconcom uses so-called global hierarchical models to define the joint
+distribution and offers four common concepts for how an environmental
+contour can be defined based on a given joint distribution.
 
-This procedure can be further broken down into 8 steps:
+If the joint distribution is known, the procedure of calculating an environmental
+contour with viroconcom can be summarized as:
 
 1. Create a first, independent distribution.
 
-2. Create another, (possibly) dependent distribution and define its dependency on the previous distributions.
+2. Create another, (possibly) dependent distribution and define its dependency
+on the previous distributions.
 
 3. Repeat step 2, until you have created the desired amount of distributions.
 
-4. Bundle the created uni-variate distributions and the defined dependencies in a multivariate distribution.
+4. Bundle the created univariate distributions and the defined dependencies
+in a multivariate distribution.
 
-5. Define the common parameters, return period and environmental state duration for the contour.
+5. Define the contour's return period and environmental state duration.
 
-6. Choose one of the two calculation options: :class:`HighestDensityContour <viroconcom.contours.HighestDensityContour>` or :class:`~viroconcom.contours.IFormContour`.
+6. Choose a type of contour:
+:class:`~viroconcom.contours.IFormContour`,
+:class:`~viroconcom.contours.ISormContour`,
+:class:`~viroconcom.contours.DirectSamplingContour` or
+:class:`~viroconcom.contours.HighestDensityContour`.
 
-7. Define the calculation specific parameters.
-
-8. Initiate the calculation.
+7. Initiate the calculation.
 
 These steps are explained in more detail in the following.
 
@@ -33,16 +42,24 @@ show on this page.
 Create independent distribution
 ===============================
 
-Distributions are represented by the abstract class :class:`~viroconcom.distributions.Distribution`. This class is further subclassed by the abstract class :class:`~viroconcom.distributions.ParametricDistribution`. Distributions of this kind are described by three parameters: ``shape``, ``loc``, and ``scale``. Though not all distributions need to make use of all three parameters.
+Distributions are represented by the abstract class
+:class:`~viroconcom.distributions.Distribution`. This class is further
+subclassed by the abstract class
+:class:`~viroconcom.distributions.ParametricDistribution`. Distributions of
+this kind are described by three or four parameters:
+``shape``, ``loc``, ``scale`` and possibly ``shape2``.
+Though not all distributions need to make use of all parameters.
 
-Currently there are 4 parametric distribution subclasses one can use to instantiate a distribution:
+Currently there are 4 parametric distribution subclasses one can use to
+instantiate a distribution:
 
 * :class:`~viroconcom.distributions.WeibullDistribution`
 * :class:`~viroconcom.distributions.ExponentiatedWeibullDistribution`
 * :class:`~viroconcom.distributions.LognormalDistribution`
 * :class:`~viroconcom.distributions.NormalDistribution`
 
-This table shows, which variables of the probability density function are are defined by specifying the scale, shape and location parameters:
+This table shows, which variables of the probability density function are are
+defined by specifying the scale, shape and location parameters:
 
 .. figure:: distributions_with_parameters.png
    :alt: Distributions implemented in viroconcom and their parameters.
@@ -51,9 +68,13 @@ This table shows, which variables of the probability density function are are de
    Distributions implemented in viroconcom and their parameters.
 
 
-For the parameters there is the abstract class :class:`~viroconcom.params.Param`. As we want to create an independet distribution, we use the subclass :class:`~viroconcom.params.ConstantParam` to define ``shape``, ``loc``, and ``scale``.
+For the parameters there is the abstract class
+:class:`~viroconcom.params.Param`. As we want to create an independet
+distribution, we use the subclass :class:`~viroconcom.params.ConstantParam` to
+define ``shape``, ``loc``, and ``scale``.
 
-Say we want to create a weibull distribution with ``shape=1.5``, ``loc=1``, and ``scale=3``.
+Say we want to create a Weibull distribution with ``shape=1.5``, ``loc=1``,
+and ``scale=3``.
 
 We first create the parameters::
 
@@ -62,11 +83,16 @@ We first create the parameters::
     scale = ConstantParam(3)
 
 
-And then create our weibull distribution::
+And then create our Weibull distribution::
 
     dist0 = WeibullDistribution(shape, loc, scale)
 
-We also need to create a dependency tuple for creating a :class:`~viroconcom.distribution.MultivariateDistribution` later on. This is a 3-element tuple with either ``int`` or ``None`` as entries. The first entry corresponds to ``shape``, the second to ``loc`` and the third to ``scale``. For further information see :ref:`create-dependent-dist`. For an independent distribution all entries need to be set to ``None``. ::
+We also need to create a dependency tuple for creating a
+:class:`~viroconcom.distribution.MultivariateDistribution` later on.
+This is a 3-element tuple with either ``int`` or ``None`` as entries.
+The first entry corresponds to ``shape``, the second to ``loc`` and the third
+to ``scale``. For further information see :ref:`create-dependent-dist`.
+For an independent distribution all entries need to be set to ``None``. ::
 
     dep0 = (None, None, None)
 
@@ -76,12 +102,15 @@ We also need to create a dependency tuple for creating a :class:`~viroconcom.dis
 Create dependent distribution
 ==============================
 
-The dependency of a parametric distribution is described by the dependency of its parameters. In :ref:`create-independent-dist` we used :class:`~viroconcom.params.ConstantParam` for the parameters. There is also :class:`~viroconcom.params.FunctionParam`, that is callable which returns a parameter value depending on the value called with.
+In a global hierarchical model, the dependency of a parametric distribution is
+described by dependence functions for the distribution's parameters.
+In :ref:`create-independent-dist` we used
+:class:`~viroconcom.params.ConstantParam` for the parameters. There is also
+:class:`~viroconcom.params.FunctionParam`, which can represent different
+ dependence functions. It is callable and returns a parameter value depending
+ on the value called with.
 
-.. note::
-    Actually :class:`~viroconcom.params.ConstantParam` is a callable as well, which returns the same value, indepently of the value called with.
-
-Say we have a random variable (RV) :math:`X` that is described by the distribution created in :ref:`create-independent-dist`. We now want to create a dependent distribution that describes the random variable :math:`Y`, which is dependent on :math:`X`. We can do this by making the parameters of that distribution, dependent on the realizations :math:`x` of RV :math:`X`.
+Say we have a random variable :math:`X` that is described by the distribution created in :ref:`create-independent-dist`. We now want to create a dependent distribution that describes the random variable :math:`Y`, which is dependent on :math:`X`. We can do this by making the parameters of that distribution, dependent on the realizations :math:`x` of RV :math:`X`.
 
 For this we first need to define an order of the distributions, so that we can determine on which distributions another may depend. We define this order, as the order in which the univariate distribution are later on passed to the :class:`~viroconcom.distributions.MultivariateDistribution` constructor. For now we use the order of creation. So the first in :ref:`create-independent-dist` created weibull distribution has the index ``0``. We use this order in the dependency tuples.
 
