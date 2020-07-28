@@ -1,8 +1,10 @@
-*********************************
-Fit your own data with fitting.py
-*********************************
+**************************************
+Fit a model structure to measured data
+**************************************
 
-This module fitting_ implements the possibility to fit a probabilistc model to measured environmental data.
+The module fitting_ implements functionality to fit a model structure to
+measured environmental data. In other words, it can be used to estimate the
+parameter values of a joint distribution.
 
 .. _fitting.py: https://github.com/virocon-organization/viroconcom/blob/master/viroconcom/fitting.py
 
