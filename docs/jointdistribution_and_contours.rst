@@ -224,6 +224,9 @@ duration, :math:`t_S`:
 .. math::
     \alpha = t_S / t_R
 
+In viroconcom the return period is assumed to be given in years and the state
+duration is assumed to be given in hours.
+
 Then we can select one of the four contour methods:
 
 - :ref:`Inverse first-order reliabilty method (IFORM) <iform>`
@@ -231,16 +234,6 @@ Then we can select one of the four contour methods:
 - Direct sampling contour method
 - :ref:`Highest density contour method <hdc>`
 
-
-.. _return-period:
-
-return period
-    The time between two environmental states that are not inside the contour, in years.
-
-.. _state_duration:
-
-state duration
-    The time between two consecutive states, in hours.
 
 .. _iform:
 
