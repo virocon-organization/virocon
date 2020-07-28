@@ -3,9 +3,9 @@ User Guide
 ##########
 
 .. toctree::
-	:maxdepth: 2
+    :maxdepth: 2
 
-	install
+    install
     example
-	jointdistribution_and_contours
-	fitting
+    jointdistribution_and_contours
+    fitting
