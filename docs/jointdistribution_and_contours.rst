@@ -11,17 +11,21 @@ If the joint distribution is known, the procedure of calculating an environmenta
 contour with viroconcom can be summarized as:
 
 1. Create a first, independent distribution.
-2. Create another, (possibly) dependent distribution and define its dependency
-on the previous distributions.
+
+2. Create another, (possibly) dependent distribution and define its dependency on the previous distributions.
+
 3. Repeat step 2, until you have created the desired amount of distributions.
-4. Bundle the created univariate distributions and the defined dependencies
-in a multivariate distribution.
+
+4. Bundle the created univariate distributions and the defined dependencies in a multivariate distribution.
+
 5. Define the contour's return period and environmental state duration.
+
 6. Choose a type of contour:
 :class:`~viroconcom.contours.IFormContour`,
 :class:`~viroconcom.contours.ISormContour`,
 :class:`~viroconcom.contours.DirectSamplingContour` or
 :class:`~viroconcom.contours.HighestDensityContour`.
+
 7. Initiate the calculation.
 
 These steps are explained in more detail in the following.
