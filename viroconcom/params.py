@@ -83,7 +83,7 @@ class FunctionParam(Param):
             Defines which kind of dependence function to use:
                 :power3: :math:`a + b * x^c`
                 :exp3: :math:`a + b * e^{x * c}`
-                :lnsquare2: :math:`\ln[a + b * \sqrt(x / 9.81)`
+                :lnsquare2: :math:`\ln[a + b * \sqrt(x / 9.81)]`
                 :powerdecrease3: :math:`a + 1 / (x + b)^c`
                 :asymdecrease3: :math:`a + b / (1 + c * x)`
                 :logistics4: :math:`a + b / [1 + e^{-1 * |c| * (x - d)}]`
