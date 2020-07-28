@@ -160,7 +160,7 @@ The conversion between ``shape``, ``scale``, ``mu`` and ``sigma`` is:
 The class :class:`~viroconcom.distribution.LognormalDistribution` has a
 constructor for ```shape`` and ``scale`` as well as for ``mu`` and ``sigma``.
 
-The dependency can be described as follows, where :math:`x` is a
+Say we want to define the following dependence structure, where :math:`x` is a
 realization of :math:`X`:
 
 .. math::
@@ -169,7 +169,9 @@ realization of :math:`X`:
 .. math::
     \mu(x) = 0.1 + 1.5^{x * 0.2}
 
-First we create the parameters as :class:`~viroconcom.params.FunctionParam`::
+In viroconcom, to define this dependence structure, first we create the
+parameters as :class:`~viroconcom.params.FunctionParam` using the keywords
+"exp3" and "power" to specify the wanted dependence functions ::
 
     my_sigma = FunctionParam(0.05, 0.2, -0.2, "exp3")
     my_mu = FunctionParam(0.1, 1.5, 0.2, "power3")
