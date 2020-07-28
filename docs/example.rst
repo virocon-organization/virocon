@@ -2,7 +2,7 @@
 Example: Sea state contour
 **************************
 
-Before going into the details, let's have a look at an example.
+Let's start this user guide with a simple example.
 
 Based on a dataset, the long-term joint distribution of sea states is estimated
 and this distribution will be used to construct an environmental contour with a
@@ -48,10 +48,12 @@ return period of 50 years. ::
                  ax=ax, x_label=label_tz, y_label=label_hs)
     plt.show()
 
-The code will create this plot:
+The code, which is available as a Python file here_, will create this plot:
 
 .. figure:: sea_state_contour.png
     :scale: 100 %
     :alt: sea state contour
 
     Environmental contour with a return period of 50 years.
+
+.. _here: https://github.com/virocon-organization/viroconcom/blob/master/examples/sea_state_iform_contour.py
