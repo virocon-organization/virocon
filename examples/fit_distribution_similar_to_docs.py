@@ -1,6 +1,5 @@
 import matplotlib.pyplot as plt
 import numpy as np
-import scipy.stats as sts
 
 from viroconcom.read_write import read_ecbenchmark_dataset
 from viroconcom.fitting import Fit
@@ -40,7 +39,8 @@ fig, ax = plt.subplots(1, 1, figsize=(5, 4.5))
 plot_marginal_fit(sample_0, fitted_hs_dist, fig, ax, label='$h_s$ (m)', dataset_char='A')
 plt.show()
 
-# Plot the fits for the zero-up-crossing peak period, Tz.
+# Plot fitted marginal distributions for the zero-up-crossing peak period
+# using a histogram of the sample and a density plot.
 n_fits = len(my_fit.multiple_fit_inspection_data[1].scale_at)
 fig, axs = plt.subplots(1, n_fits, figsize=(14, 4))
 for i in range(n_fits):
@@ -52,14 +52,16 @@ for i in range(n_fits):
         axs[i].plot(x, f)
 plt.show()
 
+# Plot the fitted dependence functions.
 fig = plt.figure(figsize=(9, 4.5))
-plot_dependence_functions(my_fit, fig, unconditonal_variable_label=label_hs)
-plt.xlim((0, 10))
+plot_dependence_functions(my_fit, fig, unconditonal_variable_label=label_hs,
+                          factor_draw_longer=2)
 plt.show()
 
 # Compute a contour based on the fit and plot it together with the sample.
 iform_contour = IFormContour(my_fit.mul_var_dist, 50, 1)
 fig, ax = plt.subplots(1, 1, figsize=(5, 4.5))
-plot_contour(iform_contour.coordinates[1], iform_contour.coordinates[0], ax=ax,
-             x_label=label_tz, y_label=label_hs, sample_plot_data=sample_plot_data)
+plot_contour(iform_contour.coordinates[1], iform_contour.coordinates[0],
+             ax=ax, x_label=label_tz, y_label=label_hs,
+             sample_plot_data=sample_plot_data, upper_ylim=12)
 plt.show()

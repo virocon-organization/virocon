@@ -125,7 +125,8 @@ def plot_dependence_functions(
         fit, fig, ax1=None, ax2=None, unconditonal_variable_label=None,
         marker_discrete='o', markersize_discrete=5,
         markerfacecolor_discrete='lightgray', markeredgecolor_discrete='k',
-        style_dependence_function='b-', legend_fontsize=8):
+        style_dependence_function='b-', legend_fontsize=8,
+        factor_draw_longer=1.1):
     """
     Plots the fitted dependence function using two subplots, one subplot showing
     the fit of the shape value and one subplot showing the fit of the scale
@@ -152,6 +153,8 @@ def plot_dependence_functions(
         Style of the fitted dependence function.
     legend_fontsize : int, defaults to 8
         Font size of the legend's text.
+    factor_draw_longer : float, defaults to 1.1
+        How much longer than the last point should the fitted curve be plotted.
 
     Raises
     ------
@@ -174,7 +177,7 @@ def plot_dependence_functions(
 
     plt.sca(ax1)
     scale_at = fit.multiple_fit_inspection_data[1].scale_at
-    x1 = np.linspace(0, max(scale_at)*1.1, 100)
+    x1 = np.linspace(0, max(scale_at) * factor_draw_longer, 100)
     if fit.mul_var_dist.distributions[1].scale.func_name == 'power3':
         dp_function = '$' + str('%.3g' % fit.mul_var_dist.distributions[1].scale.a) + \
                       '+' + str('%.3g' % fit.mul_var_dist.distributions[1].scale.b) + \
@@ -224,7 +227,7 @@ def plot_dependence_functions(
 
     plt.sca(ax2)
     shape_at = fit.multiple_fit_inspection_data[1].shape_at
-    x1 = np.linspace(0, max(shape_at)*1.1, 100)
+    x1 = np.linspace(0, max(shape_at) * factor_draw_longer, 100)
     plt.plot(shape_at, fit.multiple_fit_inspection_data[1].shape_value,
              marker_discrete,
              markersize=markersize_discrete,
@@ -278,7 +281,7 @@ def plot_dependence_functions(
 
 
 def plot_contour(x, y, ax=None, contour_label=None, x_label=None, y_label=None,
-                 line_style='b-', alpha=1, sample_plot_data=None, x_lim = None,
+                 line_style='b-', alpha=1, sample_plot_data=None, x_lim=None,
                  upper_ylim=None, median_x=None, median_y=None, median_style='r-',
                  median_label='median of x2|x1'):
     """
