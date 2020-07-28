@@ -112,7 +112,7 @@ The following dependence functions are available (keyword and meaning):
 
 - **power3** :  :math:`a + b * x^c`
 - **exp3** : :math:`a + b * e^{x * c}`
-- **lnsquare2** : :math:`\log ( a + b * \sqrt{ \dfrac(x, 9.81} } )`
+- **lnsquare2** : :math:`\log ( a + b * \sqrt{ \frac(x, 9.81} } )`
 - **powerdecrease3** : :math:`a + 1 / (x + b)^c`
 - **asymdecrease3** : :math:`a + b / (1 + c * x)`
 - **logistics4** : :math:`a + b / (1 + e^{-1 * |c| * (x - d))}`
