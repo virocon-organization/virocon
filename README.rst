@@ -70,25 +70,20 @@ Usage
 
 viroconcom is designed as an importable package.
 
-The documentation gives examples how to `fit a distribution`_ to measurement data
-and how to `compute environmental contours`_.
-
-Additionally, the folder `examples`_ contains python files that show how one can
+The folder `examples`_ contains python files that show how one can
 import and use viroconcom.
 
-As an example, to run the file `calculate_contours_similar_to_docs.py`_, use
-your shell to navigate to the folder that contains the file. Then make sure
-that you have installed the python package matplotlib or install it by typing
-
-.. code:: console
-
-   pip install matplotlib
-
-Now run the Python file by typing
+As an example, to run the file `sea_state_iform_contour.py`_, use
+your shell to navigate to the folder that contains the file. Make sure
+that you have installed matplotlib and run the Python file by typing
 
 .. code:: console
 
    python calculate_contours_similar_to_docs.py
+
+Our documentation contains a user guide, with  examples how to
+`fit a distribution`_ to measurement data and how to
+`compute environmental contours`_.
 
 Documentation
 -------------
@@ -139,7 +134,7 @@ read the file `LICENSE`_.
 .. _fit a distribution: https://virocon-organization.github.io/viroconcom/fitting.html
 .. _compute environmental contours: https://virocon-organization.github.io/viroconcom/contours.html
 .. _examples: https://github.com/virocon-organization/viroconcom/tree/master/examples
-.. _calculate_contours_similar_to_docs.py: https://github.com/virocon-organization/viroconcom/blob/master/examples/calculate_contours_similar_to_docs.py
+.. _sea_state_iform_contour.py: https://github.com/virocon-organization/viroconcom/blob/master/examples/sea_state_iform_contour.py
 .. _here: https://virocon-organization.github.io/viroconcom/
 .. _Contribution Guide: https://virocon-organization.github.io/viroconcom/contributionguide.html
 .. _LICENSE: https://github.com/virocon-organization/viroconcom/blob/master/LICENSE
