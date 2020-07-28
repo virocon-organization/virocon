@@ -63,5 +63,5 @@ iform_contour = IFormContour(my_fit.mul_var_dist, 50, 1)
 fig, ax = plt.subplots(1, 1, figsize=(5, 4.5))
 plot_contour(iform_contour.coordinates[1], iform_contour.coordinates[0],
              ax=ax, x_label=label_tz, y_label=label_hs,
-             sample_plot_data=sample_plot_data, upper_ylim=12)
+             sample_plot_data=sample_plot_data, upper_ylim=13)
 plt.show()

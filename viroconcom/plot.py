@@ -237,8 +237,8 @@ def plot_dependence_functions(
              style_dependence_function)
     plt.xlabel(unconditonal_variable_label)
     if fit.mul_var_dist.distributions[1].name == 'Lognormal':
-        plt.xlim((0, 6))
-        plt.ylim((0.065, 0.33))
+        #plt.xlim((0, 6))
+        #plt.ylim((0.065, 0.33))
         ylabel = '$σ_{tz}$'
         if fit.mul_var_dist.distributions[1].shape.func_name == 'exp3':
             dp_function = '$' + str('%.3g' % fit.mul_var_dist.distributions[1].shape.a) + \
@@ -258,8 +258,8 @@ def plot_dependence_functions(
     if fit.mul_var_dist.distributions[1].name == 'Weibull'  or \
                     fit.mul_var_dist.distributions[1].name == 'ExponentiatedWeibull':
         ylabel = '$β_{h_s}$'
-        plt.xlim((0, 30))
-        plt.ylim((0, 3.5))
+        #plt.xlim((0, 30))
+        #plt.ylim((0, 3.5))
         if fit.mul_var_dist.distributions[1].shape.func_name == 'power3':
             dp_function = '$' + str('%.4f' % fit.mul_var_dist.distributions[1].shape.a) + \
                           '+' + str('%.3g' % fit.mul_var_dist.distributions[1].shape.b) + \
