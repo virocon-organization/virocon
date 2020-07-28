@@ -122,7 +122,7 @@ class PlottingTest(unittest.TestCase):
                      x_label=label_tz,
                      y_label=label_hs,
                      line_style='b-',
-                     plotted_sample=plotted_sample,
+                     sample_plot_data=plotted_sample,
                      x_lim=(0, 19),
                      upper_ylim=15,
                      median_x=tz,
@@ -245,5 +245,5 @@ class PlottingTest(unittest.TestCase):
             x_upper=contour_v_upper, y_upper=contour_hs_upper, ax=ax,
             x_label=label_v,
             y_label=label_hs, contour_labels=contour_labels,
-            plotted_sample=plotted_sample)
+            sample_plot_data=plotted_sample)
         #plt.show()

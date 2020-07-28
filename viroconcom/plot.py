@@ -13,18 +13,18 @@ __all__ = ["plot_sample", "plot_marginal_fit", "plot_dependence_functions",
            "plot_wave_breaking_limit", "hs_from_limiting_sig_wave_steepness"]
 
 
-def plot_sample(plotted_sample, ax=None, do_plot_rasterized=True):
+def plot_sample(sample_plot_data, ax=None, do_plot_rasterized=True):
     """
     Plots the sample of metocean data.
 
     Parameters
     ----------
-    plotted_sample : SamplePlotData,
+    sample_plot_data : SamplePlotData,
         The sample that should be plotted and its meta information.
     """
     if ax is None:
-        ax = plotted_sample.ax
-    ps = plotted_sample
+        ax = sample_plot_data.ax
+    ps = sample_plot_data
     x = ps.x
     y = ps.y
     if ps.x_inside is not None and ps.y_inside is not None:
@@ -45,7 +45,7 @@ def plot_sample(plotted_sample, ax=None, do_plot_rasterized=True):
 
 def plot_marginal_fit(sample, dist, fig, ax=None, label=None, color_sample='k',
                       marker_sample='x', marker_size_sample=3, color_fit='b',
-                      dataset_char='?',legend_fontsize=8):
+                      dataset_char=None, legend_fontsize=8):
     """
     Plots the fitted marginal distribution versus a dataset in a quantile-
     quantile (QQ) plot.
@@ -267,7 +267,7 @@ def plot_dependence_functions(
 
 
 def plot_contour(x, y, ax=None, contour_label=None, x_label=None, y_label=None,
-                 line_style='b-', alpha=1, plotted_sample=None, x_lim = None,
+                 line_style='b-', alpha=1, sample_plot_data=None, x_lim = None,
                  upper_ylim=None, median_x=None, median_y=None, median_style='r-',
                  median_label='median of x2|x1'):
     """
@@ -294,7 +294,7 @@ def plot_contour(x, y, ax=None, contour_label=None, x_label=None, y_label=None,
         Matplotlib line style.
     alpha : float, optional (default to 1)
         Alpha value (transparency) for the contour's line.
-    plotted_sample : SamplePlotData, optional (defaults to None)
+    sample_plot_data : SamplePlotData, optional (defaults to None)
         The sample that should be plotted and its meta information.
     x_lim : tuple of floats, optional (defaults to None)
         x-Axis limit.
@@ -321,8 +321,8 @@ def plot_contour(x, y, ax=None, contour_label=None, x_label=None, y_label=None,
     yplot.append(y[0])
 
     # Plot the contour and, if provided, also the sample.
-    if plotted_sample:
-        plot_sample(plotted_sample, ax=ax)
+    if sample_plot_data:
+        plot_sample(sample_plot_data, ax=ax)
     if contour_label:
         ax.plot(xplot, yplot, line_style, alpha=alpha, label=contour_label)
     else:
@@ -340,14 +340,14 @@ def plot_contour(x, y, ax=None, contour_label=None, x_label=None, y_label=None,
     if x_lim:
         plt.xlim(x_lim)
     y_lim_factor = 1.2
-    if plotted_sample and upper_ylim is None:
+    if sample_plot_data and upper_ylim is None:
         # If there is not enough space for the legend in the upper left corner:
         # make space for it.
-        max_index = np.where(plotted_sample.y == max(plotted_sample.y))
-        if plotted_sample.x[max_index] < 0.6 * max(max(x), max(plotted_sample.x)):
+        max_index = np.where(sample_plot_data.y == max(sample_plot_data.y))
+        if sample_plot_data.x[max_index] < 0.6 * max(max(x), max(sample_plot_data.x)):
             y_lim_factor = 1.35
 
-        upper_ylim = max(max(y), max(plotted_sample.y)) * y_lim_factor
+        upper_ylim = max(max(y), max(sample_plot_data.y)) * y_lim_factor
     elif upper_ylim is None:
         upper_ylim = max(y) * y_lim_factor
     plt.ylim((0, upper_ylim))
@@ -387,7 +387,7 @@ class SamplePlotData():
         outside datapoints.
     """
 
-    def __init__(self, x, y, ax, label=None, x_inside=None, y_inside=None,
+    def __init__(self, x, y, ax=None, label=None, x_inside=None, y_inside=None,
                  x_outside=None, y_outside=None, return_period=None):
         """
         Parameters
@@ -396,7 +396,7 @@ class SamplePlotData():
             The sample's first environmental variable.
         y : ndarray of floats
             The sample's second environmental variable.
-        ax : Axes
+        ax : Axes, optional (defaults to None)
             Axes of the figure where the scatter plot should be drawn.
         label : str, optional (defaults to None)
             Label that will be used in the legend for the sample.
@@ -425,7 +425,7 @@ class SamplePlotData():
 
 def plot_confidence_interval(x_median, y_median, x_bottom, y_bottom, x_upper,
                              y_upper, ax, x_label=None, y_label=None,
-                             contour_labels=[None, None, None], plotted_sample=None):
+                             contour_labels=[None, None, None], sample_plot_data=None):
     """
     Plots the confidence interval (median, bottom, upper) in a standardized
     appearance.
@@ -451,7 +451,7 @@ def plot_confidence_interval(x_median, y_median, x_bottom, y_bottom, x_upper,
         Label for the y-axis.
     contour_labels : list of str, optional (defaults to [None, None, None])
         Label for the environmental contours that will be used in the legend.
-    plotted_sample : SamplePlotData, optional
+    sample_plot_data : SamplePlotData, optional
         If provided, this sample is plotted together with the contours.
     """
     plot_contour(x=x_median,
@@ -461,7 +461,7 @@ def plot_confidence_interval(x_median, y_median, x_bottom, y_bottom, x_upper,
                  y_label=y_label,
                  line_style='b-',
                  contour_label=contour_labels[0],
-                 plotted_sample=plotted_sample)
+                 sample_plot_data=sample_plot_data)
     plot_contour(x=x_bottom,
                  y=y_bottom,
                  contour_label=contour_labels[1],

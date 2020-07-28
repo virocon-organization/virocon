@@ -2,10 +2,11 @@
 Fit your own data with fitting.py
 *********************************
 
-This module implements the possibility to fit a probabilistc model to your own data.
+This module fitting_ implements the possibility to fit a probabilistc model to measured environmental data.
 
-If you want to fit multivariate distribution to your data set you have to build an object of the class ``Fit`` in this module.
-The necessary parameters for building objects of ``Fit`` are also listed in the documentation of this class.
+.. _fitting.py: https://github.com/virocon-organization/viroconcom/blob/master/viroconcom/fitting.py
+
+To fit a model structure to a dataset, we need to build an object of the class ``Fit`` in this module.
 Exemplary call::
 
     example_fit = Fit((data_1, data_2), (dist_description_0, dist_description_1), timeout=None)
@@ -39,19 +40,28 @@ The following dependence functions are available (keyword and meaning):
 - **alpha3** : :math:`(a + b * x^c) / 2.0445^{1 / logistics4(x, c_1, c_2, c_3, c_4)}`
 - **None** : no dependency
 
-Example for ``dist_description``::
+Example for a ``dist_description``, that could represent the marginal
+distribution of significant wave height::
 
-	example_dist_description = {'name': 'Lognormal', 'dependency': (0, None, 1),
-				                'functions': ('power3', None, 'exp3')}
+	dist_description_0 = {'name': 'Weibull_Exp',
+	                      'dependency': (None, None, None)}
 
-If the fit is finished it has the attribute ``mul_var_dist`` that is an object of ``MultivariateDistribution`` that contains all distributions you
-can use to build a contour for your data. Also it has the attribute ``multiple_fit_inspection_data``, which can be used to visualize
-your fit.
+Example for a ``dist_description``, that could represent the conditonal
+distribution of zero-up-crossiong period::
+
+	dist_description_1 = {'name': 'Lognormal',
+	                      'dependency': (0, None, 0),
+				          'functions': ('power3', None, 'exp3')}
+
+If Fit() is finished, example_fit, will have the attribute ``mul_var_dist``
+that is an object of ``MultivariateDistribution``, holding the fitted joint
+distribution. Additionally, example_fit will have the attribute
+``multiple_fit_inspection_data``, which can be used to analyze the goodness of fit.
 
 Comprehensive example
 ---------------------
 
-The following example can is based on the file fit_distribution_similar_to_docs_ .
+The following example is based on the file fit_distribution_similar_to_docs_ .
 
 .. _fit_distribution_similar_to_docs: https://github.com/virocon-organization/viroconcom/blob/master/examples/fit_distribution_similar_to_docs.py
 
@@ -69,9 +79,9 @@ Tp ::
 
     prng = np.random.RandomState(42)
 
-    # Draw 1000 samples from a Weibull distribution with shape=1.5 and scale=3,
+    # Draw 10000 samples from a Weibull distribution with shape=1.5 and scale=3,
     # which represents significant wave height.
-    sample_0 = prng.weibull(1.5, 1000)*3
+    sample_0 = prng.weibull(1.5, 10000)*3
 
     # Let the second sample, which represents spectral peak period increase
     # with significant wave height and follow a Lognormal distribution with
@@ -80,8 +90,8 @@ Tp ::
                 prng.lognormal(2, 0.2) for point in sample_0]
 
     plt.scatter(sample_0, sample_1)
-    plt.xlabel('significant wave height [m]')
-    plt.ylabel('spectral peak period [s]')
+    plt.xlabel('Significant wave height (m)')
+    plt.ylabel('Spectral peak period (s)')
     plt.show()
 
 The code snipped will create this plot:
@@ -94,8 +104,12 @@ The code snipped will create this plot:
 
 Now we describe the type of multivariate distribution that we want to fit to this data ::
 
-    dist_description_0 = {'name': 'Weibull_3p', 'dependency': (None, None, None), 'width_of_intervals': 2}
-    dist_description_1 = {'name': 'Lognormal', 'dependency': (None, None, 0), 'functions': (None, None, 'exp3')}
+    dist_description_0 = {'name': 'Weibull_Exp',
+                          'dependency': (None, None, None),
+                          'width_of_intervals': 0.5}
+    dist_description_1 = {'name': 'Lognormal',
+                          'dependency': (None, None, 0),
+                          'functions': (None, None, 'exp3')}
 
 Based on this description, we can compute the fit ::
 
