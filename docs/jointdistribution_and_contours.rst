@@ -11,23 +11,17 @@ If the joint distribution is known, the procedure of calculating an environmenta
 contour with viroconcom can be summarized as:
 
 1. Create a first, independent distribution.
-
 2. Create another, (possibly) dependent distribution and define its dependency
 on the previous distributions.
-
 3. Repeat step 2, until you have created the desired amount of distributions.
-
 4. Bundle the created univariate distributions and the defined dependencies
 in a multivariate distribution.
-
 5. Define the contour's return period and environmental state duration.
-
 6. Choose a type of contour:
 :class:`~viroconcom.contours.IFormContour`,
 :class:`~viroconcom.contours.ISormContour`,
 :class:`~viroconcom.contours.DirectSamplingContour` or
 :class:`~viroconcom.contours.HighestDensityContour`.
-
 7. Initiate the calculation.
 
 These steps are explained in more detail in the following.
@@ -110,10 +104,20 @@ In :ref:`create-independent-dist` we used
 dependence functions. It is callable and returns a parameter value depending
 on the value called with.
 
+The following dependence functions are available (keyword and meaning):
+
+- **power3** :  :math:`a + b * x^c`
+- **exp3** : :math:`a + b * e^{x * c}`
+- **lnsquare2** : :math:`\log ( a + b * \sqrt{ \dfrac(x, 9.81} } )`
+- **powerdecrease3** : :math:`a + 1 / (x + b)^c`
+- **asymdecrease3** : :math:`a + b / (1 + c * x)`
+- **logistics4** : :math:`a + b / (1 + e^{-1 * |c| * (x - d))}`
+- **alpha3** : math:`(a + b * x^c) / 2.0445^{1 / logistics4(x, c_1, c_2, c_3, c_4)}`
+
 Say we have a random variable :math:`X` that is described by the distribution
 created in :ref:`create-independent-dist`. Now we want to create a
 distribution that describes the random variable :math:`Y`, which is dependent
-on :math:`X` (in common notation: :math:`X|Y`).
+on :math:`X` (in common notation :math:`Y|X`).
 
 For this we first need to define an order of the distributions, so that we
 can determine on which distributions another may depend. We define this order,
@@ -144,10 +148,10 @@ the :class:`~viroconcom.distribution.LognormalDistribution`.
 The conversion between ``shape``, ``scale``, ``mu`` and ``sigma`` is:
 
 .. math::
-    shape = sigma
+    shape = \sigma
 
 .. math::
-    scale = e^{mu}
+    scale = e^{\mu}
 
 The class :class:`~viroconcom.distribution.LognormalDistribution` has a
 constructor for ```shape`` and ``scale`` as well as for ``mu`` and ``sigma``.
@@ -156,10 +160,10 @@ The dependency can be described as follows, where :math:`x` is a
 realization of :math:`X`:
 
 .. math::
-    sigma(x) = 0.05 + 0.2 * e^{-0.2}
+    \sigma(x) = 0.05 + 0.2 * e^{-0.2}
 
 .. math::
-    mu(x) = 0.1 + 1.5^{x * 0.2}
+    \mu(x) = 0.1 + 1.5^{x * 0.2}
 
 First we create the parameters as :class:`~viroconcom.params.FunctionParam`::
 
@@ -207,8 +211,8 @@ simply be created by passing these lists to the constructor::
 Constructing the contour
 ========================
 
-Next we need to define the contour's exceedance probability, :math:`\alpha`,
-which is calculated from the return period, :math:`t_R`, and model's state
+Next, we need to define the contour's exceedance probability, :math:`\alpha`,
+which is calculated using the return period, :math:`t_R`, and the model's state
 duration, :math:`t_S`:
 
 .. math::
