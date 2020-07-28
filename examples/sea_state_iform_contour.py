@@ -14,12 +14,10 @@ sample_hs, sample_tz, label_hs, label_tz = \
 # hierarchical models for wind and wave contours: Physical interpretations
 # of the dependence functions" by Haselsteiner et al. (2020).
 # The syntax used to define model structures is described in the documentation.
-dist_description_hs = {'name': 'Weibull_Exp',
-                       'width_of_intervals': 0.5}
+dist_description_hs = {'name': 'Weibull_Exp'}
 dist_description_tz = {'name': 'Lognormal_SigmaMu',
                       'dependency': (0,  None, 0),
-                      'functions': ('asymdecrease3', None, 'lnsquare2'),
-                      }
+                      'functions': ('asymdecrease3', None, 'lnsquare2')}
 model_structure = (dist_description_hs, dist_description_tz)
 
 # Fit the model to the data.

@@ -6,5 +6,6 @@ User Guide
 	:maxdepth: 2
 
 	install
-	contours
+    example
+	jointdistribution_and_contours
 	fitting

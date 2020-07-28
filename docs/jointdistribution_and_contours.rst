@@ -1,6 +1,6 @@
-********************************
-Calculate environmental contours
-********************************
+***************************************************
+Define a joint distribution and calculate a contour
+***************************************************
 The main use of this package is to create environmental contours. For this purpose one has to define a multivariate distribution, choose one of two calculation methods, and initiate the calculation.
 
 This procedure can be further broken down into 8 steps:
@@ -35,9 +35,10 @@ Create independent distribution
 
 Distributions are represented by the abstract class :class:`~viroconcom.distributions.Distribution`. This class is further subclassed by the abstract class :class:`~viroconcom.distributions.ParametricDistribution`. Distributions of this kind are described by three parameters: ``shape``, ``loc``, and ``scale``. Though not all distributions need to make use of all three parameters.
 
-Currently there are 3 parametric distribution subclasses one can use to instantiate a distribution:
+Currently there are 4 parametric distribution subclasses one can use to instantiate a distribution:
 
 * :class:`~viroconcom.distributions.WeibullDistribution`
+* :class:`~viroconcom.distributions.ExponentiatedWeibullDistribution`
 * :class:`~viroconcom.distributions.LognormalDistribution`
 * :class:`~viroconcom.distributions.NormalDistribution`
 
@@ -49,9 +50,6 @@ This table shows, which variables of the probability density function are are de
 
    Distributions implemented in viroconcom and their parameters.
 
-
-.. note::
-    There is also :class:`~viroconcom.distributions.KernelDensityDistribution`, which is a non-parametric distribution, that can only be instantiated by :doc:`fitting <fitting>`.
 
 For the parameters there is the abstract class :class:`~viroconcom.params.Param`. As we want to create an independet distribution, we use the subclass :class:`~viroconcom.params.ConstantParam` to define ``shape``, ``loc``, and ``scale``.
 
@@ -156,10 +154,12 @@ The :class:`~viroconcom.distributions.MultivariateDistribution` can now simply b
 Calculating the contour
 =======================
 
-One now has to define return period and state-duration and pick one of the two possible ways to calculate a contour.
+One now has to define return period and state-duration and pick the statistical definition for the contour.
 
 - :ref:`Inverse first-order reliabilty method (IFORM) <iform>`
-- :ref:`Highest density contour method (HDC method) <hdc>`
+- Inverse second-order reliablity method (ISORM)
+- Direct sampling contour method
+- :ref:`Highest density contour method <hdc>`
 
 
 .. _return-period:
@@ -186,8 +186,8 @@ So with the :ref:`previously created <bundle-multvar-dist>` ``mul_dist`` a conto
 
 .. _hdc:
 
-Highest density contour method (HDC method)
--------------------------------------------
+Highest density contour method
+------------------------------
 
 To create a highest density contour one has to specify a grid in variable space in addition to return period and state duration. This is done by passing the grid's ``limits`` and ``deltas`` to the constructor. ``limits`` has to be a list of tuples containing the min and max limits for the variable space, one tuple for each dimension. ``deltas`` specifies the grid cell size. It is either a list of length equal to the number of dimension, containing the step size per dimensions or a scalar. If it is a scalar it is used for all dimensions.
 
