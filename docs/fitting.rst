@@ -26,7 +26,8 @@ The list for the parameter ``functions`` also has length of three and contains i
 The following distributions are available (keyword and meaning):
 
 - **Weibull_2p** :  2-parameter Weibull distribution
-- **Weibull_3p** :  3-parameter Weibull distribution
+- **Weibull_3p** :  translated Weibull distribution (sometimes simply called 3-parameter Weibull distribution)
+- **Weibull_Exp** : exponentiated Weibull distribution
 - **Lognormal** :  lognormal distribution parametrized with exp(mu) and sigma
 - **Lognormal_SigmaMu** :  lognormal distribution parametrized with mu and sigma
 - **Normal** :  normal distribution
