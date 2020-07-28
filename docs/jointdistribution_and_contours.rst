@@ -1,22 +1,22 @@
 ***************************************************
 Define a joint distribution and calculate a contour
 ***************************************************
-To create an environmental contours, we need to define a joint distribution first.
+To create an environmental contour, first, we need to define a joint distribution.
 Then, we can choose a specific contour method and initiate the calculation.
 viroconcom uses so-called global hierarchical models to define the joint
-distribution and offers four common concepts for how an environmental
+distribution and offers four common methods how an environmental
 contour can be defined based on a given joint distribution.
 
 If the joint distribution is known, the procedure of calculating an environmental
 contour with viroconcom can be summarized as:
 
-1. Create a first, independent distribution.
+1. Create a first, independent univriate distribution.
 
-2. Create another, (possibly) dependent distribution and define its dependency on the previous distributions.
+2. Create another, (possibly) dependent univariate distribution and define its dependency on the previous distributions.
 
-3. Repeat step 2, until you have created the desired amount of distributions.
+3. Repeat step 2, until you have created a univariate distribution for each environmental variable.
 
-4. Bundle the created univariate distributions and the defined dependencies in a multivariate distribution.
+4. Create a joint distribution by bundling the created univariate distributions and defining the dependence structure.
 
 5. Define the contour's return period and environmental state duration.
 
@@ -97,8 +97,8 @@ Create dependent distribution
 =============================
 
 In a global hierarchical model, the dependency of a parametric distribution is
-described by dependence functions for the distribution's parameters.
-In :ref:`create-independent-dist` we used
+described with dependence functions for the distribution's parameters.
+In Chapter :ref:`create-independent-dist` we used
 :class:`~viroconcom.params.ConstantParam` for the parameters. There is also
 :class:`~viroconcom.params.FunctionParam`, which can represent different
 dependence functions. It is callable and returns a parameter value depending
@@ -119,21 +119,21 @@ created in :ref:`create-independent-dist`. Now we want to create a
 distribution that describes the random variable :math:`Y`, which is dependent
 on :math:`X` (in common notation :math:`Y|X`).
 
-For this we first need to define an order of the distributions, so that we
+For this, we first need to define an order of the distributions, so that we
 can determine on which distributions another may depend. We define this order,
 as the order in which the univariate distribution are later on passed to
 the :class:`~viroconcom.distributions.MultivariateDistribution` constructor.
-For now we use the order of creation. So the first in
-:ref:`create-independent-dist` created Weibull distribution has the
-index ``0``. We use this order in the dependency tuples.
+For now we use the order of creation. The first distribution (that was described in
+Chapter :ref:`create-independent-dist`) has the index ``0``.
+We use this order in the dependency tuples.
 
-As already described in :ref:`create-independent-dist` the 3 entries in the
+As already described in Chapter :ref:`create-independent-dist` the 3 entries in the
 tuple correspond to the ``shape``, ``loc``,  and ``scale`` parameters and the
 entries are either ``int`` or ``None``. If an entry is ``None``, the
 corresponding parameter is independent. If an entry is an ``int`` the parameter
 depends on the distribution with that index, in the order defined above.
 
-For example a dependency tuple of :code:`(0, None, 1)` means, that ``shape``
+For example, a dependency tuple of :code:`(0, None, 1)` means, that ``shape``
 depends on the first distribution, ``loc`` is independent and ``scale``
 depends on the second distribution.
 
@@ -240,7 +240,7 @@ With all contours, we need to specify the return period and the state duration.
 In addition, to create an IFORM contour we need to specify the number of points
 along the contour that shall be calculated.
 
-So with the :ref:`previously created <bundle-multvar-dist>` ``mul_dist`` a
+With the :ref:`previously created <bundle-multvar-dist>` ``mul_dist`` a
 contour with a ``return_period`` of ``25`` years  and  a
 ``state_duration`` of ``3`` hours can be created like this::
 
@@ -282,7 +282,7 @@ Plotting the contour
 
 To plot the contour one has be access the ``coordinates`` attribute of the contour.
 
-Using e.g. ``matplotlib`` the following code... ::
+Using for example ``matplotlib`` the following code... ::
 
     import matplotlib.pyplot as plt
 
