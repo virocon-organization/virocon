@@ -11,7 +11,6 @@ from viroconcom.plot import SamplePlotData, plot_sample, plot_marginal_fit, \
 sample_0, sample_1, label_hs, label_tz = \
     read_ecbenchmark_dataset('datasets/1year_dataset_A.txt')
 
-
 fig, ax = plt.subplots(1, 1, figsize=(5, 4.5))
 sample_plot_data = SamplePlotData(sample_1, sample_0)
 plot_sample(sample_plot_data, ax)

@@ -9,7 +9,7 @@ This module fitting_ implements the possibility to fit a probabilistc model to m
 To fit a model structure to a dataset, we need to build an object of the class ``Fit`` in this module.
 Exemplary call::
 
-    example_fit = Fit((data_1, data_2), (dist_description_0, dist_description_1), timeout=None)
+    example_fit = Fit((sample_0, sample_1), (dist_description_0, dist_description_1), timeout=None)
 
 It is important that the parameter ``samples`` is in the form (sample_0, sample_1, ...).
 Each sample is a collection of data from type *list* and also all samples have the same length. The parameter ``dist_descriptions``
@@ -43,15 +43,17 @@ The following dependence functions are available (keyword and meaning):
 Example for a ``dist_description``, that could represent the marginal
 distribution of significant wave height::
 
-	dist_description_0 = {'name': 'Weibull_Exp',
-	                      'dependency': (None, None, None)}
+    dist_description_0 = {'name': 'Weibull_Exp',
+                          'width_of_intervals': 1}
 
 Example for a ``dist_description``, that could represent the conditonal
 distribution of zero-up-crossiong period::
 
-	dist_description_1 = {'name': 'Lognormal',
-	                      'dependency': (0, None, 0),
-				          'functions': ('power3', None, 'exp3')}
+    dist_description_1 = {'name': 'Lognormal_SigmaMu',
+                          'dependency': (0,  None, 0),
+                          'functions': ('asymdecrease3', None, 'lnsquare2'),
+                          'min_datapoints_for_fit': 50
+                          }
 
 If Fit() is finished, example_fit, will have the attribute ``mul_var_dist``
 that is an object of ``MultivariateDistribution``, holding the fitted joint
@@ -71,27 +73,21 @@ Tp ::
 
     import matplotlib.pyplot as plt
     import numpy as np
-    import scipy.stats as sts
 
+    from viroconcom.read_write import read_ecbenchmark_dataset
     from viroconcom.fitting import Fit
     from viroconcom.contours import IFormContour
+    from viroconcom.plot import SamplePlotData, plot_sample, plot_marginal_fit, \
+        plot_dependence_functions, plot_contour
 
+    sample_0, sample_1, label_hs, label_tz = \
+        read_ecbenchmark_dataset('datasets/1year_dataset_A.txt')
 
-    prng = np.random.RandomState(42)
-
-    # Draw 10000 samples from a Weibull distribution with shape=1.5 and scale=3,
-    # which represents significant wave height.
-    sample_0 = prng.weibull(1.5, 10000)*3
-
-    # Let the second sample, which represents spectral peak period increase
-    # with significant wave height and follow a Lognormal distribution with
-    # mean=2 and sigma=0.2
-    sample_1 = [0.1 + 1.5 * np.exp(0.2 * point) +
-                prng.lognormal(2, 0.2) for point in sample_0]
-
-    plt.scatter(sample_0, sample_1)
-    plt.xlabel('Significant wave height (m)')
-    plt.ylabel('Spectral peak period (s)')
+    fig, ax = plt.subplots(1, 1, figsize=(5, 4.5))
+    sample_plot_data = SamplePlotData(sample_1, sample_0)
+    plot_sample(sample_plot_data, ax)
+    plt.xlabel('Zero-up-crossing period (s)')
+    plt.ylabel('Significant wave height (m)')
     plt.show()
 
 The code snipped will create this plot:
@@ -105,43 +101,25 @@ The code snipped will create this plot:
 Now we describe the type of multivariate distribution that we want to fit to this data ::
 
     dist_description_0 = {'name': 'Weibull_Exp',
-                          'dependency': (None, None, None),
-                          'width_of_intervals': 0.5}
-    dist_description_1 = {'name': 'Lognormal',
-                          'dependency': (None, None, 0),
-                          'functions': (None, None, 'exp3')}
+                          'width_of_intervals': 1}
+    dist_description_1 = {'name': 'Lognormal_SigmaMu',
+                          'dependency': (0,  None, 0),
+                          'functions': ('asymdecrease3', None, 'lnsquare2'),
+                          'min_datapoints_for_fit': 50
+                          }
 
-Based on this description, we can compute the fit ::
+Based on this description, we can compute the fit and save the two fitted
+distributions in dedicated variables ::
 
     my_fit = Fit((sample_0, sample_1), (dist_description_0, dist_description_1))
 
-Now, let us plot the fit for the first variable ::
+    fitted_hs_dist = my_fit.mul_var_dist.distributions[0]
+    fitted_tz_dist = my_fit.mul_var_dist.distributions[1]
 
-    # For panel A: use a histogram.
-    fig = plt.figure(figsize=(9, 4.5))
-    ax_1 = fig.add_subplot(121)
-    param_grid = my_fit.multiple_fit_inspection_data[0].scale_at
-    plt.hist(my_fit.multiple_fit_inspection_data[0].scale_samples[0], density=1,
-             label='sample')
-    shape = my_fit.mul_var_dist.distributions[0].shape(0)
-    scale = my_fit.mul_var_dist.distributions[0].scale(0)
-    plt.plot(np.linspace(0, 20, 100),
-             sts.weibull_min.pdf(np.linspace(0, 20, 100), c=shape, loc=0,
-                                 scale=scale),
-             label='fitted Weibull distribution')
-    plt.xlabel('significant wave height [m]')
-    plt.ylabel('probability density [-]')
-    plt.legend()
-    # For panel B: use a Q-Q plot.
-    ax_2 = fig.add_subplot(122)
-    sts.probplot(my_fit.multiple_fit_inspection_data[0].scale_samples[0],
-                 sparams=(shape, 0, scale), dist=sts.weibull_min, plot=plt)
-    ax_2.get_lines()[0].set_markerfacecolor('#1f77ba') # Adapt to v2.0 colors
-    ax_2.get_lines()[0].set_markeredgecolor('#1f77ba') # Adapt to v2.0 colors
-    ax_2.get_lines()[1].set_color('#ff7f02') # Adapt to v2.0 colors
-    plt.title("")
-    plt.xlabel('theoretical quantiles [m]')
-    plt.ylabel('data quantiles [m]')
+Now, let us plot the fit for the first variable using a QQ-plot ::
+
+    fig, ax = plt.subplots(1, 1, figsize=(5, 4.5))
+    plot_marginal_fit(sample_0, fitted_hs_dist, fig, ax, label='$h_s$ (m)', dataset_char='A')
     plt.show()
 
 
@@ -152,50 +130,17 @@ Now, let us plot the fit for the first variable ::
     Fit of the first variable, Hs.
 
 For our second variable, we need some more plots to inspect it properly.
-Let us start with the individual distributions, one for each Hs-interval ::
+Let us start with the marginal distributions that were fitted to Hs-intervals ::
 
-    fig = plt.figure(figsize=(10, 8))
-    ax_1 = fig.add_subplot(221)
-    title1 = ax_1.set_title('Tp-Distribution for 0≤Hs<2')
-    param_grid = my_fit.multiple_fit_inspection_data[1].scale_at
-    ax1_hist = ax_1.hist(my_fit.multiple_fit_inspection_data[1].scale_samples[0], density=1)
-    shape = my_fit.mul_var_dist.distributions[1].shape(0)
-    scale = my_fit.mul_var_dist.distributions[1].scale(param_grid[0])
-    ax1_plot = ax_1.plot(np.linspace(0, 20, 100), sts.lognorm.pdf(np.linspace(0, 20, 100), s=shape, scale=scale))
-
-    ax_2 = fig.add_subplot(222)
-    title2 = ax_2.set_title('Tp-Distribution for 2≤Hs<4')
-    ax2_hist = ax_2.hist(my_fit.multiple_fit_inspection_data[1].scale_samples[1], density=1)
-    shape = my_fit.mul_var_dist.distributions[1].shape(0)
-    scale = my_fit.mul_var_dist.distributions[1].scale(param_grid[1])
-    ax2_plot = ax_2.plot(np.linspace(0, 20, 100), sts.lognorm.pdf(np.linspace(0, 20, 100), s=shape, scale=scale))
-
-    ax_3 = fig.add_subplot(223)
-    title3 = ax_3.set_title('Tp-Distribution for 4≤Hs<6')
-    ax3_hist = ax_3.hist(my_fit.multiple_fit_inspection_data[1].scale_samples[2], density=1)
-    shape = my_fit.mul_var_dist.distributions[1].shape(0)
-    scale = my_fit.mul_var_dist.distributions[1].scale(param_grid[2])
-    ax3_plot = ax_3.plot(np.linspace(0, 20, 100), sts.lognorm.pdf(np.linspace(0, 20, 100), s=shape, scale=scale))
-    ax_3.set_xlabel('spectral peak period [s]')
-
-    ax_4 = fig.add_subplot(224)
-    title4 = ax_4.set_title('Tp-Distribution for 6≤Hs<8')
-    ax4_hist = ax_4.hist(my_fit.multiple_fit_inspection_data[1].scale_samples[3], density=1)
-    shape = my_fit.mul_var_dist.distributions[1].shape(0)
-    scale = my_fit.mul_var_dist.distributions[1].scale(param_grid[3])
-    ax4_plot = ax_4.plot(np.linspace(0, 20, 100), sts.lognorm.pdf(np.linspace(0, 20, 100), s=shape, scale=scale))
-    ax_4.set_xlabel('spectral peak period [s]')
-    plt.show()
-
-    fig = plt.figure()
-    x_1 = np.linspace(0, 12, 100)
-    plt.plot(param_grid, my_fit.multiple_fit_inspection_data[1].scale_value, 'x',
-             label='discrete scale values')
-    plt.plot(x_1, my_fit.mul_var_dist.distributions[1].scale(x_1),
-             label='fitted dependence function')
-    plt.xlabel('significant wave height [m]')
-    plt.ylabel('scale parameter (Tp-distribution)')
-    plt.legend()
+    n_fits = len(my_fit.multiple_fit_inspection_data[1].scale_at)
+    fig, axs = plt.subplots(1, n_fits, figsize=(14, 4))
+    for i in range(n_fits):
+            axs[i].set_title('Tz distribution for ' + str(i) + '≤Hs<' + str(i + 1))
+            axs[i].hist(my_fit.multiple_fit_inspection_data[1].scale_samples[i], density=1)
+            x = np.linspace(0, 12, 200)
+            interval_center = my_fit.multiple_fit_inspection_data[1].scale_at[i]
+            f = fitted_tz_dist.pdf(x, np.zeros(x.shape) + interval_center, (0, None, 0))
+            axs[i].plot(x, f)
     plt.show()
 
 
@@ -205,8 +150,8 @@ Let us start with the individual distributions, one for each Hs-interval ::
 
     Individual fits of second variable, Tp.
 
-Let us now inspect how well our dependence function fits to these four scale
-values, which we got from the individual distributions ::
+Let us now inspect how well our dependence functions fit to the marginal
+distributions' four scale and shape values ::
 
     fig = plt.figure()
     x_1 = np.linspace(0, 12, 100)
@@ -226,8 +171,8 @@ values, which we got from the individual distributions ::
 
     Fit of the dependence function.
 
-Finally, let us use the multivariate distribution we fitted to
-compute an environmental contour ::
+Finally, let us use the fitted joint distribution to compute an environmental
+contour ::
 
     iform_contour = IFormContour(my_fit.mul_var_dist, 25, 3, 100)
     plt.scatter(sample_0, sample_1, label='sample')
