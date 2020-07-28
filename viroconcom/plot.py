@@ -42,6 +42,12 @@ def plot_sample(sample_plot_data, ax=None, do_plot_rasterized=True):
             ax.scatter(x, y, s=40, alpha=0.5, c='k', marker='.',
                        label='observation', rasterized=do_plot_rasterized)
 
+    # Remove axis on the right and on the top (Matlab 'box off').
+    ax.spines['right'].set_visible(False)
+    ax.spines['top'].set_visible(False)
+    ax.yaxis.set_ticks_position('left')
+    ax.xaxis.set_ticks_position('bottom')
+
 
 def plot_marginal_fit(sample, dist, fig, ax=None, label=None, color_sample='k',
                       marker_sample='x', marker_size_sample=3, color_fit='b',
@@ -87,12 +93,12 @@ def plot_marginal_fit(sample, dist, fig, ax=None, label=None, color_sample='k',
     ax.title.set_text('')
     ax.spines['right'].set_visible(False)
     ax.spines['top'].set_visible(False)
-    if max(sample) < 12:
-        plt.xlim((0, 12))
-        plt.ylim((0, 15.5))
-    else:
-        plt.xlim((0, 35))
-        plt.ylim((0, 35))
+    #if max(sample) < 12:
+        #plt.xlim((0, 12))
+        #plt.ylim((0, 15.5))
+    #else:
+        #plt.xlim((0, 35))
+        #plt.ylim((0, 35))
     if dist.name == 'ExponentiatedWeibull':
         dist_description = 'Exponentiated Weibull\n' \
                            '($\\alpha$=' + str('%.3g' % dist.scale(0)) + ', ' \
@@ -106,8 +112,13 @@ def plot_marginal_fit(sample, dist, fig, ax=None, label=None, color_sample='k',
         dist_description = dist.name
     plt.legend(['Dataset '+ dataset_char, dist_description], loc='upper left',
                frameon=False, prop={'size': legend_fontsize})
-    plt.xlabel('Theoretical quantiles, ' + str(label).lower())
-    plt.ylabel('Ordered values, ' + str(label).lower())
+    xlabel_string = 'Theoretical quantiles'
+    ylabel_string = 'Ordered values'
+    if label:
+        xlabel_string += ', ' + str(label).lower()
+        ylabel_string += ', ' + str(label).lower()
+    plt.xlabel(xlabel_string)
+    plt.ylabel(ylabel_string)
 
 
 def plot_dependence_functions(
@@ -136,7 +147,7 @@ def plot_dependence_functions(
     marker_discrete : char, defaults to 'o'
     markersize_discrete : int, defaults to 5
     markerfacecolor_discrete : color (char, string or RGB), defaults to 'lightgray'
-    markeredgecolor_discrete : color (char, string or RGB),d efaults to 'k'
+    markeredgecolor_discrete : color (char, string or RGB), defaults to 'k'
     style_dependence_function : str, defaults to 'b-'
         Style of the fitted dependence function.
     legend_fontsize : int, defaults to 8
@@ -190,8 +201,8 @@ def plot_dependence_functions(
         plt.plot(x1, np.log(fit.mul_var_dist.distributions[1].scale(x1)),
                  style_dependence_function, label=dp_function)
         ylabel = '$μ_{tz}$'
-        plt.xlim((0, 6))
-        plt.ylim((0.9, 2.15))
+        #plt.xlim((0, 6))
+        #plt.ylim((0.9, 2.15))
     if fit.mul_var_dist.distributions[1].name == 'Weibull' or \
                     fit.mul_var_dist.distributions[1].name == 'ExponentiatedWeibull':
         plt.plot(scale_at, fit.multiple_fit_inspection_data[1].scale_value,
@@ -203,8 +214,8 @@ def plot_dependence_functions(
         plt.plot(x1, fit.mul_var_dist.distributions[1].scale(x1),
                  style_dependence_function, label=dp_function)
         ylabel = '$α_{hs}$'
-        plt.xlim((0, 30))
-        plt.ylim((0, 10))
+        #plt.xlim((0, 30))
+        #plt.ylim((0, 10))
     plt.xlabel(unconditonal_variable_label)
     plt.legend(frameon=False, prop={'size': legend_fontsize})
     ax1.spines['right'].set_visible(False)
@@ -247,7 +258,7 @@ def plot_dependence_functions(
         plt.xlim((0, 30))
         plt.ylim((0, 3.5))
         if fit.mul_var_dist.distributions[1].shape.func_name == 'power3':
-            dp_function = '$' + str('%.3g' % fit.mul_var_dist.distributions[1].shape.a) + \
+            dp_function = '$' + str('%.4f' % fit.mul_var_dist.distributions[1].shape.a) + \
                           '+' + str('%.3g' % fit.mul_var_dist.distributions[1].shape.b) + \
                           '\cdot h_s^{' + str('%.3g' % fit.mul_var_dist.distributions[1].shape.c) + '}$'
         elif fit.mul_var_dist.distributions[1].shape.func_name == 'logistics4':
