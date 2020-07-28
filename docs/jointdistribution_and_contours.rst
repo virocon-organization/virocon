@@ -27,7 +27,9 @@ contour with viroconcom can be summarized as:
 These steps are explained in more detail in the following.
 
 The file calculate_contours_similar_to_docs_ contains all the code that we will
-show on this page.
+show on this page. We will use the sea state model that was proposed by
+Vanem and Bitner-Gregersen (2012; DOI: 10.1016/j.apor.2012.05.006) and compute
+environmental contours with return periods of 25 years.
 
 .. _calculate_contours_similar_to_docs: https://github.com/virocon-organization/viroconcom/blob/master/examples/calculate_contours_similar_to_docs.py
 
@@ -67,14 +69,14 @@ For the parameters there is the abstract class
 distribution, we use the subclass :class:`~viroconcom.params.ConstantParam` to
 define ``shape``, ``loc``, and ``scale``.
 
-Say we want to create a Weibull distribution with ``shape=1.5``, ``loc=1``,
-and ``scale=3``.
+Say we want to create a Weibull distribution with ``shape=1.471``, ``loc=0.8888``,
+and ``scale=2.776`` (as in the model proposed by Vanem and Bitner-Gregersen).
 
 We first create the parameters::
 
-    shape = ConstantParam(1.5)
-    loc = ConstantParam(1)
-    scale = ConstantParam(3)
+    shape = ConstantParam(1.471)
+    loc = ConstantParam(0.8888)
+    scale = ConstantParam(2.776)
 
 
 And then create our Weibull distribution::
@@ -160,17 +162,17 @@ Say we want to define the following dependence structure, where :math:`x` is a
 realization of :math:`X`:
 
 .. math::
-    \sigma(x) = 0.05 + 0.2 * e^{-0.2}
+    \sigma(x) = 0.04 + 0.1748 * e^{-0.2243}
 
 .. math::
-    \mu(x) = 0.1 + 1.5^{x * 0.2}
+    \mu(x) = 0.1 + 1.489^{x * 0.1901}
 
 In viroconcom, to define this dependence structure, first we create the
 parameters as :class:`~viroconcom.params.FunctionParam` using the keywords
 "exp3" and "power" to specify the wanted dependence functions ::
 
-    my_sigma = FunctionParam(0.05, 0.2, -0.2, "exp3")
-    my_mu = FunctionParam(0.1, 1.5, 0.2, "power3")
+    my_sigma = FunctionParam('exp3', 0.04, 0.1748, -0.2243)
+    my_mu = FunctionParam('power3', 0.1, 1.489, 0.1901)
 
 Then we create the :class:`~viroconcom.distribution.LognormalDistribution`
 using the ``mu`` ``sigma`` constructor::
@@ -184,8 +186,8 @@ And eventually define the dependency tuple::
 Alternativly we could have defined the distribution as follows,
 using the wrapper argument of the :class:`~viroconcom.params.FunctionParam`::
 
-    shape = FunctionParam(0.05, 0.2, -0.2, "exp3")
-    scale = FunctionParam(0.1, 1.5, 0.2, "power3", wrapper=numpy.exp)
+    shape = FunctionParam(0.04, 0.1748, -0.2243, "exp3")
+    scale = FunctionParam(0.1, 1.1489, 0.1901, "power3", wrapper=numpy.exp)
     dist1 = LognormalDistribution(shape, None, scale)
     dep1 = (0, None, 0)
 
@@ -240,11 +242,12 @@ With all contours, we need to specify the return period and the state duration.
 In addition, to create an IFORM contour we need to specify the number of points
 along the contour that shall be calculated.
 
-With the :ref:`previously created <bundle-multvar-dist>` ``mul_dist`` a
-contour with a ``return_period`` of ``25`` years  and  a
-``state_duration`` of ``3`` hours can be created like this::
+Let us calculate 90 points along the contour such that we have a resolution of 2
+degrees. With the :ref:`previously created <bundle-multvar-dist>` ``mul_dist``,
+we can compute a contour with a ``return_period`` of ``25`` years and a
+``state_duration`` of ``6`` hours  like this::
 
-    iform_contour = IFormContour(mul_dist, 25, 3)
+    iform_contour = IFormContour(mul_dist, 25, 6, 90)
 
 
 .. _hdc:
@@ -265,7 +268,7 @@ The grid includes the min and max values: ``x = [min, min + delta, ..., max - de
 
 To create a highest density contour for the
 :ref:`previously created <bundle-multvar-dist>` ``mul_dist`` with a
-``return_period`` of ``25`` years and a ``state_duration`` of ``3``,  we first
+``return_period`` of ``25`` years and a ``state_duration`` of ``6``,  we first
 define the variable space to be between 0 and 20 and set the step size to 0.5
 in the first and 0.1 in the second dimension.::
 
@@ -274,7 +277,7 @@ in the first and 0.1 in the second dimension.::
 
 The contour can then be created as follows::
 
-    hdens_contour = HighestDensityContour(mul_dist, 25, 3, limits, deltas)
+    hdens_contour = HighestDensityContour(mul_dist, 25, 6, limits, deltas)
 
 
 Plotting the contour
@@ -290,7 +293,7 @@ Using for example ``matplotlib`` the following code... ::
                 label='IFORM contour')
     plt.scatter(hdens_contour.coordinates[1], hdens_contour.coordinates[0],
                 label='Highest density contour')
-    plt.xlabel('Spectral peak period, Tp (s)')
+    plt.xlabel('Zero-up-crossing period, Tz (s)')
     plt.ylabel('Significant wave height, Hs (m)')
     plt.legend()
     plt.show()

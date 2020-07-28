@@ -84,7 +84,7 @@ class Contour(ABC):
 
 
 class IFormContour(Contour):
-    def __init__(self, mul_var_distribution, return_period=25, state_duration=3,
+    def __init__(self, mul_var_distribution, return_period=50, state_duration=3,
                  n_points=180, timeout=None):
         """
         Contour based on the inverse first-order reliability method.
@@ -204,7 +204,7 @@ class IFormContour(Contour):
 
 
 class ISormContour(Contour):
-    def __init__(self, mul_var_distribution, return_period=25, state_duration=3,
+    def __init__(self, mul_var_distribution, return_period=50, state_duration=3,
                  n_points=180, timeout=None):
         """
         Contour based on the inverse second-order reliability method.
@@ -327,7 +327,7 @@ class ISormContour(Contour):
 
 
 class DirectSamplingContour(Contour):
-    def __init__(self, mul_var_dist, return_period=1, state_duration=3,
+    def __init__(self, mul_var_dist, return_period=50, state_duration=3,
                  n=100000, deg_step=5, sample=None, timeout=None):
         """
         Drect sampling contour as introduced by Huseby et al. (2013), see
@@ -445,7 +445,7 @@ class DirectSamplingContour(Contour):
 
 
 class HighestDensityContour(Contour):
-    def __init__(self, mul_var_distribution, return_period=25, state_duration=3,
+    def __init__(self, mul_var_distribution, return_period=50, state_duration=3,
                  limits=None, deltas=None, timeout=None):
         """
         Contour based on highest density contour method.
