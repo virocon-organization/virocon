@@ -96,7 +96,7 @@ The following example is based on the file fit_distribution_similar_to_docs_ .
 .. _fit_distribution_similar_to_docs: https://github.com/virocon-organization/viroconcom/blob/master/examples/fit_distribution_similar_to_docs.py
 
 First, let us load a dataset that holds measurements of sea states.
-The first variable is significant wave height, :math:?`H_s`, and the second variable
+The first variable is significant wave height, :math:`H_s`, and the second variable
 zero-up-crossing period, :math:`T_z` ::
 
     import matplotlib.pyplot as plt
