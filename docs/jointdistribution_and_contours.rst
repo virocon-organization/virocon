@@ -93,7 +93,7 @@ We also need to create a dependency tuple for creating a
 :class:`~viroconcom.distribution.MultivariateDistribution` later on.
 This is a 3-element tuple with either ``int`` or ``None`` as entries.
 The first entry corresponds to ``shape``, the second to ``loc`` and the third
-to ``scale``. For further information see :ref:`create-dependent-dist`.
+to ``scale``.
 For an independent distribution all entries need to be set to ``None``. ::
 
     dep0 = (None, None, None)
