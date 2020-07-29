@@ -244,8 +244,8 @@ class ParametricDistribution(Distribution, ABC):
 
         Returns
         -------
-        cdf : ndarray,
-            Porbability densities at x under condition rv_values.
+        f : ndarray,
+            Probability densities at x under condition rv_values.
         """
 
         shape_val, loc_val, scale_val, shape2_val = self._get_parameter_values(rv_values, dependencies)
@@ -1305,14 +1305,40 @@ class KernelDensityDistribution(Distribution):
         """
         result = []
         for point in x:
-            # scale x
+            # Scale x.
             x_point = point * (len(self._cdf) - 1) / (max(self._i_cdf) - min(self._i_cdf))
-            # use linear fit if x_point is between two points
+            # Use linear fit if x_point is between two points.
             linear_fit = np.poly1d(np.polyfit([int(x_point), int(x_point) + 1],
                                               [self._cdf[int(x_point)],
                                                self._cdf[int(x_point) + 1]], 1))
             result.append(linear_fit(x_point))
         return result
+
+    def pdf(self, x, rv_values=None, dependencies=None):
+        """
+        Probability density function.
+
+        Parameters
+        ----------
+        x : array_like
+            Points at which the PDF should be evaluated.
+        rv_values : array_like
+            Values of all random variables in variable space in correct order.
+            This can be a 1-dimensional array with length equal to the number of
+            random variables N or a 2-dimensional array with shape (N, M).
+            If x is an array, M must be len(x).
+        dependencies : tuple
+            A 3-element tuple with one entry each for the shape, loc and scale parameters.
+            The entry is the index of the random variable the parameter depends on.
+            The index order has to be the same as in rv_values.
+
+
+        Returns
+        -------
+        f : ndarray,
+            Probability densities at x under condition rv_values.
+        """
+        raise NotImplementedError
 
     def i_cdf(self, probability, rv_values, dependencies):
         """
@@ -1341,9 +1367,9 @@ class KernelDensityDistribution(Distribution):
         """
         result = []
         for point in probability:
-            # scale probability
+            # Scale probability.
             x_point = point * (len(self._i_cdf) - 1)
-            # use linear fit if x_point is between two points
+            # Use linear fit if x_point is between two points.
             linear_fit = np.poly1d(np.polyfit([int(x_point), int(x_point) + 1],
                                               [self._i_cdf[int(x_point)],
                                                self._i_cdf[int(x_point) + 1]], 1))
