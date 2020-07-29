@@ -179,15 +179,9 @@ Let us start with the marginal distributions that were fitted to Hs-intervals ::
 Now, let us analyze how well our dependence functions fit to the marginal
 distributions' four scale and shape values ::
 
-    fig = plt.figure()
-    x_1 = np.linspace(0, 12, 100)
-    plt.plot(param_grid, my_fit.multiple_fit_inspection_data[1].scale_value, 'x',
-             label='discrete scale values')
-    plt.plot(x_1, my_fit.mul_var_dist.distributions[1].scale(x_1),
-             label='fitted dependence function')
-    plt.xlabel('significant wave height [m]')
-    plt.ylabel('scale parameter (Tp-distribution) [-]')
-    plt.legend()
+    fig = plt.figure(figsize=(9, 4.5))
+    plot_dependence_functions(my_fit, fig, unconditonal_variable_label=label_hs,
+                              factor_draw_longer=2)
     plt.show()
 
 
