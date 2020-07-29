@@ -263,12 +263,14 @@ we can compute a contour with a ``return_period`` of ``25`` years and a
 Highest density contour method
 ------------------------------
 
-To create a highest density contour one has to specify a grid in variable
-space in addition to return period and state duration. This is done by passing
-the grid's ``limits`` and ``deltas`` to the constructor. ``limits`` has to be
-a list of tuples containing the min and max limits for the variable space,
-one tuple for each dimension. ``deltas`` specifies the grid cell size. It
-is either a list of length equal to the number of dimension, containing
+To create a highest density contour, for the used numerical integration,
+we need to specify a grid in the variable space in addition to return period
+and state duration.
+This is done by passing the grid's ``limits`` and ``deltas`` to the constructor.
+``limits`` has to be a list of tuples containing the min and max limits for the
+variable space, one tuple for each dimension.
+``deltas`` specifies the grid cell size.
+It is either a list of length equal to the number of dimension, containing
 the step size per dimensions or a scalar. If it is a scalar it is used
 for all dimensions.
 
