@@ -31,10 +31,11 @@ also must contain the keys ``dependency`` and ``functions``. The ``dependency`` 
 must be of type *list*. In the sequence of ``shape, loc, scale``, it contains
 integers for the dependency of the current parameter or *None* if it has no
 dependency. An entry of 0 means that the parameter depends upon the variable with
-index 0, for example :math:`X_2|X_0`). The ``functions`` value is of type *list*
-too, and is interpreted in the sequence ``shape, loc, scale``. Its entries define,
-which dependence functions are fitted. Additional keys such as
-``width_of_intervals`` or ``min_datapoints_for_fit`` are optional and can be used
+index 0, for example :math:`X_1|X_0` if the second dimension (index 1) is specified.
+The ``functions`` value is of type *list* too, and is interpreted in the
+sequence ``shape, loc, scale``. Its entries define which dependence functions
+are fitted. Additional keys such as ``width_of_intervals`` or
+``min_datapoints_for_fit`` are optional and can be used
 to control the fitting procedure.
 
 The following distributions are available under the given key values:
