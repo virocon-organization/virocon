@@ -15,7 +15,7 @@ About
 
 viroconcom is a software package to compute environmental contours. It
 is written in Python 3.7.4 and belongs to the software ViroCon, which also
-offers a GUI via the package viroconweb_.
+offers a GUI for some functionality via the package viroconweb_.
 
 ViroCon helps you to design marine structures, which need to withstand
 load combinations based on wave, wind and current. It lets you define
