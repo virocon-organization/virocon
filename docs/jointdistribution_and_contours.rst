@@ -112,15 +112,15 @@ In Chapter :ref:`create-independent-dist` we used
 dependence functions. It is callable and returns a parameter value depending
 on the value called with.
 
-The following dependence functions are available (keyword and meaning):
+The following dependence functions, :math:`f(x)`, are available under the given labels:
 
-- **power3** :  :math:`a + b * x^c`
-- **exp3** : :math:`a + b * e^{x * c}`
-- **lnsquare2** : :math:`\ln[a + b * \sqrt(x / 9.81)]`
-- **powerdecrease3** : :math:`a + 1 / (x + b)^c`
-- **asymdecrease3** : :math:`a + b / (1 + c * x)`
-- **logistics4** : :math:`a + b / [1 + e^{-1 * |c| * (x - d)}]`
-- **alpha3** : :math:`(a + b * x^c) / 2.0445^{1 / logistics4(x, c_1, c_2, c_3, c_4)}`
+- **power3** :  :math:`f(x) = a + b * x^c`
+- **exp3** : :math:`f(x) = a + b * e^{x * c}`
+- **lnsquare2** : :math:`f(x) = \ln[a + b * \sqrt(x / 9.81)]`
+- **powerdecrease3** : :math:`f(x) = a + 1 / (x + b)^c`
+- **asymdecrease3** : :math:`f(x) = a + b / (1 + c * x)`
+- **logistics4** : :math:`f(x) = a + b / [1 + e^{-1 * |c| * (x - d)}]`
+- **alpha3** : :math:`f(x) = (a + b * x^c) / 2.0445^{1 / logistics4(x, c_1, c_2, c_3, c_4)}`
 
 Say we have a random variable :math:`X` that is described by the distribution
 created in :ref:`create-independent-dist`. Now we want to create a
