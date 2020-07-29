@@ -16,13 +16,13 @@ contour can be defined based on a given joint distribution.
 If the joint distribution is known, the procedure of calculating an environmental
 contour with viroconcom can be summarized as:
 
-1. Create a first, independent univriate distribution.
+1. Create a first, independent univariate distribution.
 
-2. Create another, (possibly) dependent univariate distribution and define its dependency on the previous distributions.
+2. Create another, usually dependent univariate distribution and define its dependency on the previous distributions.
 
 3. Repeat step 2, until you have created a univariate distribution for each environmental variable.
 
-4. Create a joint distribution by bundling the created univariate distributions and defining the dependence structure.
+4. Create a joint distribution by bundling the created univariate distributions.
 
 5. Define the contour's return period and environmental state duration.
 
@@ -52,7 +52,7 @@ this kind are described by three or four parameters:
 ``shape``, ``loc``, ``scale`` and possibly ``shape2``.
 Though not all distributions need to make use of all parameters.
 
-Currently there are 4 parametric distribution subclasses one can use to
+Currently there are four parametric distribution subclasses one can use to
 instantiate a distribution:
 
 * :class:`~viroconcom.distributions.WeibullDistribution`

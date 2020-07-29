@@ -15,7 +15,8 @@ from .settings import SHAPE_STRING, LOCATION_STRING, SCALE_STRING, SHAPE2_STRING
 from .params import FunctionParam, ConstantParam, Wrapper
 
 __all__ = ["Distribution", "ParametricDistribution", "WeibullDistribution",
-           "LognormalDistribution", "NormalDistribution", "KernelDensityDistribution",
+           "ExponentiatedWeibullDistribution", "LognormalDistribution",
+           "NormalDistribution", "KernelDensityDistribution",
            "MultivariateDistribution"]
 
 
