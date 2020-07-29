@@ -82,7 +82,8 @@ distribution of zero-up-crossiong period::
                           'min_datapoints_for_fit': 50
                           }
 
-If Fit() is finished, the object "example_fit" will have the attribute ``mul_var_dist``
+In the given exemplary call (first code snipped), if Fit() is finished,
+the object "example_fit" will have the attribute ``mul_var_dist``
 that is an object of ``MultivariateDistribution``, holding the fitted joint
 distribution. Additionally, example_fit will have the attribute
 ``multiple_fit_inspection_data``, which can be used to analyze the goodness of fit.
