@@ -143,7 +143,7 @@ distributions in dedicated variables ::
     fitted_hs_dist = my_fit.mul_var_dist.distributions[0]
     fitted_tz_dist = my_fit.mul_var_dist.distributions[1]
 
-Now, let us plot the fit for the first variable using a QQ-plot ::
+Now, let us visualize the fit for the first variable using a QQ-plot ::
 
     fig, ax = plt.subplots(1, 1, figsize=(5, 4.5))
     plot_marginal_fit(sample_0, fitted_hs_dist, fig, ax, label='$h_s$ (m)', dataset_char='A')
