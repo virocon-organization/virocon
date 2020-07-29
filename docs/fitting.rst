@@ -6,7 +6,7 @@ The module fitting_ implements functionality to fit a model structure to
 measured environmental data. In other words, it can be used to estimate the
 parameter values of a joint distribution.
 
-.. _fitting.py: https://github.com/virocon-organization/viroconcom/blob/master/viroconcom/fitting.py
+.. _fitting: https://github.com/virocon-organization/viroconcom/blob/master/viroconcom/fitting.py
 
 To fit a model structure to a dataset, we need to build an object of the class ``Fit`` in this module.
 Exemplary call::
