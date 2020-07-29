@@ -306,7 +306,7 @@ creates this plot:
 
     Plot of the calculated IFORM and highest density contours.
 
-Alternatively, we could use viroconcom's standard plotting function: ::
+Alternatively, we could use viroconcom's standard plotting function... ::
 
 
     from viroconcom.plot import plot_contour
