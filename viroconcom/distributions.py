@@ -25,12 +25,16 @@ class Distribution(ABC):
     """
 
     @abstractmethod
-    def cdf(self, x, rv_values, dependency):
-        """Calculate the cumulative distribution function."""
+    def cdf(self, x, rv_values, dependencies):
+        """Cumulative distribution function."""
 
     @abstractmethod
-    def i_cdf(self, probabilities, rv_values, dependency):
-        """Calculate percent-point function. (inverse cumulative distribution function)"""
+    def pdf(self, x, rv_values, dependencies):
+        """Probability density function."""
+
+    @abstractmethod
+    def i_cdf(self, probabilities, rv_values, dependencies):
+        """Inverse cumulative distribution function."""
 
     def draw_sample(self, n):
         probabilities = np.random.rand(n)
