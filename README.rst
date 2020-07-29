@@ -15,7 +15,7 @@ About
 
 viroconcom is a software package to compute environmental contours. It
 is written in Python 3.7.4 and belongs to the software ViroCon, which also
-offers a GUI.
+offers a GUI via the package viroconweb_.
 
 ViroCon helps you to design marine structures, which need to withstand
 load combinations based on wave, wind and current. It lets you define
@@ -79,7 +79,7 @@ that you have installed matplotlib and run the Python file by typing
 
 .. code:: console
 
-   python calculate_contours_similar_to_docs.py
+   python sea_state_iform_contour.py
 
 Our documentation contains a user guide, with  examples how to
 `fit a distribution`_ to measurement data and how to
@@ -127,12 +127,13 @@ License
 This software is licensed under the MIT license. For more information,
 read the file `LICENSE`_.
 
+.. _viroconweb: https://github.com/virocon-organization/viroconweb
 .. _3.7.4: https://www.python.org/downloads/release/python-374/
 .. _shell: https://en.wikipedia.org/wiki/Command-line_interface#Modern_usage_as_an_operating_system_shell
 .. _pyenv: https://github.com/pyenv/pyenv
 .. _www.python.org: https://www.python.org
 .. _fit a distribution: https://virocon-organization.github.io/viroconcom/fitting.html
-.. _compute environmental contours: https://virocon-organization.github.io/viroconcom/contours.html
+.. _compute environmental contours: https://virocon-organization.github.io/viroconcom/jointdistribution_and_contours.html
 .. _examples: https://github.com/virocon-organization/viroconcom/tree/master/examples
 .. _sea_state_iform_contour.py: https://github.com/virocon-organization/viroconcom/blob/master/examples/sea_state_iform_contour.py
 .. _here: https://virocon-organization.github.io/viroconcom/
