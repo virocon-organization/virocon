@@ -25,7 +25,7 @@ length as ``samples``.
 
 Each ``dist_description`` dictionary describes one dimension of the
 probabilistic model structure.
-It must contain the name of the current distribution under the key *name*, which
+It must contain the name of the current distribution under the key ``name``, which
 could be, for example, ``"Lognormal"``. If the distribution is conditional, it
 also must contain the keys ``dependency`` and ``functions``. The ``dependency`` value
 must be of type *list*. In the sequence of ``shape, loc, scale``, it contains
