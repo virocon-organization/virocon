@@ -132,9 +132,9 @@ can determine on which distributions another may depend. We define this order,
 as the order in which the univariate distribution are later on passed to
 the :class:`~viroconcom.distributions.MultivariateDistribution` constructor.
 For now we use the order of creation. The first distribution (that was described in
-Chapter :ref:`create-independent-dist`) has the index ``0``. Thus,
-:math:`X_0=X`and :math:`X_1=Y`. In viroconcom, we need to use this order in
-the dependency tuples.
+Chapter :ref:`create-independent-dist`) has the index ``0``. Thus, using our
+previously introduced random variables, :math:`X_0=X` and :math:`X_1=Y`.
+In viroconcom, we need to use this order in the dependency tuples.
 
 As already described in Chapter :ref:`create-independent-dist` the 3 entries in the
 tuple correspond to the ``shape``, ``loc``,  and ``scale`` parameters and the
@@ -166,8 +166,8 @@ The conversion between ``shape``, ``scale``, ``mu`` and ``sigma`` is:
 The class :class:`~viroconcom.distribution.LognormalDistribution` has a
 constructor for ```shape`` and ``scale`` as well as for ``mu`` and ``sigma``.
 
-Say we want to define the following dependence structure, where :math:`x_0` is a
-realization of :math:`X_0`:
+Say we want to define the following dependence structure for :math:`X_1|X_0`,
+where :math:`x_0` is a realization of :math:`X_0`:
 
 .. math::
     \sigma(x_0) = 0.04 + 0.1748 * e^{-0.2243 * x_0}
