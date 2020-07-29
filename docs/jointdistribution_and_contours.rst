@@ -293,7 +293,7 @@ The contour can then be created as follows::
 Plotting the contour
 --------------------
 
-To plot the contour one has be access the ``coordinates`` attribute of the contour.
+To plot the contour we need to access the ``coordinates`` attribute of the contour.
 
 Using for example ``matplotlib`` the following code... ::
 
