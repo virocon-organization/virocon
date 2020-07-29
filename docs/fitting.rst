@@ -61,7 +61,7 @@ The following dependence functions are available under the given key values:
 The following optional keys and values are available:
 
 - **number_of_intervals** : int. The sample of this variable will be divided into the given number of intervals. Intervals will be equally spaced.
-- **width_of_intervals** : float. The sample of htis variable will be divided into intervals with the given width.
+- **width_of_intervals** : float. The sample of this variable will be divided into intervals with the given width.
 - **min_datapoints_for_fit** : int. A marginal distribution will only be fitted to an interval if the interval contains at least the given number of observations.
 - **do_use_weights_for_dependence_function** : boolean. If true the dependence function is fitted used weights that normalize each parameter value.
 - **fixed_parameters** : list with one entry for each parameter. *None* is interpreted as the parameter is free. If a number is given, the parameter is fixed to that number and not estimated.
