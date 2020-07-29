@@ -1,6 +1,12 @@
 ***************************************************
 Define a joint distribution and calculate a contour
 ***************************************************
+This chapter will explain how joint distributions and contours are handled in
+viroconcom. The process of estimating the parameter values of a joint distribution,
+the "fitting" is explained in the next chapter_.
+
+.. _chapter: https://virocon-organization.github.io/viroconcom/fitting.html
+
 To create an environmental contour, first, we need to define a joint distribution.
 Then, we can choose a specific contour method and initiate the calculation.
 viroconcom uses so-called global hierarchical models to define the joint
