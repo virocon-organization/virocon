@@ -8,17 +8,23 @@ parameter values of a joint distribution.
 
 .. _fitting: https://github.com/virocon-organization/viroconcom/blob/master/viroconcom/fitting.py
 
-To fit a model structure to a dataset, we need to build an object of the class ``Fit`` in this module.
+To fit a model structure to a dataset, we need to build an object of the
+class ``Fit`` in this module.
+
 Exemplary call::
 
     example_fit = Fit((sample_0, sample_1), (dist_description_0, dist_description_1))
 
 It is important that the parameter ``samples`` is in the form (sample_0, sample_1, ...).
-Each sample is a collection of data from type *list* and also all samples have the same length. The parameter ``dist_descriptions``
-describes the structure of the probabilistic model that should be fitted to the sample. It should be from type *list* and should
-contain a dictionary for each dimension in the same sequence of the samples. It should accordingly have the same length as ``samples``.
+Each sample is a collection of data from type *list* and also all samples
+have the same length. The parameter ``dist_descriptions`` describes the
+structure of the probabilistic model that should be fitted to the sample. It
+should be from type *list* and should contain a dictionary for each dimension
+in the same sequence of the samples. It should accordingly have the same
+length as ``samples``.
 
-Each ``dist_description`` dictionary describes one dimension of the probabilistic model structure.
+Each ``dist_description`` dictionary describes one dimension of the
+probabilistic model structure.
 It must contain the name of the current distribution under the key *name*, which
 could be, for example, ``"Lognormal"``. If the distribution is conditional, it
 also must contain the keys ``dependency`` and ``functions``. The ``dependency`` value
