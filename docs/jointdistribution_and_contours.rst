@@ -115,7 +115,7 @@ on the value called with.
 The following dependence functions, :math:`f(x)`, are available under the given labels:
 
 - **power3** :  :math:`f(x) = a + b * x^c`
-- **exp3** : :math:`f(x) = a + b * e^{x * c}`
+- **exp3** : :math:`f(x) = a + b * e^{c * x}`
 - **lnsquare2** : :math:`f(x) = \ln[a + b * \sqrt(x / 9.81)]`
 - **powerdecrease3** : :math:`f(x) = a + 1 / (x + b)^c`
 - **asymdecrease3** : :math:`f(x) = a + b / (1 + c * x)`
@@ -132,8 +132,9 @@ can determine on which distributions another may depend. We define this order,
 as the order in which the univariate distribution are later on passed to
 the :class:`~viroconcom.distributions.MultivariateDistribution` constructor.
 For now we use the order of creation. The first distribution (that was described in
-Chapter :ref:`create-independent-dist`) has the index ``0``.
-We use this order in the dependency tuples.
+Chapter :ref:`create-independent-dist`) has the index ``0``. Thus,
+:math:`X_0=X`and :math:`X_1=Y`. In viroconcom, we need to use this order in
+the dependency tuples.
 
 As already described in Chapter :ref:`create-independent-dist` the 3 entries in the
 tuple correspond to the ``shape``, ``loc``,  and ``scale`` parameters and the
@@ -164,14 +165,14 @@ The conversion between ``shape``, ``scale``, ``mu`` and ``sigma`` is:
 The class :class:`~viroconcom.distribution.LognormalDistribution` has a
 constructor for ```shape`` and ``scale`` as well as for ``mu`` and ``sigma``.
 
-Say we want to define the following dependence structure, where :math:`x` is a
-realization of :math:`X`:
+Say we want to define the following dependence structure, where :math:`x_0` is a
+realization of :math:`X_0`:
 
 .. math::
-    \sigma(x) = 0.04 + 0.1748 * e^{-0.2243}
+    \sigma(x_0) = 0.04 + 0.1748 * e^{-0.2243 * x_0}
 
 .. math::
-    \mu(x) = 0.1 + 1.489^{x * 0.1901}
+    \mu(x_0) = 0.1 + 1.489^{x_0 * 0.1901}
 
 In viroconcom, to define this dependence structure, first we create the
 parameters as :class:`~viroconcom.params.FunctionParam` using the keywords
