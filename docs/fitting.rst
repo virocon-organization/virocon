@@ -165,7 +165,7 @@ Let us start with the marginal distributions that were fitted to Hs-intervals ::
 
 
 .. figure:: fitting_fig3.png
-    :scale: 50 %
+    :scale: 60 %
     :alt: individual fits of second variable
 
     Fitted marginal distributions at different Hs intervals.
@@ -186,7 +186,7 @@ distributions' four scale and shape values ::
 
 
 .. figure:: fitting_fig4.png
-    :scale: 100 %
+    :scale: 80 %
     :alt: fit of the dependence function
 
     Fitted dependence function.
