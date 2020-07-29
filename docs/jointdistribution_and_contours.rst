@@ -146,7 +146,8 @@ For example, a dependency tuple of :code:`(0, None, 1)` means, that ``shape``
 depends on the first distribution, ``loc`` is independent and ``scale``
 depends on the second distribution.
 
-We now want to create a dependent lognormal distribution. Opposed to, for
+We now want to create a dependent lognormal distribution that will represent
+the second variable, :math:`X_1|X_0`. Opposed to, for
 example, a Weibull or normal distribution, a lognormal distribution is often
 not described by ``shape``, ``loc``,  and ``scale``, but by the
 mean ``mu`` and standard deviation ``sigma`` of the corresponding normal
