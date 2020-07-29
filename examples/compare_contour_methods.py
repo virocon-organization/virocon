@@ -6,6 +6,10 @@ from viroconcom.contours import IFormContour, ISormContour, \
 from viroconcom.plot import plot_contour
 import matplotlib.pyplot as plt
 
+# Four different contours with a return period of 25 years will be constructed.
+return_period = 25 # In years
+sea_state_duration = 6 # In hours
+
 # Define the multivariate distribution given in the paper by Vanem and
 # Bitner-Gregersen (2012; doi: 10.1016/j.apor.2012.05.006)
 shape = ConstantParam(1.471)
@@ -22,8 +26,6 @@ dependencies = [dep0, dep1]
 mul_dist = MultivariateDistribution(distributions, dependencies)
 
 # Compute an IFORM, an ISORM, a direct sampling and a highest density contour.
-return_period = 50 # In years
-sea_state_duration = 6 # In hours
 iform_contour = IFormContour(mul_dist, return_period, sea_state_duration, 100)
 isorm_contour = ISormContour(mul_dist, return_period, sea_state_duration, 100)
 ds_contour = DirectSamplingContour(
@@ -51,3 +53,23 @@ plt.xlabel('Zero-up-crossing period (s)')
 plt.ylabel('Significant wave height (m)')
 plt.legend()
 plt.show()
+
+
+# Method           maximum Hs (m)    maximum Tz (s)    Source (author, year)
+# IFORM            14.62             ca. 13.5          Vanem & B.-G. (2012)
+# ISORM            ca. 16.8          ca. 14.7          Chai and Leira (2018)
+# Direct sampling  14.66             13.68             Huseby, V. & N. (2013)
+# HDC              16.18             14.37             Matlab code compute-hdc*
+# * https://github.com/ahaselsteiner/compute-hdc
+print('Maximum values for the IFORM contour: ' +
+      '{:.2f}'.format(max(iform_contour.coordinates[0])) + ' m, '
+      + '{:.2f}'.format(max(iform_contour.coordinates[1])) + ' s')
+print('Maximum values for the ISORM contour: ' +
+      '{:.2f}'.format(max(isorm_contour.coordinates[0])) + ' m, '
+      + '{:.2f}'.format(max(isorm_contour.coordinates[1])) + ' s')
+print('Maximum values for the direct sampling contour: ' +
+      '{:.2f}'.format(max(ds_contour.coordinates[0])) + ' m, '
+      + '{:.2f}'.format(max(ds_contour.coordinates[1])) + ' s')
+print('Maximum values for the highest density contour: ' +
+      '{:.2f}'.format(max(hdens_contour.coordinates[0])) + ' m, '
+      + '{:.2f}'.format(max(hdens_contour.coordinates[1])) + ' s')
