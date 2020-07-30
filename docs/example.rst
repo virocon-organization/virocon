@@ -41,8 +41,7 @@ return period of 50 years. ::
     contour = IFormContour(fitted_distribution, tr, ts)
 
     # Plot the data and the contour.
-    fig = plt.figure()
-    ax = fig.add_subplot(111)
+    fig, ax = plt.subplots(1, 1)
     plt.scatter(sample_tz, sample_hs, c='black', alpha=0.5)
     plot_contour(contour.coordinates[1], contour.coordinates[0],
                  ax=ax, x_label=label_tz, y_label=label_hs)
