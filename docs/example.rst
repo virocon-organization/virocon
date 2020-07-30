@@ -16,6 +16,7 @@ return period of 50 years. ::
     from viroconcom.plot import plot_contour
 
 
+    # Load sea state measurements from the NDBC buoy 44007.
     sample_hs, sample_tz, label_hs, label_tz = \
         read_ecbenchmark_dataset('datasets/1year_dataset_A.txt')
 
@@ -23,7 +24,6 @@ return period of 50 years. ::
     # dataset. This model structure has been proposed in the paper "Global
     # hierarchical models for wind and wave contours: Physical interpretations
     # of the dependence functions" by Haselsteiner et al. (2020).
-    # The syntax used to define model structures is described in the documentation.
     dist_description_hs = {'name': 'Weibull_Exp'}
     dist_description_tz = {'name': 'Lognormal_SigmaMu',
                           'dependency': (0,  None, 0),
