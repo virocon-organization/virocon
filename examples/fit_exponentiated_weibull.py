@@ -1,14 +1,16 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+from viroconcom.params import ConstantParam
 from viroconcom.distributions import ExponentiatedWeibullDistribution
 from viroconcom.read_write import read_ecbenchmark_dataset
 
 hs, tz, label_hs, label_tz = \
     read_ecbenchmark_dataset('datasets/1year_dataset_A.txt')
 
-dist = ExponentiatedWeibullDistribution()
-params = dist.fit(hs)
+dist = ExponentiatedWeibullDistribution(shape=ConstantParam(0.6), scale=ConstantParam(3), shape2=ConstantParam(4))
+#params = dist.fit(hs)
+print(dist)
 
 fig, ax = plt.subplots(1, 1)
 plt.hist(hs, density=True, label='Empirical distribution')

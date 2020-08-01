@@ -475,7 +475,7 @@ class ExponentiatedWeibullDistribution(ParametricDistribution):
 
         Parameters
         ----------
-        x : array_like
+        x : ndarray of floats
             Position where the PDF should be evaluated.
         shape: float
             beta in https://arxiv.org/pdf/1911.12835.pdf .
@@ -488,11 +488,14 @@ class ExponentiatedWeibullDistribution(ParametricDistribution):
 
         Returns
         -------
-        f : array_like
+        f : ndarray of lfoats
             Probability density values.
         """
 
         x = np.array(x)
+        x = x.astype(float) # If x elements are int we cannot use np.nan .
+        x[x<=0] = np.nan  # To avoid warnings with negative and 0-values, use NaN.
+
         # In Matlab syntax: f = delta .* beta ./ alpha .* (x ./ alpha).^
         # (beta - 1) .* (1 - exp(-1 * (x ./ alpha).^beta)).^(delta - 1) .*
         # exp(-1 .* (x ./ alpha).^beta);
@@ -505,8 +508,8 @@ class ExponentiatedWeibullDistribution(ParametricDistribution):
         f = np.multiply(term1, np.multiply(term2, term3))
         f = np.array(f) # Ensure that f is an numpy array, also if x is 1D.
 
-        # Ensure that PDF(negative value) = 0
-        f[x < 0] = 0
+        # Ensure that PDF(-inf < x <= 0) = 0
+        f[np.isnan(x)] = 0
 
         return f
 

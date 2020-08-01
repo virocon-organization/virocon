@@ -427,10 +427,11 @@ class ParametricDistributionTest(unittest.TestCase):
         """
         Tests whether the __str__ return the correct string.
         """
-        dist = ExponentiatedWeibullDistribution(shape=2, loc=None, scale=3, shape2=4)
+        dist = ExponentiatedWeibullDistribution(
+            shape=ConstantParam(2), loc=None, scale=ConstantParam(3), shape2=ConstantParam(4))
         string_of_dist = str(dist)
-        s = 'ExponentiatedWeibullDistribution with shape=2, loc=None, ' \
-                    'scale=3, shape2=4'
+        s = 'ExponentiatedWeibullDistribution with shape=2.0, loc=None, ' \
+                    'scale=3.0, shape2=4.0'
         self.assertEqual(string_of_dist, s)
 
 
