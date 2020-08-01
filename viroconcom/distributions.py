@@ -352,10 +352,9 @@ class ParametricDistribution(Distribution, ABC):
                                      "less than {}, but was {}"
                                      "".format(param_name, valid["max"], param_value))
 
-        def __str__(self):
-            return  "ParametricDistribution with shape={}, loc={}," \
-                    "scale={}, shape2={}.".format(
-                self.shape, self.loc, self.scale, self.shape2)
+    def __str__(self):
+        return  "{} with shape={}, loc={}, scale={}, shape2={}".format(
+            self.__class__.__name__, self.shape, self.loc, self.scale, self.shape2)
 
     @staticmethod
     def param_name_to_index(param_name):
@@ -621,6 +620,10 @@ class ExponentiatedWeibullDistribution(ParametricDistribution):
             else:
                 err_msg = "Error. At least one parameter needs to be free to fit it."
                 raise NotImplementedError(err_msg)
+        else:
+            raise NotImplementedError("Currently only weighted least squares "
+                                "estimation is implemented.")
+
 
         params = (pHat[1], loc, pHat[0], shape2) # shape, location, scale, shape2
         constantParams = (ConstantParam(pHat[1]), # shape parameter.

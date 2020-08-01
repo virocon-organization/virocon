@@ -399,6 +399,8 @@ class ParametricDistributionTest(unittest.TestCase):
         self.assertGreater(dist.cdf(2), 0)
         self.assertGreater(dist.pdf(2), 0)
 
+        self.assertRaises(NotImplementedError, dist.fit, hs, method='MLE')
+
     def test_fit_exponentiated_weibull_with_zero(self):
         """
         Tests fitting the exponentiated Weibull distribution if the dataset
@@ -420,6 +422,17 @@ class ParametricDistributionTest(unittest.TestCase):
         self.assertIsNone(params[1], 2) # location parameter should be None.
         self.assertAlmostEquals(params[2], 3, delta=1)
         self.assertAlmostEquals(params[3], 1, delta=0.5)
+
+    def test_exponentiated_weibull_name(self):
+        """
+        Tests whether the __str__ return the correct string.
+        """
+        dist = ExponentiatedWeibullDistribution(shape=2, loc=None, scale=3, shape2=4)
+        string_of_dist = str(dist)
+        s = 'ExponentiatedWeibullDistribution with shape=2, loc=None, ' \
+                    'scale=3, shape2=4'
+        self.assertEqual(string_of_dist, s)
+
 
 
 if __name__ == '__main__':

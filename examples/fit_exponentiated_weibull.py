@@ -9,7 +9,6 @@ hs, tz, label_hs, label_tz = \
 
 dist = ExponentiatedWeibullDistribution()
 params = dist.fit(hs)
-print(dist)
 
 fig, ax = plt.subplots(1, 1)
 plt.hist(hs, density=True, label='Empirical distribution')
