@@ -24,7 +24,7 @@ Figure 2 shows ``viroconcom``'s class diagram.
     :scale: 50 %
     :alt: class diagram for viroconcom
 
-    Figure 1. Class diagram showing among others the class Fit, which handles
+    Figure 2. Class diagram showing among others the class Fit, which handles
     fitting a model structure to a dataset, and the class Contour, which
     handles contour construction. This class diagram was created for viroconcom
     version 1.1.0.
