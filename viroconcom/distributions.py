@@ -880,6 +880,59 @@ class MultivariateDistribution():
         f = self.pdf([x, y])
         return f
 
+    def marginal_cdf(self, x, dim=0):
+        """
+        Marginal cumulative distribution function in given dimension.
+
+        Parameters
+        ----------
+        x : ndarray
+        dim : int (optional)
+            Defaults to 0, which means the first dimension. 1 = second dimension.
+
+
+        Returns
+        -------
+        F : ndarray of floats
+            Probabilities.
+        """
+        raise NotImplementedError
+
+    def marginal_icdf(self, p, dim=0):
+        """
+        Marginal inverse cumulative distribution function in given dimension.
+
+        Parameters
+        ----------
+        p : ndarray of floats
+            Probabilities.
+        dim : int (optional)
+            Defaults to 0, which means the first dimension. 1 = second dimension.
+
+        Returns
+        -------
+        x : ndarray of floats
+        """
+        raise NotImplementedError
+
+    def marginal_pdf(self, x, dim=0):
+        """
+        Marginal probability density function in given dimension.
+
+        Parameters
+        ----------
+        x : ndarray
+        dim : int (optional)
+            Defaults to 0, which means the first dimension. 1 = second dimension.
+
+
+        Returns
+        -------
+        f : ndarray of floats
+            Probability densities.
+        """
+
+
     def draw_sample(self, n):
         """
         Parameters

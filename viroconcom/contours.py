@@ -540,6 +540,31 @@ class HighestDensityContour(Contour):
         tuple of objects,
             The computed results.
         """
+
+        n_dim = self.distribution.n_dim
+        if limits is None:
+            limits = [(0, 10)] * n_dim
+            for i in range(n_dim):
+                # This calculation is based on the relationship for an ISORM
+                # contour, see Mackay and Haselsteiner (2020), Expression 12.
+                alpha_t = 1.0 / (self.return_period * 365.25 * 24 / self.state_duration)
+                beta_Sn = math.sqrt(sts.distributions.chi2.ppf(1 - alpha_t, df=n_dim))
+                alpha_m = 1.0 - sts.distributions.norm.cdf(beta_Sn)
+                dist = self.distribution.distributions[i]
+                non_exeedance_p = 1 - alpha_m * 0.1
+                if i == 0:
+                    # When implemented this should become self.distribution.marginal_icdf(non_exceedance_p, i)
+                    limits[i] = (0, dist.i_cdf(non_exeedance_p))
+                else:
+                    # When implemented this should become self.distribution.marginal_icdf(non_exceedance_p, i)
+                    limits[i] = (0, limits[i-1][1])
+        else:
+            # Check limits length
+            if len(limits) != self.distribution.n_dim:
+                raise ValueError("limits has to be of length equal to number of dimensions, "
+                                 "but len(limits)={}, n_dim={}."
+                                 "".format(len(limits), self.distribution.n_dim))
+
         if deltas is None:
             deltas = [0.5] * self.distribution.n_dim
         else:
@@ -552,16 +577,7 @@ class HighestDensityContour(Contour):
                                      "but was list of length {}".format(len(deltas)))
                 deltas = list(deltas)
             except TypeError:
-                deltas = [deltas] * self.distribution.n_dim
-
-        if limits is None:
-            limits = [(0, 10)] * self.distribution.n_dim
-        else:
-            # Check limits length
-            if len(limits) != self.distribution.n_dim:
-                raise ValueError("limits has to be of length equal to number of dimensions, "
-                                 "but len(limits)={}, n_dim={}."
-                                 "".format(len(limits), self.distribution.n_dim))
+                deltas = [deltas] * self.distribution.n_di
 
         # Create sampling coordinate arrays.
         sample_coords = []

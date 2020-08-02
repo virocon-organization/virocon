@@ -173,6 +173,16 @@ class ContourCreationTest(unittest.TestCase):
         max_hs = max(test_contour_HDC.coordinates[1])
         self.assertAlmostEqual(max_hs, 14.5, delta=0.5) # Should be about 15
 
+        # Now calculate the same contour without defining the grid.
+        test_contour_HDC = HighestDensityContour(mul_dist, n_years, 1)
+
+        # Compare the computed contours to the contours published in
+        # 'Global hierarchical models for wind and wave contours', Figure 8.
+        max_v = max(test_contour_HDC.coordinates[0])
+        self.assertAlmostEqual(max_v, 29.5, delta=0.5) # Should be about 29.5
+        max_hs = max(test_contour_HDC.coordinates[1])
+        self.assertAlmostEqual(max_hs, 14.5, delta=0.5) # Should be about 15
+
 
     def test_HDC3d_WLL(self):
         """
@@ -631,10 +641,9 @@ class HDCTest(unittest.TestCase):
         """
         Tests error when length of limits is not equal with number of dimensions.
         """
-        with self.assertWarns(RuntimeWarning):
-            test_contour_HDC = self._setup(limits=None)
-            self.assertEqual(test_contour_HDC.limits,
-                             [(0, 10)] * test_contour_HDC.distribution.n_dim)
+        test_contour_HDC = self._setup(limits=None)
+        expected =  [(0, 19.18)] * test_contour_HDC.distribution.n_dim
+        np.testing.assert_allclose(test_contour_HDC.limits, expected, atol=0.1)
 
 
     def test_setup_HDC_limits_Tuple_length(self):
