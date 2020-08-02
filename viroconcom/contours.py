@@ -559,14 +559,17 @@ class HighestDensityContour(Contour):
                     # When implemented this should become self.distribution.marginal_icdf(non_exceedance_p, i)
                     limits[i] = (0, limits[i-1][1])
         else:
-            # Check limits length
+            # Check limits length.
             if len(limits) != self.distribution.n_dim:
                 raise ValueError("limits has to be of length equal to number of dimensions, "
                                  "but len(limits)={}, n_dim={}."
                                  "".format(len(limits), self.distribution.n_dim))
 
         if deltas is None:
-            deltas = [0.5] * self.distribution.n_dim
+            deltas = np.empty(shape=n_dim)
+            relative_cell_size = 0.01
+            for i in range(n_dim):
+                deltas[i] = (limits[i][1] - limits[i][0]) * relative_cell_size
         else:
             # Check if deltas is a scalar.
             try:

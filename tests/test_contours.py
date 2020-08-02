@@ -611,12 +611,12 @@ class HDCTest(unittest.TestCase):
 
     def test_setup_HDC_deltas_none(self):
         """
-        Tests error when length of deltas is not equal with number of dimensions.
+        Tests if default deltas are correctly calcualted.
         """
 
         test_contour_HDC = self._setup(deltas=None)
-        self.assertEqual(test_contour_HDC.deltas, [0.5] *
-                         test_contour_HDC.distribution.n_dim)
+        expected =  [0.2] * test_contour_HDC.distribution.n_dim
+        np.testing.assert_allclose(test_contour_HDC.deltas, expected, atol=0.01)
 
 
     def test_setup_HDC_deltas_value(self):
