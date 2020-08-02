@@ -12,10 +12,7 @@ state_duration = 6 # In hours
 
 # Define the multivariate distribution given in the paper by Vanem and
 # Bitner-Gregersen (2012; doi: 10.1016/j.apor.2012.05.006)
-shape = ConstantParam(1.471)
-loc = ConstantParam(0.889)
-scale = ConstantParam(2.776)
-dist0 = WeibullDistribution(shape, loc, scale)
+dist0 = WeibullDistribution(shape=1.471, loc=0.8888, scale=2.776)
 dep0 = (None, None, None) # All three parameters are independent.
 my_sigma = FunctionParam('exp3', 0.040, 0.175, -0.224)
 my_mu = FunctionParam('power3', 0.100, 1.489, 0.190)

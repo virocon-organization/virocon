@@ -5,10 +5,7 @@ from viroconcom.contours import DirectSamplingContour
 import matplotlib.pyplot as plt
 
 # Define a Weibull distribution representing significant wave height.
-shape = ConstantParam(1.471)
-loc = ConstantParam(0.8888)
-scale = ConstantParam(2.776)
-dist0 = WeibullDistribution(shape, loc, scale)
+dist0 = WeibullDistribution(shape=1.471, loc=0.8888, scale=2.776)
 dep0 = (None, None, None)  # All three parameters are independent.
 
 # Define a lognormal distribution representing spectral peak period.
