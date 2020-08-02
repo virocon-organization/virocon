@@ -7,5 +7,6 @@ User Guide
 
     install
     example
+    workflow
     jointdistribution_and_contours
     fitting

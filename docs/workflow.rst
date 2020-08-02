@@ -1,0 +1,29 @@
+*******************************************
+Overall work flow and software architecture
+*******************************************
+
+Figure 1 shows a flowchart that captures the overall functionality of
+``viroconcom``. A statistical model can be defined by fitting a model structure to
+measured data. Then, this statistical model can be used to construct an
+environmental contour.
+
+.. figure:: viroconcom-flowchart.png
+    :scale: 100 %
+    :alt: flowchart for viroconcom
+
+    Figure 1. Flowchart showing how the process of fitting a model structure to
+    measured data and constructing an environmental contour.
+
+
+In ``viroconcom`` the class ``Fit`` handles the fitting and the class
+``Contour`` (and its child classes) handle the contour construction.
+
+Figure 2 shows ``viroconcom``'s class diagram.
+
+.. figure:: class-diagram.jpg
+    :scale: 100 %
+    :alt: class diagram for viroconcom
+
+    Figure 1. Class diagram showing among others the class Fit, which handles
+    fitting a model structure to a dataset, and the class Contour, which
+    handles contour construction.
