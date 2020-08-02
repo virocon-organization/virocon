@@ -248,6 +248,24 @@ class ParametricDistributionTest(unittest.TestCase):
         scale_test = dist._get_parameter_values(rv_values, dependencies)[2]
         self.assertEqual(scale_test, 1)
 
+    def test_create_distribution_with_number(self):
+        """
+        Tests if creating a ParametricDistribution with floats/ints works.
+        """
+        shape = ConstantParam(2)
+        loc = ConstantParam(3)
+        dist0 = NormalDistribution(shape=shape, loc=loc)
+        median_const_par = dist0.i_cdf(0.5)
+
+        dist1 = NormalDistribution(shape=2, loc=3)
+        median_ints = dist1.i_cdf(0.5)
+
+        dist2 = NormalDistribution(shape=2.0, loc=3.0)
+        median_floats = dist2.i_cdf(0.5)
+
+        self.assertEqual(median_const_par, 3)
+        self.assertEqual(median_const_par, median_ints)
+        self.assertEqual(median_const_par, median_floats)
 
     def test_check_parameter_value(self):
         """
