@@ -7,7 +7,7 @@ Figure 1 shows a flowchart that captures the overall functionality of
 measured data. Then, this statistical model can be used to construct an
 environmental contour.
 
-.. figure:: viroconcom-flowchart.png
+.. figure:: viroconcom-flowchart.jpg
     :scale: 100 %
     :alt: flowchart for viroconcom
 
@@ -21,7 +21,7 @@ In ``viroconcom`` the class ``Fit`` handles the fitting and the class
 Figure 2 shows ``viroconcom``'s class diagram.
 
 .. figure:: class-diagram.jpg
-    :scale: 100 %
+    :scale: 50 %
     :alt: class diagram for viroconcom
 
     Figure 1. Class diagram showing among others the class Fit, which handles
