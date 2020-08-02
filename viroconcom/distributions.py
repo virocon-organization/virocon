@@ -475,20 +475,20 @@ class ExponentiatedWeibullDistribution(ParametricDistribution):
 
         Parameters
         ----------
-        x : ndarray of floats
+        x : float or ndarray of floats
             Position where the PDF should be evaluated.
-        shape: float
+        shape: float or ndarray of floats
             beta in https://arxiv.org/pdf/1911.12835.pdf .
-        loc : float
+        loc : float or ndarray of floats
             The distribution does not have a location parameter.
-        scale : float
+        scale : float or ndarray of floats
             alpha in https://arxiv.org/pdf/1911.12835.pdf .
-        shape2 : float
+        shape2 : float or ndarray of floats
             delta in https://arxiv.org/pdf/1911.12835.pdf .
 
         Returns
         -------
-        f : ndarray of lfoats
+        f : ndarray of floats
             Probability density values.
         """
 
@@ -499,9 +499,9 @@ class ExponentiatedWeibullDistribution(ParametricDistribution):
         # In Matlab syntax: f = delta .* beta ./ alpha .* (x ./ alpha).^
         # (beta - 1) .* (1 - exp(-1 * (x ./ alpha).^beta)).^(delta - 1) .*
         # exp(-1 .* (x ./ alpha).^beta);
-        a = scale
-        b = shape
-        d = shape2
+        a = np.array(scale)
+        b = np.array(shape)
+        d = np.array(shape2)
         term1 = d * np.divide(b, a) * np.power(np.divide(x, a), b - 1)
         term2 = np.power(1 - np.exp(-1 * np.power(np.divide(x, a), b)), d - 1)
         term3 = np.exp(-1 * np.power(np.divide(x, a), b))
