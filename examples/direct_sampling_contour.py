@@ -4,11 +4,10 @@ from viroconcom.distributions import WeibullDistribution, LognormalDistribution,
 from viroconcom.contours import DirectSamplingContour
 import matplotlib.pyplot as plt
 
-# Define a Weibull distribution representing significant wave height.
+# Define the multivariate distribution given in the paper by Vanem and
+# Bitner-Gregersen (2012; doi: 10.1016/j.apor.2012.05.006)
 dist0 = WeibullDistribution(shape=1.471, loc=0.8888, scale=2.776)
 dep0 = (None, None, None)  # All three parameters are independent.
-
-# Define a lognormal distribution representing spectral peak period.
 my_sigma = FunctionParam("exp3", 0.0400, 0.1748, -0.2243)
 my_mu = FunctionParam("power3", 0.1, 1.489, 0.1901)
 dist1 = LognormalDistribution(sigma=my_sigma, mu=my_mu)
