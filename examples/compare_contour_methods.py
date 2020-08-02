@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 
 # Four different contours with a return period of 25 years will be constructed.
 return_period = 25 # In years
-sea_state_duration = 6 # In hours
+state_duration = 6 # In hours
 
 # Define the multivariate distribution given in the paper by Vanem and
 # Bitner-Gregersen (2012; doi: 10.1016/j.apor.2012.05.006)
@@ -26,11 +26,10 @@ dependencies = [dep0, dep1]
 mul_dist = MultivariateDistribution(distributions, dependencies)
 
 # Compute an IFORM, an ISORM, a direct sampling and a highest density contour.
-iform_contour = IFormContour(mul_dist, return_period, sea_state_duration)
-isorm_contour = ISormContour(mul_dist, return_period, sea_state_duration)
-ds_contour = DirectSamplingContour(
-    mul_dist, return_period, sea_state_duration, 5000000)
-hdens_contour = HighestDensityContour(mul_dist, return_period, sea_state_duration)
+iform_contour = IFormContour(mul_dist, return_period, state_duration)
+isorm_contour = ISormContour(mul_dist, return_period, state_duration)
+ds_contour = DirectSamplingContour(mul_dist, return_period, state_duration, 5000000)
+hdens_contour = HighestDensityContour(mul_dist, return_period, state_duration)
 hdc_coordinates = sort_points_to_form_continous_line(
     hdens_contour.coordinates[0], hdens_contour.coordinates[1])
 

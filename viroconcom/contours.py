@@ -567,7 +567,12 @@ class HighestDensityContour(Contour):
 
         if deltas is None:
             deltas = np.empty(shape=n_dim)
-            relative_cell_size = 0.0005 # 0.05 percent of the variable space.
+            # Set default cell size to 0.025 percent of the variable space.
+            # This is losely based on the results from Fig. 7 in 10.1016/j.coastaleng.2017.03.002
+            # In the considered variable space length of 20 a cell length of
+            # 0.05 was sufficient --> 20 / 0.05 = 400. 1/400 = 0.0025
+            relative_cell_size = 0.0025
+
             for i in range(n_dim):
                 deltas[i] = (limits[i][1] - limits[i][0]) * relative_cell_size
         else:
