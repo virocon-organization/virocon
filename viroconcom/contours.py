@@ -567,7 +567,7 @@ class HighestDensityContour(Contour):
 
         if deltas is None:
             deltas = np.empty(shape=n_dim)
-            relative_cell_size = 0.01
+            relative_cell_size = 0.0005 # 0.05 percent of the variable space.
             for i in range(n_dim):
                 deltas[i] = (limits[i][1] - limits[i][0]) * relative_cell_size
         else:

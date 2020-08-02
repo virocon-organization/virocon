@@ -615,8 +615,8 @@ class HDCTest(unittest.TestCase):
         """
 
         test_contour_HDC = self._setup(deltas=None)
-        expected =  [0.2] * test_contour_HDC.distribution.n_dim
-        np.testing.assert_allclose(test_contour_HDC.deltas, expected, atol=0.01)
+        expected =  [0.01] * test_contour_HDC.distribution.n_dim
+        np.testing.assert_allclose(test_contour_HDC.deltas, expected, atol=0.001)
 
 
     def test_setup_HDC_deltas_value(self):

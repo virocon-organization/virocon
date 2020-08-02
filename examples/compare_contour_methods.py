@@ -26,14 +26,11 @@ dependencies = [dep0, dep1]
 mul_dist = MultivariateDistribution(distributions, dependencies)
 
 # Compute an IFORM, an ISORM, a direct sampling and a highest density contour.
-iform_contour = IFormContour(mul_dist, return_period, sea_state_duration, 100)
-isorm_contour = ISormContour(mul_dist, return_period, sea_state_duration, 100)
+iform_contour = IFormContour(mul_dist, return_period, sea_state_duration)
+isorm_contour = ISormContour(mul_dist, return_period, sea_state_duration)
 ds_contour = DirectSamplingContour(
     mul_dist, return_period, sea_state_duration, 5000000)
-limits = [(0, 20), (0, 20)] # Limits of the computational domain
-deltas = [0.005, 0.005] # Dimensions of the grid cells
-hdens_contour = HighestDensityContour(
-    mul_dist, return_period, sea_state_duration, limits, deltas)
+hdens_contour = HighestDensityContour(mul_dist, return_period, sea_state_duration)
 hdc_coordinates = sort_points_to_form_continous_line(
     hdens_contour.coordinates[0], hdens_contour.coordinates[1])
 
