@@ -78,16 +78,9 @@ define ``shape``, ``loc``, and ``scale``.
 Say we want to create a Weibull distribution with ``shape=1.471``, ``loc=0.8888``,
 and ``scale=2.776`` (as in the model proposed by Vanem and Bitner-Gregersen).
 
-We first create the parameters::
+We first create a WeibullDistribution object::
 
-    shape = ConstantParam(1.471)
-    loc = ConstantParam(0.8888)
-    scale = ConstantParam(2.776)
-
-
-And then create our Weibull distribution::
-
-    dist0 = WeibullDistribution(shape, loc, scale)
+    dist0 = WeibullDistribution(shape=1.471, loc=0.8888, scale=2.776)
 
 We also need to create a dependency tuple for creating a
 :class:`~viroconcom.distribution.MultivariateDistribution` later on.
