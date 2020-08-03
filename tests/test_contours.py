@@ -753,6 +753,7 @@ class DirectSamplingTest(unittest.TestCase):
         mul_dist = MultivariateDistribution(distributions, dependencies)
 
         # Calculate contour.
+        prng = np.random.RandomState(42) # Fix the random seed for consistency.
         ds_contour = DirectSamplingContour(
             mul_dist, return_period, state_duration, 500000, 6)
         return ds_contour
@@ -762,10 +763,6 @@ class DirectSamplingTest(unittest.TestCase):
         Computes a direct sampling contour and compares it with results
         presented in the literature (DOI: 10.1016/j.oceaneng.2012.12.034).
         """
-
-        # Fix the random seed for consistency in repeated tests.
-        prng = np.random.RandomState(42)
-
         contour = self._setup()
         ref_contour_hs_1 = \
             [9.99, 10.65, 10.99, 11.25, 11.25, 11.41, 11.42, 11.46, 11.48,

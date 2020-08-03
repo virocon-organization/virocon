@@ -248,6 +248,24 @@ class ParametricDistributionTest(unittest.TestCase):
         scale_test = dist._get_parameter_values(rv_values, dependencies)[2]
         self.assertEqual(scale_test, 1)
 
+    def test_create_distribution_with_number(self):
+        """
+        Tests if creating a ParametricDistribution with floats/ints works.
+        """
+        shape = ConstantParam(2)
+        loc = ConstantParam(3)
+        dist0 = NormalDistribution(shape=shape, loc=loc)
+        median_const_par = dist0.i_cdf(0.5)
+
+        dist1 = NormalDistribution(shape=2, loc=3)
+        median_ints = dist1.i_cdf(0.5)
+
+        dist2 = NormalDistribution(shape=2.0, loc=3.0)
+        median_floats = dist2.i_cdf(0.5)
+
+        self.assertEqual(median_const_par, 3)
+        self.assertEqual(median_const_par, median_ints)
+        self.assertEqual(median_const_par, median_floats)
 
     def test_check_parameter_value(self):
         """
@@ -288,12 +306,15 @@ class ParametricDistributionTest(unittest.TestCase):
         shape2 = ConstantParam(46.6078)
         params = (shape, loc, scale, shape2)
         dist = ExponentiatedWeibullDistribution(*params)
+        dist_with_floats = ExponentiatedWeibullDistribution(
+            shape=0.4743, scale=0.0373, shape2=46.6078)
 
         # CDF(1) should be roughly 0.7, see Figure 12 in
         # https://arxiv.org/pdf/1911.12835.pdf .
         p = dist.cdf(1)
-        self.assertGreater(p, 0.5)
-        self.assertLess(p, 0.8)
+        self.assertAlmostEqual(p, 0.7, delta=0.1)
+        p_with_floats = dist_with_floats.cdf(1)
+        self.assertEqual(p, p_with_floats)
 
         # CDF(4) should be roughly 0.993, see Figure 12 in
         # https://arxiv.org/pdf/1911.12835.pdf .

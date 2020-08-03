@@ -110,15 +110,25 @@ class ParametricDistribution(Distribution, ABC):
 
         Parameters
         ----------
-        shape : Param,
+        shape : Param or float,
             The shape parameter.
-        loc : Param,
+        loc : Param or float,
             The location parameter.
-        scale : Param,
+        scale : Param or float,
             The scale parameter.
-        shape2: Param
+        shape2: Param or float,
             Second shape parameter (if the distribution has one).
         """
+        # In case a parameter is given as a number, convert it to a ConstantParameter.
+        if isinstance(shape, float) or isinstance(shape, int):
+            shape = ConstantParam(shape)
+        if isinstance(loc, float) or isinstance(loc, int):
+            loc = ConstantParam(loc)
+        if isinstance(scale, float) or isinstance(scale, int):
+            scale = ConstantParam(scale)
+        if isinstance(shape2, float) or isinstance(shape2, int):
+            shape2 = ConstantParam(shape2)
+
         self.shape = shape
         self.loc = loc
         self.scale = scale
