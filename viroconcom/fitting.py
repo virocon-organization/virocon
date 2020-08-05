@@ -12,7 +12,7 @@ from multiprocessing import Pool, TimeoutError
 from numbers import Number
 import statsmodels.api as sm
 import scipy.stats as sts
-from scipy.optimize import curve_fit
+from scipy.optimize import curve_fit, minimize
 from inspect import signature
 
 from .settings import (SHAPE_STRING, LOCATION_STRING, SCALE_STRING,
@@ -21,10 +21,12 @@ from .settings import (SHAPE_STRING, LOCATION_STRING, SCALE_STRING,
                        LOGNORMAL_MU_PARAMETER_KEYWORD,
                        NORMAL_KEYWORD, WEIBULL_3P_KEYWORD,
                        WEIBULL_3P_KEYWORD_ALTERNATIVE,
-                       WEIBULL_2P_KEYWORD, WEIBULL_EXP_KEYWORD)
+                       WEIBULL_2P_KEYWORD, WEIBULL_EXP_KEYWORD,
+                       INVERSE_GAUSSIAN_KEYWORD)
 from .params import ConstantParam, FunctionParam
 from .distributions import (WeibullDistribution, ExponentiatedWeibullDistribution,
                             LognormalDistribution, NormalDistribution,
+                            InverseGaussianDistribution,
                             KernelDensityDistribution, MultivariateDistribution)
 
 
@@ -69,6 +71,14 @@ def _logistics4(x, a, b, c, d):
 def _alpha3(x, a, b, c, C1=None, C2=None, C3=None, C4=None):
     return (a + b * x ** c) \
            / 2.0445 ** (1 / _logistics4(x, C1, C2, C3, C4))
+           
+# A 3-parameter 2nd order polynomial  (a dependence function).
+def _poly2(x, a, b, c):
+    return a * x**2 + b * x + c
+
+# A 2-parameter 1st order polynomial  (a dependence function).
+def _poly1(x, a, b):
+    return a * x + b
 
 
 # Bounds for function parameters:
@@ -550,6 +560,7 @@ class Fit():
             - Lognormal (shape, scale),
             - Lognormal_SigmaMu (sigma, mu),
             - Normal,
+            - InverseGaussian
             - KernelDensity (no dependency)
 
         dependency : tuple or list of int
@@ -580,7 +591,7 @@ class Fit():
             If true the dependence function is fitted using weights. The weights
             are 1 / parameter_value such that a normalization is performed.
 
-        and either number_of_intervals or width_of_intervals:
+        and either number_of_intervals, width_of_intervals or samples_per_interval:
 
         number_of_intervals : int
             Number of bins the data of this variable should be seperated for fits which depend
@@ -590,6 +601,9 @@ class Fit():
         width_of_bins : float
             Width of the bins. When the width of the bins is given, the number of bins is
             determined automatically.
+            
+        samples_per_interval : int
+            The number of samples per interval. TODO
 
         """
 
@@ -752,6 +766,9 @@ class Fit():
                         name == LOGNORMAL_MU_PARAMETER_KEYWORD:
             # For lognormal loc is set to 0
             params = sts.lognorm.fit(sample, floc=0)
+        elif name == INVERSE_GAUSSIAN_KEYWORD:
+            # For inverse gaussian loc is set to 0
+            params = sts.invgauss.fit(sample, floc=0)
         elif name == 'KernelDensity':
             dens = sm.nonparametric.KDEUnivariate(sample)
             dens.fit(gridsize=2000)
@@ -814,6 +831,10 @@ class Fit():
             return _logistics4
         elif function_name == 'alpha3':
             return _alpha3
+        elif function_name == 'poly2':
+            return _poly2
+        elif function_name == 'poly1':
+            return _poly1
         elif function_name is None:
             return None
         else:
@@ -1167,17 +1188,9 @@ class Fit():
                             bUpper = _bounds[1][0: nParam - 1]
                             bounds = (bLower, bUpper)
 
-                            if functions[i] != "alpha3":
-                                if do_use_weights_for_dependence_function:
-                                    param_popt, param_pcov = curve_fit(
-                                    Fit._get_function(functions[i]),
-                                    interval_centers, fit_points,
-                                        sigma=fit_points, bounds=bounds)
-                                else:
-                                    param_popt, param_pcov = curve_fit(
-                                    Fit._get_function(functions[i]),
-                                    interval_centers, fit_points, bounds=bounds)
-                            else: # alpha3 is handled differently, since it
+
+                            if functions[i] == "alpha3":
+                                # alpha3 is handled differently, since it
                                 # depends on a prevously fitted logistics4
                                 # function.
 
@@ -1215,6 +1228,43 @@ class Fit():
                                         "model shape is modelled with a function " \
                                         "of type '{}'.".format(f.func_name)
                                     raise TypeError(err_msg)
+                                    
+                            elif functions[i] == "poly2":
+                                x = interval_centers
+                                y = fit_points
+                                def error_func(p):
+                                    return np.sum((_poly2(x, p[0], p[1], p[2]) - y)**2) 
+                                
+                                ineq_cons = {"type": "ineq",
+                                             "fun": lambda x: np.array([x[2] - x[1]**2 / (4 * x[0])]),
+                                             "jac": lambda x: np.array([[x[1]**2 / (4* x[0]**2), 
+                                                                        -x[1]/(2*x[0]), 
+                                                                        1]]),
+                                             }
+                                p0 = [1, 1, 1]
+                                bounds = [(None, None), (None, None), (0, None)]
+                                res = minimize(error_func, p0, 
+                                               method="SLSQP", 
+                                               constraints=[ineq_cons],
+                                               bounds=bounds,
+                                               options={'ftol': 1e-9, "disp":True},
+                                               )
+                                param_popt = res.x
+                                    
+                                # if do_use_weights_for_dependence_function:
+                                #     pass
+                                # else:
+                                #     pass
+                            else:
+                                if do_use_weights_for_dependence_function:
+                                    param_popt, param_pcov = curve_fit(
+                                    Fit._get_function(functions[i]),
+                                    interval_centers, fit_points,
+                                        sigma=fit_points, bounds=bounds)
+                                else:
+                                    param_popt, param_pcov = curve_fit(
+                                    Fit._get_function(functions[i]),
+                                    interval_centers, fit_points, bounds=bounds)
 
                         except RuntimeError:
                             # Case that optimal parameters not found
@@ -1247,14 +1297,18 @@ class Fit():
                                     "Number of iterations exceeded.".format(param_name, dimension))
 
                         # Save parameter
-                        if functions[i] != "alpha3":
-                            params[i] = FunctionParam(functions[i], *param_popt)
-                        else:
+                        if functions[i] == "alpha3":
                             a = param_popt[0]
                             b = param_popt[1]
                             c = param_popt[2]
                             params[i] = FunctionParam(functions[i], a, b, c,
                                                      C1=C1, C2=C2, C3=C3, C4=C4)
+                        elif functions[i] == "poly1":
+                            a = param_popt[0]
+                            b = param_popt[1]
+                            params[i] = FunctionParam(functions[i], a, b, 0)
+                        else:
+                            params[i] = FunctionParam(functions[i], *param_popt)
 
 
         # Return particular distribution
@@ -1270,6 +1324,8 @@ class Fit():
             distribution = LognormalDistribution(*params[:3])
         elif name == NORMAL_KEYWORD:
             distribution = NormalDistribution(*params[:3])
+        elif name == INVERSE_GAUSSIAN_KEYWORD:
+            distribution = InverseGaussianDistribution(*params[:3])
         return distribution, dependency, used_number_of_intervals, fit_inspection_data
 
     def __str__(self):

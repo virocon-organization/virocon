@@ -131,6 +131,12 @@ class FunctionParam(Param):
         elif func_name == "alpha3":
             self._func = self._alpha3
             self.func_name = func_name
+        elif func_name == "poly2":
+            self._func = self._poly2
+            self.func_name = func_name
+        elif func_name == "poly1":
+            self._func = self._poly1
+            self.func_name = func_name
         else:
             raise ValueError("{} is not a known kind of function.".format(func_name))
 
@@ -180,6 +186,14 @@ class FunctionParam(Param):
     def _alpha3(self, x):
         return (self.a + self.b * x ** self.c) \
                / 2.0445 ** (1 / self._logistics4(x, self.C1, self.C2, self.C3, self.C4))
+
+    # A 3-parameter 2nd order polynomial  (a dependence function).
+    def _poly2(self, x):
+        return self.a * x**2 + self.b * x + self.c
+    
+    # A 2-parameter 1st order polynomial  (a dependence function).
+    def _poly1(self, x):
+        return self.a * x + self.b
 
     def _value(self, x):
         return self._wrapper(self._func(x))
