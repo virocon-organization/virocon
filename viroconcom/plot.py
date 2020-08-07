@@ -346,7 +346,7 @@ def plot_contour(x, y, ax=None, contour_label=None, x_label=None, y_label=None,
 
     # Format the figure.
     if contour_label:
-        plt.legend(loc='upper left', frameon=False)
+        ax.legend(loc='upper left', frameon=False)
     if x_label:
         ax.set_xlabel(x_label)
     if y_label:
