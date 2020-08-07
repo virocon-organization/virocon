@@ -348,11 +348,11 @@ def plot_contour(x, y, ax=None, contour_label=None, x_label=None, y_label=None,
     if contour_label:
         plt.legend(loc='upper left', frameon=False)
     if x_label:
-        plt.xlabel(x_label)
+        ax.set_xlabel(x_label)
     if y_label:
-        plt.ylabel(y_label)
+        ax.set_ylabel(y_label)
     if x_lim:
-        plt.xlim(x_lim)
+        ax.set_xlim(x_lim)
     y_lim_factor = 1.2
     if sample_plot_data and upper_ylim is None:
         # If there is not enough space for the legend in the upper left corner:
@@ -364,7 +364,7 @@ def plot_contour(x, y, ax=None, contour_label=None, x_label=None, y_label=None,
         upper_ylim = max(max(y), max(sample_plot_data.y)) * y_lim_factor
     elif upper_ylim is None:
         upper_ylim = max(y) * y_lim_factor
-    plt.ylim((0, upper_ylim))
+    ax.set_ylim((0, upper_ylim))
 
 
     # Remove axis on the right and on the top (Matlab 'box off').
