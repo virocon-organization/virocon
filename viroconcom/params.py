@@ -223,6 +223,10 @@ class FunctionParam(Param):
                 "x^" + str(self.c) + ") / 2.0445^(1 / logistics4(" + \
                 str(self.C1) + ", " + str(self.C2) + ", |" + str(self.C3) + \
                 "|, " + str(self.C4) + ")"
+        elif self.func_name == "poly2":
+            function_string = f"{self.a} * x^2 + {self.b} * x + {self.c}"
+        elif self.func_name == "poly1":
+            function_string = f"{self.a} * x + {self.b}"
         if isinstance(self._wrapper.func, np.ufunc):
             function_string += " with _wrapper: " + str(self._wrapper)
         return function_string

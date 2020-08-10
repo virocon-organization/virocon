@@ -598,11 +598,11 @@ class Fit():
             upon it. If the number of bins is given, the width of the bins is determined
             automatically.
 
-        width_of_bins : float
+        width_of_intervals : float
             Width of the bins. When the width of the bins is given, the number of bins is
             determined automatically.
             
-        samples_per_interval : int
+        samples_per_intervals : int
             The number of samples per interval. TODO
 
         """
@@ -620,6 +620,7 @@ class Fit():
 
         list_number_of_intervals = []
         list_width_of_intervals = []
+        list_samples_per_intervals = []
         for dist_description in dist_descriptions:
             if dist_description.get(
                     'number_of_intervals') == None and dist_description.get(
@@ -627,10 +628,11 @@ class Fit():
                 dist_description['number_of_intervals'] = 15
             list_number_of_intervals.append(dist_description.get('number_of_intervals'))
             list_width_of_intervals.append(dist_description.get('width_of_intervals'))
-
+            list_samples_per_intervals.append((dist_description.get('samples_per_intervals')))
         for dist_description in dist_descriptions:
             dist_description['list_number_of_intervals'] = list_number_of_intervals
             dist_description['list_width_of_intervals'] = list_width_of_intervals
+            dist_description['list_samples_per_intervals'] = list_samples_per_intervals
 
         # Results will be computed for each dimension
         multiple_results = []
@@ -886,7 +888,8 @@ class Fit():
 
     @staticmethod
     def _get_fitting_values(sample, samples, name, dependency, index,
-                            number_of_intervals=None, bin_width=None,
+                            number_of_intervals=None, bin_width=None, 
+                            samples_per_interval=None,
                             min_datapoints_for_fit=20,
                             fixed_parameters=(None, None, None, None)):
         """
@@ -936,32 +939,50 @@ class Fit():
         Raises
         ------
         RuntimeError
-            If the parameter number_of_intervals or bin_width was not specified.
+            If the parameter number_of_intervals or bin_width or samples_per_interval was not specified.
         RuntimeError
             If there was not enough data and the number of intervals was less than three.
         """
 
+        # Sort samples.
+        stacked_samples = np.stack((sample, samples[dependency[index]])).T
+        sort_indice = np.argsort(stacked_samples[:, 1])
+        sorted_samples = stacked_samples[sort_indice]
+
         # Compute intervals.
-        if number_of_intervals:
+        if number_of_intervals is not None:
             interval_centers, interval_width = np.linspace(
                 min(samples[dependency[index]]), max(samples[dependency[index]]),
                 num=number_of_intervals, endpoint=False, retstep=True)
             interval_centers += 0.5 * interval_width
-        elif bin_width:
+        elif bin_width is not None:
             interval_width = bin_width
             interval_centers = np.arange(
                 0.5 * interval_width,
                 max(samples[dependency[index]]) + 0.5 * interval_width,
                 interval_width)
+        elif samples_per_interval is not None:
+            n_full_chunks = np.floor(len(sorted_samples) / samples_per_interval)
+            last_full_chunk_idx = int(n_full_chunks * samples_per_interval)
+            full_sample_chunks = np.split(sorted_samples[:last_full_chunk_idx],
+                                          n_full_chunks)
+            remaining_chunk = sorted_samples[last_full_chunk_idx:]
+            # use mean as is is used by ESSC, i would prefer median though
+            full_chunk_centers = np.mean(np.array(full_sample_chunks)[:, :, 1], axis=-1)
+            remaining_chunk_center = np.mean(remaining_chunk[:, 1])
+            
+            sample_chunks = full_sample_chunks
+            sample_chunks.append(remaining_chunk)
+            interval_centers = np.append(full_chunk_centers, [remaining_chunk_center])
+            
         else:
             raise RuntimeError(
-                "Either the parameters number_of_intervals or bin_width has to be specified, "
+                "Either the parameters number_of_intervals or bin_width or "
+                "samples_per_interval has to be specified, "
                 "otherwise the intervals are not specified. Exiting.")
 
-        # Sort samples.
-        samples = np.stack((sample, samples[dependency[index]])).T
-        sort_indice = np.argsort(samples[:, 1])
-        sorted_samples = samples[sort_indice]
+
+        
 
         # Return values.
         param_values = [[], [], []]
@@ -975,9 +996,13 @@ class Fit():
 
         # Define the data interval that is used for the fit.
         for i, step in enumerate(interval_centers):
-            mask = ((sorted_samples[:, 1] >= step - 0.5 * interval_width) &
-                    (sorted_samples[:, 1] < step + 0.5 * interval_width))
-            samples_in_interval = sorted_samples[mask, 0]
+            if samples_per_interval is not None:
+                # samples_in_interval = sample_chunks[i]
+                samples_in_interval = np.sort(sample_chunks[i][:, 0])
+            else:
+                mask = ((sorted_samples[:, 1] >= step - 0.5 * interval_width) &
+                        (sorted_samples[:, 1] < step + 0.5 * interval_width))
+                samples_in_interval = sorted_samples[mask, 0]
             if len(samples_in_interval) >= min_datapoints_for_fit:
                 try:
                     # Fit distribution to selected data.
@@ -1061,6 +1086,7 @@ class Fit():
         functions = kwargs.get('functions', ('polynomial', )*len(dependency))
         list_number_of_intervals = kwargs.get('list_number_of_intervals')
         list_width_of_intervals = kwargs.get('list_width_of_intervals')
+        list_samples_per_intervals =  kwargs.get('list_samples_per_intervals')
         min_datapoints_for_fit = kwargs.get('min_datapoints_for_fit', 20)
         fixed_parameters = kwargs.get('fixed_parameters', (None, None, None, None))
         do_use_weights_for_dependence_function = kwargs.get('do_use_weights_for_dependence_function', False)
@@ -1132,6 +1158,13 @@ class Fit():
                         Fit._get_fitting_values(
                             sample, samples, name, dependency, index,
                             bin_width=list_width_of_intervals[dependency[index]],
+                            min_datapoints_for_fit=min_datapoints_for_fit,
+                            fixed_parameters=fixed_parameters)
+                elif list_samples_per_intervals[dependency[index]]:
+                    interval_centers, dist_values, param_values, multiple_basic_fit = \
+                        Fit._get_fitting_values(
+                            sample, samples, name, dependency, index,
+                            samples_per_interval=list_samples_per_intervals[dependency[index]],
                             min_datapoints_for_fit=min_datapoints_for_fit,
                             fixed_parameters=fixed_parameters)
 
@@ -1255,6 +1288,18 @@ class Fit():
                                 #     pass
                                 # else:
                                 #     pass
+                            elif functions[i] == "poly1": 
+                                #necessary as bounds can be negative
+                                if do_use_weights_for_dependence_function:
+                                    param_popt, param_pcov = curve_fit(
+                                    Fit._get_function(functions[i]),
+                                    interval_centers, fit_points,
+                                        sigma=fit_points)
+                                else:
+                                    param_popt, param_pcov = curve_fit(
+                                    Fit._get_function(functions[i]),
+                                    interval_centers, fit_points,)
+                                
                             else:
                                 if do_use_weights_for_dependence_function:
                                     param_popt, param_pcov = curve_fit(
@@ -1306,7 +1351,7 @@ class Fit():
                         elif functions[i] == "poly1":
                             a = param_popt[0]
                             b = param_popt[1]
-                            params[i] = FunctionParam(functions[i], a, b, 0)
+                            params[i] = FunctionParam(functions[i], a, b, None)
                         else:
                             params[i] = FunctionParam(functions[i], *param_popt)
 
