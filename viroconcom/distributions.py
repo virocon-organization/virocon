@@ -769,6 +769,9 @@ class NormalDistribution(ParametricDistribution):
     def _scipy_i_cdf(self, probabilities, _, loc, scale):
         return sts.norm.ppf(probabilities, loc=loc, scale=scale)
     
+    def _scipy_pdf(self, x, shape, loc, scale):
+        return sts.norm.pdf(x, loc=loc, scale=scale)
+    
     
 class InverseGaussianDistribution(ParametricDistribution):
     """
@@ -823,9 +826,11 @@ class InverseGaussianDistribution(ParametricDistribution):
 
     def _scipy_i_cdf(self, probabilities, shape, _, scale):
         return sts.invgauss.ppf(probabilities, shape, scale=scale)
+    
+    def _scipy_pdf(self, x, shape, _, scale):
+        return sts.invgauss.pdf(x, shape, scale=scale)
 
-    def _scipy_pdf(self, x, shape, loc, scale):
-        return sts.norm.pdf(x, loc=loc, scale=scale)
+
 
 
 class MultivariateDistribution():
