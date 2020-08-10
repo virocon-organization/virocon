@@ -1280,7 +1280,7 @@ class Fit():
                                                method="SLSQP", 
                                                constraints=[ineq_cons],
                                                bounds=bounds,
-                                               options={'ftol': 1e-9, "disp":True},
+                                               options={'ftol': 1e-9, "disp":False},
                                                )
                                 param_popt = res.x
                                     
