@@ -13,7 +13,6 @@ from viroconcom.fitting import Fit
 from viroconcom.contours import IFormContour
 
 @pytest.mark.parametrize("buoy_num", [46022, 46023, 46025, 46050])
-#@pytest.mark.parametrize("buoy_num", [46022])
 def test_IFORM_contour_with_PCA_like_EckertGallupp2016(buoy_num):
     # according to Eckert-Gallup2016: https://doi.org/10.1016/j.oceaneng.2015.12.018.
     # and https://github.com/WEC-Sim/WDRT/blob/master/WDRT/ESSC.py
@@ -43,7 +42,7 @@ def test_IFORM_contour_with_PCA_like_EckertGallupp2016(buoy_num):
     
     ref = pd.read_csv(f"tests/testfiles/PCA_IFORM_buoy_{buoy_num}.csv")
     
-    assert_allclose(coords, ref[["Hs", "T"]].values)
+    assert_allclose(coords, ref[["Hs", "T"]].values, rtol=0, atol=1e-5)
     
     
     
