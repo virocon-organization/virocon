@@ -37,13 +37,15 @@ How to use viroconcom
 ---------------------
 Requirements
 ~~~~~~~~~~~~
-Make sure you have installed Python `3.7.4`_ by typing
+Make sure you have installed Python `3.8` by typing
 
 .. code:: console
 
    python --version
 
 in your `shell`_.
+
+(Older version might work, but are not actively tested)
 
 Consider using the python version management `pyenv`_.
 
@@ -128,7 +130,6 @@ This software is licensed under the MIT license. For more information,
 read the file `LICENSE`_.
 
 .. _viroconweb: https://github.com/virocon-organization/viroconweb
-.. _3.7.4: https://www.python.org/downloads/release/python-374/
 .. _shell: https://en.wikipedia.org/wiki/Command-line_interface#Modern_usage_as_an_operating_system_shell
 .. _pyenv: https://github.com/pyenv/pyenv
 .. _www.python.org: https://www.python.org

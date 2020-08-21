@@ -3,13 +3,15 @@ Installation
 ************
 Requirements
 ~~~~~~~~~~~~
-Make sure you have installed Python `3.7.4`_ by typing
+Make sure you have installed Python `3.8` by typing
 
 .. code:: console
 
    python --version
 
 in your `shell`_.
+
+(Older version might work, but are not actively tested)
 
 Consider using the python version management `pyenv`_.
 
@@ -30,6 +32,5 @@ by typing
    pip install https://github.com/virocon-organization/viroconcom/archive/master.zip
 
 
-.. _3.7.4: https://www.python.org/downloads/release/python-374
 .. _shell: https://en.wikipedia.org/wiki/Command-line_interface#Modern_usage_as_an_operating_system_shell
 .. _pyenv: https://github.com/pyenv/pyenv
