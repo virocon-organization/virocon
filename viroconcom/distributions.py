@@ -462,8 +462,7 @@ class ExponentiatedWeibullDistribution(ParametricDistribution):
     def _scipy_cdf(self, x, shape, loc, scale, shape2):
         x = np.array(x)
         # Ensure x> 0. In Matlab syntax do: x(x < 0) = 0
-        indices = np.argwhere(x < 0)
-        np.put(x, indices, np.zeros(indices.size))
+        x[x < 0] = 0
         p = np.power(1 - np.exp(np.multiply(-1, np.power(np.divide(x,  scale), shape))), shape2)
         return p
 
