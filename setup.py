@@ -52,7 +52,7 @@ setup(
 
     packages=['viroconcom'],
 
-    install_requires=['matplotlib'
+    install_requires=['matplotlib>=2.2.0'
                       'networkx',
                       'numpy',
                       'pandas',
