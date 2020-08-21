@@ -42,7 +42,7 @@ def test_IFORM_contour_with_PCA_like_EckertGallupp2016(buoy_num):
     
     ref = pd.read_csv(f"tests/testfiles/PCA_IFORM_buoy_{buoy_num}.csv")
     
-    assert_allclose(coords, ref[["Hs", "T"]].values, rtol=0, atol=1e-5)
+    assert_allclose(coords, ref[["Hs", "T"]].values, rtol=0, atol=1e-3)
     
     
     
