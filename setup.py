@@ -52,15 +52,21 @@ setup(
 
     packages=['viroconcom'],
 
-    install_requires=[
-            'numpy',
-            'scipy',
-            'statsmodels'],
+    install_requires=['matplotlib'
+                      'networkx',
+                      'numpy',
+                      'pandas',
+                      'scikit-learn',
+                      'scipy',
+                      'statsmodels'],
 
 
     extras_require={
-        'dev': ['sphinx'],
-        'test': [],
+        'dev': ['Sphinx'],
+        'test': ['pytest',
+                 'pytest-cov',
+                 'coverage',
+                 'coveralls'],
     },
 
     project_urls={  # Optional
