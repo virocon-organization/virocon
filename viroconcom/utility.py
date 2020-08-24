@@ -33,18 +33,18 @@ class PCA():
         #  sklearn pca.transform normalizes before transforming 
         # X_transformed = np.dot(X, self.components_.T)
         # here we do not normalize
-        Comp1_Comp2 = np.dot(data, self.components.T)
+        pca_components = np.dot(data, self.components.T)
         
-        # shift = abs(min(Comp1_Comp2[:, 1])) + 0.1 # ESSC style shift
-        c2_min = min(Comp1_Comp2[:, 1])
+        # shift = abs(min(pca_components[:, 1])) + 0.1 # ESSC style shift
+        c2_min = min(pca_components[:, 1])
         if c2_min < 0:
             self.shift = abs(c2_min) + 0.1  # Calculate shift
         else:
             self.shift = 0
             
         # Apply shift to Component 2 to make all values positive
-        Comp1_Comp2[:, 1] = Comp1_Comp2[:, 1] + self.shift
-        return Comp1_Comp2
+        pca_components[:, 1] = pca_components[:, 1] + self.shift
+        return pca_components
     
     def inverse_transform(self, data, clip=True):
         """
@@ -70,5 +70,3 @@ class PCA():
             return np.clip(inv_transformed_data, 0, None)
         else:
             return inv_transformed_data
-
-        

@@ -96,7 +96,7 @@ class ParametricDistribution(Distribution, ABC):
 
         * Exponentiated Weibull:
             
-        * Inverse Gaussian: 
+        * Inverse Gaussian: :math:`f(x) = \\sqrt{\\frac{1}{2 \\pi (x / s)^3 s^2}} \\exp\\left(-\\frac{(x/s - m)^2}{2 m^2 x/s}\\right)`
 
         Their scale, shape, and loc values correspond to the variables
         in the probability density function in the following manner:
@@ -108,6 +108,7 @@ class ParametricDistribution(Distribution, ABC):
         Weibull       α                    β                  γ                 --
         log-normal    e^μ                  σ                  --                --
         exp. Weibull  α                    β                  --                δ
+        inv. Gauss    s                    m                  --                --
         ============  ===================  =================  ================  ================
 
         Parameters
@@ -782,7 +783,7 @@ class InverseGaussianDistribution(ParametricDistribution):
     
     .. math::
         
-        f(x, m , s) = \\sqrt{\\frac{1}{2 \\pi (x / s)^3 s^2}} 
+        f(x, m, s) = \\sqrt{\\frac{1}{2 \\pi (x / s)^3 s^2}}
         \\exp\\left(-\\frac{(x/s - m)^2}{2 m^2 x/s}\\right)
         
     An alternative definition [1]_, [2]_ uses the parameters 
@@ -790,7 +791,7 @@ class InverseGaussianDistribution(ParametricDistribution):
         
     .. math::
         
-        f(x, \\mu , \\lambda) = \\sqrt{\\frac{\\lambda}{2 \\pi x^3}} 
+        f(x, \\mu, \\lambda) = \\sqrt{\\frac{\\lambda}{2 \\pi x^3}}
         \\exp\\left(-\\frac{\\lambda (x - \\mu)^2}{2 \\mu^2 x}\\right)
         
     A conversion between these definitions can be done with:
@@ -829,8 +830,6 @@ class InverseGaussianDistribution(ParametricDistribution):
     
     def _scipy_pdf(self, x, shape, _, scale):
         return sts.invgauss.pdf(x, shape, scale=scale)
-
-
 
 
 class MultivariateDistribution():
