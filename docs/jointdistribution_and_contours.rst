@@ -52,15 +52,16 @@ this kind are described by three or four parameters:
 ``shape``, ``loc``, ``scale`` and possibly ``shape2``.
 Though not all distributions need to make use of all parameters.
 
-Currently there are four parametric distribution subclasses one can use to
+Currently there are five parametric distribution subclasses one can use to
 instantiate a distribution:
 
 * :class:`~viroconcom.distributions.WeibullDistribution`
 * :class:`~viroconcom.distributions.ExponentiatedWeibullDistribution`
 * :class:`~viroconcom.distributions.LognormalDistribution`
 * :class:`~viroconcom.distributions.NormalDistribution`
+* :class:`~viroconcom.distributions.InverseGaussianDistribution`
 
-This table shows, which variables of the probability density function are are
+This table shows, which variables of the probability density function are
 defined by specifying the scale, shape and location parameters:
 
 .. figure:: distributions_with_parameters.png

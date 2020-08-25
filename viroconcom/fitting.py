@@ -12,7 +12,7 @@ from multiprocessing import Pool, TimeoutError
 from numbers import Number
 import statsmodels.api as sm
 import scipy.stats as sts
-from scipy.optimize import curve_fit
+from scipy.optimize import curve_fit, minimize
 from inspect import signature
 
 from .settings import (SHAPE_STRING, LOCATION_STRING, SCALE_STRING,
@@ -21,10 +21,12 @@ from .settings import (SHAPE_STRING, LOCATION_STRING, SCALE_STRING,
                        LOGNORMAL_MU_PARAMETER_KEYWORD,
                        NORMAL_KEYWORD, WEIBULL_3P_KEYWORD,
                        WEIBULL_3P_KEYWORD_ALTERNATIVE,
-                       WEIBULL_2P_KEYWORD, WEIBULL_EXP_KEYWORD)
+                       WEIBULL_2P_KEYWORD, WEIBULL_EXP_KEYWORD,
+                       INVERSE_GAUSSIAN_KEYWORD)
 from .params import ConstantParam, FunctionParam
 from .distributions import (WeibullDistribution, ExponentiatedWeibullDistribution,
                             LognormalDistribution, NormalDistribution,
+                            InverseGaussianDistribution,
                             KernelDensityDistribution, MultivariateDistribution)
 
 
@@ -69,6 +71,14 @@ def _logistics4(x, a, b, c, d):
 def _alpha3(x, a, b, c, C1=None, C2=None, C3=None, C4=None):
     return (a + b * x ** c) \
            / 2.0445 ** (1 / _logistics4(x, C1, C2, C3, C4))
+           
+# A 3-parameter 2nd order polynomial  (a dependence function).
+def _poly2(x, a, b, c):
+    return a * x**2 + b * x + c
+
+# A 2-parameter 1st order polynomial  (a dependence function).
+def _poly1(x, a, b):
+    return a * x + b
 
 
 # Bounds for function parameters:
@@ -550,6 +560,7 @@ class Fit():
             - Lognormal (shape, scale),
             - Lognormal_SigmaMu (sigma, mu),
             - Normal,
+            - InverseGaussian
             - KernelDensity (no dependency)
 
         dependency : tuple or list of int
@@ -580,16 +591,19 @@ class Fit():
             If true the dependence function is fitted using weights. The weights
             are 1 / parameter_value such that a normalization is performed.
 
-        and either number_of_intervals or width_of_intervals:
+        and either number_of_intervals, width_of_intervals or points_per_interval:
 
         number_of_intervals : int
             Number of bins the data of this variable should be seperated for fits which depend
             upon it. If the number of bins is given, the width of the bins is determined
             automatically.
 
-        width_of_bins : float
+        width_of_intervals : float
             Width of the bins. When the width of the bins is given, the number of bins is
             determined automatically.
+            
+        points_per_interval : int
+            The number of points per interval.
 
         """
 
@@ -606,17 +620,19 @@ class Fit():
 
         list_number_of_intervals = []
         list_width_of_intervals = []
+        list_points_per_interval = []
         for dist_description in dist_descriptions:
-            if dist_description.get(
-                    'number_of_intervals') == None and dist_description.get(
-                    'width_of_intervals') == None:
+            if (dist_description.get('number_of_intervals') is None 
+                and dist_description.get('width_of_intervals') is None
+                and dist_description.get('points_per_interval') is None):
                 dist_description['number_of_intervals'] = 15
             list_number_of_intervals.append(dist_description.get('number_of_intervals'))
             list_width_of_intervals.append(dist_description.get('width_of_intervals'))
-
+            list_points_per_interval.append(dist_description.get('points_per_interval'))
         for dist_description in dist_descriptions:
             dist_description['list_number_of_intervals'] = list_number_of_intervals
             dist_description['list_width_of_intervals'] = list_width_of_intervals
+            dist_description['list_points_per_interval'] = list_points_per_interval
 
         # Results will be computed for each dimension
         multiple_results = []
@@ -750,8 +766,11 @@ class Fit():
             params.insert(0, 0)
         elif name == LOGNORMAL_EXPMU_PARAMETER_KEYWORD or \
                         name == LOGNORMAL_MU_PARAMETER_KEYWORD:
-            # For lognormal loc is set to 0
+            # For the lognormal distribution the value of the location parameter is set to 0.
             params = sts.lognorm.fit(sample, floc=0)
+        elif name == INVERSE_GAUSSIAN_KEYWORD:
+            # For the inverse Gaussian distribution the value of the location parameter is set to 0.
+            params = sts.invgauss.fit(sample, floc=0)
         elif name == 'KernelDensity':
             dens = sm.nonparametric.KDEUnivariate(sample)
             dens.fit(gridsize=2000)
@@ -814,6 +833,10 @@ class Fit():
             return _logistics4
         elif function_name == 'alpha3':
             return _alpha3
+        elif function_name == 'poly2':
+            return _poly2
+        elif function_name == 'poly1':
+            return _poly1
         elif function_name is None:
             return None
         else:
@@ -866,6 +889,7 @@ class Fit():
     @staticmethod
     def _get_fitting_values(sample, samples, name, dependency, index,
                             number_of_intervals=None, bin_width=None,
+                            points_per_interval=None,
                             min_datapoints_for_fit=20,
                             fixed_parameters=(None, None, None, None)):
         """
@@ -915,32 +939,52 @@ class Fit():
         Raises
         ------
         RuntimeError
-            If the parameter number_of_intervals or bin_width was not specified.
+            If the parameter number_of_intervals or bin_width or points_per_interval was not specified.
         RuntimeError
             If there was not enough data and the number of intervals was less than three.
         """
 
+        # Sort samples.
+        stacked_samples = np.stack((sample, samples[dependency[index]])).T
+        sort_indice = np.argsort(stacked_samples[:, 1])
+        sorted_samples = stacked_samples[sort_indice]
+
         # Compute intervals.
-        if number_of_intervals:
+        if number_of_intervals is not None:
             interval_centers, interval_width = np.linspace(
                 min(samples[dependency[index]]), max(samples[dependency[index]]),
                 num=number_of_intervals, endpoint=False, retstep=True)
             interval_centers += 0.5 * interval_width
-        elif bin_width:
+        elif bin_width is not None:
             interval_width = bin_width
             interval_centers = np.arange(
                 0.5 * interval_width,
                 max(samples[dependency[index]]) + 0.5 * interval_width,
                 interval_width)
+        elif points_per_interval is not None:
+            n_full_chunks = np.floor(len(sorted_samples) / points_per_interval)
+            last_full_chunk_idx = int(n_full_chunks * points_per_interval)
+            full_sample_chunks = np.split(sorted_samples[:last_full_chunk_idx],
+                                          n_full_chunks)
+            remaining_chunk = sorted_samples[last_full_chunk_idx:]
+            # Use the mean as it is used by ESSC
+            # (https://github.com/WEC-Sim/WDRT/blob/master/WDRT/ESSC.py),
+            # I would prefer median though
+            full_chunk_centers = np.mean(np.array(full_sample_chunks)[:, :, 1], axis=-1)
+            remaining_chunk_center = np.mean(remaining_chunk[:, 1])
+            
+            sample_chunks = full_sample_chunks
+            sample_chunks.append(remaining_chunk)
+            interval_centers = np.append(full_chunk_centers, [remaining_chunk_center])
+            
         else:
             raise RuntimeError(
-                "Either the parameters number_of_intervals or bin_width has to be specified, "
+                "Either the parameters number_of_intervals or bin_width or "
+                "points_per_interval has to be specified, "
                 "otherwise the intervals are not specified. Exiting.")
 
-        # Sort samples.
-        samples = np.stack((sample, samples[dependency[index]])).T
-        sort_indice = np.argsort(samples[:, 1])
-        sorted_samples = samples[sort_indice]
+
+        
 
         # Return values.
         param_values = [[], [], []]
@@ -954,9 +998,13 @@ class Fit():
 
         # Define the data interval that is used for the fit.
         for i, step in enumerate(interval_centers):
-            mask = ((sorted_samples[:, 1] >= step - 0.5 * interval_width) &
-                    (sorted_samples[:, 1] < step + 0.5 * interval_width))
-            samples_in_interval = sorted_samples[mask, 0]
+            if points_per_interval is not None:
+                # samples_in_interval = sample_chunks[i]
+                samples_in_interval = np.sort(sample_chunks[i][:, 0])
+            else:
+                mask = ((sorted_samples[:, 1] >= step - 0.5 * interval_width) &
+                        (sorted_samples[:, 1] < step + 0.5 * interval_width))
+                samples_in_interval = sorted_samples[mask, 0]
             if len(samples_in_interval) >= min_datapoints_for_fit:
                 try:
                     # Fit distribution to selected data.
@@ -1040,6 +1088,7 @@ class Fit():
         functions = kwargs.get('functions', ('polynomial', )*len(dependency))
         list_number_of_intervals = kwargs.get('list_number_of_intervals')
         list_width_of_intervals = kwargs.get('list_width_of_intervals')
+        list_points_per_interval =  kwargs.get('list_points_per_interval')
         min_datapoints_for_fit = kwargs.get('min_datapoints_for_fit', 20)
         fixed_parameters = kwargs.get('fixed_parameters', (None, None, None, None))
         do_use_weights_for_dependence_function = kwargs.get('do_use_weights_for_dependence_function', False)
@@ -1113,6 +1162,13 @@ class Fit():
                             bin_width=list_width_of_intervals[dependency[index]],
                             min_datapoints_for_fit=min_datapoints_for_fit,
                             fixed_parameters=fixed_parameters)
+                elif list_points_per_interval[dependency[index]]:
+                    interval_centers, dist_values, param_values, multiple_basic_fit = \
+                        Fit._get_fitting_values(
+                            sample, samples, name, dependency, index,
+                            points_per_interval=list_points_per_interval[dependency[index]],
+                            min_datapoints_for_fit=min_datapoints_for_fit,
+                            fixed_parameters=fixed_parameters)
 
                 for i in range(index, len(functions)):
                     # Check if the other parameters have the same dependency
@@ -1167,17 +1223,9 @@ class Fit():
                             bUpper = _bounds[1][0: nParam - 1]
                             bounds = (bLower, bUpper)
 
-                            if functions[i] != "alpha3":
-                                if do_use_weights_for_dependence_function:
-                                    param_popt, param_pcov = curve_fit(
-                                    Fit._get_function(functions[i]),
-                                    interval_centers, fit_points,
-                                        sigma=fit_points, bounds=bounds)
-                                else:
-                                    param_popt, param_pcov = curve_fit(
-                                    Fit._get_function(functions[i]),
-                                    interval_centers, fit_points, bounds=bounds)
-                            else: # alpha3 is handled differently, since it
+
+                            if functions[i] == "alpha3":
+                                # alpha3 is handled differently, since it
                                 # depends on a prevously fitted logistics4
                                 # function.
 
@@ -1216,6 +1264,61 @@ class Fit():
                                         "of type '{}'.".format(f.func_name)
                                     raise TypeError(err_msg)
 
+                            elif functions[i] == "poly2":
+                                # This is based on the fitting described in
+                                # Eckert-Gallup2016: https://doi.org/10.1016/j.oceaneng.2015.12.018.
+
+                                if do_use_weights_for_dependence_function:
+                                    raise NotImplementedError("do_use_weights_for_dependence_function "
+                                                              "is not implemented for poly2")
+
+                                x = interval_centers
+                                y = fit_points
+                                def error_func(p):
+                                    return np.sum((_poly2(x, p[0], p[1], p[2]) - y)**2) 
+                                
+                                ineq_cons = {"type": "ineq",
+                                             "fun": lambda x: np.array([x[2] - x[1]**2 / (4 * x[0])]),
+                                             "jac": lambda x: np.array([[x[1]**2 / (4* x[0]**2), 
+                                                                        -x[1]/(2*x[0]), 
+                                                                        1]]),
+                                             }
+                                p0 = [1, 1, 1]
+                                bounds = [(None, None), (None, None), (0, None)]
+                                res = minimize(error_func, p0, 
+                                               method="SLSQP", 
+                                               constraints=[ineq_cons],
+                                               bounds=bounds,
+                                               options={'ftol': 1e-9, "disp":False},
+                                               )
+                                param_popt = res.x
+
+                            elif functions[i] == "poly1": 
+                                # This special case is necessary as for poly1
+                                # negative parameters must be allowed to comply
+                                # with ESSC.py
+                                # https://github.com/WEC-Sim/WDRT/blob/master/WDRT/ESSC.py
+                                if do_use_weights_for_dependence_function:
+                                    param_popt, param_pcov = curve_fit(
+                                    Fit._get_function(functions[i]),
+                                    interval_centers, fit_points,
+                                        sigma=fit_points)
+                                else:
+                                    param_popt, param_pcov = curve_fit(
+                                    Fit._get_function(functions[i]),
+                                    interval_centers, fit_points,)
+                                
+                            else:
+                                if do_use_weights_for_dependence_function:
+                                    param_popt, param_pcov = curve_fit(
+                                    Fit._get_function(functions[i]),
+                                    interval_centers, fit_points,
+                                        sigma=fit_points, bounds=bounds)
+                                else:
+                                    param_popt, param_pcov = curve_fit(
+                                    Fit._get_function(functions[i]),
+                                    interval_centers, fit_points, bounds=bounds)
+
                         except RuntimeError:
                             # Case that optimal parameters not found
                             if i == 0 and name == LOGNORMAL_MU_PARAMETER_KEYWORD:
@@ -1247,14 +1350,18 @@ class Fit():
                                     "Number of iterations exceeded.".format(param_name, dimension))
 
                         # Save parameter
-                        if functions[i] != "alpha3":
-                            params[i] = FunctionParam(functions[i], *param_popt)
-                        else:
+                        if functions[i] == "alpha3":
                             a = param_popt[0]
                             b = param_popt[1]
                             c = param_popt[2]
                             params[i] = FunctionParam(functions[i], a, b, c,
                                                      C1=C1, C2=C2, C3=C3, C4=C4)
+                        elif functions[i] == "poly1":
+                            a = param_popt[0]
+                            b = param_popt[1]
+                            params[i] = FunctionParam(functions[i], a, b, None)
+                        else:
+                            params[i] = FunctionParam(functions[i], *param_popt)
 
 
         # Return particular distribution
@@ -1270,6 +1377,8 @@ class Fit():
             distribution = LognormalDistribution(*params[:3])
         elif name == NORMAL_KEYWORD:
             distribution = NormalDistribution(*params[:3])
+        elif name == INVERSE_GAUSSIAN_KEYWORD:
+            distribution = InverseGaussianDistribution(*params[:3])
         return distribution, dependency, used_number_of_intervals, fit_inspection_data
 
     def __str__(self):

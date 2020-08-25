@@ -95,8 +95,10 @@ class ParametricDistribution(Distribution, ABC):
         * log-normal: :math:`f(x) = \\frac{1}{x\\widetilde{\\sigma} \\sqrt{2\\pi}}\\exp \\left[ \\frac{-(\\ln x - \\widetilde{\\mu})^2}{2\\widetilde{\\sigma}^2}\\right]`
 
         * Exponentiated Weibull:
+            
+        * Inverse Gaussian: :math:`f(x) = \\sqrt{\\frac{1}{2 \\pi (x / s)^3 s^2}} \\exp\\left(-\\frac{(x/s - m)^2}{2 m^2 x/s}\\right)`
 
-        Their scale, shape, and loc values corerspond to the variables
+        Their scale, shape, and loc values correspond to the variables
         in the probability density function in the following manner:
 
         ============  ===================  =================  ================  ================
@@ -106,6 +108,7 @@ class ParametricDistribution(Distribution, ABC):
         Weibull       α                    β                  γ                 --
         log-normal    e^μ                  σ                  --                --
         exp. Weibull  α                    β                  --                δ
+        inv. Gauss    s                    m                  --                --
         ============  ===================  =================  ================  ================
 
         Parameters
@@ -766,9 +769,67 @@ class NormalDistribution(ParametricDistribution):
 
     def _scipy_i_cdf(self, probabilities, _, loc, scale):
         return sts.norm.ppf(probabilities, loc=loc, scale=scale)
-
+    
     def _scipy_pdf(self, x, shape, loc, scale):
         return sts.norm.pdf(x, loc=loc, scale=scale)
+    
+    
+class InverseGaussianDistribution(ParametricDistribution):
+    """
+    An inverse Gaussian distribution.
+    
+    Let :math:`m` be the shape parameter and :math:`s` the scale parameter,
+    then the probability density function is defined as:
+    
+    .. math::
+        
+        f(x, m, s) = \\sqrt{\\frac{1}{2 \\pi (x / s)^3 s^2}}
+        \\exp\\left(-\\frac{(x/s - m)^2}{2 m^2 x/s}\\right)
+        
+    An alternative definition [1]_, [2]_ uses the parameters 
+    :math:`\\mu` and :math:`\\lambda`:
+        
+    .. math::
+        
+        f(x, \\mu, \\lambda) = \\sqrt{\\frac{\\lambda}{2 \\pi x^3}}
+        \\exp\\left(-\\frac{\\lambda (x - \\mu)^2}{2 \\mu^2 x}\\right)
+        
+    A conversion between these definitions can be done with:
+        
+    .. math::
+        
+        m = \\frac{\\mu}{\\lambda}, s = \\lambda
+        
+    References
+    ----------
+
+    .. [1] Folks, J. L., & Chhikara, R. S. (1978). The inverse Gaussian 
+        distribution and its statistical application—a review. Journal of
+        the Royal Statistical Society: Series B (Methodological), 40(3), 
+        263-275.
+        
+    .. [2] Wikipedia contributors, "Inverse Gaussian distribution," 
+        Wikipedia, The Free Encyclopedia, 
+        https://en.wikipedia.org/w/index.php?title=Inverse_Gaussian_distribution&oldid=957945428
+        (accessed June 19, 2020). 
+    """
+
+    def __init__(self, shape=None, loc=None, scale=None):
+        super().__init__(shape, loc, scale)
+        self.name = "InverseGaussian"
+        self._valid_shape = {"min" : 0, "strict_greater" : True,
+                     "max" : np.inf, "strict_less" : True }
+        self._valid_scale = {"min" : 0, "strict_greater" : True,
+                             "max" : np.inf, "strict_less" : True }
+
+    def _scipy_cdf(self, x, shape, _, scale):
+        return sts.invgauss.cdf(x, shape, scale=scale)
+
+    def _scipy_i_cdf(self, probabilities, shape, _, scale):
+        return sts.invgauss.ppf(probabilities, shape, scale=scale)
+    
+    def _scipy_pdf(self, x, shape, _, scale):
+        return sts.invgauss.pdf(x, shape, scale=scale)
 
 
 class MultivariateDistribution():

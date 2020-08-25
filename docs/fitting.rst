@@ -46,6 +46,7 @@ The following distributions are available under the given key values:
 - **Lognormal** :  lognormal distribution parametrized with exp(mu) and sigma
 - **Lognormal_SigmaMu** :  lognormal distribution parametrized with mu and sigma
 - **Normal** :  normal distribution
+- **InverseGaussian** : inverse gaussian distribution (**not** the inverse of the normal distribution)
 
 The following dependence functions are available under the given key values:
 
@@ -56,12 +57,15 @@ The following dependence functions are available under the given key values:
 - **asymdecrease3** : :math:`a + b / (1 + c * x)`
 - **logistics4** : :math:`a + b / [1 + e^{-1 * |c| * (x - d)}]`
 - **alpha3** : :math:`(a + b * x^c) / 2.0445^{1 / logistics4(x, c_1, c_2, c_3, c_4)}`
+- **poly1** : :math:`a * x + b`
+- **poly2** : :math:`a * x^2 + b *x  + c`, with :math:`c - \frac{b^2}{4 * a} \geq 0, c \leq 0`
 - **None** : no dependency
 
 The following optional keys and values are available:
 
 - **number_of_intervals** : int. The sample of this variable will be divided into the given number of intervals. Intervals will be equally spaced.
 - **width_of_intervals** : float. The sample of this variable will be divided into intervals with the given width.
+- **points_per_interval** : int. The sample of this variable will be divided into intervals with the given number of points.
 - **min_datapoints_for_fit** : int. A marginal distribution will only be fitted to an interval if the interval contains at least the given number of observations.
 - **do_use_weights_for_dependence_function** : boolean. If true the dependence function is fitted with weights that normalize each parameter value.
 - **fixed_parameters** : list with one entry for each parameter. *None* means that the parameter is free - it will be estimated. If a number is given, the parameter is fixed to that number and the value will not be estimated.
