@@ -17,7 +17,7 @@ def test_IFORM_contour_with_PCA_like_EckertGallupp2016(buoy_num):
     # Test the IFORM contour with PCA preprocessed data
     # as described by Eckert-Gallup2016: https://doi.org/10.1016/j.oceaneng.2015.12.018.
     # and https://github.com/WEC-Sim/WDRT/blob/master/WDRT/ESSC.py
-    buoy_data = pd.read_csv(f"tests/testfiles/NDBC_buoy_{buoy_num}.csv")
+    buoy_data = pd.read_csv(f"datasets/NDBC_buoy_{buoy_num}.csv")
     pca = PCA(buoy_data[["Hs", "T"]].values)
     pca_components = pca.transformed
     
