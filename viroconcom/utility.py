@@ -34,7 +34,9 @@ class PCA():
         # X_transformed = np.dot(X, self.components_.T)
         # here we do not normalize
         pca_components = np.dot(data, self.components.T)
-        
+
+        # This is a point where we divert from ESSC.
+        # ESSC always uses a shift, while we only use it if necessary.
         # shift = abs(min(pca_components[:, 1])) + 0.1 # ESSC style shift
         c2_min = min(pca_components[:, 1])
         if c2_min < 0:
