@@ -281,7 +281,7 @@ def plot_dependence_functions(
 
 
 def plot_contour(x, y, ax=None, contour_label=None, x_label=None, y_label=None,
-                 line_style='b-', color=None, linewidth=None, alpha=1,
+                 style='b-', color=None, linewidth=None, linestyle=None, alpha=1,
                  sample_plot_data=None, x_lim=None, upper_ylim=None,
                  median_x=None, median_y=None, median_style='r-',
                  median_label='median of x2|x1'):
@@ -305,13 +305,15 @@ def plot_contour(x, y, ax=None, contour_label=None, x_label=None, y_label=None,
         Label for the x-axis.
     y_label : str, optional (defaults to None)
         Label for the y-axis.
-    line_style : str, optional (defaults to 'b-')
-        Matplotlib line style. Will be ignored if 'color' or 'lindwidth' is
-        specified.
+    style : str, optional (defaults to 'b-')
+        Matplotlib style abbrevation. Will be ignored if 'color', 'lindwidth'
+        or 'linestyle' is pecified.
     color : any matplotlib color, optional (defaults to None)
         Color of the line.
     linewidth : float value in points, optional (defaults to None)
         Width of the line.
+    linestyle : any matplotlib linestyle, optional (defaults to None)
+        Style of the line.
     alpha : float, optional (default to 1)
         Alpha value (transparency) for the contour's line.
     sample_plot_data : SamplePlotData, optional (defaults to None)
@@ -343,10 +345,11 @@ def plot_contour(x, y, ax=None, contour_label=None, x_label=None, y_label=None,
     # Plot the contour and, if provided, also the sample.
     if sample_plot_data:
         plot_sample(sample_plot_data, ax=ax)
-    if color is None and linewidth is None:
-        ax.plot(xplot, yplot, line_style, alpha=alpha, label=contour_label)
+    if color is None and linewidth is None and linestyle is None:
+        ax.plot(xplot, yplot, style, alpha=alpha, label=contour_label)
     else:
-        ax.plot(xplot, yplot, color=color,  linewidth=linewidth, alpha=alpha,
+        ax.plot(xplot, yplot, color=color, linewidth=linewidth,
+                linestyle=linestyle, alpha=alpha,
                 label=contour_label)
     if median_x is not None:
         ax.plot(median_x, median_y, median_style, label=median_label)
@@ -480,18 +483,18 @@ def plot_confidence_interval(x_median, y_median, x_bottom, y_bottom, x_upper,
                  ax=ax,
                  x_label=x_label,
                  y_label=y_label,
-                 line_style='b-',
+                 style='b-',
                  contour_label=contour_labels[0],
                  sample_plot_data=sample_plot_data)
     plot_contour(x=x_bottom,
                  y=y_bottom,
                  contour_label=contour_labels[1],
-                 line_style='r--',
+                 style='r--',
                  ax=ax)
     plot_contour(x=x_upper,
                  y=y_upper,
                  contour_label=contour_labels[2],
-                 line_style='r--',
+                 style='r--',
                  ax=ax)
 
 
