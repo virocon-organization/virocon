@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Polygon
 import pandas as pd
 
-from shapely.geometry import Point, Polygon, LineString
+from shapely.geometry import Polygon, LineString
 
 from viroconcom.params import ConstantParam, FunctionParam
 
