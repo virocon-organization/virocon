@@ -9,7 +9,10 @@ import os
 
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.patches import Polygon
 import pandas as pd
+
+from shapely.geometry import Point, Polygon, LineString
 
 from viroconcom.params import ConstantParam, FunctionParam
 
@@ -18,6 +21,7 @@ from viroconcom.distributions import (
     NormalDistribution, MultivariateDistribution)
 from viroconcom.contours import IFormContour, ISormContour, \
     HighestDensityContour, DirectSamplingContour, sort_points_to_form_continous_line
+from viroconcom.read_write import read_contour
 from viroconcom.plot import plot_contour
 
 
@@ -749,6 +753,64 @@ class HDCTest(unittest.TestCase):
 
         np.testing.assert_array_equal(x_correct, x_s)
         np.testing.assert_array_equal(y_correct, y_s)
+
+    def test_sort_coordinates_high_n(self):
+        """
+        Sorts an existing IFORM contour (high number of points).
+        """
+        # Load a IFORM contour that was has been computed for th EC benchmark.
+        folder_name = 'contour-coordinates/'
+        file_name_median = 'doe_john_years_25_median.txt'
+        (x_correct, y_correct) = read_contour(folder_name + file_name_median)
+
+        # Switch two entries such that the coordinates are not ordered anymore.
+        x_us = x_correct.copy()
+        y_us = y_correct.copy()
+        i1 = 10
+        i2 = 100
+        x_us[i1] = x_correct[i2]
+        x_us[i2] = x_correct[i1]
+        y_us[i1] = y_correct[i2]
+        y_us[i2] = y_correct[i1]
+        i1 = 50
+        i2 = 150
+        x_us[i1] = x_correct[i2]
+        x_us[i2] = x_correct[i1]
+        y_us[i1] = y_correct[i2]
+        y_us[i2] = y_correct[i1]
+
+        c_sorted = sort_points_to_form_continous_line(x_us, y_us)
+        x_s = c_sorted[0]
+        y_s = c_sorted[1]
+
+        # Broadly define a polygon that spans the inside of the contour.
+        coords = [(1, 1), (10, 1),
+                  (22, 7), (10, 5)]
+        poly = Polygon(coords)
+        x, y = poly.exterior.xy
+
+        # For a manual check during development: Plot the contours.
+        fig, ax = plt.subplots()
+        ax.plot(x, y)
+        plot_contour(x_correct, y_correct, ax=ax)
+        plot_contour(x_us, y_us, ax=ax, style='-r')
+        plot_contour(x_s, y_s, ax=ax, style='-g')
+        ax.plot(x_s[1], y_s[1], 'og')
+        #plt.show()
+
+        shapely_line_us = LineString(np.c_[x_us, y_us])
+        shapely_line_s = LineString(np.c_[x_s, y_s])
+
+        # Assert that the unsorted contour would cross the design region and
+        # that the sorted contour does not cross it.
+        self.assertTrue(poly.crosses(shapely_line_us))
+        self.assertFalse(poly.crosses(shapely_line_s))
+
+        # The sorting algorithm changes the direciton (clock-wise vs
+        # counter-clockwise. Thus np.testing.assert_array_equal(x_correct, x_s)
+        # would fail.
+        #np.testing.assert_array_equal(x_correct, x_s)
+        #np.testing.assert_array_equal(y_correct, y_s)
 
 
 class DirectSamplingTest(unittest.TestCase):
