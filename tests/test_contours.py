@@ -8,9 +8,8 @@ import unittest
 import os
 
 import numpy as np
+import matplotlib.pyplot as plt
 import pandas as pd
-
-from .context import viroconcom
 
 from viroconcom.params import ConstantParam, FunctionParam
 
@@ -18,7 +17,8 @@ from viroconcom.distributions import (
     WeibullDistribution, ExponentiatedWeibullDistribution, LognormalDistribution,
     NormalDistribution, MultivariateDistribution)
 from viroconcom.contours import IFormContour, ISormContour, \
-    HighestDensityContour, DirectSamplingContour
+    HighestDensityContour, DirectSamplingContour, sort_points_to_form_continous_line
+from viroconcom.plot import plot_contour
 
 
 _here = os.path.dirname(__file__)
@@ -718,6 +718,34 @@ class HDCTest(unittest.TestCase):
     #                  style='b-')
     #     ax2.title.set_text('Sorted')
     #     #plt.show()
+
+
+    def test_sort_coordinates_low_n(self):
+        """
+        Sorts a limited number of points (low n).
+        """
+        x_correct = np.array([0, 1, 2, 3, 3, 3, 3, 2, 1])
+        y_correct = np.array([0, 0, 0, 0, 1, 2, 3, 2, 1])
+
+        x_us = x_correct.copy()
+        y_us = y_correct.copy()
+        x_us[3] = x_correct[6]
+        x_us[6] = x_correct[3]
+        y_us[3] = y_correct[6]
+        y_us[6] = y_correct[3]
+
+        c_sorted = sort_points_to_form_continous_line(x_us, y_us)
+        x_s = c_sorted[0]
+        y_s = c_sorted[1]
+
+        fig, ax = plt.subplots()
+        plot_contour(x_correct, y_correct, ax=ax)
+        plot_contour(x_us, y_us, ax=ax, style='-r')
+        plot_contour(x_s, y_s, ax=ax, style='-g')
+        #plt.show()
+
+        np.testing.assert_array_equal(x_correct, x_s)
+        np.testing.assert_array_equal(y_correct, y_s)
 
 
 class DirectSamplingTest(unittest.TestCase):
