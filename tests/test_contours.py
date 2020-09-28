@@ -724,9 +724,11 @@ class HDCTest(unittest.TestCase):
         """
         Sorts a limited number of points (low n).
         """
+        # Describe a contour with correctly ordered coordinates.
         x_correct = np.array([0, 1, 2, 3, 3, 3, 3, 2, 1])
         y_correct = np.array([0, 0, 0, 0, 1, 2, 3, 2, 1])
 
+        # Switch two entries such that the coordinates are not ordered anymore.
         x_us = x_correct.copy()
         y_us = y_correct.copy()
         x_us[3] = x_correct[6]
@@ -738,6 +740,7 @@ class HDCTest(unittest.TestCase):
         x_s = c_sorted[0]
         y_s = c_sorted[1]
 
+        # For a manual check during development: Plot the contours.
         fig, ax = plt.subplots()
         plot_contour(x_correct, y_correct, ax=ax)
         plot_contour(x_us, y_us, ax=ax, style='-r')
