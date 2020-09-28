@@ -6,8 +6,6 @@ import pandas as pd
 
 from numpy.testing import assert_allclose
 
-from .context import viroconcom
-
 from viroconcom.utility import PCA
 from viroconcom.fitting import Fit
 from viroconcom.contours import IFormContour
