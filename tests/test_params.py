@@ -1,16 +1,10 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Tue Sep 19 12:22:42 2017
-
-@author: nb
+Tests the parameter classes
 """
 import unittest
 
 import numpy as np
-
-
-from .context import viroconcom
 
 from viroconcom.params import ConstantParam, FunctionParam, Wrapper
 

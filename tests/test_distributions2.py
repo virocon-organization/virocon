@@ -1,9 +1,13 @@
+# -*- coding: utf-8 -*-
+"""
+Tests the distribution classes.
+"""
+
 import pytest
 
 import numpy as np
 import scipy.stats as sts
 
-from .context import viroconcom
 from viroconcom.distributions import (WeibullDistribution, NormalDistribution,
                                       LognormalDistribution)
 from viroconcom.params import ConstantParam

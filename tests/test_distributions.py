@@ -1,3 +1,8 @@
+# -*- coding: utf-8 -*-
+"""
+Tests the distribution classes.
+"""
+
 import unittest
 
 
