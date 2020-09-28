@@ -708,14 +708,14 @@ class HDCTest(unittest.TestCase):
     #                  y=c_unsorted[0][1],
     #                  ax=ax1,
     #                  contour_label=str(return_period_1) + '-yr contour',
-    #                  line_style='b-')
+    #                  style='b-')
     #     ax1.title.set_text('Unsorted')
     #     ax2 = fig.add_subplot(122)
     #     plot_contour(x=c_sorted[0],
     #                  y=c_sorted[1],
     #                  ax=ax2,
     #                  contour_label=str(return_period_1) + '-yr contour',
-    #                  line_style='b-')
+    #                  style='b-')
     #     ax2.title.set_text('Sorted')
     #     #plt.show()
 

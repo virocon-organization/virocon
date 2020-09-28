@@ -35,13 +35,13 @@ hdc_coordinates = sort_points_to_form_continous_line(
 fig = plt.figure(figsize=(5, 5), dpi=150)
 ax = fig.add_subplot(111)
 plot_contour(iform_contour.coordinates[1], iform_contour.coordinates[0],
-             ax, line_style='b-', contour_label='IFORM contour')
+             ax, style='b-', contour_label='IFORM contour')
 plot_contour(isorm_contour.coordinates[1], isorm_contour.coordinates[0],
-             ax, line_style='r-', contour_label='ISORM contour')
+             ax, style='r-', contour_label='ISORM contour')
 plot_contour(ds_contour.coordinates[1], ds_contour.coordinates[0], ax,
-             line_style='g-', contour_label='Direct sampling contour')
+             style='g-', contour_label='Direct sampling contour')
 plot_contour(hdc_coordinates[1], hdc_coordinates[0], ax,
-             line_style='k-', contour_label='Highest density contour')
+             style='k-', contour_label='Highest density contour')
 plt.xlabel('Zero-up-crossing period (s)')
 plt.ylabel('Significant wave height (m)')
 plt.legend()
