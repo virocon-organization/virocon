@@ -10,7 +10,7 @@ import matplotlib as mpl
 
 def points_outside(contour_x, contour_y, x, y):
     """
-    Determines the observations outside the region enclosed by a 2D contour.
+    Returns the observations outside the region enclosed by a 2D contour.
 
     Parameters
     ----------
