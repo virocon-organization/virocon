@@ -5,7 +5,7 @@ import numpy as np
 from viroconcom.fitting import Fit
 
 
-def read_benchmark_dataset(path='tests/testfiles/1year_dataset_A.txt'):
+def read_benchmark_dataset(path='datasets/1year_dataset_A.txt'):
     """
     Reads a datasets provided for the environmental contour benchmark.
     Parameters
@@ -105,7 +105,7 @@ class FittingTest(unittest.TestCase):
         """
 
         sample_hs, sample_tz, label_hs, label_tz = read_benchmark_dataset(
-            path='tests/testfiles/allyears_dataset_A.txt')
+            path='datasets/allyears_dataset_A.txt')
 
         # Describe the distribution that should be fitted to the sample.
         dist_description_0 = {'name': 'Weibull_3p',
@@ -410,7 +410,7 @@ class FittingTest(unittest.TestCase):
         'Global hierarchical models for wind and wave contours' on dataset D.
         """
 
-        sample_v, sample_hs, label_v, label_hs = read_benchmark_dataset(path='tests/testfiles/1year_dataset_D.txt')
+        sample_v, sample_hs, label_v, label_hs = read_benchmark_dataset(path='datasets/1year_dataset_D.txt')
 
 
         # Define the structure of the probabilistic model that will be fitted to the
@@ -465,7 +465,7 @@ class FittingTest(unittest.TestCase):
         specified.
         """
 
-        sample_v, sample_hs, label_v, label_hs = read_benchmark_dataset(path='tests/testfiles/1year_dataset_D.txt')
+        sample_v, sample_hs, label_v, label_hs = read_benchmark_dataset(path='datasets/1year_dataset_D.txt')
 
 
         # This structure is incorrect as there is not distribution called 'something'.
@@ -558,7 +558,7 @@ class FittingTest(unittest.TestCase):
         correctly.
         """
 
-        sample_v, sample_hs, label_v, label_hs = read_benchmark_dataset(path='tests/testfiles/1year_dataset_D.txt')
+        sample_v, sample_hs, label_v, label_hs = read_benchmark_dataset(path='datasets/1year_dataset_D.txt')
 
 
         # Define the structure of the probabilistic model that will be fitted to the
