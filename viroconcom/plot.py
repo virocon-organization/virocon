@@ -7,6 +7,7 @@ Plots datasets, model fits and contour coordinates.
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy import stats
+import warnings
 
 __all__ = ["plot_sample", "plot_marginal_fit", "plot_dependence_functions",
            "plot_contour", "SamplePlotData", "plot_confidence_interval",
@@ -284,7 +285,7 @@ def plot_contour(x, y, ax=None, contour_label=None, x_label=None, y_label=None,
                  style='b-', color=None, linewidth=None, linestyle=None, alpha=1,
                  sample_plot_data=None, x_lim=None, upper_ylim=None,
                  median_x=None, median_y=None, median_style='r-',
-                 median_label='median of x2|x1'):
+                 median_label='median of x2|x1', line_style=None):
     """
     Plots the environmental contour.
 
@@ -331,6 +332,10 @@ def plot_contour(x, y, ax=None, contour_label=None, x_label=None, y_label=None,
     median_label : str, optional (defaults to 'median of x2|x1')
         Label for the legend of the plotted median line.
     """
+    if line_style:
+        warnings.warn("Keyword 'line_style' is depreciated and will be removed "
+                      "in future versions. Use keyword 'style' instead.", DeprecationWarning)
+        style = line_style
 
     if ax is None:
         fig = plt.figure()
