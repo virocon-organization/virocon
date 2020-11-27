@@ -4,7 +4,7 @@ import numpy as np
 import scipy.stats as sts
 
 from abc import ABC, abstractmethod
-from inspect import signature
+from scipy.optimize import fmin
 
 
 from virocon.fitting import fit_function, fit_constrained_function
@@ -111,37 +111,6 @@ class ConditionalDistribution():
         dep_func.parameters = dict(zip(dep_func.parameters.keys(), popt))
         return dep_func
         
-        
-# TODO move to own module
-class DependenceFunction():
-    
-    #TODO implement check of bounds and constraints
-    def __init__(self, func, bounds=None, constraints=None):
-        #TODO add fitting method 
-        self.func = func
-        self.bounds = bounds
-        self.constraints = constraints
-        
-        # read default values from function or set default as 1 if not specified
-        sig = signature(func)
-        self.parameters = {par.name : (par.default if par.default is not par.empty else 1) 
-                           for par in list(sig.parameters.values())[1:]
-                           }
-        
-        
-    def __call__(self, x, *args, **kwargs):
-        if len(args) + len(kwargs) == 0:
-            return self.func(x, *self.parameters.values())
-        elif len(args) + len(kwargs) == len(self.parameters):
-            return self.func(x, *args, **kwargs)
-        else:
-            raise ValueError() # TODO helpful error message
-            
-
-
-        
-            
-
 
 class Distribution(ABC):
     """
@@ -160,9 +129,25 @@ class Distribution(ABC):
     def icdf(self, prob):
         """Inverse cumulative distribution function."""
         
-    @abstractmethod
-    def fit(self, data, fixed=None):
+
+    def fit(self, data, fixed=None, method="mle", weights=None):
         """Fit the distribution to the sampled data"""
+        if method.lower() == "mle":
+            self._fit_mle(data, fixed)
+        elif method.lower() == "lsq":
+            self._fit_lsq(data, fixed, weights)
+        else:
+            raise ValueError(f"Unknown method '{method}'. "
+                             "Only Maximum-Likelihood-Estimation (mle) "
+                             "and (weighted) least squares (lsq) are supported.")
+        
+    @abstractmethod
+    def _fit_mle(self, data, fixed):
+        """Fit the distribution using Maximum-Likelihood-Estimation."""
+        
+    @abstractmethod
+    def _fit_lsq(self, data, fixed, weights):
+        """Fit the distribution using (weighted) least squares."""
 
 
 
@@ -190,7 +175,7 @@ class WeibullDistribution(Distribution):
     def pdf(self, x):
         return sts.weibull_min.pdf(x, c=self.k, loc=self.theta, scale=self.lambda_)
     
-    def fit(self, samples, fixed=None):
+    def _fit_mle(self, samples, fixed):
         p0={"lambda_": self.lambda_, "k": self.k, "theta": self.theta}
         
         fparams = {}
@@ -207,6 +192,8 @@ class WeibullDistribution(Distribution):
                                 scale=p0["lambda_"], **fparams)
              )
         
+    def _fit_lsq(self, data, fixed, weights):
+        raise NotImplementedError()
         
 class LogNormalDistribution(Distribution):
     
@@ -238,7 +225,7 @@ class LogNormalDistribution(Distribution):
     def pdf(self, x):
         return sts.lognorm.pdf(x, s=self.sigma, scale=self._scale)
     
-    def fit(self, samples, fixed=None):
+    def _fit_mle(self, samples, fixed):
         p0={"scale": self._scale, "sigma": self.sigma}
         
         fparams = {"floc" : 0}
@@ -255,4 +242,142 @@ class LogNormalDistribution(Distribution):
         #self.mu = math.log(self._scale)
         
         
+    def _fit_lsq(self, data, fixed, weights):
+        raise NotImplementedError()
+        
+class ExponentiatedWeibullDistribution(Distribution):
+    """
+    An exponentiated Weibull distribution.
+
+    Note
+    -----
+    We use the parametrization that is also used in
+    https://arxiv.org/pdf/1911.12835.pdf .
+    """
+
+    def __init__(self, alpha=1, beta=1, delta=1):
+        self.alpha = alpha  # scale
+        self.beta = beta  # shape
+        self.delta = delta  # shape2
+        # In scipy the order of the shape parameters is reversed:
+        # a ^= delta
+        # c ^= beta
+
+
+    def cdf(self, x):
+        return sts.exponweib.cdf(x, self.delta, self.beta, loc=0, scale=self.alpha)
+
+
+    def icdf(self, prob):
+        return sts.exponweib.ppf(prob, self.delta, self.beta, loc=0, scale=self.alpha)
+
+
+    def pdf(self, x):
+        return sts.exponweib.pdf(x, self.delta, self.beta, loc=0, scale=self.alpha)
+
     
+    def _fit_mle(self, samples, fixed):
+        p0={"alpha": self.alpha, "beta": self.beta, "delta": self.delta}
+    
+        fparams = {}
+        if fixed is not None:
+            if "delta" in fixed.keys():
+                fparams["f0"] = fixed["delta"]
+            if "beta" in fixed.keys():
+                fparams["f1"] = fixed["beta"]
+            if "alpha" in fixed.keys():
+                fparams["fscale"] = fixed["alpha"]
+        
+        self.delta, self.beta, _, self.alpha  = (
+            sts.exponweib.fit(samples, p0["delta"], p0["beta"], loc=0, 
+                                scale=p0["alpha"], **fparams)
+             )
+        
+    def _fit_lsq(self, data, fixed, weights):
+        # Based on Appendix A. in https://arxiv.org/pdf/1911.12835.pdf
+        x = np.sort(np.asarray_chkfinite(data))
+        if weights is None:
+            weights = np.ones_like(x)
+        elif isinstance(weights, str):
+            if weights.lower() == "linear":
+                weights = x ** 2 / np.sum(x ** 2)
+            elif weights.lower() == "quadratic":
+                weights = x ** 2 / np.sum(x ** 2)
+            elif weights.lower() == "cubic":
+                weights = x ** 2 / np.sum(x ** 2)
+            else:
+                raise ValueError(f"Unsupported value for weights={weights}.")
+        else:
+            try:
+                _ = iter(weights)
+                weights = np.asarray_chkfinite(weights)
+            except TypeError:
+                raise ValueError(f"Unsupported value for weights={weights}.")
+                
+        n = len(x)
+        p = (np.arange(1, n + 1) - 0.5) / n
+        
+                
+        if fixed is not None:
+            raise NotImplementedError()
+        else:
+            delta0 = self.delta
+            self.delta = fmin(self._wlsq_error, delta0, disp=False,
+                              args=(x, p, weights))[0]
+            
+            self.alpha, self.beta = self._estimate_alpha_beta(self.delta, x, p, 
+                                                              weights,
+                                                              )
+            
+            
+    @staticmethod   
+    def _estimate_alpha_beta(delta, x, p, w, falpha=None, fbeta=None):
+        
+        # First, transform x and p to get a linear relationship.
+        x_star = np.log10(x)
+        p_star = np.log10(-np.log(1 - p ** (1 / delta)))
+        
+        
+        # Estimate the parameters alpha_hat and beta_hat.
+        p_star_bar = np.sum(w * p_star)
+        x_star_bar = np.sum(w * x_star)
+        b_hat_dividend = np.sum(w * p_star * x_star) - p_star_bar * x_star_bar
+        b_hat_divisor = np.sum(w * p_star ** 2) - p_star_bar ** 2
+        b_hat = b_hat_dividend / b_hat_divisor
+        a_hat = x_star_bar - b_hat * p_star_bar
+        alpha_hat = 10 ** a_hat
+        beta_hat = b_hat_divisor / b_hat_dividend  # beta_hat = 1 / b_hat
+        
+        return alpha_hat, beta_hat
+        
+            
+    @staticmethod
+    def _wlsq_error(delta, x, p, w, return_alpha_beta=False, falpha=None, fbeta=None):
+
+        # As x = 0 causes problems when x_star is calculated, zero-elements
+        # are not considered in the parameter estimation.
+        indices = np.nonzero(x)
+        x = x[indices]
+        p = p[indices]
+        
+        alpha_hat, beta_hat = ExponentiatedWeibullDistribution._estimate_alpha_beta(delta, x, p, w)
+        
+        # Compute the weighted least squares error.
+        x_hat = alpha_hat * (-np.log(1 - p ** (1 / delta))) ** (1 / beta_hat)
+        wlsq_error = np.sum(w * (x - x_hat) ** 2)
+
+        return wlsq_error
+
+            
+        
+        
+                
+        
+
+                
+        
+        
+        
+        
+        
+        

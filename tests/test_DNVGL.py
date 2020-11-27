@@ -5,10 +5,8 @@ import numpy as np
 import pandas as pd
 
 from virocon.models import GlobalHierarchicalModel
-from virocon.distributions import (WeibullDistribution, 
-                                   LogNormalDistribution,
-                                   DependenceFunction,
-                                   )
+from virocon.distributions import WeibullDistribution, LogNormalDistribution
+from virocon.dependencies import DependenceFunction
 
 @pytest.fixture(scope="module")
 def test_data():
