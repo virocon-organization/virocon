@@ -228,7 +228,7 @@ class MultivariateDistributionTest(unittest.TestCase):
 
         # Marginal ICDF of second variable, Tz.
         with self.assertRaises(NotImplementedError):
-            tz = self.mul_var_dist.marginal_icdf(0.48)
+            tz = self.mul_var_dist.marginal_icdf(0.48, dim=1)
         
     def test_latex_representation(self):
         """
