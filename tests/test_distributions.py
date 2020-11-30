@@ -216,8 +216,20 @@ class MultivariateDistributionTest(unittest.TestCase):
 
         tz = [4, 7]
         F = self.mul_var_dist.marginal_cdf(tz, dim=1)
-        self.assertGreater(F[1], F[0])       
+        self.assertGreater(F[1], F[0])    
 
+    def test_marginal_icdf(self):
+        """
+        Tests marginal_icdf() of MulvariateDistribution.
+        """
+        # Marginal ICDF of first variable, Hs.
+        hs = self.mul_var_dist.marginal_icdf(0.22)
+        np.testing.assert_allclose(hs, 2, atol=0.5) 
+
+        # Marginal ICDF of second variable, Tz.
+        with self.assertRaises(NotImplementedError):
+            tz = self.mul_var_dist.marginal_icdf(0.48)
+        
     def test_latex_representation(self):
         """
         Tests if the latex representation is correct.
