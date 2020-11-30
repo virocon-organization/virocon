@@ -966,7 +966,19 @@ class MultivariateDistribution():
         F : ndarray of floats
             Probabilities.
         """
-        raise NotImplementedError
+        x = np.array(x)
+        if self.n_dim == 2:
+            if dim == 0:
+                F = self.distributions[0].cdf(x)
+            elif dim == 1:
+                F = np.zeros(x.size)
+                for i, xi in np.ndenumerate(x): 
+                    p, error_estimate = scipy.integrate.nquad(
+                        self.pdf_2d, [[0, np.inf], [0, xi]])
+                F[i] = p
+        else:
+            raise NotImplementedError
+        return F
 
     def marginal_icdf(self, p, dim=0):
         """
@@ -983,7 +995,14 @@ class MultivariateDistribution():
         -------
         x : ndarray of floats
         """
-        raise NotImplementedError
+        if self.n_dim == 2:
+            if dim == 0:
+                x = self.distributions[0].i_cdf(p)
+            elif dim == 1:
+                raise NotImplementedError
+        else:
+            raise NotImplementedError
+        return x
 
     def marginal_pdf(self, x, dim=0):
         """
@@ -1001,7 +1020,19 @@ class MultivariateDistribution():
         f : ndarray of floats
             Probability densities.
         """
-
+        x = np.array(x)
+        if self.n_dim == 2:
+            if dim == 0:
+                f = self.distributions[0].pdf(x)
+            elif dim == 1:
+                f = np.zeros(x.size)
+                for i, x1i in np.ndenumerate(x): 
+                    density, error_estimate = scipy.integrate.quad(
+                        lambda x0: self.pdf_2d(x0, x1i), 0, np.inf)
+                    f[i] = density
+        else:
+            raise NotImplementedError
+        return f
 
     def draw_sample(self, n):
         """

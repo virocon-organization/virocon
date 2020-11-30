@@ -170,6 +170,52 @@ class MultivariateDistributionTest(unittest.TestCase):
         f = self.mul_var_dist.pdf([[8, 10, 12], [12.5, 13, 13.4]])
         np.testing.assert_allclose(f, [0.000044, 0.000044, 0.000044], atol=0.00002)
 
+    def test_marginal_pdf(self):
+        """
+        Tests the marginal_pdf() function of MulvariateDistribution.
+        """
+        # Marginal PDF of first variable, Hs.
+        f = self.mul_var_dist.marginal_pdf(2)
+        f_uni = self.mul_var_dist.distributions[0].pdf(2)
+        self.assertAlmostEqual(f, f_uni)
+
+        hs = [1, 2, 3]
+        f = self.mul_var_dist.marginal_pdf(hs)
+        f_uni = self.mul_var_dist.distributions[0].pdf(hs)
+        np.testing.assert_allclose(f, f_uni)
+
+        # Marginal PDF of second variable, Tz.
+        tz = [4, 5, 6]
+        f = self.mul_var_dist.marginal_pdf(tz, dim=1)
+        (hs_sample, tz_sample) = self.mul_var_dist.draw_sample(10000)
+        hist = np.histogram(tz_sample, bins=100)
+        hist_dist = sts.rv_histogram(hist)
+        f_sample = hist_dist.pdf(tz)
+        
+        np.testing.assert_allclose(f, f_sample, rtol=0.3)
+
+    def test_marginal_cdf(self):
+        """
+        Tests the marginal_cdf() function of MulvariateDistribution.
+        """
+        # Marginal CDF of first variable, Hs.
+        F = self.mul_var_dist.marginal_cdf(np.inf)
+        np.testing.assert_allclose(F, 1, atol=0.001)
+
+        F = self.mul_var_dist.marginal_cdf(2)
+        np.testing.assert_allclose(F, 0.22, atol=0.01)
+
+        # Marginal CDF of second variable, Tz.
+        F = self.mul_var_dist.marginal_cdf(np.inf, dim=1)
+        np.testing.assert_allclose(F, 1, atol=0.001)
+
+        F = self.mul_var_dist.marginal_cdf(7, dim=1)
+        np.testing.assert_allclose(F, 0.48, atol=0.01)
+
+        tz = [4, 7]
+        F = self.mul_var_dist.marginal_cdf(tz, dim=1)
+        self.assertGreater(F[1], F[0])       
+
     def test_latex_representation(self):
         """
         Tests if the latex representation is correct.
