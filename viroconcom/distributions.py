@@ -994,6 +994,7 @@ class MultivariateDistribution():
         Returns
         -------
         x : ndarray of floats
+            Quantiles.
         """
         p = np.array(p)
         if self.n_dim == 2:
