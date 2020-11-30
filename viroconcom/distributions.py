@@ -995,6 +995,7 @@ class MultivariateDistribution():
         -------
         x : ndarray of floats
         """
+        p = np.array(p)
         if self.n_dim == 2:
             if dim == 0:
                 x = self.distributions[0].i_cdf(p)

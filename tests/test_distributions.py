@@ -141,7 +141,7 @@ class MultivariateDistributionTest(unittest.TestCase):
 
     def test_multivariate_cdf(self):
         """
-         Tests the cdf() function of MulvariateDistribution.
+         Tests cdf() of MulvariateDistribution (joint cumulative distr. func.).
          """
         p = self.mul_var_dist.cdf([2, 2], lower_integration_limit=[0, 0])
         self.assertAlmostEqual(p, 0, delta=0.01)
@@ -160,7 +160,7 @@ class MultivariateDistributionTest(unittest.TestCase):
 
     def test_multivariate_pdf(self):
         """
-        Tests the pdf() function of MulvariateDistribution.
+        Tests pdf() of MulvariateDistribution (joint probabilty density func.).
         """
         # Let's compare the density values with density values presented in
         # Haselsteiner et al. (2017), Fig. 5, DOI: 10.1016/j.coastaleng.2017.03.002
@@ -172,7 +172,7 @@ class MultivariateDistributionTest(unittest.TestCase):
 
     def test_marginal_pdf(self):
         """
-        Tests the marginal_pdf() function of MulvariateDistribution.
+        Tests  marginal_pdf() of MulvariateDistribution.
         """
         # Marginal PDF of first variable, Hs.
         f = self.mul_var_dist.marginal_pdf(2)
@@ -196,7 +196,7 @@ class MultivariateDistributionTest(unittest.TestCase):
 
     def test_marginal_cdf(self):
         """
-        Tests the marginal_cdf() function of MulvariateDistribution.
+        Tests marginal_cdf() of MulvariateDistribution.
         """
         # Marginal CDF of first variable, Hs.
         F = self.mul_var_dist.marginal_cdf(np.inf)
