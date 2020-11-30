@@ -189,8 +189,8 @@ class MultivariateDistributionTest(unittest.TestCase):
         # Marginal PDF of second variable, Tz.
         tz = [4, 5, 6]
         f = self.mul_var_dist.marginal_pdf(tz, dim=1)
-        (hs_sample, tz_sample) = self.mul_var_dist.draw_sample(10000)
-        hist = np.histogram(tz_sample, bins=100)
+        (hs_sample, tz_sample) = self.mul_var_dist.draw_sample(100000)
+        hist = np.histogram(tz_sample, bins=200)
         hist_dist = sts.rv_histogram(hist)
         f_sample = hist_dist.pdf(tz)
         
