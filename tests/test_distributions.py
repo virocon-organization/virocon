@@ -227,8 +227,15 @@ class MultivariateDistributionTest(unittest.TestCase):
         np.testing.assert_allclose(hs, 2, atol=0.5) 
 
         # Marginal ICDF of second variable, Tz.
-        with self.assertRaises(NotImplementedError):
-            tz = self.mul_var_dist.marginal_icdf(0.48, dim=1)
+        tz = self.mul_var_dist.marginal_icdf(0.48, dim=1)
+        np.testing.assert_allclose(tz, 7, atol=0.1)
+        tz = self.mul_var_dist.marginal_icdf(0.0001, dim=1)
+        np.testing.assert_allclose(tz, 3, rtol=0.3)        
+        tz = self.mul_var_dist.marginal_icdf(0.9999, dim=1)
+        np.testing.assert_allclose(tz, 13, rtol=0.3)       
+        p = np.array([0.0001, 0.48])
+        tz = self.mul_var_dist.marginal_icdf(p, dim=1)
+        np.testing.assert_allclose(tz, [3, 7], rtol=0.3)   
         
     def test_latex_representation(self):
         """

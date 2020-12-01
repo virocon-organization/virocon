@@ -1001,7 +1001,18 @@ class MultivariateDistribution():
             if dim == 0:
                 x = self.distributions[0].i_cdf(p)
             elif dim == 1:
-                raise NotImplementedError
+                # If very low/high quantiles are of interest, a bigger
+                # Monte Carlo sample should be drawn.
+                p_min = np.min(p) 
+                p_max = np.max(p)
+                if p_min < 0.001 or p_max > 0.999:
+                    nr_exceeding_points = 100
+                    p_small = np.min([p_min, 1 - p_max])
+                    n = int((1 / p_small) * nr_exceeding_points)
+                else:
+                    n = 100000 # Minimum to draw for minimum precesision.
+                (x0, x1) = self.draw_sample(n)
+                x = np.quantile(x1, p)
         else:
             raise NotImplementedError
         return x
