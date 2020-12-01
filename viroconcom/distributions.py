@@ -980,7 +980,7 @@ class MultivariateDistribution():
             raise NotImplementedError
         return F
 
-    def marginal_icdf(self, p, dim=0):
+    def marginal_icdf(self, p, dim=0, precision_factor=1):
         """
         Marginal inverse cumulative distribution function in given dimension.
 
@@ -990,6 +990,11 @@ class MultivariateDistribution():
             Probabilities.
         dim : int (optional)
             Defaults to 0, which means the first dimension. 1 = second dimension.
+        precision_factor : float (optional), defaults to 1
+            For the quantile estimation, 100 points must at least exceed the 
+            target quantile if precision_factor is 1, if it is a, then 
+            a * 100 point  must exceed the target quantile and the estimation
+            becomes more precise.
 
         Returns
         -------
@@ -1006,11 +1011,12 @@ class MultivariateDistribution():
                 p_min = np.min(p) 
                 p_max = np.max(p)
                 if p_min < 0.001 or p_max > 0.999:
-                    nr_exceeding_points = 100
+                    nr_exceeding_points = 100 * precision_factor
                     p_small = np.min([p_min, 1 - p_max])
                     n = int((1 / p_small) * nr_exceeding_points)
                 else:
-                    n = 100000 # Minimum to draw for minimum precesision.
+                    # Minimum to draw for minimum precesision.
+                    n = 100000 * precision_factor
                 (x0, x1) = self.draw_sample(n)
                 x = np.quantile(x1, p)
         else:
