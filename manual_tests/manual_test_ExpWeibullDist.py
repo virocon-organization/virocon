@@ -58,12 +58,15 @@ ref_icdf = ref_expweibull.i_cdf(p)
 
 # %%
 
-# ref_data = {"ref_pdf" : ref_pdf, 
+# ref_data = {"ref_alpha" : ref_alpha,
+#             "ref_beta" : ref_beta,
+#             "ref_delta" : ref_delta,
+#             "ref_pdf" : ref_pdf, 
 #             "ref_cdf" : ref_cdf,
 #             "ref_icdf" : ref_icdf,
 #             }
 
-# np.savez_compressed("reference_data_exp_weibull.npz", **ref_data)
+# np.savez_compressed("reference_data_exp_weibull_wlsq_fit.npz", **ref_data)
 
 
 # %%
