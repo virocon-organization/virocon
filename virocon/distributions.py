@@ -273,7 +273,14 @@ class ExponentiatedWeibullDistribution(Distribution):
 
 
     def pdf(self, x):
-        return sts.exponweib.pdf(x, self.delta, self.beta, loc=0, scale=self.alpha)
+        #x = np.asarray(x, dtype=float)  # If x elements are int we cannot use np.nan .
+        # This changes x which is unepexted behaviour!
+        #x[x<=0] = np.nan  # To avoid warnings with negative and 0-values, use NaN.
+        # TODO ensure for all pdf that no nan come up?
+        x_greater_zero = np.where(x > 0, x, np.nan)
+        _pdf = sts.exponweib.pdf(x_greater_zero, self.delta, self.beta, loc=0, scale=self.alpha)
+        _pdf[np.isnan(_pdf)] = 0
+        return _pdf
 
     
     def _fit_mle(self, samples, fixed):

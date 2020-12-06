@@ -55,7 +55,11 @@ class GlobalHierarchicalModel(MultivariateModel):
             else:
                 self.conditional_on.append(None)
                 #self.dependencies.append(None)
-                self.distributions.append(dist_class())
+                dist_params = dist_desc.get("parameters")
+                if dist_params is not None:
+                    self.distributions.append(dist_class(**dist_params))
+                else:
+                    self.distributions.append(dist_class())
                 
         # TODO throw an error if an unknown key is in dist_description
 
@@ -165,6 +169,7 @@ class GlobalHierarchicalModel(MultivariateModel):
         
         fs[:, 0] = self.distributions[0].pdf(x[:, 0])
         
+        # TODO check that x has the correct size
         for i in range(1, self.dimensions):
             if self.conditional_on[i] is None:
                 fs[:, i] = self.distributions[i].pdf(x[:, i])
@@ -179,8 +184,28 @@ class GlobalHierarchicalModel(MultivariateModel):
     def cdf(self, *args, **kwargs):
         pass
     
-    def icdf(self, *args, **kwargs):
-        pass
+    def icdf(self, p):
+        if self.conditional_on[0] is not None:
+            raise RuntimeError("Illegal state encountered. The first dimension "
+                               "has to be independent, but was conditional on "
+                               f"{self.conditional_on[0]}.")
+            
+        p = np.asarray_chkfinite(p)
+        x = np.empty_like(p)
+        
+        x[:, 0] = self.distributions[0].icdf(p[:, 0])
+        
+        for i in range(1, self.dimensions):
+            if self.conditional_on[i] is None:
+                x[:, i] = self.distributions[i].icdf(p[:, i])
+            else:
+                cond_idx = self.conditional_on[i]
+                x[:, i] = np.array([self.distributions[i].icdf(p[j, i], given=x[j, cond_idx]) 
+                                    for j in range(len(p))])
+                
+        return x
+        
+        
     
     def marginal_pdf(self, *args, **kwargs):
         pass
