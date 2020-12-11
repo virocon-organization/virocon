@@ -1,5 +1,7 @@
 from inspect import signature
 
+from virocon.fitting import fit_function, fit_constrained_function
+
 
 class DependenceFunction():
     
@@ -24,3 +26,21 @@ class DependenceFunction():
             return self.func(x, *args, **kwargs)
         else:
             raise ValueError() # TODO helpful error message
+            
+            
+    def fit(self, x, y):
+        method = "lsq"
+        # alternative: "wlsq" for weighted least squares
+        bounds = self.bounds
+        constraints = self.constraints
+                
+        # get initial parameters
+        p0 = tuple(self.parameters.values())
+        
+        if constraints is None:
+            popt = fit_function(self, x, y, p0, method, bounds)
+        else:
+            popt = fit_constrained_function(self, x, y, p0, method, bounds, constraints)
+        
+        # update self with fitted parameters
+        self.parameters = dict(zip(self.parameters.keys(), popt))

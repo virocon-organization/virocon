@@ -7,8 +7,6 @@ from abc import ABC, abstractmethod
 from scipy.optimize import fmin
 
 
-from virocon.fitting import fit_function, fit_constrained_function
-
 # The distributions parameters need to have an order, this order is defined by
 # the parameters dict. As of Python 3.7 dicts officially keep their order of creation.
 # So this version is a requirement.
@@ -24,6 +22,7 @@ class ConditionalDistribution():
         self.param_names = distribution_class().parameters.keys()
         self.conditional_parameters = {}
         self.fixed_parameters = {}
+        # TODO check that dependency functions are not duplicates
         for par_name in self.param_names:
             if par_name not in parameters.keys():
                 raise ValueError(f"Mandatory key {par_name} was not found in parameters.")
@@ -83,34 +82,12 @@ class ConditionalDistribution():
         # fit dependence functions
         fitted_dependence_functions = {}
         for par_name, dep_func in self.conditional_parameters.items():
-            fitted_dependence_functions[par_name] = self._fit_dependence_function(par_name, dep_func)
+            x = self.conditioning_values
+            y = [params[par_name] for params in self.parameters_per_interval]
+            dep_func.fit(x, y)
+            fitted_dependence_functions[par_name] = dep_func
             
         self.conditional_parameters = fitted_dependence_functions
-        
-
-    def _fit_dependence_function(self, par_name, dep_func):
-
-        method = getattr(dep_func, "fit_method", "lsq")
-        # alternative: "wlsq" for weighted least squares
-        bounds = getattr(dep_func, "bounds", None)
-        constraints = getattr(dep_func, "constraints", None)
-        
-        # TODO conditioning values durchreichen anstatt zustand
-        x = self.conditioning_values
-        y = [params[par_name] for params in self.parameters_per_interval]
-        
-        # get initial parameters
-        p0 = tuple(dep_func.parameters.values())
-        
-        if constraints is None:
-            popt = fit_function(dep_func, x, y, p0, method, bounds)
-        else:
-            popt = fit_constrained_function(dep_func, x, y, p0, method, bounds, constraints)
-        
-        # update the dependence function with fitted parameters
-        dep_func.parameters = dict(zip(dep_func.parameters.keys(), popt))
-        return dep_func
-        
 
 class Distribution(ABC):
     """
@@ -254,6 +231,12 @@ class ExponentiatedWeibullDistribution(Distribution):
     We use the parametrization that is also used in
     https://arxiv.org/pdf/1911.12835.pdf .
     """
+    
+    @property
+    def parameters(self):
+        return {"alpha" : self.alpha,
+                "beta" : self.beta,
+                "delta" : self.delta}
 
     def __init__(self, alpha=1, beta=1, delta=1):
         self.alpha = alpha  # scale
