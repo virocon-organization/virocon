@@ -269,7 +269,7 @@ class ExponentiatedWeibullDistribution(Distribution):
     def _fit_mle(self, samples, fixed):
         p0={"alpha": self.alpha, "beta": self.beta, "delta": self.delta}
     
-        fparams = {}
+        fparams = {"floc" : 0}
         if fixed is not None:
             if "delta" in fixed.keys():
                 fparams["f0"] = fixed["delta"]
@@ -279,7 +279,7 @@ class ExponentiatedWeibullDistribution(Distribution):
                 fparams["fscale"] = fixed["alpha"]
         
         self.delta, self.beta, _, self.alpha  = (
-            sts.exponweib.fit(samples, p0["delta"], p0["beta"], loc=0, 
+            sts.exponweib.fit(samples, p0["delta"], p0["beta"], 
                                 scale=p0["alpha"], **fparams)
              )
         
