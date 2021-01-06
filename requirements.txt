@@ -52,3 +52,5 @@ threadpoolctl==2.1.0
 toml==0.10.1
 urllib3==1.25.10
 wincertstore==0.2
+wheel # Was necessary to allow the installation of the listed packages on my new Windows machine.
+shapely # Used in test_contours.py

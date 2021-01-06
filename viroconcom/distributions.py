@@ -1424,7 +1424,7 @@ class KernelDensityDistribution(Distribution):
     >>> sample = np.random.RandomState(500)
     >>> p = sample.normal(10, 1, 500)
     >>> dens = sm.nonparametric.KDEUnivariate(p)
-    >>> dens.fit(gridsize=2000)
+    >>> temp = dens.fit(gridsize=2000)
     >>> list = (dens.cdf, dens.icdf)
     >>> # ------------------------------------------------
     >>> dist = KernelDensityDistribution(list)
