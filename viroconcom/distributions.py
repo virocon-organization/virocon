@@ -1002,25 +1002,23 @@ class MultivariateDistribution():
             Quantiles.
         """
         p = np.array(p)
-        if self.n_dim == 2:
-            if dim == 0:
-                x = self.distributions[0].i_cdf(p)
-            elif dim == 1:
-                # If very low/high quantiles are of interest, a bigger
-                # Monte Carlo sample should be drawn.
-                p_min = np.min(p) 
-                p_max = np.max(p)
-                if p_min < 0.001 or p_max > 0.999:
-                    nr_exceeding_points = 100 * precision_factor
-                    p_small = np.min([p_min, 1 - p_max])
-                    n = int((1 / p_small) * nr_exceeding_points)
-                else:
-                    # Minimum to draw for minimum precesision.
-                    n = 100000 * precision_factor
-                (x0, x1) = self.draw_sample(n)
-                x = np.quantile(x1, p)
+        if dim == 0:
+            x = self.distributions[0].i_cdf(p)
         else:
-            raise NotImplementedError
+            # If very low/high quantiles are of interest, a bigger
+            # Monte Carlo sample should be drawn.
+            p_min = np.min(p) 
+            p_max = np.max(p)
+            if p_min < 0.001 or p_max > 0.999:
+                nr_exceeding_points = 100 * precision_factor
+                p_small = np.min([p_min, 1 - p_max])
+                n = int((1 / p_small) * nr_exceeding_points)
+            else:
+                # Minimum to draw for minimum precesision.
+                n = 100000 * precision_factor
+            sample = self.draw_sample(n)
+            x = np.quantile(sample[dim], p)
+
         return x
 
     def marginal_pdf(self, x, dim=0):

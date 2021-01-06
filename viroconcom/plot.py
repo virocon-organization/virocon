@@ -204,9 +204,7 @@ def plot_dependence_functions(
                  label='from marginal distribution')
         plt.plot(x1, np.log(fit.mul_var_dist.distributions[1].scale(x1)),
                  style_dependence_function, label=dp_function)
-        ylabel = '$μ_{tz}$'
-        #plt.xlim((0, 6))
-        #plt.ylim((0.9, 2.15))
+        ylabel = '$μ$'
     if fit.mul_var_dist.distributions[1].name == 'Weibull' or \
                     fit.mul_var_dist.distributions[1].name == 'ExponentiatedWeibull':
         plt.plot(scale_at, fit.multiple_fit_inspection_data[1].scale_value,
@@ -217,9 +215,7 @@ def plot_dependence_functions(
                  label='from marginal distribution')
         plt.plot(x1, fit.mul_var_dist.distributions[1].scale(x1),
                  style_dependence_function, label=dp_function)
-        ylabel = '$α_{hs}$'
-        #plt.xlim((0, 30))
-        #plt.ylim((0, 10))
+        ylabel = '$α$'
     plt.xlabel(unconditonal_variable_label)
     plt.legend(frameon=False, prop={'size': legend_fontsize})
     ax1.spines['right'].set_visible(False)
@@ -238,9 +234,7 @@ def plot_dependence_functions(
              style_dependence_function)
     plt.xlabel(unconditonal_variable_label)
     if fit.mul_var_dist.distributions[1].name == 'Lognormal':
-        #plt.xlim((0, 6))
-        #plt.ylim((0.065, 0.33))
-        ylabel = '$σ_{tz}$'
+        ylabel = '$σ$'
         if fit.mul_var_dist.distributions[1].shape.func_name == 'exp3':
             dp_function = '$' + str('%.3g' % fit.mul_var_dist.distributions[1].shape.a) + \
                           '+' + str('%.3g' % fit.mul_var_dist.distributions[1].shape.b) + \
@@ -258,9 +252,7 @@ def plot_dependence_functions(
                           ' h_s )$'
     if fit.mul_var_dist.distributions[1].name == 'Weibull'  or \
                     fit.mul_var_dist.distributions[1].name == 'ExponentiatedWeibull':
-        ylabel = '$β_{h_s}$'
-        #plt.xlim((0, 30))
-        #plt.ylim((0, 3.5))
+        ylabel = '$β$'
         if fit.mul_var_dist.distributions[1].shape.func_name == 'power3':
             dp_function = '$' + str('%.4f' % fit.mul_var_dist.distributions[1].shape.a) + \
                           '+' + str('%.3g' % fit.mul_var_dist.distributions[1].shape.b) + \
