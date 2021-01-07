@@ -752,7 +752,7 @@ def sort_points_to_form_continous_line(x, y, do_search_for_optimal_start=False):
         The sorted points.
     """
     points = np.c_[x, y]
-    clf = NearestNeighbors(2).fit(points)
+    clf = NearestNeighbors(n_neighbors=2).fit(points)
     G = clf.kneighbors_graph()
     T = nx.from_scipy_sparse_matrix(G)
     order = list(nx.dfs_preorder_nodes(T, 0))

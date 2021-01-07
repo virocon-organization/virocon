@@ -41,7 +41,14 @@ class MultivariateDistributionTest(unittest.TestCase):
     dep1 = (0, None, 0)
     dependencies = [dep0, dep1]
 
-    mul_var_dist = MultivariateDistribution(distributions, dependencies)
+    joint_dist_2d = MultivariateDistribution(distributions, dependencies)
+
+    # Conditional lognormal distribution for wind speed, V (for simplicity, same as Tz).
+    mu = FunctionParam('power3', 0.1, 1.489, 0.1901)
+    sigma = FunctionParam('exp3', 0.0400, 0.1748, -0.2243)
+    dist2 = LognormalDistribution(mu=mu, sigma=sigma)
+    dep2 = (0, None, 0)
+    joint_dist_3d = MultivariateDistribution([dist0, dist1, dist2], [dep0, dep1, dep2])
 
 
     def test_add_distribution_err_msg(self):
@@ -116,8 +123,8 @@ class MultivariateDistributionTest(unittest.TestCase):
         """
         Tests the draw_sample() function of MulvariateDistribution.
         """
-        n=10000
-        sample = self.mul_var_dist.draw_sample(n)
+        n = 20000
+        sample = self.joint_dist_2d.draw_sample(n)
         self.assertEqual(n, sample[0].size)
         self.assertEqual(n, sample[1].size)
 
@@ -143,10 +150,10 @@ class MultivariateDistributionTest(unittest.TestCase):
         """
          Tests cdf() of MulvariateDistribution (joint cumulative distr. func.).
          """
-        p = self.mul_var_dist.cdf([2, 2], lower_integration_limit=[0, 0])
+        p = self.joint_dist_2d.cdf([2, 2], lower_integration_limit=[0, 0])
         self.assertAlmostEqual(p, 0, delta=0.01)
 
-        p = self.mul_var_dist.cdf([[2, 20], [2, 16]], lower_integration_limit=[0, 0])
+        p = self.joint_dist_2d.cdf([[2, 20], [2, 16]], lower_integration_limit=[0, 0])
         np.testing.assert_allclose(p, [0, 1], atol=0.01)
 
         # Create a bivariate normal distribution, where we know that at the
@@ -164,10 +171,10 @@ class MultivariateDistributionTest(unittest.TestCase):
         """
         # Let's compare the density values with density values presented in
         # Haselsteiner et al. (2017), Fig. 5, DOI: 10.1016/j.coastaleng.2017.03.002
-        f = self.mul_var_dist.pdf([10, 13])
+        f = self.joint_dist_2d.pdf([10, 13])
         self.assertAlmostEqual(f, 0.000044, delta=0.00002)
 
-        f = self.mul_var_dist.pdf([[8, 10, 12], [12.5, 13, 13.4]])
+        f = self.joint_dist_2d.pdf([[8, 10, 12], [12.5, 13, 13.4]])
         np.testing.assert_allclose(f, [0.000044, 0.000044, 0.000044], atol=0.00002)
 
     def test_marginal_pdf(self):
@@ -177,19 +184,19 @@ class MultivariateDistributionTest(unittest.TestCase):
         prng = np.random.RandomState(42) # For reproducability.
 
         # Marginal PDF of first variable, Hs.
-        f = self.mul_var_dist.marginal_pdf(2)
-        f_uni = self.mul_var_dist.distributions[0].pdf(2)
+        f = self.joint_dist_2d.marginal_pdf(2)
+        f_uni = self.joint_dist_2d.distributions[0].pdf(2)
         self.assertAlmostEqual(f, f_uni)
 
         hs = [1, 2, 3]
-        f = self.mul_var_dist.marginal_pdf(hs)
-        f_uni = self.mul_var_dist.distributions[0].pdf(hs)
+        f = self.joint_dist_2d.marginal_pdf(hs)
+        f_uni = self.joint_dist_2d.distributions[0].pdf(hs)
         np.testing.assert_allclose(f, f_uni)
 
         # Marginal PDF of second variable, Tz.
         tz = [4, 5, 6]
-        f = self.mul_var_dist.marginal_pdf(tz, dim=1)
-        (hs_sample, tz_sample) = self.mul_var_dist.draw_sample(100000)
+        f = self.joint_dist_2d.marginal_pdf(tz, dim=1)
+        (hs_sample, tz_sample) = self.joint_dist_2d.draw_sample(100000)
         hist = np.histogram(tz_sample, bins=200)
         hist_dist = sts.rv_histogram(hist)
         f_sample = hist_dist.pdf(tz)
@@ -201,21 +208,21 @@ class MultivariateDistributionTest(unittest.TestCase):
         Tests marginal_cdf() of MulvariateDistribution.
         """
         # Marginal CDF of first variable, Hs.
-        F = self.mul_var_dist.marginal_cdf(np.inf)
+        F = self.joint_dist_2d.marginal_cdf(np.inf)
         np.testing.assert_allclose(F, 1, atol=0.001)
 
-        F = self.mul_var_dist.marginal_cdf(2)
+        F = self.joint_dist_2d.marginal_cdf(2)
         np.testing.assert_allclose(F, 0.22, atol=0.01)
 
         # Marginal CDF of second variable, Tz.
-        F = self.mul_var_dist.marginal_cdf(np.inf, dim=1)
+        F = self.joint_dist_2d.marginal_cdf(np.inf, dim=1)
         np.testing.assert_allclose(F, 1, atol=0.001)
 
-        F = self.mul_var_dist.marginal_cdf(7, dim=1)
+        F = self.joint_dist_2d.marginal_cdf(7, dim=1)
         np.testing.assert_allclose(F, 0.48, atol=0.01)
 
         tz = [4, 7]
-        F = self.mul_var_dist.marginal_cdf(tz, dim=1)
+        F = self.joint_dist_2d.marginal_cdf(tz, dim=1)
         self.assertGreater(F[1], F[0])    
 
     def test_marginal_icdf(self):
@@ -223,25 +230,36 @@ class MultivariateDistributionTest(unittest.TestCase):
         Tests marginal_icdf() of MulvariateDistribution.
         """
         # Marginal ICDF of first variable, Hs.
-        hs = self.mul_var_dist.marginal_icdf(0.22)
+        hs = self.joint_dist_2d.marginal_icdf(0.22)
         np.testing.assert_allclose(hs, 2, atol=0.5) 
 
         # Marginal ICDF of second variable, Tz.
-        tz = self.mul_var_dist.marginal_icdf(0.48, dim=1)
+        tz = self.joint_dist_2d.marginal_icdf(0.48, dim=1)
         np.testing.assert_allclose(tz, 7, atol=0.1)
-        tz = self.mul_var_dist.marginal_icdf(0.0001, dim=1)
+        tz = self.joint_dist_2d.marginal_icdf(0.0001, dim=1)
         np.testing.assert_allclose(tz, 3, rtol=0.3)        
-        tz = self.mul_var_dist.marginal_icdf(0.9999, dim=1)
+        tz = self.joint_dist_2d.marginal_icdf(0.9999, dim=1)
         np.testing.assert_allclose(tz, 13, rtol=0.3)       
         p = np.array([0.0001, 0.48])
-        tz = self.mul_var_dist.marginal_icdf(p, dim=1)
+        tz = self.joint_dist_2d.marginal_icdf(p, dim=1)
         np.testing.assert_allclose(tz, [3, 7], rtol=0.3)   
+
+        # Marginal ICDF of second variable, V.
+        v = self.joint_dist_3d.marginal_icdf(0.48, dim=2)
+        np.testing.assert_allclose(v, 7, atol=0.1)
+        v = self.joint_dist_3d.marginal_icdf(0.0001, dim=2)
+        np.testing.assert_allclose(v, 3, rtol=0.3)        
+        v = self.joint_dist_3d.marginal_icdf(0.9999, dim=2)
+        np.testing.assert_allclose(v, 13, rtol=0.3)       
+        p = np.array([0.0001, 0.48])
+        v = self.joint_dist_3d.marginal_icdf(p, dim=2)
+        np.testing.assert_allclose(v, [3, 7], rtol=0.3)   
         
     def test_latex_representation(self):
         """
         Tests if the latex representation is correct.
         """
-        m = self.mul_var_dist
+        m = self.joint_dist_2d
         computed_latex = m.latex_repr(['Hs', 'Tp'])
         correct_latex = \
         ['\\text{ joint PDF: }',
@@ -511,10 +529,10 @@ class ParametricDistributionTest(unittest.TestCase):
 
         params = dist.fit(hs)
 
-        self.assertAlmostEquals(params[0], 1.5, delta=0.5)
+        self.assertAlmostEqual(params[0], 1.5, delta=0.5)
         self.assertIsNone(params[1], 2) # location parameter should be None.
-        self.assertAlmostEquals(params[2], 3, delta=1)
-        self.assertAlmostEquals(params[3], 1, delta=0.5)
+        self.assertAlmostEqual(params[2], 3, delta=1)
+        self.assertAlmostEqual(params[3], 1, delta=0.5)
 
     def test_exponentiated_weibull_name(self):
         """
