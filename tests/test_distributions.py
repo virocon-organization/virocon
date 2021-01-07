@@ -123,7 +123,7 @@ class MultivariateDistributionTest(unittest.TestCase):
         """
         Tests the draw_sample() function of MulvariateDistribution.
         """
-        n=10000
+        n = 20000
         sample = self.joint_dist_2d.draw_sample(n)
         self.assertEqual(n, sample[0].size)
         self.assertEqual(n, sample[1].size)
@@ -529,10 +529,10 @@ class ParametricDistributionTest(unittest.TestCase):
 
         params = dist.fit(hs)
 
-        self.assertAlmostEquals(params[0], 1.5, delta=0.5)
+        self.assertAlmostEqual(params[0], 1.5, delta=0.5)
         self.assertIsNone(params[1], 2) # location parameter should be None.
-        self.assertAlmostEquals(params[2], 3, delta=1)
-        self.assertAlmostEquals(params[3], 1, delta=0.5)
+        self.assertAlmostEqual(params[2], 3, delta=1)
+        self.assertAlmostEqual(params[3], 1, delta=0.5)
 
     def test_exponentiated_weibull_name(self):
         """
