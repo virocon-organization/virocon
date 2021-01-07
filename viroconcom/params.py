@@ -76,7 +76,7 @@ class FunctionParam(Param):
 
     def __init__(self, func_name, a, b, c, d=None,
                  C1=None, C2=None, C3=None, C4=None, wrapper=None):
-        """
+        r"""
         Parameters
         ----------
         func_name : str

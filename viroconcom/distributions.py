@@ -1321,7 +1321,7 @@ class MultivariateDistribution():
                                 realization_symbols[i] + \
                                 r"}}{" + wbl_scale + r"_{" + \
                                 realization_symbols[i] \
-                        + "}}\left(\dfrac{" + realization_symbols[i] + \
+                        + r"}}\left(\dfrac{" + realization_symbols[i] + \
                                 r"-" +  loc_name + r"}{" + wbl_scale + r"_{" + \
                                 realization_symbols[i] \
                         + r"}}\right)^{" + wbl_shape + r"_{" + \
