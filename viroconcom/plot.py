@@ -191,7 +191,7 @@ def plot_dependence_functions(
         dp_function = r'$(' + str('%.3g' % fit.mul_var_dist.distributions[1].scale.a) + \
                       r'+' + str('%.3g' % fit.mul_var_dist.distributions[1].scale.b) + \
                       r'\cdot v^{' + str('%.3g' % fit.mul_var_dist.distributions[1].scale.c) + \
-                      r'}) / 2.0445^{(1 / \\beta_{hs})}$'
+                      r'}) / 2.0445^{(1 / \beta_{hs})}$'
     else:
         dp_function = str(fit.mul_var_dist.distributions[1].scale)
 
