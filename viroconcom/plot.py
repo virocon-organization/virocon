@@ -180,15 +180,15 @@ def plot_dependence_functions(
     scale_at = fit.multiple_fit_inspection_data[1].scale_at
     x1 = np.linspace(0, max(scale_at) * factor_draw_longer, 100)
     if fit.mul_var_dist.distributions[1].scale.func_name == 'power3':
-        dp_function = '$' + str('%.3g' % fit.mul_var_dist.distributions[1].scale.a) + \
+        dp_function = r'$' + str('%.3g' % fit.mul_var_dist.distributions[1].scale.a) + \
                       '+' + str('%.3g' % fit.mul_var_dist.distributions[1].scale.b) + \
                       '\cdot h_s^{' + str('%.3g' % fit.mul_var_dist.distributions[1].scale.c) + '}$'
     elif fit.mul_var_dist.distributions[1].scale.func_name == 'lnsquare2':
-        dp_function = '$\ln(' + str('%.3g' % fit.mul_var_dist.distributions[1].scale.a) + \
+        dp_function = r'$\ln(' + str('%.3g' % fit.mul_var_dist.distributions[1].scale.a) + \
                       '+' + str('%.3g' % fit.mul_var_dist.distributions[1].scale.b) + \
                       '\sqrt{h_s / g})$'
     elif fit.mul_var_dist.distributions[1].scale.func_name == 'alpha3':
-        dp_function = '$(' + str('%.3g' % fit.mul_var_dist.distributions[1].scale.a) + \
+        dp_function = r'$(' + str('%.3g' % fit.mul_var_dist.distributions[1].scale.a) + \
                       '+' + str('%.3g' % fit.mul_var_dist.distributions[1].scale.b) + \
                       '\cdot v^{' + str('%.3g' % fit.mul_var_dist.distributions[1].scale.c) + \
                       '}) / 2.0445^{(1 / \\beta_{hs})}$'
@@ -236,17 +236,17 @@ def plot_dependence_functions(
     if fit.mul_var_dist.distributions[1].name == 'Lognormal':
         ylabel = '$σ$'
         if fit.mul_var_dist.distributions[1].shape.func_name == 'exp3':
-            dp_function = '$' + str('%.3g' % fit.mul_var_dist.distributions[1].shape.a) + \
+            dp_function = r'$' + str('%.3g' % fit.mul_var_dist.distributions[1].shape.a) + \
                           '+' + str('%.3g' % fit.mul_var_dist.distributions[1].shape.b) + \
                           '\exp (' + str('%.3g' % fit.mul_var_dist.distributions[1].shape.c) + \
                           'h_s)$'
         elif fit.mul_var_dist.distributions[1].shape.func_name == 'powerdecrease3':
-            dp_function = '$' + str('%.4f' % fit.mul_var_dist.distributions[1].shape.a) + \
+            dp_function = r'$' + str('%.4f' % fit.mul_var_dist.distributions[1].shape.a) + \
                           '+ 1 / (h_s + ' + str('%.3g' % fit.mul_var_dist.distributions[1].shape.b) + \
                           ')^{' + str('%.3g' % fit.mul_var_dist.distributions[1].shape.c) + \
                           '}$'
         elif fit.mul_var_dist.distributions[1].shape.func_name == 'asymdecrease3':
-            dp_function = '$' + str('%.4f' % fit.mul_var_dist.distributions[1].shape.a) + \
+            dp_function = r'$' + str('%.4f' % fit.mul_var_dist.distributions[1].shape.a) + \
                           ' + ' + str('%.3g' % fit.mul_var_dist.distributions[1].shape.b) + \
                           ' / (1 + ' + str('%.3g' % fit.mul_var_dist.distributions[1].shape.c) + \
                           ' h_s )$'
@@ -254,13 +254,13 @@ def plot_dependence_functions(
                     fit.mul_var_dist.distributions[1].name == 'ExponentiatedWeibull':
         ylabel = '$β$'
         if fit.mul_var_dist.distributions[1].shape.func_name == 'power3':
-            dp_function = '$' + str('%.4f' % fit.mul_var_dist.distributions[1].shape.a) + \
+            dp_function = r'$' + str('%.4f' % fit.mul_var_dist.distributions[1].shape.a) + \
                           '+' + str('%.3g' % fit.mul_var_dist.distributions[1].shape.b) + \
                           '\cdot h_s^{' + str('%.3g' % fit.mul_var_dist.distributions[1].shape.c) + '}$'
         elif fit.mul_var_dist.distributions[1].shape.func_name == 'logistics4':
             # logistics4 uses np.abs(c), to display it nicer, abs(c) is shown.
             absOfC = np.abs(fit.mul_var_dist.distributions[1].shape.c)
-            dp_function = '$' + str('%.3g' % fit.mul_var_dist.distributions[1].shape.a) + \
+            dp_function = r'$' + str('%.3g' % fit.mul_var_dist.distributions[1].shape.a) + \
                           '+' + str('%.3g' % fit.mul_var_dist.distributions[1].shape.b) + \
                           '/ [1 + e^{-' + str('%.3g' % absOfC) + \
                           '(v - ' + str('%.3g' % fit.mul_var_dist.distributions[1].shape.d) + \
