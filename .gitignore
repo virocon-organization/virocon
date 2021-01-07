@@ -14,6 +14,7 @@
 *.pytest_cache/*
 *_build
 *_build/*
+build/*
 htmlcov/
 dist/*
 viroconcom.egg-info/*

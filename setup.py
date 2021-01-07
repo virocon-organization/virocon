@@ -12,8 +12,16 @@ from os import path
 here = path.abspath(path.dirname(__file__))
 
 # Get the long description from the README file
-with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
-    long_description = f.read()
+#with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
+#    long_description = f.read()
+long_description = """
+ViroCon: viroconcom
+===================
+
+ViroCon is a software to compute environmental contours.
+
+A longer description is available at: https://github.com/virocon-organization/viroconcom
+"""
 
 
 version = {}
@@ -25,11 +33,11 @@ setup(
 
     version=version['__version__'],
 
-    description='ViroCon\'s numerical core: computes n-dimensional environmental contours',
+    description='ViroCon is a software to compute environmental contour',
 
     long_description=long_description,
 
-    long_description_content_type='text/x-rst',
+    #long_description_content_type='text/x-rst',
 
     url='https://github.com/virocon-organization/viroconcom',
 
