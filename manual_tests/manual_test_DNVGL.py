@@ -1,5 +1,3 @@
-import pickle
-
 import numpy as np
 import pandas as pd
 
@@ -18,8 +16,8 @@ x, dx = np.linspace([0.1, 0.1], [6, 22], num=100, retstep=True)
 from virocon.models import GlobalHierarchicalModel
 from virocon.distributions import (WeibullDistribution, 
                                    LogNormalDistribution,
-                                   DependenceFunction,
                                    )
+from virocon.dependencies import DependenceFunction
 
 # A 3-parameter power function (a dependence function).
 def _power3(x, a, b, c):
@@ -74,15 +72,17 @@ my_intervals = my_ln.data_intervals
 
 reference_data = {"ref_f_weibull" : my_f_weibull, 
                   "ref_weibull_params" : my_weibull_params,
-                  "ref_intervals" : my_intervals,
                   "ref_givens" : my_given, 
                   "ref_f_lognorm" : my_f_ln,
                   "ref_mus" : my_mus,
                   "ref_sigmas" : my_sigmas
                   }
 
-with open("reference_data_DNVGL.pkl", "wb") as pkl_file:
-    pickle.dump(reference_data, pkl_file)
+   
+for i, interval in enumerate(my_intervals):
+    reference_data[f"ref_interval{i}"] = interval
+
+np.savez_compressed("reference_data_DNVGL", **reference_data)
 
 
 
