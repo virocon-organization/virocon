@@ -9,8 +9,8 @@ from virocon.models import GlobalHierarchicalModel
 
 @pytest.fixture(scope="module")
 def reference_coordinates_IFORM():
-    data = np.load("tests/reference_data/contours/reference_data_IFORM.npz")
-    ref_coordinates = data["ref_coordinates"]
+    with np.load("tests/reference_data/contours/reference_data_IFORM.npz") as data:
+        ref_coordinates = data["ref_coordinates"]
     return ref_coordinates
 
 

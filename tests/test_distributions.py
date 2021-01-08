@@ -10,13 +10,15 @@ from virocon.distributions import ExponentiatedWeibullDistribution
 
 @pytest.fixture(scope="module")
 def exp_weibull_reference_data():
-    data = np.load("tests/reference_data/distributions/reference_data_exp_weibull.npz")
-    return data
+    with np.load("tests/reference_data/distributions/reference_data_exp_weibull.npz") as data:
+        data_dict = dict(data)
+    return data_dict
 
 @pytest.fixture(scope="module")
 def exp_weibull_reference_data_wlsq_fit():
-    data = np.load("tests/reference_data/distributions/reference_data_exp_weibull_wlsq_fit.npz")
-    return data
+    with np.load("tests/reference_data/distributions/reference_data_exp_weibull_wlsq_fit.npz") as data:
+        data_dict = dict(data)
+    return data_dict
 
 
 
