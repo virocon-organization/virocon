@@ -15,8 +15,22 @@ def test_data():
 
 @pytest.fixture(scope="module")
 def reference_data():
-    with open("tests/reference_data/DNVGL/reference_data_DNVGL.pkl", "rb") as pkl_file:
-        ref_data = pickle.load(pkl_file)
+    with np.load("tests/reference_data/DNVGL/reference_data_DNVGL.npz") as npz_file:
+        data_dict = dict(npz_file)
+        
+    data_keys = ["ref_f_weibull", "ref_weibull_params", "ref_givens", 
+                 "ref_f_lognorm", "ref_mus", "ref_sigmas"]
+    ref_data = {}
+    for key in data_keys:
+        ref_data[key] = data_dict[key]
+    
+    ref_intervals = []
+    i = 0
+    while f"ref_interval{i}" in data_dict:
+        ref_intervals.append(data_dict[f"ref_interval{i}"])
+        i += 1
+        
+    ref_data["ref_intervals"] = ref_intervals
     return ref_data
 
 def test_DNVGL(test_data, reference_data):
