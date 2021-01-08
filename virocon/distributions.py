@@ -64,18 +64,17 @@ class ConditionalDistribution():
         dist = self._get_dist(given)
         return dist.draw_sample(n)
     
-    def fit(self, data, conditioning_values):
+    def fit(self, data, conditioning_values, fixed=None, method=None, weights=None):
         self.distributions_per_interval = []
         self.parameters_per_interval = []
         self.data_intervals = data
         self.conditioning_values = np.array(conditioning_values)
         # fit distribution to each interval
         for interval_data in data:
-            fixed = None
             if len(self.fixed_parameters) > 0:
                 fixed = self.fixed_parameters
             dist = self.distribution_class()
-            dist.fit(interval_data, fixed=fixed)
+            dist.fit(interval_data, fixed=fixed, method=method, weights=weights)
             self.distributions_per_interval.append(dist)
             self.parameters_per_interval.append(dist.parameters)
             
@@ -107,11 +106,14 @@ class Distribution(ABC):
         """Inverse cumulative distribution function."""
         
 
-    def fit(self, data, fixed=None, method="mle", weights=None):
+    def fit(self, data, fixed=None, method=None, weights=None):
         """Fit the distribution to the sampled data"""
+        if method is None:
+            method = "mle"
+            
         if method.lower() == "mle":
             self._fit_mle(data, fixed)
-        elif method.lower() == "lsq":
+        elif method.lower() == "lsq" or method.lower() == "wlsq":
             self._fit_lsq(data, fixed, weights)
         else:
             raise ValueError(f"Unknown method '{method}'. "
@@ -262,7 +264,11 @@ class ExponentiatedWeibullDistribution(Distribution):
         # TODO ensure for all pdf that no nan come up?
         x_greater_zero = np.where(x > 0, x, np.nan)
         _pdf = sts.exponweib.pdf(x_greater_zero, self.delta, self.beta, loc=0, scale=self.alpha)
-        _pdf[np.isnan(_pdf)] = 0
+        if _pdf.shape == (): # x was scalar
+            if np.isnan(_pdf):
+                _pdf = 0
+        else:          
+            _pdf[np.isnan(_pdf)] = 0
         return _pdf
 
     
@@ -290,11 +296,11 @@ class ExponentiatedWeibullDistribution(Distribution):
             weights = np.ones_like(x)
         elif isinstance(weights, str):
             if weights.lower() == "linear":
-                weights = x ** 2 / np.sum(x ** 2)
+                weights = x / np.sum(x)
             elif weights.lower() == "quadratic":
                 weights = x ** 2 / np.sum(x ** 2)
             elif weights.lower() == "cubic":
-                weights = x ** 2 / np.sum(x ** 2)
+                weights = x ** 3 / np.sum(x ** 3)
             else:
                 raise ValueError(f"Unsupported value for weights={weights}.")
         else:
@@ -309,7 +315,13 @@ class ExponentiatedWeibullDistribution(Distribution):
         
                 
         if fixed is not None:
-            raise NotImplementedError()
+            if "delta" in fixed and not ("alpha" in fixed or "beta" in fixed):
+                self.delta = fixed["delta"]
+                self.alpha, self.beta = self._estimate_alpha_beta(self.delta, x, p, 
+                                                              weights,
+                                                              )
+            else:
+                raise NotImplementedError()
         else:
             delta0 = self.delta
             self.delta = fmin(self._wlsq_error, delta0, disp=False,
