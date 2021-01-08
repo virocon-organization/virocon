@@ -58,7 +58,7 @@ def bounds_to_constraints(bounds):
     return cons
 
 
-def fit_constrained_function(func, x, y, p0, method, bounds, constraints):
+def fit_constrained_function(func, x, y, p0, method, bounds, constraints, weights=None):
     #p0 = np.asarray(p0)
     if method == "lsq":
         error_func = get_least_squares_error_func(func, x, y)

@@ -42,6 +42,8 @@ class GlobalHierarchicalModel(MultivariateModel):
         self.interval_split_methods = []
         self.min_interval_sizes = []
         self.dimensions = len(dist_descriptions)
+        self.fit_methods = []
+        self.fit_weights = []
         for dist_desc in dist_descriptions:
             dist_class = dist_desc["distribution"]
             self.interval_split_methods.append(self._get_interval_split_method(dist_desc))
@@ -60,6 +62,10 @@ class GlobalHierarchicalModel(MultivariateModel):
                     self.distributions.append(dist_class(**dist_params))
                 else:
                     self.distributions.append(dist_class())
+                    
+            self.fit_methods.append(dist_desc.get("fit_method"))
+            self.fit_weights.append(dist_desc.get("weights"))
+                                
                 
         # TODO throw an error if an unknown key is in dist_description
 
@@ -138,9 +144,11 @@ class GlobalHierarchicalModel(MultivariateModel):
         for i in range(self.dimensions):
             dist = self.distributions[i]
             conditioning_idx = self.conditional_on[i]
+            fit_method = self.fit_methods[i]
+            weights = self.fit_weights[i]
             
             if conditioning_idx is None:
-                dist.fit(data[:, i])
+                dist.fit(data[:, i], method=fit_method, weights=weights)
             else:
                 interval_split_method, interval_n = self.interval_split_methods[conditioning_idx]
                 min_interval_size = self.min_interval_sizes[conditioning_idx]
@@ -152,7 +160,7 @@ class GlobalHierarchicalModel(MultivariateModel):
                                                                         min_interval_size)
                 #dist data  is a list of ndarray 
                 # and conditioning_data is a list of interval points
-                dist.fit(dist_data, conditioning_data)
+                dist.fit(dist_data, conditioning_data, method=fit_method, weights=weights)
     
     
             self.distributions[i] = dist # TODO is the writeback necessary? -> probably not
