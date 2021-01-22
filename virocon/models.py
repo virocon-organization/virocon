@@ -4,6 +4,7 @@ from abc import ABC, abstractmethod
 import numpy as np
 
 from virocon.distributions import ConditionalDistribution
+from virocon.intervals import NumberOfIntervalsSlicer
 
 
 
@@ -39,15 +40,15 @@ class GlobalHierarchicalModel(MultivariateModel):
         self.distributions = []
         #self.dependencies = []
         self.conditional_on = []
-        self.interval_split_methods = []
-        self.min_interval_sizes = []
+        self.interval_slicers = []
         self.dimensions = len(dist_descriptions)
         self.fit_methods = []
         self.fit_weights = []
         for dist_desc in dist_descriptions:
             dist_class = dist_desc["distribution"]
-            self.interval_split_methods.append(self._get_interval_split_method(dist_desc))
-            self.min_interval_sizes.append(dist_desc.get("min_points_per_interval", 20))
+            self.interval_slicers.append(
+                dist_desc.get("intervals", 
+                              NumberOfIntervalsSlicer(n_intervals=10)))
             if "conditional_on" in dist_desc:
                 self.conditional_on.append(dist_desc["conditional_on"])
                 #self.dependencies.append(dist_desc["dependency"])
@@ -66,74 +67,17 @@ class GlobalHierarchicalModel(MultivariateModel):
             self.fit_methods.append(dist_desc.get("fit_method"))
             self.fit_weights.append(dist_desc.get("weights"))
                                 
-                
-        # TODO throw an error if an unknown key is in dist_description
-
-    @staticmethod
-    def _get_interval_split_method(dist_desc):
-        if "number_of_intervals" in dist_desc:
-            return "number_of_intervals", dist_desc["number_of_intervals"]
-        elif "width_of_intervals" in dist_desc:
-            return "width_of_intervals", dist_desc["width_of_intervals"]
-        elif "points_per_interval" in dist_desc:
-            return "points_per_interval", dist_desc["points_per_interval"]
-        else: # set default
-            return "number_of_intervals", 10
+        # TODO throw an error if an unknown key is in dist_description   
        
-
-    def _split_in_intervals(self, data, dist_idx, conditioning_idx, method, method_n, min_interval_size):
-        if method == "number_of_intervals":
-            dist_data, interval_centers =  self._split_by_number_of_intervals(data, dist_idx, conditioning_idx, method_n)
-        elif method == "width_of_intervals":
-            dist_data, interval_centers = self._split_by_width_of_intervals(data, dist_idx, conditioning_idx, method_n)
-        elif method == "points_per_interval":
-            raise NotImplementedError("points_per_interval not yet implemented")
-        else:
-            raise NotImplementedError()
-                    
-        # only use intervals with at least `min_interval_size` points
-        ok_intervals = [interval for interval in 
-                        zip(dist_data, interval_centers) 
-                        if len(interval[0]) >= min_interval_size]
-        dist_data, interval_centers = zip(*ok_intervals)
-        # TODO check output of submethod: are there enough intervals?
-        return dist_data, interval_centers
         
-        
-    @staticmethod 
-    def _split_by_number_of_intervals(data, dist_idx, conditioning_idx, n_intervals):
-        # TODO merge with _split_by_width_of_intervals
+    def _split_in_intervals(self, data, dist_idx, conditioning_idx):
+        slicer = self.interval_slicers[conditioning_idx]
         conditioning_data = data[:, conditioning_idx]
-        interval_starts, interval_width = np.linspace(min(conditioning_data),
-                                                      max(conditioning_data),
-                                                      num=n_intervals, 
-                                                      endpoint=False,
-                                                      retstep=True
-                                                      )
-        interval_centers = interval_starts + 0.5 * interval_width
-        interval_masks = [((conditioning_data >= int_start) & 
-                           (conditioning_data < int_start + interval_width)) 
-                          for int_start in interval_starts]
+        interval_slices, interval_centers = slicer.slice_(conditioning_data)
         
-        dist_data = [data[int_mask, dist_idx] for int_mask in interval_masks]
+        dist_data = [data[int_slice, dist_idx] for int_slice in interval_slices]
         
         return dist_data, interval_centers
-    
-    @staticmethod 
-    def _split_by_width_of_intervals(data, dist_idx, conditioning_idx, interval_width):
-        # TODO implement check, that interval_starts is a proper array
-       conditioning_data = data[:, conditioning_idx]
-       interval_starts = np.arange(0, max(conditioning_data), interval_width)
-       interval_centers = interval_starts + 0.5 * interval_width
-       interval_masks = [((conditioning_data >= int_start) & 
-                          (conditioning_data < int_start + interval_width)) 
-                         for int_start in interval_starts]
-       
-       dist_data = [data[int_mask, dist_idx] for int_mask in interval_masks]
-       
-       return dist_data, interval_centers
-
-
         
     
     def fit(self, data):
@@ -150,14 +94,10 @@ class GlobalHierarchicalModel(MultivariateModel):
             if conditioning_idx is None:
                 dist.fit(data[:, i], method=fit_method, weights=weights)
             else:
-                interval_split_method, interval_n = self.interval_split_methods[conditioning_idx]
-                min_interval_size = self.min_interval_sizes[conditioning_idx]
-                dist_data, conditioning_data = self._split_in_intervals(data, 
-                                                                        i, 
-                                                                        conditioning_idx, 
-                                                                        interval_split_method, 
-                                                                        interval_n, 
-                                                                        min_interval_size)
+                # interval_split_method, interval_n = self.interval_split_methods[conditioning_idx]
+                # min_interval_size = self.min_interval_sizes[conditioning_idx]
+                dist_data, conditioning_data = self._split_in_intervals(data, i, 
+                                                                        conditioning_idx)
                 #dist data  is a list of ndarray 
                 # and conditioning_data is a list of interval points
                 dist.fit(dist_data, conditioning_data, method=fit_method, weights=weights)
