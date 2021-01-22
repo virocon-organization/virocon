@@ -6,6 +6,7 @@ import pandas as pd
 from virocon.models import GlobalHierarchicalModel
 from virocon.distributions import WeibullDistribution, LogNormalDistribution
 from virocon.dependencies import DependenceFunction
+from virocon.intervals import WidthOfIntervalSlicer
 
 @pytest.fixture(scope="module")
 def test_data():
@@ -50,8 +51,7 @@ def test_DNVGL(test_data, reference_data):
     x, dx = np.linspace([0.1, 0.1], [6, 22], num=100, retstep=True)
     
     dist_description_0 = {"distribution" : WeibullDistribution,
-                          "width_of_intervals" : 0.5,
-                          "min_points_per_interval" : 50
+                          "intervals" : WidthOfIntervalSlicer(width=0.5, offset=True)
                           }
     dist_description_1 = {"distribution" : LogNormalDistribution,
                           "conditional_on" : 0,

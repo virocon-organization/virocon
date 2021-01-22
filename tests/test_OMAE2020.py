@@ -6,7 +6,7 @@ import pandas as pd
 from virocon.models import GlobalHierarchicalModel
 from virocon.distributions import ExponentiatedWeibullDistribution
 from virocon.dependencies import DependenceFunction
-
+from virocon.intervals import WidthOfIntervalSlicer
 
 @pytest.fixture(scope="module")
 def dataset():
@@ -59,8 +59,7 @@ def test_OMAE2020(dataset, reference_data):
     
     
     dist_description_vs = {"distribution" : ExponentiatedWeibullDistribution,
-                           "width_of_intervals" : 2,
-                           "min_points_per_interval" : 50,
+                           "intervals" : WidthOfIntervalSlicer(width=2, offset=True),
                            "fit_method" : "wlsq",
                            "weights" : "quadratic",
                            }
