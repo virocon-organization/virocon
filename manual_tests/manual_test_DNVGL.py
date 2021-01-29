@@ -18,6 +18,7 @@ from virocon.distributions import (WeibullDistribution,
                                    LogNormalDistribution,
                                    )
 from virocon.dependencies import DependenceFunction
+from virocon.intervals import WidthOfIntervalSlicer
 
 # A 3-parameter power function (a dependence function).
 def _power3(x, a, b, c):
@@ -35,8 +36,7 @@ power3 = DependenceFunction(_power3, bounds)
 exp3 = DependenceFunction(_exp3, bounds)
 
 dist_description_0 = {"distribution" : WeibullDistribution,
-                      "width_of_intervals" : 0.5,
-                      "min_points_per_interval" : 50
+                      "intervals" : WidthOfIntervalSlicer(width=0.5, offset=True)
                       }
 
 dist_description_1 = {"distribution" : LogNormalDistribution,
