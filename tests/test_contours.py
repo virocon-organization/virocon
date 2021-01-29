@@ -15,7 +15,7 @@ def reference_coordinates_IFORM():
 
 
 
-def test_ExponentiatedWeibull_pdf_cdf_icdf(reference_coordinates_IFORM):
+def test_IFORM(reference_coordinates_IFORM):
     
     # Logarithmic square function.
     def _lnsquare2(x, a=3.62, b=5.77):
