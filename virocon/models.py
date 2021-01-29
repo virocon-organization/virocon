@@ -42,7 +42,7 @@ class GlobalHierarchicalModel(MultivariateModel):
         self.distributions = []
         self.conditional_on = []
         self.interval_slicers = []
-        self.dimensions = len(dist_descriptions)
+        self.n_dim = len(dist_descriptions)
         self.fit_methods = []
         self.fit_weights = []
         self._check_dist_descriptions(dist_descriptions)
@@ -92,11 +92,16 @@ class GlobalHierarchicalModel(MultivariateModel):
         
     
     def fit(self, data):
+        #data.shape = (n_samples, n_dim)
         data = np.array(data)
         
-        assert data.shape[-1] == self.dimensions
+        if data.shape[-1] != self.n_dim:
+            raise ValueError("The dimension of data does not match the "
+                             "dimension of the model. "
+                             f"The model has {self.n_dim} dimensions, "
+                             f"but the data has {data.shape[-1]} dimensions.")
         
-        for i in range(self.dimensions):
+        for i in range(self.n_dim):
             dist = self.distributions[i]
             conditioning_idx = self.conditional_on[i]
             fit_method = self.fit_methods[i]
@@ -105,8 +110,6 @@ class GlobalHierarchicalModel(MultivariateModel):
             if conditioning_idx is None:
                 dist.fit(data[:, i], method=fit_method, weights=weights)
             else:
-                # interval_split_method, interval_n = self.interval_split_methods[conditioning_idx]
-                # min_interval_size = self.min_interval_sizes[conditioning_idx]
                 dist_data, conditioning_data = self._split_in_intervals(data, i, 
                                                                         conditioning_idx)
                 #dist data  is a list of ndarray 
@@ -129,7 +132,7 @@ class GlobalHierarchicalModel(MultivariateModel):
         fs[:, 0] = self.distributions[0].pdf(x[:, 0])
         
         # TODO check that x has the correct size
-        for i in range(1, self.dimensions):
+        for i in range(1, self.n_dim):
             if self.conditional_on[i] is None:
                 fs[:, i] = self.distributions[i].pdf(x[:, i])
             else:
@@ -154,7 +157,7 @@ class GlobalHierarchicalModel(MultivariateModel):
         
         x[:, 0] = self.distributions[0].icdf(p[:, 0])
         
-        for i in range(1, self.dimensions):
+        for i in range(1, self.n_dim):
             if self.conditional_on[i] is None:
                 x[:, i] = self.distributions[i].icdf(p[:, i])
             else:
