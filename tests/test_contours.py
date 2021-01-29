@@ -28,13 +28,10 @@ def test_IFORM(reference_coordinates_IFORM):
     lnsquare2 = DependenceFunction(_lnsquare2)
     asymdecrease3 = DependenceFunction(_asymdecrease3)
     
-    dist_description_0 = {"distribution" : ExponentiatedWeibullDistribution,
-                          "parameters" : {"alpha" : 0.207,
-                                          "beta" : 0.684,
-                                          "delta" : 7.79}
+    dist_description_0 = {"distribution" : ExponentiatedWeibullDistribution(alpha=0.207, beta=0.684, delta=7.79),
                           }
     
-    dist_description_1 = {"distribution" : LogNormalDistribution,
+    dist_description_1 = {"distribution" : LogNormalDistribution(),
                           "conditional_on" : 0,
                           "parameters" : {"mu": lnsquare2,
                                           "sigma" : asymdecrease3},

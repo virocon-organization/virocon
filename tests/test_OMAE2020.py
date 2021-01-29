@@ -58,20 +58,15 @@ def test_OMAE2020(dataset, reference_data):
                                    weights=lambda x, y : y)
     
     
-    dist_description_vs = {"distribution" : ExponentiatedWeibullDistribution,
+    dist_description_vs = {"distribution" : ExponentiatedWeibullDistribution(fit_method="wlsq", weights="quadratic"),
                            "intervals" : WidthOfIntervalSlicer(width=2, offset=True),
-                           "fit_method" : "wlsq",
-                           "weights" : "quadratic",
                            }
     
-    dist_description_hs = {"distribution" : ExponentiatedWeibullDistribution,
+    dist_description_hs = {"distribution" : ExponentiatedWeibullDistribution(f_delta=5, fit_method="wlsq", weights="quadratic"),
                            "conditional_on" : 0,
                            "parameters" : {"alpha" : alpha_dep,
                                            "beta": beta_dep,
-                                           "delta" : 5
                                            },
-                           "fit_method" : "wlsq",
-                           "weights" : "quadratic",
                            }
     
     

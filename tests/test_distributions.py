@@ -24,9 +24,9 @@ def exp_weibull_reference_data_wlsq_fit():
 
 def test_ExponentiatedWeibull_pdf_cdf_icdf(exp_weibull_reference_data):
     OMAE2020_param = {"alpha" : 10.0, 
-                  "beta" : 2.42, 
-                  "delta" : 0.761
-                  }
+                      "beta" : 2.42, 
+                      "delta" : 0.761
+                      }
     x = np.linspace(2, 15, num=100)
     p = np.linspace(0.01, 0.99, num=100)
     my_expweibull = ExponentiatedWeibullDistribution(**OMAE2020_param)
@@ -54,9 +54,9 @@ def test_ExponentiatedWeibull_wlsq_fit(exp_weibull_reference_data_wlsq_fit):
                                            loc=0, scale=true_alpha, 
                                            size=100, random_state=42)
     
-    my_expweibull = ExponentiatedWeibullDistribution()
+    my_expweibull = ExponentiatedWeibullDistribution(fit_method="lsq", weights="quadratic")
     
-    my_expweibull.fit(expweibull_samples, method="lsq", weights="quadratic")
+    my_expweibull.fit(expweibull_samples)
     
     my_pdf = my_expweibull.pdf(x)
     my_cdf = my_expweibull.cdf(x)
