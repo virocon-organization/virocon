@@ -67,6 +67,11 @@ class GlobalHierarchicalModel(MultivariateModel):
             self.fit_methods.append(dist_desc.get("fit_method"))
             self.fit_weights.append(dist_desc.get("weights"))
             # TODO move weights and fit_method to Distribution
+            
+        if self.conditional_on[0] is not None:
+            raise RuntimeError("Illegal state encountered. The first dimension "
+                               "has to be independent, but was conditional on "
+                               f"{self.conditional_on[0]}.")
                                         
     def _check_dist_descriptions(self, dist_descriptions):
         for i, dist_desc in enumerate(dist_descriptions):
@@ -121,11 +126,6 @@ class GlobalHierarchicalModel(MultivariateModel):
                     
                     
     def pdf(self, x):
-        if self.conditional_on[0] is not None:
-            raise RuntimeError("Illegal state encountered. The first dimension "
-                               "has to be independent, but was conditional on "
-                               f"{self.conditional_on[0]}.")
-            
         x = np.asarray_chkfinite(x)        
         fs = np.empty_like(x)
         
@@ -147,11 +147,6 @@ class GlobalHierarchicalModel(MultivariateModel):
         pass
     
     def icdf(self, p):
-        if self.conditional_on[0] is not None:
-            raise RuntimeError("Illegal state encountered. The first dimension "
-                               "has to be independent, but was conditional on "
-                               f"{self.conditional_on[0]}.")
-            
         p = np.asarray_chkfinite(p)
         x = np.empty_like(p)
         
