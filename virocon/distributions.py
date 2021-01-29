@@ -23,9 +23,16 @@ class ConditionalDistribution():
         self.conditional_parameters = {}
         self.fixed_parameters = {}
         # TODO check that dependency functions are not duplicates
+        
+        unknown_params = set(parameters).difference(self.param_names)
+        if len(unknown_params) > 0:
+            raise ValueError("Unknown param(s) in parameters."
+                             f"Known params are {self.param_names}, "
+                             f"but found {unknown_params}.")
         for par_name in self.param_names:
-            if par_name not in parameters.keys():
+            if par_name not in parameters:
                 raise ValueError(f"Mandatory key {par_name} was not found in parameters.")
+
             
             if callable(parameters[par_name]):
                 self.conditional_parameters[par_name] = parameters[par_name]
