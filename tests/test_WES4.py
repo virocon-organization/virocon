@@ -43,9 +43,9 @@ def test_WES4(dataset, reference_data):
     
     class MyIntervalSlicer(WidthOfIntervalSlicer):
     
-        def slice_(self, data):
+        def _slice(self, data):
             
-            interval_slices, interval_centers = super().slice_(data)
+            interval_slices, interval_centers = super()._slice(data)
             
             #discard slices below 4 m/s
             ok_slices = []
@@ -67,7 +67,7 @@ def test_WES4(dataset, reference_data):
     poly2 = DependenceFunction(_poly2)
     
     dim0_description = {"distribution" : WeibullDistribution,
-                        "intervals" : MyIntervalSlicer(width=1, min_number_of_points=5),
+                        "intervals" : MyIntervalSlicer(width=1, min_n_points=5),
                         }
     
     dim1_description = {"distribution" : LogNormalNormFitDistribution,
