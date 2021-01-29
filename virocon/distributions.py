@@ -224,6 +224,54 @@ class LogNormalDistribution(Distribution):
     def _fit_lsq(self, data, fixed, weights):
         raise NotImplementedError()
         
+        
+class LogNormalNormFitDistribution(LogNormalDistribution):
+    #https://en.wikipedia.org/wiki/Log-normal_distribution#Estimation_of_parameters
+    
+   
+    def __init__(self, mu_norm=0, sigma_norm=1):
+        
+        self.mu_norm = mu_norm
+        self.sigma_norm = sigma_norm
+        
+    @property
+    def parameters(self):
+        return {"mu_norm" : self.mu_norm,
+                "sigma_norm" : self.sigma_norm}
+
+    @property
+    def mu(self):
+        return self.calculate_mu(self.mu_norm, self.sigma_norm)
+    
+    @staticmethod
+    def calculate_mu(mu_norm, sigma_norm):
+        return np.log(mu_norm / np.sqrt(1 + sigma_norm**2 / mu_norm**2))
+        # return np.log(mu_norm**2 * np.sqrt(1 / (sigma_norm**2 + mu_norm**2)))
+    
+    @property
+    def sigma(self):
+        return self.calculate_sigma(self.mu_norm, self.sigma_norm)
+    
+    @staticmethod
+    def calculate_sigma(mu_norm, sigma_norm):
+        # return np.sqrt(np.log(1 + sigma_norm**2 / mu_norm**2))
+        return np.sqrt(np.log(1 + (sigma_norm**2 / mu_norm**2)))
+    
+     
+    def _fit_mle(self, samples, fixed):
+        
+        if fixed is not None:
+            raise NotImplementedError()
+        
+        self.mu_norm = np.mean(samples)
+        self.sigma_norm = np.std(samples, ddof=1)
+        # self.mu_norm, self.sigma_norm = sts.norm.fit(samples)
+        
+        
+    def _fit_lsq(self, data, fixed, weights):
+        raise NotImplementedError()
+        
+        
 class ExponentiatedWeibullDistribution(Distribution):
     """
     An exponentiated Weibull distribution.
