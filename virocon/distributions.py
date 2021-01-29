@@ -1,4 +1,5 @@
 import math
+import copy
 
 import numpy as np
 import scipy.stats as sts
@@ -16,10 +17,11 @@ from scipy.optimize import fmin
 # https://stackoverflow.com/questions/21060073/dynamic-inheritance-in-python
 class ConditionalDistribution():
     
-    def __init__(self, distribution_class, parameters):
+    def __init__(self, distribution, parameters):
         # allow setting fitting initials on class creation?
-        self.distribution_class = distribution_class
-        self.param_names = distribution_class().parameters.keys()
+        self.distribution = distribution
+        self.distribution_class = distribution.__class__
+        self.param_names = distribution.parameters.keys()
         self.conditional_parameters = {}
         self.fixed_parameters = {}
         # TODO check that dependency functions are not duplicates
@@ -29,15 +31,28 @@ class ConditionalDistribution():
             raise ValueError("Unknown param(s) in parameters."
                              f"Known params are {self.param_names}, "
                              f"but found {unknown_params}.")
-        for par_name in self.param_names:
-            if par_name not in parameters:
-                raise ValueError(f"Mandatory key {par_name} was not found in parameters.")
 
-            
-            if callable(parameters[par_name]):
-                self.conditional_parameters[par_name] = parameters[par_name]
+        for par_name in self.param_names:
+            # is the parameter defined as a dependence function?
+            if par_name not in parameters:
+                # if it is not dependence function it must be fixed
+                if getattr(distribution, f"f_{par_name}") is None:
+                    raise ValueError("Parameters of the distribution must be "
+                                     "either defined by a dependence function "                                     
+                                     f"or fixed, but {par_name} was not defined.")
+                else:
+                     self.fixed_parameters[par_name] = getattr(distribution, f"f_{par_name}")
             else:
-                self.fixed_parameters[par_name] = parameters[par_name]
+                # if it is a dependence function it must not be fixed
+                if getattr(distribution, f"f_{par_name}") is not None:
+                    raise ValueError("Parameters can be defined by a "
+                                     "dependence function or by being fixed. "
+                                     f"But for parameter {par_name} both where given."
+                                     )
+                else:
+                    self.conditional_parameters[par_name] = parameters[par_name]
+
+                
         
 
 
@@ -71,17 +86,16 @@ class ConditionalDistribution():
         dist = self._get_dist(given)
         return dist.draw_sample(n)
     
-    def fit(self, data, conditioning_values, fixed=None, method=None, weights=None):
+    def fit(self, data, conditioning_values):
         self.distributions_per_interval = []
         self.parameters_per_interval = []
         self.data_intervals = data
         self.conditioning_values = np.array(conditioning_values)
         # fit distribution to each interval
         for interval_data in data:
-            if len(self.fixed_parameters) > 0:
-                fixed = self.fixed_parameters
-            dist = self.distribution_class()
-            dist.fit(interval_data, fixed=fixed, method=method, weights=weights)
+            #dist = self.distribution_class()
+            dist = copy.deepcopy(self.distribution)
+            dist.fit(interval_data)
             self.distributions_per_interval.append(dist)
             self.parameters_per_interval.append(dist.parameters)
             
@@ -95,10 +109,16 @@ class ConditionalDistribution():
             
         self.conditional_parameters = fitted_dependence_functions
 
+
 class Distribution(ABC):
     """
     Abstract base class for distributions.
     """
+
+    @property
+    @abstractmethod
+    def parameters(self):
+        return {}
 
     @abstractmethod
     def cdf(self, x,):
@@ -113,26 +133,25 @@ class Distribution(ABC):
         """Inverse cumulative distribution function."""
         
 
-    def fit(self, data, fixed=None, method=None, weights=None):
+    def fit(self, data):
         """Fit the distribution to the sampled data"""
-        if method is None:
-            method = "mle"
+        method = self.fit_method
             
         if method.lower() == "mle":
-            self._fit_mle(data, fixed)
+            self._fit_mle(data)
         elif method.lower() == "lsq" or method.lower() == "wlsq":
-            self._fit_lsq(data, fixed, weights)
+            self._fit_lsq(data)
         else:
             raise ValueError(f"Unknown method '{method}'. "
                              "Only Maximum-Likelihood-Estimation (mle) "
                              "and (weighted) least squares (lsq) are supported.")
         
     @abstractmethod
-    def _fit_mle(self, data, fixed):
+    def _fit_mle(self, data):
         """Fit the distribution using Maximum-Likelihood-Estimation."""
         
     @abstractmethod
-    def _fit_lsq(self, data, fixed, weights):
+    def _fit_lsq(self, data):
         """Fit the distribution using (weighted) least squares."""
 
 
@@ -140,11 +159,18 @@ class Distribution(ABC):
 class WeibullDistribution(Distribution):
     
     
-    def __init__(self, lambda_=1, k=1, theta=0):
+    def __init__(self, lambda_=1, k=1, theta=0, f_lambda_=None, f_k=None, 
+                 f_theta=None, fit_method="mle", weights=None):
         
+        # TODO set parameters to fixed values if provided
         self.lambda_ = lambda_  # scale
         self.k = k  # shape
         self.theta = theta  # loc
+        self.f_lambda_ = f_lambda_ 
+        self.f_k = f_k
+        self.f_theta = f_theta
+        self.fit_method = fit_method
+        self.weights = weights
         
     @property
     def parameters(self):
@@ -161,33 +187,37 @@ class WeibullDistribution(Distribution):
     def pdf(self, x):
         return sts.weibull_min.pdf(x, c=self.k, loc=self.theta, scale=self.lambda_)
     
-    def _fit_mle(self, samples, fixed):
+    def _fit_mle(self, samples):
         p0={"lambda_": self.lambda_, "k": self.k, "theta": self.theta}
         
         fparams = {}
-        if fixed is not None:
-            if "k" in fixed.keys():
-                fparams["f0"] = fixed["k"]
-            if "theta" in fixed.keys():
-                fparams["floc"] = fixed["theta"]
-            if "lambda_" in fixed.keys():
-                fparams["fscale"] = fixed["lambda_"]
+        if self.f_k is not None:
+            fparams["f0"] = self.f_k
+        if self.f_theta is not None:
+            fparams["floc"] = self.f_theta
+        if self.f_lambda_ is not None:
+            fparams["fscale"] = self.f_lambda_
         
         self.k, self.theta, self.lambda_  = (
             sts.weibull_min.fit(samples, p0["k"], loc=p0["theta"], 
                                 scale=p0["lambda_"], **fparams)
              )
         
-    def _fit_lsq(self, data, fixed, weights):
+    def _fit_lsq(self, data):
         raise NotImplementedError()
         
 class LogNormalDistribution(Distribution):
     
    
-    def __init__(self, mu=0, sigma=1):
+    def __init__(self, mu=0, sigma=1, f_mu=None, f_sigma=None, fit_method="mle",
+                 weights=None):
         
         self.mu = mu
         self.sigma = sigma  # shape
+        self.f_mu = f_mu
+        self.f_sigma = f_sigma
+        self.fit_method = fit_method
+        self.weights = weights
         #self.scale = math.exp(mu)
         
     @property
@@ -211,15 +241,15 @@ class LogNormalDistribution(Distribution):
     def pdf(self, x):
         return sts.lognorm.pdf(x, s=self.sigma, scale=self._scale)
     
-    def _fit_mle(self, samples, fixed):
+    def _fit_mle(self, samples):
         p0={"scale": self._scale, "sigma": self.sigma}
         
         fparams = {"floc" : 0}
-        if fixed is not None:
-            if "sigma" in fixed.keys():
-                fparams["f0"] = fixed["sigma"]
-            if "mu" in fixed.keys():
-                fparams["fscale"] = math.exp(fixed["mu"])
+        
+        if self.f_sigma is not None:
+            fparams["f0"] = self.f_sigma
+        if self.f_mu is not None:
+            fparams["fscale"] = math.exp(self.f_mu)
         
         #scale0 = math.exp(p0["mu"])
         self.sigma, _, self._scale  = (
@@ -228,7 +258,7 @@ class LogNormalDistribution(Distribution):
         #self.mu = math.log(self._scale)
         
         
-    def _fit_lsq(self, data, fixed, weights):
+    def _fit_lsq(self, data):
         raise NotImplementedError()
         
         
@@ -236,10 +266,15 @@ class LogNormalNormFitDistribution(LogNormalDistribution):
     #https://en.wikipedia.org/wiki/Log-normal_distribution#Estimation_of_parameters
     
    
-    def __init__(self, mu_norm=0, sigma_norm=1):
+    def __init__(self, mu_norm=0, sigma_norm=1, f_mu_norm=None, f_sigma_norm=None, 
+                 fit_method="mle", weights=None):
         
         self.mu_norm = mu_norm
         self.sigma_norm = sigma_norm
+        self.f_mu_norm = f_mu_norm
+        self.f_sigma_norm = f_sigma_norm
+        self.fit_method = fit_method
+        self.weights = weights
         
     @property
     def parameters(self):
@@ -265,17 +300,23 @@ class LogNormalNormFitDistribution(LogNormalDistribution):
         return np.sqrt(np.log(1 + (sigma_norm**2 / mu_norm**2)))
     
      
-    def _fit_mle(self, samples, fixed):
+    def _fit_mle(self, samples):
         
-        if fixed is not None:
-            raise NotImplementedError()
+
+        if self.f_mu_norm is None:
+            self.mu_norm = np.mean(samples)
+        else:
+            self.mu_norm = self.f_mu_norm
+            
+        if self.f_sigma_norm is None:
+            self.sigma_norm = np.std(samples, ddof=1)
+        else:
+            self.sigma_norm = self.f_sigma_norm
         
-        self.mu_norm = np.mean(samples)
-        self.sigma_norm = np.std(samples, ddof=1)
         # self.mu_norm, self.sigma_norm = sts.norm.fit(samples)
         
         
-    def _fit_lsq(self, data, fixed, weights):
+    def _fit_lsq(self, data):
         raise NotImplementedError()
         
         
@@ -295,10 +336,16 @@ class ExponentiatedWeibullDistribution(Distribution):
                 "beta" : self.beta,
                 "delta" : self.delta}
 
-    def __init__(self, alpha=1, beta=1, delta=1):
+    def __init__(self, alpha=1, beta=1, delta=1, f_alpha=None, f_beta=None, 
+                 f_delta=None, fit_method="mle", weights=None):
         self.alpha = alpha  # scale
         self.beta = beta  # shape
         self.delta = delta  # shape2
+        self.f_alpha = f_alpha
+        self.f_beta = f_beta
+        self.f_delta = f_delta
+        self.fit_method = fit_method
+        self.weights = weights
         # In scipy the order of the shape parameters is reversed:
         # a ^= delta
         # c ^= beta
@@ -327,26 +374,27 @@ class ExponentiatedWeibullDistribution(Distribution):
         return _pdf
 
     
-    def _fit_mle(self, samples, fixed):
+    def _fit_mle(self, samples):
         p0={"alpha": self.alpha, "beta": self.beta, "delta": self.delta}
     
         fparams = {"floc" : 0}
-        if fixed is not None:
-            if "delta" in fixed.keys():
-                fparams["f0"] = fixed["delta"]
-            if "beta" in fixed.keys():
-                fparams["f1"] = fixed["beta"]
-            if "alpha" in fixed.keys():
-                fparams["fscale"] = fixed["alpha"]
         
+        if self.f_delta is not None:
+            fparams["f0"] = self.f_delta 
+        if self.f_beta is not None:
+            fparams["f1"] = self.f_beta 
+        if self.f_alpha is not None:
+             fparams["fscale"] = self.f_alpha
+                
         self.delta, self.beta, _, self.alpha  = (
             sts.exponweib.fit(samples, p0["delta"], p0["beta"], 
                                 scale=p0["alpha"], **fparams)
              )
         
-    def _fit_lsq(self, data, fixed, weights):
+    def _fit_lsq(self, data):
         # Based on Appendix A. in https://arxiv.org/pdf/1911.12835.pdf
         x = np.sort(np.asarray_chkfinite(data))
+        weights = self.weights
         if weights is None:
             weights = np.ones_like(x)
         elif isinstance(weights, str):
@@ -368,13 +416,22 @@ class ExponentiatedWeibullDistribution(Distribution):
         n = len(x)
         p = (np.arange(1, n + 1) - 0.5) / n
         
+        fixed = {}
+        if self.f_alpha is not None:
+            fixed["alpha"] = self.f_alpha
+        if self.f_beta is not None:
+            fixed["beta"] = self.f_beta
+        if self.f_delta is not None:
+            fixed["delta"] = self.f_delta
+        if len(fixed) == 0:
+            fixed = None
                 
         if fixed is not None:
             if "delta" in fixed and not ("alpha" in fixed or "beta" in fixed):
                 self.delta = fixed["delta"]
                 self.alpha, self.beta = self._estimate_alpha_beta(self.delta, x, p, 
-                                                              weights,
-                                                              )
+                                                                  weights,
+                                                                  )
             else:
                 raise NotImplementedError()
         else:

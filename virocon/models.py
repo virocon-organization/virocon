@@ -8,9 +8,6 @@ from virocon.intervals import NumberOfIntervalsSlicer
 
 
 
-# %%
-
-
 class MultivariateModel(ABC):
     
     @abstractmethod
@@ -36,38 +33,29 @@ class MultivariateModel(ABC):
 class GlobalHierarchicalModel(MultivariateModel):
     
     _dist_description_keys = {"distribution", "intervals", "conditional_on",
-                              "parameters", "fit_method", "weights"}
+                              "parameters"}
     
     def __init__(self, dist_descriptions):
         self.distributions = []
         self.conditional_on = []
         self.interval_slicers = []
         self.n_dim = len(dist_descriptions)
-        self.fit_methods = []
-        self.fit_weights = []
         self._check_dist_descriptions(dist_descriptions)
         for dist_desc in dist_descriptions:
-            dist_class = dist_desc["distribution"]
+            # dist_class = dist_desc["distribution"]
+            dist = dist_desc["distribution"]
             self.interval_slicers.append(
                 dist_desc.get("intervals", 
                               NumberOfIntervalsSlicer(n_intervals=10)))
             
             if "conditional_on" in dist_desc:
                 self.conditional_on.append(dist_desc["conditional_on"])
-                dist = ConditionalDistribution(dist_class, dist_desc["parameters"])
+                dist = ConditionalDistribution(dist, dist_desc["parameters"])
                 self.distributions.append(dist)
             else:
                 self.conditional_on.append(None)
-                #self.dependencies.append(None)
-                dist_params = dist_desc.get("parameters")
-                if dist_params is not None:
-                    self.distributions.append(dist_class(**dist_params))
-                else:
-                    self.distributions.append(dist_class())
+                self.distributions.append(dist)
                     
-            self.fit_methods.append(dist_desc.get("fit_method"))
-            self.fit_weights.append(dist_desc.get("weights"))
-            # TODO move weights and fit_method to Distribution
             
         if self.conditional_on[0] is not None:
             raise RuntimeError("Illegal state encountered. The first dimension "
@@ -81,11 +69,16 @@ class GlobalHierarchicalModel(MultivariateModel):
                 raise ValueError("Mandatory key 'distribution' missing in "
                                  f"dist_description for dimension {i}")
                 
+            if "conditional_on" in dist_desc and not "parameters" in dist_desc:
+                raise ValueError("For conditional distributions the "
+                                 "dist_description key 'parameters' "
+                                 f"is mandatory but was missing for dimension {i}.")
+                
             unknown_keys = set(dist_desc).difference(self._dist_description_keys)
             if len(unknown_keys) > 0:
                 raise ValueError("Unknown key(s) in dist_description for "
                                  f"dimension {i}."
-                                 f"Known keys are {self.dist_description_keys}, "
+                                 f"Known keys are {self._dist_description_keys}, "
                                  f"but found {unknown_keys}.")
         
         
@@ -112,17 +105,15 @@ class GlobalHierarchicalModel(MultivariateModel):
         for i in range(self.n_dim):
             dist = self.distributions[i]
             conditioning_idx = self.conditional_on[i]
-            fit_method = self.fit_methods[i]
-            weights = self.fit_weights[i]
             
             if conditioning_idx is None:
-                dist.fit(data[:, i], method=fit_method, weights=weights)
+                dist.fit(data[:, i])
             else:
                 dist_data, conditioning_data = self._split_in_intervals(data, i, 
                                                                         conditioning_idx)
                 #dist data  is a list of ndarray 
                 # and conditioning_data is a list of interval points
-                dist.fit(dist_data, conditioning_data, method=fit_method, weights=weights)
+                dist.fit(dist_data, conditioning_data)
     
     
             self.distributions[i] = dist # TODO is the writeback necessary? -> probably not

@@ -66,11 +66,11 @@ def test_WES4(dataset, reference_data):
     poly3 = DependenceFunction(_poly3)
     poly2 = DependenceFunction(_poly2)
     
-    dim0_description = {"distribution" : WeibullDistribution,
+    dim0_description = {"distribution" : WeibullDistribution(),
                         "intervals" : MyIntervalSlicer(width=1, min_n_points=5),
                         }
     
-    dim1_description = {"distribution" : LogNormalNormFitDistribution,
+    dim1_description = {"distribution" : LogNormalNormFitDistribution(),
                         "conditional_on" : 0,
                         "parameters" : {"mu_norm": poly3,
                                         "sigma_norm" : poly2},

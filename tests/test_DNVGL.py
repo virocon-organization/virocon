@@ -50,10 +50,10 @@ def test_DNVGL(test_data, reference_data):
     
     x, dx = np.linspace([0.1, 0.1], [6, 22], num=100, retstep=True)
     
-    dist_description_0 = {"distribution" : WeibullDistribution,
+    dist_description_0 = {"distribution" : WeibullDistribution(),
                           "intervals" : WidthOfIntervalSlicer(width=0.5, offset=True)
                           }
-    dist_description_1 = {"distribution" : LogNormalDistribution,
+    dist_description_1 = {"distribution" : LogNormalDistribution(),
                           "conditional_on" : 0,
                           "parameters" : {"mu": power3,
                                           "sigma" : exp3},
