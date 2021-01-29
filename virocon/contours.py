@@ -24,7 +24,7 @@ class IFORMContour():
         Calculates coordinates using IFORM.
 
         """
-        n_dim = self.model.dimensions
+        n_dim = self.model.n_dim
         n_points = self.n_points
         
         beta = sts.norm.ppf(1 - self.alpha)
