@@ -51,6 +51,7 @@ class GlobalHierarchicalModel(MultivariateModel):
             self.interval_slicers.append(
                 dist_desc.get("intervals", 
                               NumberOfIntervalsSlicer(n_intervals=10)))
+            
             if "conditional_on" in dist_desc:
                 self.conditional_on.append(dist_desc["conditional_on"])
                 dist = ConditionalDistribution(dist_class, dist_desc["parameters"])
@@ -72,7 +73,8 @@ class GlobalHierarchicalModel(MultivariateModel):
             raise RuntimeError("Illegal state encountered. The first dimension "
                                "has to be independent, but was conditional on "
                                f"{self.conditional_on[0]}.")
-                                        
+                   
+                     
     def _check_dist_descriptions(self, dist_descriptions):
         for i, dist_desc in enumerate(dist_descriptions):
             if not "distribution" in dist_desc:
@@ -85,6 +87,7 @@ class GlobalHierarchicalModel(MultivariateModel):
                                  f"dimension {i}."
                                  f"Known keys are {self.dist_description_keys}, "
                                  f"but found {unknown_keys}.")
+        
         
     def _split_in_intervals(self, data, dist_idx, conditioning_idx):
         slicer = self.interval_slicers[conditioning_idx]
@@ -143,8 +146,10 @@ class GlobalHierarchicalModel(MultivariateModel):
         
         return np.prod(fs, axis=-1)
     
+    
     def cdf(self, *args, **kwargs):
         pass
+    
     
     def icdf(self, p):
         p = np.asarray_chkfinite(p)
