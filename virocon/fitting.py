@@ -19,7 +19,7 @@ def fit_function(func, x, y, p0, method, bounds, weights=None):
         else:
             popt, _ = curve_fit(func, x, y, p0, sigma=weights, bounds=bounds)
     else:
-        raise ValueError("method must be either lsq for least sqaures or" 
+        raise ValueError("method must be either lsq for least squares or" 
                          "wlsq for weighted least squares")
     return popt
 
@@ -64,6 +64,7 @@ def fit_constrained_function(func, x, y, p0, method, bounds, constraints, weight
         error_func = get_least_squares_error_func(func, x, y)
         #cost_func
     else:
+        # TODO implement WLSQ
         raise NotImplementedError("At this time only least squares (lsq) " 
                                   "fitting is supported.")
         

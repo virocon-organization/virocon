@@ -35,15 +35,17 @@ class MultivariateModel(ABC):
 
 class GlobalHierarchicalModel(MultivariateModel):
     
+    _dist_description_keys = {"distribution", "intervals", "conditional_on",
+                              "parameters", "fit_method", "weights"}
+    
     def __init__(self, dist_descriptions):
-        # TODO check input
         self.distributions = []
-        #self.dependencies = []
         self.conditional_on = []
         self.interval_slicers = []
         self.dimensions = len(dist_descriptions)
         self.fit_methods = []
         self.fit_weights = []
+        self._check_dist_descriptions(dist_descriptions)
         for dist_desc in dist_descriptions:
             dist_class = dist_desc["distribution"]
             self.interval_slicers.append(
@@ -51,8 +53,6 @@ class GlobalHierarchicalModel(MultivariateModel):
                               NumberOfIntervalsSlicer(n_intervals=10)))
             if "conditional_on" in dist_desc:
                 self.conditional_on.append(dist_desc["conditional_on"])
-                #self.dependencies.append(dist_desc["dependency"])
-                # TODO check that all parameters are specified in "dependency", else set defaults
                 dist = ConditionalDistribution(dist_class, dist_desc["parameters"])
                 self.distributions.append(dist)
             else:
@@ -66,9 +66,20 @@ class GlobalHierarchicalModel(MultivariateModel):
                     
             self.fit_methods.append(dist_desc.get("fit_method"))
             self.fit_weights.append(dist_desc.get("weights"))
-                                
-        # TODO throw an error if an unknown key is in dist_description   
-       
+            # TODO move weights and fit_method to Distribution
+                                        
+    def _check_dist_descriptions(self, dist_descriptions):
+        for i, dist_desc in enumerate(dist_descriptions):
+            if not "distribution" in dist_desc:
+                raise ValueError("Mandatory key 'distribution' missing in "
+                                 f"dist_description for dimension {i}")
+                
+            unknown_keys = set(dist_desc).difference(self._dist_description_keys)
+            if len(unknown_keys) > 0:
+                raise ValueError("Unknown key(s) in dist_description for "
+                                 f"dimension {i}."
+                                 f"Known keys are {self.dist_description_keys}, "
+                                 f"but found {unknown_keys}.")
         
     def _split_in_intervals(self, data, dist_idx, conditioning_idx):
         slicer = self.interval_slicers[conditioning_idx]
