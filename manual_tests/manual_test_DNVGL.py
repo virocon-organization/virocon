@@ -35,11 +35,11 @@ bounds = [(0, None),
 power3 = DependenceFunction(_power3, bounds)
 exp3 = DependenceFunction(_exp3, bounds)
 
-dist_description_0 = {"distribution" : WeibullDistribution,
+dist_description_0 = {"distribution" : WeibullDistribution(),
                       "intervals" : WidthOfIntervalSlicer(width=0.5, offset=True)
                       }
 
-dist_description_1 = {"distribution" : LogNormalDistribution,
+dist_description_1 = {"distribution" : LogNormalDistribution(),
                       "conditional_on" : 0,
                       "parameters" : {"mu": power3,
                                       "sigma" : exp3},
@@ -82,7 +82,7 @@ reference_data = {"ref_f_weibull" : my_f_weibull,
 for i, interval in enumerate(my_intervals):
     reference_data[f"ref_interval{i}"] = interval
 
-np.savez_compressed("reference_data_DNVGL", **reference_data)
+# np.savez_compressed("reference_data_DNVGL", **reference_data)
 
 
 
@@ -141,7 +141,7 @@ for i in range(len(ref_intervals)):
     assert len(my_intervals) == len(ref_intervals)
     assert sorted(my_intervals[i]) == sorted(ref_intervals[i])
     
-# data is ordered differently -> can this have an effect?
+
 
 # %% debug prints
 

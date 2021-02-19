@@ -78,14 +78,14 @@ def _poly2(x, a, b, c):
 poly3 = DependenceFunction(_poly3)
 poly2 = DependenceFunction(_poly2)
 
-dim0_description = {"distribution" : WeibullDistribution,
+dim0_description = {"distribution" : WeibullDistribution(),
                     "intervals" : MyIntervalSlicer(width=1, min_number_of_points=5),
                     # "parameters" : {"lambda_" : 9.74,
                     #                 "k" : 2.02,
                     #                 "theta" : 2.2},
                     }
 
-dim1_description = {"distribution" : LogNormalNormFitDistribution,
+dim1_description = {"distribution" : LogNormalNormFitDistribution(),
                     "conditional_on" : 0,
                     "parameters" : {"mu_norm": poly3,
                                     "sigma_norm" : poly2},

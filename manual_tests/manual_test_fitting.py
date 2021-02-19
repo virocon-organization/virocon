@@ -6,7 +6,7 @@ from scipy.optimize import curve_fit
 from matplotlib import pyplot as plt
 
 from virocon.fitting import fit_function, fit_constrained_function, convert_bounds_for_curve_fit
-from virocon.distributions import DependenceFunction
+from virocon.dependencies import DependenceFunction
 
 def _linear(x, a, b):
     return x * a + b
