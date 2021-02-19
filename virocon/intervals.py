@@ -77,8 +77,7 @@ class NumberOfIntervalsSlicer(IntervalSlicer):
     def __init__(self, n_intervals, center=None, include_max=True, range_=None, **kwargs):
         super().__init__(**kwargs)
         if n_intervals < self.min_n_intervals:
-            raise ValueError("n_intervals has to be >= min_n_intervals, but was "
-                             f"n_intervals={n_intervals} < min_n_intervals={self.min_n_intervals}")
+            self.min_n_intervals = n_intervals
         self.n_intervals = n_intervals
         self.center = center
         self.include_max = include_max
@@ -116,8 +115,8 @@ class PointsPerIntervalSlicer(IntervalSlicer):
     def __init__(self, n_points, center=None, last_full=True, **kwargs):
         super().__init__(**kwargs)
         if n_points < self.min_n_points:
-            raise ValueError("n_points has to be >= min_n_points, but was "
-                             f"n_points={n_points} < min_n_points={self.min_n_points}")
+            self.min_n_points = n_points
+            
         self.n_points = n_points
         self.center = center if center is not None else np.median
         self.last_full = last_full
