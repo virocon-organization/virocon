@@ -18,6 +18,7 @@ x, dx = np.linspace([0.1, 0.1], [30, 12], num=100, retstep=True)
 from virocon.models import GlobalHierarchicalModel
 from virocon.distributions import ExponentiatedWeibullDistribution
 from virocon.dependencies import DependenceFunction
+from virocon.intervals import WidthOfIntervalSlicer
 
 
 # # A 4-parameter logististics function (a dependence function).
@@ -49,21 +50,20 @@ alpha_dep = DependenceFunction(_alpha3, alpha_bounds, d_of_x=beta_dep,
                                weights=lambda x, y : y)
 
 
-dist_description_vs = {"distribution" : ExponentiatedWeibullDistribution,
-                       "width_of_intervals" : 2,
-                       "min_points_per_interval" : 50,
-                       "fit_method" : "wlsq",
-                       "weights" : "quadratic",
+dist_description_vs = {"distribution" : ExponentiatedWeibullDistribution(fit_method="wlsq",
+                                                                         weights="quadratic",
+                                                                         ),
+                       "intervals" : WidthOfIntervalSlicer(2, min_n_points=50,
+                                                           offset=True)
                        }
 
-dist_description_hs = {"distribution" : ExponentiatedWeibullDistribution,
+dist_description_hs = {"distribution" : ExponentiatedWeibullDistribution(f_delta=5, fit_method="wlsq",
+                                                                         weights="quadratic",
+                                                                         ),
                        "conditional_on" : 0,
                        "parameters" : {"alpha" : alpha_dep,
                                        "beta": beta_dep,
-                                       "delta" : 5
                                        },
-                       "fit_method" : "wlsq",
-                       "weights" : "quadratic",
                        }
 
 

@@ -23,9 +23,9 @@ expweibull_samples = sts.exponweib.rvs(a=true_delta, c=true_beta,
 
 # %%
 # my_expweibull = ExponentiatedWeibullDistribution(**OMAE2020_param)
-my_expweibull = ExponentiatedWeibullDistribution()
+my_expweibull = ExponentiatedWeibullDistribution(fit_method="lsq", weights="quadratic")
 
-my_expweibull.fit(expweibull_samples, method="lsq", weights="quadratic")
+my_expweibull.fit(expweibull_samples)
 
 my_pdf = my_expweibull.pdf(x)
 my_cdf = my_expweibull.cdf(x)
