@@ -1,5 +1,10 @@
+import warnings
+
 import numpy as np
 import scipy.stats as sts
+import scipy.ndimage as ndi
+
+
 
 
 from virocon._n_sphere import NSphere
@@ -55,3 +60,272 @@ class IFORMContour():
 
         self.sphere_points = sphere_points
         self.coordinates = coordinates
+
+
+class HighestDensityContour():
+    
+    def __init__(self, model, alpha, limits, deltas):
+        self.model = model
+        self.alpha = alpha
+        self.limits = limits
+        self.deltas = deltas
+        
+        self._check_grid()
+        self._compute()
+        
+    def _check_grid(self):
+        n_dim = self.model.n_dim
+        limits = self.limits
+        deltas = self.deltas
+        if limits is None:
+            limits = [(0, 10)] * n_dim
+            # TODO set better default limits
+        else:
+            # Check limits length.
+            if len(limits) != n_dim:
+                raise ValueError("limits has to be of length equal to number of dimensions, "
+                                  f"but len(limits)={len(limits)}, n_dim={n_dim}.")
+        self.limits = limits
+
+        if deltas is None:
+            deltas = np.empty(shape=n_dim)
+            # Set default cell size to 0.25 percent of the variable space.
+            # This is losely based on the results from Fig. 7 in 10.1016/j.coastaleng.2017.03.002
+            # In the considered variable space length of 20 a cell length of
+            # 0.05 was sufficient --> 20 / 0.05 = 400. 1/400 = 0.0025
+            relative_cell_size = 0.0025
+
+            for i in range(n_dim):
+                deltas[i] = (limits[i][1] - limits[i][0]) * relative_cell_size
+        else:
+            try:  # Check if deltas is an iterable
+                iter(deltas)
+                if len(deltas) != n_dim:
+                    raise ValueError("deltas has do be either scalar, "
+                                     "or list of length equal to number of dimensions, "
+                                     f"but was list of length {len(deltas)}")
+                deltas = list(deltas)
+            except TypeError: # asserts that deltas is scalar
+                deltas = [deltas] * n_dim
+    
+        self.deltas = deltas
+        
+    def _compute(self):
+        limits = self.limits
+        deltas = self.deltas
+        n_dim = self.model.n_dim
+        alpha = self.alpha
+        
+        # Create sampling coordinate arrays.
+        sample_coords = []
+        for i, lim_tuple in enumerate(limits):
+            try:
+                iter(lim_tuple)
+                if len(lim_tuple) != 2:
+                    raise ValueError("tuples in limits have to be of length 2 ( = (min, max)), "
+                                     f"but tuple with index = {i}, has length = {len(lim_tuple)}.")
+                                 
+            except TypeError:
+                raise ValueError("tuples in limits have to be of length 2 ( = (min, max)), "
+                                 f"but tuple with index = {i}, has length = 1.")
+
+            min_ = min(lim_tuple)
+            max_ = max(lim_tuple)
+            delta = deltas[i]
+            samples = np.arange(min_, max_+ delta, delta)
+            sample_coords.append(samples)
+
+        
+        f = self.cell_averaged_joint_pdf(sample_coords) # TODO
+
+        if np.isnan(f).any():
+            raise ValueError("Encountered nan in cell averaged probabilty joint pdf. "
+                             "Possibly invalid distribution parameters?")
+
+        # Calculate probability per cell.
+        cell_prob = f
+        for delta in deltas:
+            cell_prob *= delta
+
+        # Calculate highest density region.
+        try:
+            with warnings.catch_warnings():
+                warnings.simplefilter("error")
+                HDR, prob_m = self.cumsum_biggest_until(cell_prob, 1 - alpha)
+        except RuntimeWarning:
+            HDR = np.ones_like(cell_prob)
+            prob_m = 0
+            warnings.warn("A probability of 1-alpha could not be reached. "
+                          "Consider enlarging the area defined by limits or "
+                          "setting n_years to a smaller value.",
+                          RuntimeWarning, stacklevel=4)
+
+        # Calculate fm from probability per cell.
+        fm = prob_m
+        for delta in deltas:
+            fm /= delta
+
+        structure = np.ones(tuple([3] * n_dim), dtype=bool)
+        HDC = HDR - ndi.binary_erosion(HDR, structure=structure)
+
+        labeled_array, n_modes = ndi.label(HDC, structure=structure)
+
+        coordinates = []
+        # Iterate over all partial contours and start at 1.
+        for i in range(1, n_modes+1):
+            # Array of arrays with same length, one per dimension
+            # containing the indice of the contour.
+            partial_contour_indice = np.nonzero(labeled_array == i)
+
+            # Calculate the values corresponding to the indice
+            partial_coordinates = []
+            for dimension, indice in enumerate(partial_contour_indice):
+                partial_coordinates.append(sample_coords[dimension][indice])
+
+            coordinates.append(partial_coordinates)
+
+        if len(coordinates) == 1:
+            coordinates = coordinates[0]
+            
+        self.sample_coords = sample_coords
+        self.fm = fm
+        self.coordinates = np.array(coordinates).T
+    
+    
+    @staticmethod
+    def cumsum_biggest_until(array, limit):
+        """
+        Find biggest elements to sum to reach limit.
+
+        Sorts array, and calculates the cumulative sum.
+        Returns a boolean array with the same shape as array indicating the
+        fields summed to reach limit, as well as the last value added.
+
+        Parameters
+        ----------
+        array : ndarray
+            Array of arbitrary shape with all values >= 0.
+        limit : float
+            Value to sum up to.
+
+        Returns
+        -------
+        summed_fields : ndarray, dtype=Bool
+            Boolean array of shape like array with True if element was used in summation.
+        last_summed : float
+            Element that was added last to the sum.
+
+        Raises
+        ------
+        ValueError
+            If `array` contains nan.
+        Notes
+        ------
+        A ``RuntimeWarning`` is raised if the limit cannot be reached by summing all values.
+        """
+
+        flat_array = np.ravel(array)
+        if np.isnan(flat_array).any():
+            raise ValueError("array contains nan.")
+
+        sort_inds = np.argsort(flat_array, kind="mergesort")[::-1]
+        sort_vals = flat_array[sort_inds]
+
+        cum_sum = np.cumsum(sort_vals)
+
+        if cum_sum[-1] < limit:
+            warnings.warn("The limit could not be reached.", RuntimeWarning, stacklevel=1)
+
+        summed_flat_inds = sort_inds[cum_sum <= limit]
+
+        summed_fields = np.zeros(array.shape)
+
+        summed_fields[np.unravel_index(summed_flat_inds, shape=array.shape)] = 1
+
+        last_summed = array[np.unravel_index(summed_flat_inds[-1], shape=array.shape)]
+
+
+        return summed_fields, last_summed
+    
+    def cell_averaged_joint_pdf(self, coords):
+        """
+        Calculates the cell averaged joint probabilty density function.
+
+        Multiplies the cell averaged probability densities of all distributions.
+
+        Parameters
+        ----------
+        coords : List[array_like]
+            List of the sampling points of the random variables.
+            The length of coords has to equal self.model.n_dim.
+
+        Returns
+        -------
+        fbar : ndarray
+            Cell averaged joint probabilty density function evaluated at coords.
+            It is a self.model.n_dim dimensional array,
+            with shape (len(coords[0]), len(coords[1]), ...)
+
+        """
+        n_dim = len(coords)
+        fbar = np.ones(((1,) * n_dim), dtype=np.float64)
+        for dist_idx in range(n_dim):
+            fbar = np.multiply(fbar, self.cell_averaged_pdf(dist_idx, coords))
+
+        return fbar
+
+    def cell_averaged_pdf(self, dist_idx, coords):
+        """
+        Calculates the cell averaged probabilty density function of a single distribution.
+
+        Calculates the pdf by approximating it with the finite differential quotient
+        of the cumulative distributions function, evaluated at the grid cells borders.
+        i.e. :math:`f(x) \\approx \\frac{F(x+ 0.5\\Delta x) - F(x- 0.5\\Delta x) }{\\Delta x}`
+
+        Parameters
+        ----------
+        dist_idx : int
+            The index of the distribution to calculate the pdf of,
+            according to order of self.model.distributions.
+        coords : list[array_like]
+            List of the sampling points of the random variables.
+            The pdf is calculated at coords[dist_idx].
+            The length of coords has to equal self.model.n_dim.
+
+        Returns
+        -------
+        fbar : ndarray
+            Cell averaged probabilty density function evaluated at coords[dist_idx].
+            It is a self.model.n_dim dimensional array.
+        """
+        n_dim = len(coords)
+        dist = self.model.distributions[dist_idx]
+        cond_idx = self.model.conditional_on[dist_idx]
+        
+        dx = coords[dist_idx][1] - coords[dist_idx][0]
+        
+        cdf = dist.cdf
+        fbar_out_shape = np.ones(n_dim, dtype=int)
+        
+        if cond_idx is None: # independent variable
+            # Calculate averaged pdf.
+            lower = cdf(coords[dist_idx] - 0.5 * dx)
+            upper = cdf(coords[dist_idx] + 0.5 * dx)
+            fbar = (upper - lower)
+            
+            fbar_out_shape[dist_idx] = len(coords[dist_idx])
+            
+        else:
+            dist_values = coords[dist_idx]
+            cond_values = coords[cond_idx]
+            fbar = np.empty((len(cond_values), len(dist_values)))
+            for i, cond_value in enumerate(cond_values):
+                lower = cdf(coords[dist_idx] - 0.5 * dx, given=cond_value)
+                upper = cdf(coords[dist_idx] + 0.5 * dx,  given=cond_value)
+                fbar[i, :] = (upper - lower)
+            
+            fbar_out_shape[dist_idx] = len(coords[dist_idx])
+            fbar_out_shape[cond_idx] = len(coords[cond_idx])
+            
+        fbar_out = fbar.reshape(fbar_out_shape)
+        return fbar_out / dx
