@@ -153,6 +153,10 @@ class Distribution(ABC):
     @abstractmethod
     def _fit_lsq(self, data):
         """Fit the distribution using (weighted) least squares."""
+        
+    @abstractmethod
+    def draw_sample(self, n):
+        """Draw samples from distribution."""
 
 
 
@@ -205,6 +209,9 @@ class WeibullDistribution(Distribution):
         
     def _fit_lsq(self, data):
         raise NotImplementedError()
+        
+    def draw_sample(self, n):
+        return sts.weibull_min.rvs(size=n, c=self.k, loc=self.theta, scale=self.lambda_)
         
 class LogNormalDistribution(Distribution):
     
@@ -260,6 +267,9 @@ class LogNormalDistribution(Distribution):
         
     def _fit_lsq(self, data):
         raise NotImplementedError()
+        
+    def draw_sample(self, n):
+        return sts.lognorm.rvs(size=n, s=self.sigma, scale=self._scale)
         
         
 class LogNormalNormFitDistribution(LogNormalDistribution):
@@ -481,7 +491,9 @@ class ExponentiatedWeibullDistribution(Distribution):
         wlsq_error = np.sum(w * (x - x_hat) ** 2)
 
         return wlsq_error
-
+    
+    def draw_sample(self, n):
+        return sts.exponweib.rvs(self.delta, self.beta, loc=0, scale=self.alpha, size=n)
             
         
         

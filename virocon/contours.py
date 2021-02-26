@@ -329,3 +329,66 @@ class HighestDensityContour():
             
         fbar_out = fbar.reshape(fbar_out_shape)
         return fbar_out / dx
+    
+    
+class DirectSamplingContour():
+    
+    def __init__(self, model, alpha, n=100000, deg_step=5, sample=None):
+        self.model = model
+        self.alpha = alpha
+        self.n = n
+        self.deg_step = deg_step
+        self.sample = sample
+        
+        self._compute()
+        
+    def _compute(self):
+        sample = self.sample
+        n = self.n 
+        deg_step = self.deg_step
+        alpha = self.alpha
+        
+        if self.model.n_dim != 2:
+            raise NotImplementedError("DirectSamplingContour is currently only "
+                                      "implemented for two dimensions.")
+
+        if sample is None:
+            sample = self.model.draw_sample(n)
+            self.sample = sample
+        x, y = sample.T
+
+        # Calculate non-exceedance probability.
+        # alpha = 1 - (1 / (self.return_period * 365.25 * 24 / self.state_duration))
+        beta = 1 - alpha
+
+        # Define the angles such the coordinates[0] and coordinates[1] will
+        # be based on the exceedance plane with angle 0 deg, with 0 deg being
+        # along the x-axis. Angles will increase counterclockwise in a xy-plot.
+        # Not enirely sure why the + 2*rad_step is required, but tests show it.
+        rad_step = deg_step * np.pi / 180
+        angles = np.arange(0.5 * np.pi + 2 * rad_step, -1.5 * np.pi + rad_step,
+                            -1 * rad_step)
+
+        length_t = len(angles)
+        r = np.zeros(length_t)
+
+        # Find radius for each angle.
+        i = 0
+        while i < length_t:
+            z = x * np.cos(angles[i]) + y * np.sin(angles[i])
+            r[i] = np.quantile(z, beta)
+            i = i + 1
+
+        # Find intersection of lines.
+        a = np.array(np.concatenate((angles, [angles[0]]), axis=0))
+        r = np.array(np.concatenate((r, [r[0]]), axis=0))
+
+        denominator = np.sin(a[2:]) * np.cos(a[1:len(a)-1]) - \
+                      np.sin(a[1:len(a)-1]) * np.cos(a[2:])
+
+        x_cont = (np.sin(a[2:]) * r[1:len(r)-1]
+                  - np.sin(a[1:len(a)-1]) * r[2:]) / denominator
+        y_cont = (-np.cos(a[2:]) * r[1:len(r)-1]
+                  + np.cos(a[1:len(a)-1]) * r[2:]) / denominator
+
+        self.coordinates = np.array([x_cont, y_cont]).T
