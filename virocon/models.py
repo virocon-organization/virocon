@@ -26,7 +26,7 @@ class MultivariateModel(ABC):
     def marginal_cdf(self, *args, **kwargs):
         pass   
     @abstractmethod
-    def rvs(self, *args, **kwargs):
+    def draw_sample(self, *args, **kwargs):
         pass
 
 
@@ -166,7 +166,18 @@ class GlobalHierarchicalModel(MultivariateModel):
     def marginal_cdf(self, *args, **kwargs):
         pass   
     
-    def rvs(self, *args, **kwargs):
-        pass
+    def draw_sample(self, n):
+        samples = np.zeros((n, self.n_dim))
+        for i in range(self.n_dim):
+            cond_idx = self.conditional_on[i]
+            dist = self.distributions[i]
+            if cond_idx is None:
+                samples[:, i] = dist.draw_sample(n)
+            else:
+                conditioning_values = samples[:, cond_idx]
+                for j in range(n):
+                    samples[j, i] = dist.draw_sample_(1, conditioning_values[j])
+                    
+        return samples
     
 
