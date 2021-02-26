@@ -4,9 +4,6 @@ import numpy as np
 import scipy.stats as sts
 import scipy.ndimage as ndi
 
-
-
-
 from virocon._n_sphere import NSphere
 
 def calculate_alpha(state_duration, return_period):
@@ -60,6 +57,68 @@ class IFORMContour():
 
         self.sphere_points = sphere_points
         self.coordinates = coordinates
+        
+        
+class ISORMContour():
+    def __init__(self, model, alpha, n_points=180):
+        self.model = model
+        self.alpha = alpha
+        self.n_points = n_points
+        
+        self._compute()
+        
+        
+    def _compute(self,):
+        """
+        Calculates coordinates using ISORM.
+
+        """
+    
+        n_dim = self.model.n_dim
+        n_points = self.n_points
+        
+        distributions = self.model.distributions
+        conditional_on = self.model.conditional_on
+        
+
+        # Use the ICDF of a chi-squared distribution with n dimensions. For
+        # reference see equation 20 in Chai and Leira (2018).
+        beta = np.sqrt(sts.chi2.ppf(1 - self.alpha, n_dim))
+
+        # Create sphere.
+        if n_dim == 2:
+            _phi = np.linspace(0, 2 * np.pi , num=n_points, endpoint=False)
+            _x = np.cos(_phi)
+            _y = np.sin(_phi)
+            _circle = np.stack((_x,_y)).T
+            sphere_points = beta * _circle
+
+        else:
+            sphere = NSphere(dim=n_dim, n_samples=n_points)
+            sphere_points = beta * sphere.unit_sphere_points
+
+        # Get probabilities for coordinates of shape.
+        norm_cdf_per_dimension = [sts.norm.cdf(sphere_points[:, dim])
+                                  for dim in range(n_dim)]
+
+        # Inverse procedure. Get coordinates from probabilities.
+        data = np.zeros((n_points, n_dim))
+        
+        for i in range(n_dim):
+            dist = distributions[i]
+            cond_idx = conditional_on[i]
+            if cond_idx is None:
+                data[:, i] = dist.icdf(norm_cdf_per_dimension[i])
+            else:
+                conditioning_values = data[:, cond_idx]
+                for j in range(n_points):
+                    data[j, i] = dist.icdf(norm_cdf_per_dimension[i][j], 
+                                           given=conditioning_values[j])
+        
+        
+        self.beta = beta
+        self.sphere_points = sphere_points
+        self.coordinates = data
 
 
 class HighestDensityContour():

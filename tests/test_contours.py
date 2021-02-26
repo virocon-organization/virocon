@@ -1,7 +1,9 @@
 import pytest
 import numpy as np
 
-from virocon.contours import (IFORMContour, HighestDensityContour, 
+from virocon.contours import (IFORMContour, 
+                              ISORMContour,
+                              HighestDensityContour, 
                               DirectSamplingContour,
                               calculate_alpha)
 from virocon.dependencies import DependenceFunction
@@ -18,17 +20,24 @@ def reference_coordinates_IFORM():
 
 
 @pytest.fixture(scope="module")
+def reference_coordinates_ISORM():
+    with np.load("tests/reference_data/contours/reference_data_ISORM.npz") as data:
+        ref_coordinates = data["ref_coordinates"]
+    return ref_coordinates
+
+
+@pytest.fixture(scope="module")
 def reference_coordinates_HDC():
     with np.load("tests/reference_data/contours/reference_data_HDC.npz") as data:
         ref_coordinates = data["ref_coordinates"]
     return ref_coordinates
+
 
 @pytest.fixture(scope="module")
 def reference_data_DSContour():
     with np.load("tests/reference_data/contours/reference_data_DSContour.npz") as data:
         data_dict = dict(data)
     return data_dict
-
 
 
 def test_IFORM(reference_coordinates_IFORM):
@@ -63,6 +72,44 @@ def test_IFORM(reference_coordinates_IFORM):
     my_coordinates = my_iform.coordinates
     
     np.testing.assert_allclose(my_coordinates, reference_coordinates_IFORM)
+    
+    
+def test_ISORM(reference_coordinates_ISORM):
+
+    # Logarithmic square function.
+    def _lnsquare2(x, a=3.62, b=5.77):
+        return np.log(a + b * np.sqrt(x / 9.81))
+    
+    # 3-parameter function that asymptotically decreases (a dependence function).
+    def _asymdecrease3(x, a=0, b=0.324, c=0.404):
+        return a + b / (1 + c * x)
+    
+    
+    lnsquare2 = DependenceFunction(_lnsquare2)
+    asymdecrease3 = DependenceFunction(_asymdecrease3)
+    
+    dist_description_0 = {"distribution" : ExponentiatedWeibullDistribution(alpha=0.207,
+                                                                            beta=0.684,
+                                                                            delta=7.79),
+                          }
+    
+    dist_description_1 = {"distribution" : LogNormalDistribution(),
+                          "conditional_on" : 0,
+                          "parameters" : {"mu": lnsquare2,
+                                          "sigma" : asymdecrease3},
+                          }
+    
+    ghm = GlobalHierarchicalModel([dist_description_0, dist_description_1])
+    
+    
+    state_duration = 3
+    return_period = 20
+    alpha = calculate_alpha(state_duration, return_period)
+    my_isorm = ISORMContour(ghm, alpha)
+    
+    my_coordinates = my_isorm.coordinates
+    
+    np.testing.assert_allclose(my_coordinates, reference_coordinates_ISORM)
     
     
 def test_HDC(reference_coordinates_HDC):
