@@ -545,6 +545,26 @@ class ParametricDistributionTest(unittest.TestCase):
                     'scale=3.0, shape2=4.0'
         self.assertEqual(string_of_dist, s)
 
+    def test_mae(self):
+        """
+        Tests the mean_absolute_error function.
+        """
+        dist = NormalDistribution(
+            scale=ConstantParam(1), 
+            loc=ConstantParam(2))
+        sample = np.array([1, 2, 3])
+        mae = dist.mean_absolute_error(sample)
+        ae1 = np.abs(dist.i_cdf(0.5 / 3) - sample[0])
+        ae2 = np.abs(dist.i_cdf(1.5 / 3) - sample[1])
+        ae3 = np.abs(dist.i_cdf(2.5 / 3) - sample[2])
+        mae_check = (ae1 + ae2 + ae3) / 3
+        self.assertAlmostEqual(mae, mae_check, delta=1E-5)
+
+        # Suppose these observations were some selected vary high quantiles.
+        mae_higher = dist.mean_absolute_error(sample, [0.99, 0.999, 0.999])
+        self.assertGreater(mae_higher, mae_check)
+
+
 
 
 if __name__ == '__main__':
