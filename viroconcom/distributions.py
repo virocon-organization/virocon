@@ -63,7 +63,7 @@ class Distribution(ABC):
         """
         sample = np.array(sample)
         n = sample.size
-        if pi == None:
+        if pi is None:
             i = np.arange(1, n + 1, 1)
             pi = (i - 0.5) / n
         xi = np.sort(sample)
