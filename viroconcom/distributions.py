@@ -38,8 +38,39 @@ class Distribution(ABC):
         """Inverse cumulative distribution function."""
 
     def draw_sample(self, n):
+        """Draw a random sample with length n."""
         probabilities = np.random.rand(n)
         return self.i_cdf(probabilities)
+
+    def mean_absolute_error(self, sample, pi=None):
+        """
+        Mean absolute error (as a measure of goodness of fit).
+        Used on wave height data, e.g., in doi.org/10.1016/j.renene.2020.04.112.
+
+        Parameters
+        ----------
+        sample : array_like
+            Sample that will be compared to the distribution's predictions.
+        pi : array_like, optional
+            Associated probabilites of the sample when its values are ordered. If no 
+            probabilites are supplied the sample is assumed to be the complete sample
+            and the associated probabilities will be calculated accordingly.
+
+        Returns
+        -------
+        mae : float,
+            Mean absoute error.
+        """
+        sample = np.array(sample)
+        n = sample.size
+        if pi == None:
+            i = np.arange(1, n + 1, 1)
+            pi = (i - 0.5) / n
+        xi = np.sort(sample)
+        xhati = self.i_cdf(pi) # The predictions.
+        mae = np.sum(np.abs(xi - xhati)) / n
+
+        return mae
 
 class ParametricDistribution(Distribution, ABC):
     """
