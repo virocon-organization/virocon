@@ -77,6 +77,7 @@ class Distribution(ABC):
 
         return mae
 
+
 class ParametricDistribution(Distribution, ABC):
     """
     Abstract base class for parametric distributions.
