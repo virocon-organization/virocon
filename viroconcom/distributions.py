@@ -45,16 +45,19 @@ class Distribution(ABC):
     def mean_absolute_error(self, sample, pi=None):
         """
         Mean absolute error (as a measure of goodness of fit).
-        Used on wave height data, e.g., in doi.org/10.1016/j.renene.2020.04.112.
+        Used on wave height data, e.g., in doi.org/10.1016/j.renene.2020.04.112, 
+        equations (6) and (7).
 
         Parameters
         ----------
         sample : array_like
             Sample that will be compared to the distribution's predictions.
         pi : array_like, optional
-            Associated probabilites of the sample when its values are ordered. If no 
-            probabilites are supplied the sample is assumed to be the complete sample
-            and the associated probabilities will be calculated accordingly.
+            Non-exceedance probabilites of the sample (empirical CDF). i is an index 
+            and the element pi[i] relates to the observation sample[i]. sample and pi
+            can represent a subset of the complete sample.
+            If pi is not supplied, sample is assumed to be the complete sample, it will
+            be ordered and the associated probabilities will be calculated accordingly.
 
         Returns
         -------
@@ -63,10 +66,12 @@ class Distribution(ABC):
         """
         sample = np.array(sample)
         n = sample.size
-        if pi is None:
+        if pi is not None:
+            xi = sample
+        else:
+            xi = np.sort(sample)
             i = np.arange(1, n + 1, 1)
             pi = (i - 0.5) / n
-        xi = np.sort(sample)
         xhati = self.i_cdf(pi) # The predictions.
         mae = np.sum(np.abs(xi - xhati)) / n
 
