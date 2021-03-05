@@ -1012,7 +1012,7 @@ class MultivariateDistribution():
                 for i, xi in np.ndenumerate(x): 
                     p, error_estimate = scipy.integrate.nquad(
                         self.pdf_2d, [[0, np.inf], [0, xi]])
-                F[i] = p
+                    F[i] = p
         else:
             raise NotImplementedError
         return F
