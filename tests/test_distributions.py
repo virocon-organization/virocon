@@ -221,9 +221,10 @@ class MultivariateDistributionTest(unittest.TestCase):
         F = self.joint_dist_2d.marginal_cdf(7, dim=1)
         np.testing.assert_allclose(F, 0.48, atol=0.01)
 
-        tz = [4, 7]
+        tz = [4, 6, 8]
         F = self.joint_dist_2d.marginal_cdf(tz, dim=1)
-        self.assertGreater(F[1], F[0])    
+        self.assertGreater(F[1], F[0])
+        self.assertGreater(F[2], F[1])     
 
     def test_marginal_icdf(self):
         """
