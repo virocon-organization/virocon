@@ -107,7 +107,7 @@ ref_coordinates = np.stack(ref_isorm.coordinates, axis=1)
        
 # %% 
 
-np.savez_compressed("reference_data_ISORM.npz", ref_coordinates=ref_coordinates)
+# np.savez_compressed("reference_data_ISORM.npz", ref_coordinates=ref_coordinates)
 
 
 # %%
