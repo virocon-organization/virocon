@@ -3,6 +3,8 @@ from abc import ABC, abstractmethod
 
 import numpy as np
 
+import scipy.integrate as integrate
+
 from virocon.distributions import ConditionalDistribution
 from virocon.intervals import NumberOfIntervalsSlicer
 
@@ -25,6 +27,9 @@ class MultivariateModel(ABC):
     @abstractmethod        
     def marginal_cdf(self, *args, **kwargs):
         pass   
+    @abstractmethod        
+    def marginal_icdf(self, *args, **kwargs):
+        pass
     @abstractmethod
     def draw_sample(self, *args, **kwargs):
         pass
@@ -160,11 +165,119 @@ class GlobalHierarchicalModel(MultivariateModel):
         
         
     
-    def marginal_pdf(self, *args, **kwargs):
-        pass
-               
-    def marginal_cdf(self, *args, **kwargs):
-        pass   
+    def marginal_pdf(self, x, dim):
+        #x = x.reshape((-1, 1))
+        if self.conditional_on[dim] is None:
+            # the distribution is not conditional -> it is the marginal
+            return self.distributions[dim].pdf(x)
+        
+        # the distribution is conditional
+        # thus we integrate over the joint pdf to get the marginal
+        
+        #TODO check size of x
+
+        n_dim = self.n_dim
+        integral_order = list(range(n_dim))
+        del integral_order[dim] # we do not integrate over the dim'th variable
+        integral_order = integral_order[::-1] # we integrate over last dimensions first
+        
+        # scipy.integrate.nquad expects one argument per dimension
+        # thus we have to wrap the (joint) pdf
+        def get_integral_func():
+            arg_order = integral_order + [dim]
+            
+            def integral_func(*args):
+                assert len(args) == n_dim
+                # sort arguments as expected by pdf (the models order)
+                # arguments = list(args)[:-1]
+                # arguments.append(args[-1][0])
+                x = np.array(args)[np.argsort(arg_order)].reshape((1, n_dim))
+                return self.pdf(x)
+            
+            return integral_func
+            
+        # TODO make limits a property of the distributions?
+        # "for var in integral_order append limits"
+        # but for now we simplify that all vars have the same limits
+        limit = (0, np.inf)
+        limits = [limit] * (n_dim-1)
+        
+        f = np.empty_like(x)
+        integral_func = get_integral_func()
+        for i, x_i in enumerate(x):
+            result, _ = integrate.nquad(integral_func, ranges=limits, args=[x_i])
+            f[i] = result
+        return f
+    
+    
+    def marginal_cdf(self, x, dim):
+        #x = x.reshape((-1, 1))
+        if self.conditional_on[dim] is None:
+            # the distribution is not conditional -> it is the marginal
+            return self.distributions[dim].cdf(x)
+        
+        # the distribution is conditional
+        # thus we integrate over the joint pdf to get the marginal pdf
+        # and then integrate the marginal pdf to get the marginal cdf
+        
+        #TODO check size of x
+
+        n_dim = self.n_dim
+        integral_order = list(range(n_dim))
+        del integral_order[dim]
+        integral_order = integral_order[::-1] # we integrate over last dimensions first
+        integral_order = integral_order + [dim] # finally we integrate over the dim'th var
+        
+        # scipy.integrate.nquad expects one argument per dimension
+        # thus we have to wrap the (joint) pdf
+        def get_integral_func():
+            arg_order = integral_order
+            
+            def integral_func(*args):
+                assert len(args) == n_dim
+                # sort arguments as expected by pdf (the models order)
+                # arguments = list(args)[:-1]
+                # arguments.append(args[-1][0])
+                x = np.array(args)[np.argsort(arg_order)].reshape((1, n_dim))
+                return self.pdf(x)
+            
+            return integral_func
+            
+        # TODO make limits (or lower limit) a property of the distributions?
+        limit = (0, np.inf)
+        limits = [limit] * (n_dim-1)
+        
+        F = np.empty_like(x)
+        integral_func = get_integral_func()
+        for i, x_i in enumerate(x):
+            result, _ = integrate.nquad(integral_func, ranges=limits + [(0, x_i)])
+            F[i] = result
+        return F
+    
+    
+    def marginal_icdf(self, p, dim, precision_factor=1):
+        p = np.array(p)
+        
+        if self.conditional_on[dim] is None:
+            # the distribution is not conditional -> it is the marginal
+            return self.distributions[dim].icdf(p)
+        
+
+        # If very low/high quantiles are of interest, a bigger
+        # Monte Carlo sample should be drawn.
+        p_min = np.min(p) 
+        p_max = np.max(p)
+        # if p_min < 0.001 or p_max > 0.999:
+        nr_exceeding_points = 100 * precision_factor
+        p_small = np.min([p_min, 1 - p_max])
+        n = int((1 / p_small) * nr_exceeding_points)
+        # else:
+        #     # Minimum to draw for minimum precesision.
+        #     n = 100000 * precision_factor
+        sample = self.draw_sample(n)
+        x = np.quantile(sample[:, dim], p)
+        return x   
+    
     
     def draw_sample(self, n):
         samples = np.zeros((n, self.n_dim))
