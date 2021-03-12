@@ -13,8 +13,7 @@ from scipy.optimize import fmin
 # So this version is a requirement.
 # (Though the dict order might work as well in 3.6)
 
-# TODO possibly use something like
-# https://stackoverflow.com/questions/21060073/dynamic-inheritance-in-python
+
 class ConditionalDistribution():
     
     def __init__(self, distribution, parameters):
@@ -52,39 +51,28 @@ class ConditionalDistribution():
                 else:
                     self.conditional_parameters[par_name] = parameters[par_name]
 
-                
-        
 
-
-        
-    def _get_dist(self, given):
-        
-        unpacked_params = {}
+    def _get_param_values(self, given):
+        param_values = {}
         for par_name in self.param_names:
             if par_name in self.conditional_parameters.keys():
-                unpacked_params[par_name] = self.conditional_parameters[par_name](given)
+                param_values[par_name] = self.conditional_parameters[par_name](given)
             else:
-                unpacked_params[par_name] = self.fixed_parameters[par_name]
-                        
-        return self.distribution_class(**unpacked_params)
-  
-                
+                param_values[par_name] = self.fixed_parameters[par_name]
+
+        return param_values
+
     def pdf(self, x, given):
-        # possibly allow given as ndarray in the future?
-        dist = self._get_dist(given)
-        return dist.pdf(x)
+        return self.distribution.pdf(x, **self._get_param_values(given))
     
     def cdf(self, x, given):
-        dist = self._get_dist(given)
-        return dist.cdf(x)
+        return self.distribution.cdf(x, **self._get_param_values(given))
     
-    def icdf(self, x, given):
-        dist = self._get_dist(given)
-        return dist.icdf(x)
+    def icdf(self, prob, given):
+        return self.distribution.icdf(prob, **self._get_param_values(given))
         
     def draw_sample(self, n, given):
-        dist = self._get_dist(given)
-        return dist.draw_sample(n)
+        return self.distribution.draw_sample(n, **self._get_param_values(given))
     
     def fit(self, data, conditioning_values):
         self.distributions_per_interval = []
@@ -121,17 +109,20 @@ class Distribution(ABC):
         return {}
 
     @abstractmethod
-    def cdf(self, x,):
+    def cdf(self, x, *args, **kwargs):
         """Cumulative distribution function."""
 
     @abstractmethod
-    def pdf(self, x):
+    def pdf(self, x, *args, **kwargs):
         """Probability density function."""
 
     @abstractmethod
-    def icdf(self, prob):
+    def icdf(self, prob, *args, **kwargs):
         """Inverse cumulative distribution function."""
         
+    @abstractmethod
+    def draw_sample(self, n,  *args, **kwargs):
+        """Draw samples from distribution."""
 
     def fit(self, data):
         """Fit the distribution to the sampled data"""
@@ -153,10 +144,45 @@ class Distribution(ABC):
     @abstractmethod
     def _fit_lsq(self, data):
         """Fit the distribution using (weighted) least squares."""
-        
-    @abstractmethod
-    def draw_sample(self, n):
-        """Draw samples from distribution."""
+
+    # @staticmethod
+    # def _adapt_array_dimensions(x, pars):
+    #     # x and pars broadcastable against each other
+    #     reshaped_pars = []
+    #     at_least_one_iterable = False
+    #     for par in pars:
+    #         try:
+    #             _ = iter(par)
+    #             reshaped_pars.append(np.reshape(par, (1, -1)))
+    #             at_least_one_iterable = True
+    #         except TypeError:
+    #             reshaped_pars.append(par)
+
+    #     if at_least_one_iterable:
+    #         try:
+    #             _ = iter(x)
+    #             x = x.reshape((-1,1))
+    #         except:
+    #             x = np.asarray(x).reshape((1, 1))
+
+    #     return x, reshaped_pars
+
+    @staticmethod
+    def _get_rvs_size(n, pars):
+        at_least_one_iterable = False
+        par_length = 0
+        for par in pars:
+            try:
+                _ = iter(par)
+                at_least_one_iterable = True
+                par_length = len(par)
+            except TypeError:
+                pass
+
+        if at_least_one_iterable:
+            return (n, par_length)
+        else:
+            return n
 
 
 
@@ -181,16 +207,38 @@ class WeibullDistribution(Distribution):
         return {"lambda_" : self.lambda_,
                 "k" : self.k,
                 "theta" : self.theta}
-        
-    def cdf(self, x):
-        return sts.weibull_min.cdf(x, c=self.k, loc=self.theta, scale=self.lambda_)
 
-    def icdf(self, prob):
-        return sts.weibull_min.ppf(prob, c=self.k, loc=self.theta, scale=self.lambda_)
 
-    def pdf(self, x):
-        return sts.weibull_min.pdf(x, c=self.k, loc=self.theta, scale=self.lambda_)
-    
+    def _get_scipy_parameters(self, lambda_, k, theta):
+        if lambda_ is None:
+            lambda_ = self.lambda_
+        if k is None:
+            k = self.k
+        if theta is None:
+            theta = self.theta
+        return k, theta, lambda_  # shape, loc, scale
+
+    def cdf(self, x, lambda_=None, k=None, theta=None):
+        scipy_par = self._get_scipy_parameters(lambda_, k, theta)
+        return sts.weibull_min.cdf(x, *scipy_par)
+
+
+    def icdf(self, prob, lambda_=None, k=None, theta=None):
+        scipy_par = self._get_scipy_parameters(lambda_, k, theta)
+        return sts.weibull_min.ppf(prob, *scipy_par)
+
+
+    def pdf(self, x, lambda_=None, k=None, theta=None):
+        scipy_par = self._get_scipy_parameters(lambda_, k, theta)
+        return sts.weibull_min.pdf(x, *scipy_par)
+
+
+    def draw_sample(self, n,  lambda_=None, k=None, theta=None):
+        scipy_par = self._get_scipy_parameters(lambda_, k, theta)
+        rvs_size = self._get_rvs_size(n, scipy_par)
+        return sts.weibull_min.rvs(*scipy_par, size=rvs_size)
+
+
     def _fit_mle(self, samples):
         p0={"lambda_": self.lambda_, "k": self.k, "theta": self.theta}
         
@@ -210,8 +258,7 @@ class WeibullDistribution(Distribution):
     def _fit_lsq(self, data):
         raise NotImplementedError()
         
-    def draw_sample(self, n):
-        return sts.weibull_min.rvs(size=n, c=self.k, loc=self.theta, scale=self.lambda_)
+
         
 class LogNormalDistribution(Distribution):
     
@@ -233,20 +280,37 @@ class LogNormalDistribution(Distribution):
                 "sigma" : self.sigma}
     @property
     def _scale(self):
-        return math.exp(self.mu)
+        return np.exp(self.mu)
     
     @_scale.setter
     def _scale(self, val):
-        self.mu = math.log(val)
+        self.mu = np.log(val)
+
+    def _get_scipy_parameters(self, mu, sigma):
+        if mu is None:
+            scale = self._scale
+        else:
+            scale = np.exp(mu)
+        if sigma is None:
+            sigma = self.sigma
+        return sigma, 0, scale # shape, loc, scale
         
-    def cdf(self, x):
-        return sts.lognorm.cdf(x, s=self.sigma, scale=self._scale)
+    def cdf(self, x, mu=None, sigma=None):
+        scipy_par = self._get_scipy_parameters(mu, sigma)
+        return sts.lognorm.cdf(x, *scipy_par)
 
-    def icdf(self, prob):
-        return sts.lognorm.ppf(prob, s=self.sigma, scale=self._scale)
+    def icdf(self, prob, mu=None, sigma=None):
+        scipy_par = self._get_scipy_parameters(mu, sigma)
+        return sts.lognorm.ppf(prob, *scipy_par)
 
-    def pdf(self, x):
-        return sts.lognorm.pdf(x, s=self.sigma, scale=self._scale)
+    def pdf(self, x, mu=None, sigma=None):
+        scipy_par = self._get_scipy_parameters(mu, sigma)
+        return sts.lognorm.pdf(x, *scipy_par)
+
+    def draw_sample(self, n, mu=None, sigma=None):
+        scipy_par = self._get_scipy_parameters(mu, sigma)
+        rvs_size = self._get_rvs_size(n, scipy_par)
+        return sts.lognorm.rvs(*scipy_par, size=rvs_size)
     
     def _fit_mle(self, samples):
         p0={"scale": self._scale, "sigma": self.sigma}
@@ -268,8 +332,7 @@ class LogNormalDistribution(Distribution):
     def _fit_lsq(self, data):
         raise NotImplementedError()
         
-    def draw_sample(self, n):
-        return sts.lognorm.rvs(size=n, s=self.sigma, scale=self._scale)
+
         
         
 class LogNormalNormFitDistribution(LogNormalDistribution):
@@ -308,6 +371,36 @@ class LogNormalNormFitDistribution(LogNormalDistribution):
     def calculate_sigma(mu_norm, sigma_norm):
         # return np.sqrt(np.log(1 + sigma_norm**2 / mu_norm**2))
         return np.sqrt(np.log(1 + (sigma_norm**2 / mu_norm**2)))
+
+    def _get_scipy_parameters(self, mu_norm, sigma_norm):
+        if (mu_norm is None) != (sigma_norm is None):
+            raise RuntimeError("mu_norm and sigma_norm have to be passed both or not at all")
+
+        if mu_norm is None:
+            scale = self._scale
+            sigma = self.sigma
+        else:
+            sigma = self.calculate_sigma(mu_norm, sigma_norm)
+            mu = self.calculate_mu(mu_norm, sigma_norm)
+            scale = np.exp(mu)
+        return sigma, 0, scale  # shape, loc, scale
+
+    def cdf(self, x, mu_norm=None, sigma_norm=None):
+        scipy_par = self._get_scipy_parameters(mu_norm, sigma_norm)
+        return sts.lognorm.cdf(x, *scipy_par)
+
+    def icdf(self, prob, mu_norm=None, sigma_norm=None):
+        scipy_par = self._get_scipy_parameters(mu_norm, sigma_norm)
+        return sts.lognorm.ppf(prob, *scipy_par)
+
+    def pdf(self, x, mu_norm=None, sigma_norm=None):
+        scipy_par = self._get_scipy_parameters(mu_norm, sigma_norm)
+        return sts.lognorm.pdf(x, *scipy_par)
+
+    def draw_sample(self, n,mu_norm=None, sigma_norm=None):
+        scipy_par = self._get_scipy_parameters(mu_norm, sigma_norm)
+        rvs_size = self._get_rvs_size(n, scipy_par)
+        return sts.lognorm.rvs(*scipy_par, size=rvs_size)
     
      
     def _fit_mle(self, samples):
@@ -360,28 +453,43 @@ class ExponentiatedWeibullDistribution(Distribution):
         # a ^= delta
         # c ^= beta
 
+    def _get_scipy_parameters(self, alpha, beta, delta):
+        if alpha is None:
+            alpha = self.alpha
+        if beta is None:
+            beta = self.beta
+        if delta is None:
+            delta = self.delta
+        return delta, beta, 0, alpha # shape1, shape2, loc, scale
 
-    def cdf(self, x):
-        return sts.exponweib.cdf(x, self.delta, self.beta, loc=0, scale=self.alpha)
+    def cdf(self, x, alpha=None, beta=None, delta=None):
+        scipy_par = self._get_scipy_parameters(alpha, beta, delta)
+        return sts.exponweib.cdf(x, *scipy_par)
 
 
-    def icdf(self, prob):
-        return sts.exponweib.ppf(prob, self.delta, self.beta, loc=0, scale=self.alpha)
+    def icdf(self, prob, alpha=None, beta=None, delta=None):
+        scipy_par = self._get_scipy_parameters(alpha, beta, delta)
+        return sts.exponweib.ppf(prob, *scipy_par)
 
-
-    def pdf(self, x):
+    def pdf(self, x, alpha=None, beta=None, delta=None):
         #x = np.asarray(x, dtype=float)  # If x elements are int we cannot use np.nan .
         # This changes x which is unepexted behaviour!
         #x[x<=0] = np.nan  # To avoid warnings with negative and 0-values, use NaN.
         # TODO ensure for all pdf that no nan come up?
         x_greater_zero = np.where(x > 0, x, np.nan)
-        _pdf = sts.exponweib.pdf(x_greater_zero, self.delta, self.beta, loc=0, scale=self.alpha)
+        scipy_par = self._get_scipy_parameters(alpha, beta, delta)
+        _pdf = sts.exponweib.pdf(x_greater_zero, *scipy_par)
         if _pdf.shape == (): # x was scalar
             if np.isnan(_pdf):
                 _pdf = 0
         else:          
             _pdf[np.isnan(_pdf)] = 0
         return _pdf
+
+    def draw_sample(self, n, alpha=None, beta=None, delta=None):
+        scipy_par = self._get_scipy_parameters(alpha, beta, delta)
+        rvs_size = self._get_rvs_size(n, scipy_par)
+        return sts.exponweib.rvs(*scipy_par, size=rvs_size)
 
     
     def _fit_mle(self, samples):
@@ -492,8 +600,7 @@ class ExponentiatedWeibullDistribution(Distribution):
 
         return wlsq_error
     
-    def draw_sample(self, n):
-        return sts.exponweib.rvs(self.delta, self.beta, loc=0, scale=self.alpha, size=n)
+
             
         
         

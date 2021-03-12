@@ -136,8 +136,7 @@ class GlobalHierarchicalModel(MultivariateModel):
                 fs[:, i] = self.distributions[i].pdf(x[:, i])
             else:
                 cond_idx = self.conditional_on[i]
-                fs[:, i] = np.array([self.distributions[i].pdf(x[j, i], given=x[j, cond_idx]) 
-                                     for j in range(len(x))])
+                fs[:, i] = self.distributions[i].pdf(x[:, i], given=x[:, cond_idx])
 
         
         return np.prod(fs, axis=-1)
@@ -158,8 +157,7 @@ class GlobalHierarchicalModel(MultivariateModel):
                 x[:, i] = self.distributions[i].icdf(p[:, i])
             else:
                 cond_idx = self.conditional_on[i]
-                x[:, i] = np.array([self.distributions[i].icdf(p[j, i], given=x[j, cond_idx]) 
-                                    for j in range(len(p))])
+                x[:, i] = self.distributions[i].icdf(p[:, i], given=x[:, cond_idx])
                 
         return x
         
@@ -288,8 +286,7 @@ class GlobalHierarchicalModel(MultivariateModel):
                 samples[:, i] = dist.draw_sample(n)
             else:
                 conditioning_values = samples[:, cond_idx]
-                for j in range(n):
-                    samples[j, i] = dist.draw_sample(1, conditioning_values[j])
+                samples[:, i] = dist.draw_sample(1, conditioning_values)
                     
         return samples
     
