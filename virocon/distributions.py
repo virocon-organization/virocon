@@ -82,7 +82,7 @@ class ConditionalDistribution():
         dist = self._get_dist(given)
         return dist.icdf(x)
         
-    def draw_sample_(self, n, given):
+    def draw_sample(self, n, given):
         dist = self._get_dist(given)
         return dist.draw_sample(n)
     

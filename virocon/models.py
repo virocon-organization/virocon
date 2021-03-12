@@ -289,7 +289,7 @@ class GlobalHierarchicalModel(MultivariateModel):
             else:
                 conditioning_values = samples[:, cond_idx]
                 for j in range(n):
-                    samples[j, i] = dist.draw_sample_(1, conditioning_values[j])
+                    samples[j, i] = dist.draw_sample(1, conditioning_values[j])
                     
         return samples
     
