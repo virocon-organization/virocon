@@ -1,5 +1,5 @@
-import sys 
-sys.path.append("..")
+# import sys 
+# sys.path.append("..")
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -37,7 +37,7 @@ dist_description_1 = {"distribution" : LogNormalDistribution(),
 
 ghm = GlobalHierarchicalModel([dist_description_0, dist_description_1])
 
-steps = 2
+steps = 5
 
 x, dx = np.linspace(0, 20, num=steps, retstep=True)
 # x = x[:, np.newaxis]
@@ -57,9 +57,9 @@ print("my done")
 
 # %%
 
-# import sys 
-# sys.path.append("../viroconcom")
-sys.path.append("../../viroconcom")
+import sys 
+sys.path.append("../viroconcom")
+# sys.path.append("../../viroconcom")
 from viroconcom.params import FunctionParam
 from viroconcom.distributions import (ExponentiatedWeibullDistribution, 
                                       LognormalDistribution, 

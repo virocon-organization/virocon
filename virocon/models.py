@@ -142,11 +142,40 @@ class GlobalHierarchicalModel(MultivariateModel):
         return np.prod(fs, axis=-1)
     
     
-    def cdf(self, *args, **kwargs):
-        pass
+    def cdf(self, x):
+        x = np.asarray_chkfinite(x)
+        
+        n_dim = self.n_dim
+        integral_order = list(range(n_dim))
+        
+        def get_integral_func():
+            arg_order = integral_order
+            
+            def integral_func(*args):
+                assert len(args) == n_dim
+                # sort arguments as expected by pdf (the models order)
+                x = np.array(args)[np.argsort(arg_order)].reshape((1, n_dim))
+                return self.pdf(x)
+            
+            return integral_func
+        
+        lower_integration_limits = [0] * n_dim
+        
+        integral_func = get_integral_func()
+
+        p = np.empty(len(x))
+        for i in range(len(x)):
+            
+            integration_limits = [(lower_integration_limits[j], x[i, j])
+                                  for j in range(n_dim)]
+            
+            p[i], error = integrate.nquad(integral_func, integration_limits)
+
+
+        return p
     
     
-    def icdf(self, p):
+    def icdf(self, p): # TODO move to IFORMContour
         p = np.asarray_chkfinite(p)
         x = np.empty_like(p)
         
