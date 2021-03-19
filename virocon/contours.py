@@ -3,6 +3,10 @@ import warnings
 import numpy as np
 import scipy.stats as sts
 import scipy.ndimage as ndi
+import networkx as nx
+
+from sklearn.neighbors import NearestNeighbors
+
 
 from virocon._n_sphere import NSphere
 
@@ -10,6 +14,56 @@ def calculate_alpha(state_duration, return_period):
     alpha = state_duration / (return_period * 365.25 * 24)
     return alpha
 
+
+def sort_points_to_form_continous_line(x, y, search_for_optimal_start=False):
+    """
+    Sorts contour points to form a a continous line / contour.
+
+    Thanks to https://stackoverflow.com/a/37744549
+
+    Parameters
+    ----------
+    x : array_like
+    y : array_like
+    search_for_optimal_start : boolean, optional
+     If true, the algorithm also searches for the ideal starting node, see the
+     stackoverflow link for more info.
+
+    Returns
+    -------
+    sorted_points : tuple of array_like floats
+        The sorted points.
+    """
+    points = np.c_[x, y]
+    clf = NearestNeighbors(n_neighbors=2).fit(points)
+    G = clf.kneighbors_graph()
+    T = nx.from_scipy_sparse_matrix(G)
+    order = list(nx.dfs_preorder_nodes(T, 0))
+
+    xx = x[order]
+    yy = y[order]
+
+    if search_for_optimal_start:
+        paths = [list(nx.dfs_preorder_nodes(T, i)) for i in range(len(points))]
+        mindist = np.inf
+        minidx = 0
+
+        for i in range(len(points)):
+            p = paths[i]  # Order of nodes.
+            ordered = points[p]  # Ordered nodes.
+            # Find cost of that order by the sum of euclidean distances
+            # between points (i) and (i + 1).
+            cost = (((ordered[:-1] - ordered[1:]) ** 2).sum(1)).sum()
+            if cost < mindist:
+                mindist = cost
+                minidx = i
+
+        opt_order = paths[minidx]
+
+        xx = x[opt_order]
+        yy = y[opt_order]
+
+    return xx, yy
 
 class IFORMContour():
     
@@ -257,12 +311,24 @@ class HighestDensityContour():
 
             coordinates.append(partial_coordinates)
 
+        is_single_contour = False
         if len(coordinates) == 1:
+            is_single_contour = True
             coordinates = coordinates[0]
             
         self.sample_coords = sample_coords
         self.fm = fm
-        self.coordinates = np.array(coordinates).T
+        
+        if is_single_contour:
+            if n_dim == 2:
+                self.coordinates = np.array(
+                    sort_points_to_form_continous_line(*coordinates,
+                                                       search_for_optimal_start=True)).T
+            else:
+                self.coordinates = np.array(coordinates).T
+        else:
+            self.coordinates = coordinates
+            # TODO raise warning
     
     
     @staticmethod
