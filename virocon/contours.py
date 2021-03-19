@@ -145,9 +145,14 @@ class HighestDensityContour():
         n_dim = self.model.n_dim
         limits = self.limits
         deltas = self.deltas
+
         if limits is None:
-            limits = [(0, 10)] * n_dim
-            # TODO set better default limits
+            alpha = self.alpha
+            marginal_icdf = self.model.marginal_icdf
+            non_exceedance_p = 1 - 0.2 ** n_dim * alpha
+            limits = [(0, marginal_icdf(non_exceedance_p, dim))
+                      for dim in range(n_dim)]
+            # TODO use distributions lower bound instead of zero
         else:
             # Check limits length.
             if len(limits) != n_dim:
