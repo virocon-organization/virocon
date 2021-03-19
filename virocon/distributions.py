@@ -172,6 +172,9 @@ class Distribution(ABC):
 
     @staticmethod
     def _get_rvs_size(n, pars):
+        # Returns the size parameter for the scipy rvs method.
+        # If there are any iterable pars it is a tuple,
+        # otherwise n is returned.
         at_least_one_iterable = False
         par_length = 0
         for par in pars:
