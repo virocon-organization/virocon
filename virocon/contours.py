@@ -244,7 +244,7 @@ class HighestDensityContour():
         alpha = self.alpha
         
         # Create sampling coordinate arrays.
-        sample_coords = []
+        cell_center_coordinates = []
         for i, lim_tuple in enumerate(limits):
             try:
                 iter(lim_tuple)
@@ -260,10 +260,10 @@ class HighestDensityContour():
             max_ = max(lim_tuple)
             delta = deltas[i]
             samples = np.arange(min_, max_+ delta, delta)
-            sample_coords.append(samples)
+            cell_center_coordinates .append(samples)
 
         
-        f = self.cell_averaged_joint_pdf(sample_coords) # TODO
+        f = self.cell_averaged_joint_pdf(cell_center_coordinates ) # TODO
 
         if np.isnan(f).any():
             raise ValueError("Encountered nan in cell averaged probabilty joint pdf. "
@@ -307,7 +307,7 @@ class HighestDensityContour():
             # Calculate the values corresponding to the indice
             partial_coordinates = []
             for dimension, indice in enumerate(partial_contour_indice):
-                partial_coordinates.append(sample_coords[dimension][indice])
+                partial_coordinates.append(cell_center_coordinates [dimension][indice])
 
             coordinates.append(partial_coordinates)
 
@@ -316,7 +316,7 @@ class HighestDensityContour():
             is_single_contour = True
             coordinates = coordinates[0]
             
-        self.sample_coords = sample_coords
+        self.cell_center_coordinates = cell_center_coordinates
         self.fm = fm
         
         if is_single_contour:
@@ -392,19 +392,6 @@ class HighestDensityContour():
 
         Multiplies the cell averaged probability densities of all distributions.
 
-        Parameters
-        ----------
-        coords : List[array_like]
-            List of the sampling points of the random variables.
-            The length of coords has to equal self.model.n_dim.
-
-        Returns
-        -------
-        fbar : ndarray
-            Cell averaged joint probabilty density function evaluated at coords.
-            It is a self.model.n_dim dimensional array,
-            with shape (len(coords[0]), len(coords[1]), ...)
-
         """
         n_dim = len(coords)
         fbar = np.ones(((1,) * n_dim), dtype=np.float64)
@@ -421,21 +408,6 @@ class HighestDensityContour():
         of the cumulative distributions function, evaluated at the grid cells borders.
         i.e. :math:`f(x) \\approx \\frac{F(x+ 0.5\\Delta x) - F(x- 0.5\\Delta x) }{\\Delta x}`
 
-        Parameters
-        ----------
-        dist_idx : int
-            The index of the distribution to calculate the pdf of,
-            according to order of self.model.distributions.
-        coords : list[array_like]
-            List of the sampling points of the random variables.
-            The pdf is calculated at coords[dist_idx].
-            The length of coords has to equal self.model.n_dim.
-
-        Returns
-        -------
-        fbar : ndarray
-            Cell averaged probabilty density function evaluated at coords[dist_idx].
-            It is a self.model.n_dim dimensional array.
         """
         n_dim = len(coords)
         dist = self.model.distributions[dist_idx]
