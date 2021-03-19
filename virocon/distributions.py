@@ -122,7 +122,7 @@ class Distribution(ABC):
         
     @abstractmethod
     def draw_sample(self, n,  *args, **kwargs):
-        """Draw samples from distribution."""
+        """Draw sample from distribution."""
 
     def fit(self, data):
         """Fit the distribution to the sampled data"""
@@ -239,7 +239,7 @@ class WeibullDistribution(Distribution):
         return sts.weibull_min.rvs(*scipy_par, size=rvs_size)
 
 
-    def _fit_mle(self, samples):
+    def _fit_mle(self, sample):
         p0={"lambda_": self.lambda_, "k": self.k, "theta": self.theta}
         
         fparams = {}
@@ -251,7 +251,7 @@ class WeibullDistribution(Distribution):
             fparams["fscale"] = self.f_lambda_
         
         self.k, self.theta, self.lambda_  = (
-            sts.weibull_min.fit(samples, p0["k"], loc=p0["theta"], 
+            sts.weibull_min.fit(sample, p0["k"], loc=p0["theta"],
                                 scale=p0["lambda_"], **fparams)
              )
         
@@ -312,7 +312,7 @@ class LogNormalDistribution(Distribution):
         rvs_size = self._get_rvs_size(n, scipy_par)
         return sts.lognorm.rvs(*scipy_par, size=rvs_size)
     
-    def _fit_mle(self, samples):
+    def _fit_mle(self, sample):
         p0={"scale": self._scale, "sigma": self.sigma}
         
         fparams = {"floc" : 0}
@@ -324,7 +324,7 @@ class LogNormalDistribution(Distribution):
         
         #scale0 = math.exp(p0["mu"])
         self.sigma, _, self._scale  = (
-            sts.lognorm.fit(samples, p0["sigma"], scale=p0["scale"], **fparams)
+            sts.lognorm.fit(sample, p0["sigma"], scale=p0["scale"], **fparams)
              )
         #self.mu = math.log(self._scale)
         
@@ -403,20 +403,18 @@ class LogNormalNormFitDistribution(LogNormalDistribution):
         return sts.lognorm.rvs(*scipy_par, size=rvs_size)
     
      
-    def _fit_mle(self, samples):
+    def _fit_mle(self, sample):
         
 
         if self.f_mu_norm is None:
-            self.mu_norm = np.mean(samples)
+            self.mu_norm = np.mean(sample)
         else:
             self.mu_norm = self.f_mu_norm
             
         if self.f_sigma_norm is None:
-            self.sigma_norm = np.std(samples, ddof=1)
+            self.sigma_norm = np.std(sample, ddof=1)
         else:
             self.sigma_norm = self.f_sigma_norm
-        
-        # self.mu_norm, self.sigma_norm = sts.norm.fit(samples)
         
         
     def _fit_lsq(self, data):
@@ -492,7 +490,7 @@ class ExponentiatedWeibullDistribution(Distribution):
         return sts.exponweib.rvs(*scipy_par, size=rvs_size)
 
     
-    def _fit_mle(self, samples):
+    def _fit_mle(self, sample):
         p0={"alpha": self.alpha, "beta": self.beta, "delta": self.delta}
     
         fparams = {"floc" : 0}
@@ -505,7 +503,7 @@ class ExponentiatedWeibullDistribution(Distribution):
              fparams["fscale"] = self.f_alpha
                 
         self.delta, self.beta, _, self.alpha  = (
-            sts.exponweib.fit(samples, p0["delta"], p0["beta"], 
+            sts.exponweib.fit(sample, p0["delta"], p0["beta"],
                                 scale=p0["alpha"], **fparams)
              )
         
