@@ -432,7 +432,7 @@ class DirectSamplingContour():
 
         # Calculate non-exceedance probability.
         # alpha = 1 - (1 / (self.return_period * 365.25 * 24 / self.state_duration))
-        beta = 1 - alpha
+        non_exceedance_p = 1 - alpha
 
         # Define the angles such the coordinates[0] and coordinates[1] will
         # be based on the exceedance plane with angle 0 deg, with 0 deg being
@@ -449,7 +449,7 @@ class DirectSamplingContour():
         i = 0
         while i < length_t:
             z = x * np.cos(angles[i]) + y * np.sin(angles[i])
-            r[i] = np.quantile(z, beta)
+            r[i] = np.quantile(z, non_exceedance_p)
             i = i + 1
 
         # Find intersection of lines.
