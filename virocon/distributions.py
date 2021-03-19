@@ -14,7 +14,7 @@ from scipy.optimize import fmin
 # (Though the dict order might work as well in 3.6)
 
 
-class ConditionalDistribution():
+class ConditionalDistribution:
     
     def __init__(self, distribution, parameters):
         # allow setting fitting initials on class creation?
@@ -24,7 +24,10 @@ class ConditionalDistribution():
         self.conditional_parameters = {}
         self.fixed_parameters = {}
         # TODO check that dependency functions are not duplicates
-        
+
+        # Check if the parameters dict contains keys/parameters that
+        # are not known to the distribution.
+        # (use set operations for that purpose)
         unknown_params = set(parameters).difference(self.param_names)
         if len(unknown_params) > 0:
             raise ValueError("Unknown param(s) in parameters."
@@ -34,7 +37,7 @@ class ConditionalDistribution():
         for par_name in self.param_names:
             # is the parameter defined as a dependence function?
             if par_name not in parameters:
-                # if it is not dependence function it must be fixed
+                # if it is not a dependence function it must be fixed
                 if getattr(distribution, f"f_{par_name}") is None:
                     raise ValueError("Parameters of the distribution must be "
                                      "either defined by a dependence function "                                     
@@ -79,7 +82,7 @@ class ConditionalDistribution():
         self.parameters_per_interval = []
         self.data_intervals = data
         self.conditioning_values = np.array(conditioning_values)
-        # fit distribution to each interval
+        # Fit distribution to each interval.
         for interval_data in data:
             #dist = self.distribution_class()
             dist = copy.deepcopy(self.distribution)
@@ -87,7 +90,7 @@ class ConditionalDistribution():
             self.distributions_per_interval.append(dist)
             self.parameters_per_interval.append(dist.parameters)
             
-        # fit dependence functions
+        # Fit dependence functions.
         fitted_dependence_functions = {}
         for par_name, dep_func in self.conditional_parameters.items():
             x = self.conditioning_values
