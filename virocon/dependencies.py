@@ -50,6 +50,16 @@ class DependenceFunction():
             
             
     def fit(self, x, y):
+        # The dependence function does not know in which order all the
+        # dependence functions are fitted.
+        # If another DependenceFunction has to be fitted before the current one,
+        # the current one will not be fitted.
+        # In the init the current dependence function registered at all
+        # dependence functions which it depends on.
+        # After fitting, every dependence functions signals all it's registered
+        # dependence functions that it was fitted,
+        # so that they know they may be fitted as well.
+
         # save x and y, this also marks that fit was called
         self.x = x
         self.y = y
