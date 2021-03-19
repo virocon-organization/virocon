@@ -28,6 +28,8 @@ class IFORMContour():
         """
         n_dim = self.model.n_dim
         n_points = self.n_points
+        distributions = self.model.distributions
+        conditional_on = self.model.conditional_on
         
         beta = sts.norm.ppf(1 - self.alpha)
         self.beta = beta
@@ -49,10 +51,17 @@ class IFORMContour():
         norm_cdf = sts.norm.cdf(sphere_points)
 
         # Inverse procedure. Get coordinates from probabilities.
-        coordinates = self.model.icdf(norm_cdf)
-        # for index, distribution in enumerate(distributions):
-        #     data[index] = distribution.i_cdf(norm_cdf_per_dimension[index], rv_values=data,
-        #                                      dependencies=self.distribution.dependencies[index])
+        p = norm_cdf
+        coordinates = np.empty_like(p)
+
+        coordinates[:, 0] = distributions[0].icdf(p[:, 0])
+
+        for i in range(1, n_dim):
+              if conditional_on[i] is None:
+                  coordinates[:, i] = distributions[i].icdf(p[:, i])
+              else:
+                  cond_idx = conditional_on[i]
+                  coordinates[:, i] = distributions[i].icdf(p[:, i], given=coordinates[:, cond_idx])
 
 
         self.sphere_points = sphere_points
