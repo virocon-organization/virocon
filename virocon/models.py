@@ -19,9 +19,6 @@ class MultivariateModel(ABC):
     def cdf(self, *args, **kwargs):
         pass
     @abstractmethod
-    def icdf(self, *args, **kwargs):
-        pass
-    @abstractmethod
     def marginal_pdf(self, *args, **kwargs):
         pass
     @abstractmethod        
@@ -173,25 +170,8 @@ class GlobalHierarchicalModel(MultivariateModel):
 
 
         return p
-    
-    
-    def icdf(self, p): # TODO move to IFORMContour
-        p = np.asarray_chkfinite(p)
-        x = np.empty_like(p)
-        
-        x[:, 0] = self.distributions[0].icdf(p[:, 0])
-        
-        for i in range(1, self.n_dim):
-            if self.conditional_on[i] is None:
-                x[:, i] = self.distributions[i].icdf(p[:, i])
-            else:
-                cond_idx = self.conditional_on[i]
-                x[:, i] = self.distributions[i].icdf(p[:, i], given=x[:, cond_idx])
-                
-        return x
-        
-        
-    
+
+
     def marginal_pdf(self, x, dim):
         #x = x.reshape((-1, 1))
         if self.conditional_on[dim] is None:
