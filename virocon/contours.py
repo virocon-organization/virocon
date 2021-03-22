@@ -16,6 +16,28 @@ __all__ = ["calculate_alpha", "save_contour_coordinates", "IFORMContour",
            "ISORMContour", "HighestDensityContour", "DirectSamplingContour"]
 
 def calculate_alpha(state_duration, return_period):
+    
+        """
+        Calculates the probability that an observation falls outside the 
+        environmental contour.
+        
+        Parameters
+        ----------
+        
+        state_duration : float, optional
+            Time period for which an environmental state is measured,
+            expressed in hours. Defaults to 3.
+        return_period : float, optional
+            The years to consider for calculation. Defaults to 50.
+            
+        Returns
+        -------
+        alpha : float
+            Element, that was calculated by the function.
+
+
+        """
+    
     alpha = state_duration / (return_period * 365.25 * 24)
     return alpha
 
@@ -115,7 +137,25 @@ class Contour(ABC):
 
 
 class IFORMContour(Contour):
+        """
+        Contour based on the inverse first-order reliability method.
 
+        This method was proposed by Winterstein et al. (1993).
+
+        Parameters
+        ----------
+        mul_var_distribution : MultivariateDistribution
+            The distribution to be used to calculate the contour.
+        alpha : float
+            probability that an observation falls outside the 
+            environmental contour
+        n_points : int, optional
+            Number of points on the contour. Defaults to 180.
+
+
+        """
+   
+    
     def __init__(self, model, alpha, n_points=180):
         self.model = model
         self.alpha = alpha
@@ -168,8 +208,26 @@ class IFORMContour(Contour):
         self.coordinates = coordinates
 
 
-class ISORMContour(Contour):
+class ISORMContour(Contour):   
+        """
+        Contour based on the inverse second-order reliability method.
 
+        This method was proposed by Chai and Leira (2018). The paper's DOI
+        is 10.1016/j.marstruc.2018.03.007 .
+
+        Parameters
+        ----------
+        mul_var_distribution : MultivariateDistribution
+            The distribution to be used to calculate the contour.
+        alpha : float
+            probability that an observation falls outside the 
+            environmental contour
+        n_points : int, optional
+            Number of points on the contour. Defaults to 180.
+        
+
+        """
+    
     def __init__(self, model, alpha, n_points=180):
         self.model = model
         self.alpha = alpha
@@ -230,6 +288,31 @@ class ISORMContour(Contour):
 class HighestDensityContour(Contour):
 
     def __init__(self, model, alpha, limits=None, deltas=None):
+    
+        """
+        Contour based on highest density contour method.
+
+        This method was proposed by Haselsteiner et al. (2017). The paper's
+        DOI is 10.1016/j.coastaleng.2017.03.002 .
+
+        Parameters
+        ----------
+        
+        alpha : float
+            probability that an observation falls outside the 
+            environmental contour
+        limits : list of tuples, optional
+            One 2-Element tuple per dimension in mul_var_distribution,
+            containing min and max limits for calculation. ((min, max)).
+            Smaller value is always assumed minimum. Defaults to list of (0, 10)
+        deltas : float or list of float, optional
+            The grid stepsize used for calculation.
+            If a single float is supplied it is used for all dimensions.
+            If a list of float is supplied it has to be of the same length
+            as there are dimensions in mul_var_dist.
+            Defaults to 0.5.
+        """
+
         self.model = model
         self.alpha = alpha
         self.limits = limits
@@ -280,6 +363,12 @@ class HighestDensityContour(Contour):
         self.deltas = deltas
 
     def _compute(self):
+        
+        """
+        Calculates coordinates using HDC.
+
+        """
+        
         limits = self.limits
         deltas = self.deltas
         n_dim = self.model.n_dim
@@ -373,6 +462,7 @@ class HighestDensityContour(Contour):
 
     @staticmethod
     def cumsum_biggest_until(array, limit):
+        
         """
         Find biggest elements to sum to reach limit.
 
@@ -401,6 +491,7 @@ class HighestDensityContour(Contour):
         Notes
         ------
         A ``RuntimeWarning`` is raised if the limit cannot be reached by summing all values.
+        
         """
 
         flat_array = np.ravel(array)
@@ -426,12 +517,14 @@ class HighestDensityContour(Contour):
         return summed_fields, last_summed
 
     def cell_averaged_joint_pdf(self, coords):
+        
         """
         Calculates the cell averaged joint probabilty density function.
 
         Multiplies the cell averaged probability densities of all distributions.
 
         """
+        
         n_dim = len(coords)
         fbar = np.ones(((1,) * n_dim), dtype=np.float64)
         for dist_idx in range(n_dim):
@@ -440,6 +533,7 @@ class HighestDensityContour(Contour):
         return fbar
 
     def cell_averaged_pdf(self, dist_idx, coords):
+        
         """
         Calculates the cell averaged probabilty density function of a single distribution.
 
@@ -448,6 +542,7 @@ class HighestDensityContour(Contour):
         i.e. :math:`f(x) \\approx \\frac{F(x+ 0.5\\Delta x) - F(x- 0.5\\Delta x) }{\\Delta x}`
 
         """
+        
         n_dim = len(coords)
         dist = self.model.distributions[dist_idx]
         cond_idx = self.model.conditional_on[dist_idx]
@@ -480,8 +575,40 @@ class HighestDensityContour(Contour):
         fbar_out = fbar.reshape(fbar_out_shape)
         return fbar_out / dx
 
-
 class DirectSamplingContour(Contour):
+        """
+        Direct sampling contour as introduced by Huseby et al. (2013), see
+        doi.org/10.1016/j.oceaneng.2012.12.034 .
+
+        This implementation only works for two-dimensional distributions.
+
+        Parameters
+        ----------
+        mul_var_dist : MultivariateDistribution
+            Must be 2-dimensional.
+        return_period : int, optional
+            Return period given in years. Defaults to 1.
+        state_duration : int, optional
+            Time period for which an environmental state is measured,
+            expressed in hours. Defaults to 3.
+        n : int, optional
+            Number of data points that shall be Monte Carlo simulated.
+        deg_step : float, optional
+            Directional step in degrees. Defaults to 5.
+        sample : 2-dimensional ndarray, optional
+            Monte Carlo simulated environmental states. Array is of shape (d, n)
+            with d being the number of variables and n being the number of
+            observations.
+        timeout : int, optional
+            The maximum time in seconds there the contour has to be computed.
+            This parameter also controls multiprocessing. If timeout is None
+            serial processing is performed, if it is not None multiprocessing
+            is used. Defaults to None.
+        Raises
+        ------
+        TimeoutError,
+            If the calculation takes too long and the given value for timeout is exceeded.
+        """
 
     def __init__(self, model, alpha, n=100000, deg_step=5, sample=None):
         self.model = model
