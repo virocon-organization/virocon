@@ -16,7 +16,27 @@ __all__ = ["WeibullDistribution", "LogNormalDistribution",
 # (Though the dict order might work as well in 3.6)
 
 
+
 class ConditionalDistribution:
+
+    
+        """
+        Conditional distributions for two or more (environmental) parameters 
+        that are dependet on each other. 
+        
+        Parameters
+        ----------
+        distribution : Distribution
+            Function, that calculates the probabilities of occurence for
+            different possbile (environmental) events.
+        parameters: 
+           Probability distributions have parameters (1-3) that define its shape,
+           location and scale. These parameters represent essential properties
+           of the distribution.
+        
+        """
+
+
     
     def __init__(self, distribution, parameters):
         # allow setting fitting initials on class creation?
@@ -68,15 +88,23 @@ class ConditionalDistribution:
         return param_values
 
     def pdf(self, x, given):
+        """Probability density function."""
+        
         return self.distribution.pdf(x, **self._get_param_values(given))
     
     def cdf(self, x, given):
+         """Cumulative distribution function."""
+        
         return self.distribution.cdf(x, **self._get_param_values(given))
     
     def icdf(self, prob, given):
+        """Inverse cumulative distribution function."""
+        
         return self.distribution.icdf(prob, **self._get_param_values(given))
         
     def draw_sample(self, n, given):
+         """Draw a random sample with length n."""
+         
         return self.distribution.draw_sample(n, **self._get_param_values(given))
     
     def fit(self, data, conditioning_values, conditioning_interval_boundaries,
@@ -106,13 +134,23 @@ class ConditionalDistribution:
 
 
 class Distribution(ABC):
-    """
-    Abstract base class for distributions.
-    """
+   """
+   Abstract base class for distributions. 
+        
+   Models the probabilities of occurence for different possbile 
+   (environmental) events.
+   """
+
+
 
     @property
     @abstractmethod
     def parameters(self):
+        """
+           Parameters of the probability distribution.
+        
+        """
+        
         return {}
 
     @abstractmethod

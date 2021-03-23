@@ -24,11 +24,11 @@ def calculate_alpha(state_duration, return_period):
         Parameters
         ----------
         
-        state_duration : float, optional
+        state_duration : float
             Time period for which an environmental state is measured,
-            expressed in hours. Defaults to 3.
-        return_period : float, optional
-            The years to consider for calculation. Defaults to 50.
+            expressed in hours.
+        return_period : float
+            The years to consider for calculation.
             
         Returns
         -------
@@ -144,8 +144,8 @@ class IFORMContour(Contour):
 
         Parameters
         ----------
-        mul_var_distribution : MultivariateDistribution
-            The distribution to be used to calculate the contour.
+        model :  MultivariateModel
+            The model to be used to calculate the contour.
         alpha : float
             probability that an observation falls outside the 
             environmental contour
@@ -217,8 +217,8 @@ class ISORMContour(Contour):
 
         Parameters
         ----------
-        mul_var_distribution : MultivariateDistribution
-            The distribution to be used to calculate the contour.
+       model : MultivariateModel
+            The model to be used to calculate the contour.
         alpha : float
             probability that an observation falls outside the 
             environmental contour
