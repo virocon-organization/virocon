@@ -18,7 +18,6 @@ __all__ = ["WeibullDistribution", "LogNormalDistribution",
 
 
 class ConditionalDistribution:
-
     
         """
         Conditional distributions for two or more (environmental) parameters 
@@ -27,12 +26,10 @@ class ConditionalDistribution:
         Parameters
         ----------
         distribution : Distribution
-            Function, that calculates the probabilities of occurence for
-            different possbile (environmental) events.
-        parameters: 
-           Probability distributions have parameters (1-3) that define its shape,
-           location and scale. These parameters represent essential properties
-           of the distribution.
+            calculates the probabilities of occurence for different possbile 
+            (environmental) events.
+        parameters: type Distribution???
+           Parameters of the probability distribution.
         
         """
 
@@ -88,17 +85,29 @@ class ConditionalDistribution:
         return param_values
 
     def pdf(self, x, given):
-        """Probability density function."""
+        """Probability density function.
+        
+           TODO: Beschreibung
+     
+           """
         
         return self.distribution.pdf(x, **self._get_param_values(given))
     
     def cdf(self, x, given):
-         """Cumulative distribution function."""
+         """Cumulative distribution function.
+         
+            TODO: Beschreibung
+         
+         """
         
         return self.distribution.cdf(x, **self._get_param_values(given))
     
     def icdf(self, prob, given):
-        """Inverse cumulative distribution function."""
+        """Inverse cumulative distribution function.
+        
+            TODO: Beschreibung
+        
+        """
         
         return self.distribution.icdf(prob, **self._get_param_values(given))
         
@@ -134,6 +143,7 @@ class ConditionalDistribution:
 
 
 class Distribution(ABC):
+
    """
    Abstract base class for distributions. 
         
@@ -146,6 +156,7 @@ class Distribution(ABC):
     @property
     @abstractmethod
     def parameters(self):
+        
         """
            Parameters of the probability distribution.
         
@@ -155,22 +166,43 @@ class Distribution(ABC):
 
     @abstractmethod
     def cdf(self, x, *args, **kwargs):
-        """Cumulative distribution function."""
+        """Cumulative distribution function.
+        
+        TODO: Beschreibung
+        
+        """
 
     @abstractmethod
     def pdf(self, x, *args, **kwargs):
-        """Probability density function."""
+        """Probability density function.
+        
+        TODO: Beschreibung
+        
+        """
 
     @abstractmethod
     def icdf(self, prob, *args, **kwargs):
-        """Inverse cumulative distribution function."""
+        """Inverse cumulative distribution function.
+        
+        TODO: Beschreibung
+        
+        """
         
     @abstractmethod
     def draw_sample(self, n,  *args, **kwargs):
-        """Draw sample from distribution."""
+        """Draw sample from distribution.
+        
+        TODO: Beschreibung
+        
+        """
 
     def fit(self, data, method="mle", weights=None):
-        """Fit the distribution to the sampled data"""
+        """Fit the distribution to the sampled data.
+        
+        TODO: Data format
+        
+        """
+        method = self.fit_method
             
         if method.lower() == "mle":
             self._fit_mle(data)
@@ -213,7 +245,10 @@ class Distribution(ABC):
 
 
 class WeibullDistribution(Distribution):
-    
+     """
+     TODO: Beschreibung
+     
+     """
     
     def __init__(self, alpha=1, beta=1, gamma=0, f_alpha=None, f_beta=None,
                  f_gamma=None):
@@ -285,7 +320,10 @@ class WeibullDistribution(Distribution):
 
         
 class LogNormalDistribution(Distribution):
-    
+    """
+     TODO: Beschreibung
+     
+    """
    
     def __init__(self, mu=0, sigma=1, f_mu=None, f_sigma=None):
         
@@ -442,7 +480,11 @@ class LogNormalNormFitDistribution(LogNormalDistribution):
 class ExponentiatedWeibullDistribution(Distribution):
     """
     An exponentiated Weibull distribution.
+    
 
+     TODO: Beschreibung
+
+    
     Note
     -----
     We use the parametrization that is also used in

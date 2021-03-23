@@ -12,6 +12,11 @@ __all__ = ["GlobalHierarchicalModel"]
 
 class MultivariateModel(ABC):
     
+    """
+    TODO: Beschreibung
+    
+    """
+    
     @abstractmethod
     def pdf(self, *args, **kwargs):
         pass
@@ -33,6 +38,11 @@ class MultivariateModel(ABC):
 
 
 class GlobalHierarchicalModel(MultivariateModel):
+    
+     """
+     TODO: Beschreibung
+     
+     """
     
     _dist_description_keys = {"distribution", "intervals", "conditional_on",
                               "parameters"}
@@ -115,7 +125,12 @@ class GlobalHierarchicalModel(MultivariateModel):
 
         return fit_descriptions
     
+
     def fit(self, data, fit_descriptions=None):
+        """
+        TODO: Beschreibung
+          
+        """
 
         data = np.array(data)
 
@@ -147,6 +162,12 @@ class GlobalHierarchicalModel(MultivariateModel):
                     
                     
     def pdf(self, x):
+        
+           """
+           TODO: Beschreibung
+     
+           """
+        
         x = np.asarray_chkfinite(x)        
         fs = np.empty_like(x)
         
@@ -165,6 +186,12 @@ class GlobalHierarchicalModel(MultivariateModel):
     
     
     def cdf(self, x):
+        
+          """
+           TODO: Beschreibung
+     
+          """
+        
         x = np.asarray_chkfinite(x)
         
         n_dim = self.n_dim
@@ -198,6 +225,12 @@ class GlobalHierarchicalModel(MultivariateModel):
 
 
     def marginal_pdf(self, x, dim):
+        
+          """
+           TODO: Beschreibung
+     
+          """
+        
         #x = x.reshape((-1, 1))
         if self.conditional_on[dim] is None:
             # the distribution is not conditional -> it is the marginal
@@ -243,6 +276,12 @@ class GlobalHierarchicalModel(MultivariateModel):
     
     
     def marginal_cdf(self, x, dim):
+        
+          """
+           TODO: Beschreibung
+    
+          """
+        
         #x = x.reshape((-1, 1))
         if self.conditional_on[dim] is None:
             # the distribution is not conditional -> it is the marginal
@@ -288,6 +327,12 @@ class GlobalHierarchicalModel(MultivariateModel):
     
     
     def marginal_icdf(self, p, dim, precision_factor=1):
+        
+          """
+           TODO: Beschreibung
+     
+          """
+        
         p = np.array(p)
         
         if self.conditional_on[dim] is None:

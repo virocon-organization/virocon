@@ -19,7 +19,7 @@ def calculate_alpha(state_duration, return_period):
     
         """
         Calculates the probability that an observation falls outside the 
-        environmental contour.
+        environmental contour (exceedance probability).
         
         Parameters
         ----------
@@ -28,7 +28,7 @@ def calculate_alpha(state_duration, return_period):
             Time period for which an environmental state is measured,
             expressed in hours.
         return_period : float
-            The years to consider for calculation.
+            The years to consider for calculation. Converted into hours.
             
         Returns
         -------
@@ -61,6 +61,7 @@ def sort_points_to_form_continuous_line(x, y, search_for_optimal_start=False):
     sorted_points : tuple of array_like floats
         The sorted points.
     """
+    
     points = np.c_[x, y]
     clf = NearestNeighbors(n_neighbors=2).fit(points)
     G = clf.kneighbors_graph()
