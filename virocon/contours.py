@@ -5,17 +5,18 @@ import scipy.stats as sts
 import scipy.ndimage as ndi
 import networkx as nx
 
+from abc import ABC, abstractmethod
 from sklearn.neighbors import NearestNeighbors
 
-
 from virocon._n_sphere import NSphere
+
 
 def calculate_alpha(state_duration, return_period):
     alpha = state_duration / (return_period * 365.25 * 24)
     return alpha
 
 
-def sort_points_to_form_continous_line(x, y, search_for_optimal_start=False):
+def sort_points_to_form_continuous_line(x, y, search_for_optimal_start=False):
     """
     Sorts contour points to form a a continous line / contour.
 
@@ -65,17 +66,42 @@ def sort_points_to_form_continous_line(x, y, search_for_optimal_start=False):
 
     return xx, yy
 
-class IFORMContour():
-    
+
+class Contour(ABC):
+
+    def __init__(self):
+        try:
+            _ = self.model
+        except AttributeError:
+            raise NotImplementedError(f"Can't instantiate abstract class {type(self).__name__} "
+                                      "with abstract attribute model.")
+        try:
+            _ = self.alpha
+        except AttributeError:
+            raise NotImplementedError(f"Can't instantiate abstract class {type(self).__name__} "
+                                      "with abstract attribute model.")
+
+        self._compute()
+        try:
+            _ = self.coordinates
+        except AttributeError:
+            raise NotImplementedError(f"Can't instantiate abstract class {type(self).__name__} "
+                                      "with abstract attribute coordinates.")
+
+    @abstractmethod
+    def _compute(self):
+        pass
+
+
+class IFORMContour(Contour):
+
     def __init__(self, model, alpha, n_points=180):
         self.model = model
         self.alpha = alpha
         self.n_points = n_points
-        
-        self._compute()
-        
-        
-    def _compute(self,):
+        super().__init__()
+
+    def _compute(self, ):
         """
         Calculates coordinates using IFORM.
 
@@ -84,17 +110,17 @@ class IFORMContour():
         n_points = self.n_points
         distributions = self.model.distributions
         conditional_on = self.model.conditional_on
-        
+
         beta = sts.norm.ppf(1 - self.alpha)
         self.beta = beta
 
         # TODO Update NSphere to handle n_dim case with order
         # Create sphere
         if n_dim == 2:
-            _phi = np.linspace(0, 2 * np.pi , num=n_points, endpoint=False)
+            _phi = np.linspace(0, 2 * np.pi, num=n_points, endpoint=False)
             _x = np.cos(_phi)
             _y = np.sin(_phi)
-            _circle = np.stack((_x,_y), axis=1)
+            _circle = np.stack((_x, _y), axis=1)
             sphere_points = beta * _circle
 
         else:
@@ -111,38 +137,35 @@ class IFORMContour():
         coordinates[:, 0] = distributions[0].icdf(p[:, 0])
 
         for i in range(1, n_dim):
-              if conditional_on[i] is None:
-                  coordinates[:, i] = distributions[i].icdf(p[:, i])
-              else:
-                  cond_idx = conditional_on[i]
-                  coordinates[:, i] = distributions[i].icdf(p[:, i], given=coordinates[:, cond_idx])
-
+            if conditional_on[i] is None:
+                coordinates[:, i] = distributions[i].icdf(p[:, i])
+            else:
+                cond_idx = conditional_on[i]
+                coordinates[:, i] = distributions[i].icdf(p[:, i], given=coordinates[:, cond_idx])
 
         self.sphere_points = sphere_points
         self.coordinates = coordinates
-        
-        
-class ISORMContour():
+
+
+class ISORMContour(Contour):
+
     def __init__(self, model, alpha, n_points=180):
         self.model = model
         self.alpha = alpha
         self.n_points = n_points
-        
-        self._compute()
-        
-        
-    def _compute(self,):
+        super().__init__()
+
+    def _compute(self, ):
         """
         Calculates coordinates using ISORM.
 
         """
-    
+
         n_dim = self.model.n_dim
         n_points = self.n_points
-        
+
         distributions = self.model.distributions
         conditional_on = self.model.conditional_on
-        
 
         # Use the ICDF of a chi-squared distribution with n dimensions. For
         # reference see equation 20 in Chai and Leira (2018).
@@ -150,10 +173,10 @@ class ISORMContour():
 
         # Create sphere.
         if n_dim == 2:
-            _phi = np.linspace(0, 2 * np.pi , num=n_points, endpoint=False)
+            _phi = np.linspace(0, 2 * np.pi, num=n_points, endpoint=False)
             _x = np.cos(_phi)
             _y = np.sin(_phi)
-            _circle = np.stack((_x,_y)).T
+            _circle = np.stack((_x, _y)).T
             sphere_points = beta * _circle
 
         else:
@@ -166,7 +189,7 @@ class ISORMContour():
 
         # Inverse procedure. Get coordinates from probabilities.
         data = np.zeros((n_points, n_dim))
-        
+
         for i in range(n_dim):
             dist = distributions[i]
             cond_idx = conditional_on[i]
@@ -175,26 +198,24 @@ class ISORMContour():
             else:
                 conditioning_values = data[:, cond_idx]
                 for j in range(n_points):
-                    data[j, i] = dist.icdf(norm_cdf_per_dimension[i][j], 
+                    data[j, i] = dist.icdf(norm_cdf_per_dimension[i][j],
                                            given=conditioning_values[j])
-        
-        
+
         self.beta = beta
         self.sphere_points = sphere_points
         self.coordinates = data
 
 
-class HighestDensityContour():
-    
-    def __init__(self, model, alpha, limits, deltas):
+class HighestDensityContour(Contour):
+
+    def __init__(self, model, alpha, limits=None, deltas=None):
         self.model = model
         self.alpha = alpha
         self.limits = limits
         self.deltas = deltas
-        
         self._check_grid()
-        self._compute()
-        
+        super().__init__()
+
     def _check_grid(self):
         n_dim = self.model.n_dim
         limits = self.limits
@@ -211,7 +232,7 @@ class HighestDensityContour():
             # Check limits length.
             if len(limits) != n_dim:
                 raise ValueError("limits has to be of length equal to number of dimensions, "
-                                  f"but len(limits)={len(limits)}, n_dim={n_dim}.")
+                                 f"but len(limits)={len(limits)}, n_dim={n_dim}.")
         self.limits = limits
 
         if deltas is None:
@@ -232,17 +253,17 @@ class HighestDensityContour():
                                      "or list of length equal to number of dimensions, "
                                      f"but was list of length {len(deltas)}")
                 deltas = list(deltas)
-            except TypeError: # asserts that deltas is scalar
+            except TypeError:  # asserts that deltas is scalar
                 deltas = [deltas] * n_dim
-    
+
         self.deltas = deltas
-        
+
     def _compute(self):
         limits = self.limits
         deltas = self.deltas
         n_dim = self.model.n_dim
         alpha = self.alpha
-        
+
         # Create sampling coordinate arrays.
         cell_center_coordinates = []
         for i, lim_tuple in enumerate(limits):
@@ -251,7 +272,7 @@ class HighestDensityContour():
                 if len(lim_tuple) != 2:
                     raise ValueError("tuples in limits have to be of length 2 ( = (min, max)), "
                                      f"but tuple with index = {i}, has length = {len(lim_tuple)}.")
-                                 
+
             except TypeError:
                 raise ValueError("tuples in limits have to be of length 2 ( = (min, max)), "
                                  f"but tuple with index = {i}, has length = 1.")
@@ -259,11 +280,10 @@ class HighestDensityContour():
             min_ = min(lim_tuple)
             max_ = max(lim_tuple)
             delta = deltas[i]
-            samples = np.arange(min_, max_+ delta, delta)
-            cell_center_coordinates .append(samples)
+            samples = np.arange(min_, max_ + delta, delta)
+            cell_center_coordinates.append(samples)
 
-        
-        f = self.cell_averaged_joint_pdf(cell_center_coordinates ) # TODO
+        f = self.cell_averaged_joint_pdf(cell_center_coordinates)  # TODO
 
         if np.isnan(f).any():
             raise ValueError("Encountered nan in cell averaged probabilty joint pdf. "
@@ -299,7 +319,7 @@ class HighestDensityContour():
 
         coordinates = []
         # Iterate over all partial contours and start at 1.
-        for i in range(1, n_modes+1):
+        for i in range(1, n_modes + 1):
             # Array of arrays with same length, one per dimension
             # containing the indice of the contour.
             partial_contour_indice = np.nonzero(labeled_array == i)
@@ -307,7 +327,7 @@ class HighestDensityContour():
             # Calculate the values corresponding to the indice
             partial_coordinates = []
             for dimension, indice in enumerate(partial_contour_indice):
-                partial_coordinates.append(cell_center_coordinates [dimension][indice])
+                partial_coordinates.append(cell_center_coordinates[dimension][indice])
 
             coordinates.append(partial_coordinates)
 
@@ -315,22 +335,21 @@ class HighestDensityContour():
         if len(coordinates) == 1:
             is_single_contour = True
             coordinates = coordinates[0]
-            
+
         self.cell_center_coordinates = cell_center_coordinates
         self.fm = fm
-        
+
         if is_single_contour:
             if n_dim == 2:
                 self.coordinates = np.array(
-                    sort_points_to_form_continous_line(*coordinates,
-                                                       search_for_optimal_start=True)).T
+                    sort_points_to_form_continuous_line(*coordinates,
+                                                        search_for_optimal_start=True)).T
             else:
                 self.coordinates = np.array(coordinates).T
         else:
             self.coordinates = coordinates
             # TODO raise warning
-    
-    
+
     @staticmethod
     def cumsum_biggest_until(array, limit):
         """
@@ -383,9 +402,8 @@ class HighestDensityContour():
 
         last_summed = array[np.unravel_index(summed_flat_inds[-1], shape=array.shape)]
 
-
         return summed_fields, last_summed
-    
+
     def cell_averaged_joint_pdf(self, coords):
         """
         Calculates the cell averaged joint probabilty density function.
@@ -412,53 +430,52 @@ class HighestDensityContour():
         n_dim = len(coords)
         dist = self.model.distributions[dist_idx]
         cond_idx = self.model.conditional_on[dist_idx]
-        
+
         dx = coords[dist_idx][1] - coords[dist_idx][0]
-        
+
         cdf = dist.cdf
         fbar_out_shape = np.ones(n_dim, dtype=int)
-        
-        if cond_idx is None: # independent variable
+
+        if cond_idx is None:  # independent variable
             # Calculate averaged pdf.
             lower = cdf(coords[dist_idx] - 0.5 * dx)
             upper = cdf(coords[dist_idx] + 0.5 * dx)
             fbar = (upper - lower)
-            
+
             fbar_out_shape[dist_idx] = len(coords[dist_idx])
-            
+
         else:
             dist_values = coords[dist_idx]
             cond_values = coords[cond_idx]
             fbar = np.empty((len(cond_values), len(dist_values)))
             for i, cond_value in enumerate(cond_values):
                 lower = cdf(coords[dist_idx] - 0.5 * dx, given=cond_value)
-                upper = cdf(coords[dist_idx] + 0.5 * dx,  given=cond_value)
+                upper = cdf(coords[dist_idx] + 0.5 * dx, given=cond_value)
                 fbar[i, :] = (upper - lower)
-            
+
             fbar_out_shape[dist_idx] = len(coords[dist_idx])
             fbar_out_shape[cond_idx] = len(coords[cond_idx])
-            
+
         fbar_out = fbar.reshape(fbar_out_shape)
         return fbar_out / dx
-    
-    
-class DirectSamplingContour():
-    
+
+
+class DirectSamplingContour(Contour):
+
     def __init__(self, model, alpha, n=100000, deg_step=5, sample=None):
         self.model = model
         self.alpha = alpha
         self.n = n
         self.deg_step = deg_step
         self.sample = sample
-        
-        self._compute()
-        
+        super().__init__()
+
     def _compute(self):
         sample = self.sample
-        n = self.n 
+        n = self.n
         deg_step = self.deg_step
         alpha = self.alpha
-        
+
         if self.model.n_dim != 2:
             raise NotImplementedError("DirectSamplingContour is currently only "
                                       "implemented for two dimensions.")
@@ -478,7 +495,7 @@ class DirectSamplingContour():
         # Not enirely sure why the + 2*rad_step is required, but tests show it.
         rad_step = deg_step * np.pi / 180
         angles = np.arange(0.5 * np.pi + 2 * rad_step, -1.5 * np.pi + rad_step,
-                            -1 * rad_step)
+                           -1 * rad_step)
 
         length_t = len(angles)
         r = np.zeros(length_t)
@@ -494,12 +511,12 @@ class DirectSamplingContour():
         a = np.array(np.concatenate((angles, [angles[0]]), axis=0))
         r = np.array(np.concatenate((r, [r[0]]), axis=0))
 
-        denominator = np.sin(a[2:]) * np.cos(a[1:len(a)-1]) - \
-                      np.sin(a[1:len(a)-1]) * np.cos(a[2:])
+        denominator = np.sin(a[2:]) * np.cos(a[1:len(a) - 1]) - \
+                      np.sin(a[1:len(a) - 1]) * np.cos(a[2:])
 
-        x_cont = (np.sin(a[2:]) * r[1:len(r)-1]
-                  - np.sin(a[1:len(a)-1]) * r[2:]) / denominator
-        y_cont = (-np.cos(a[2:]) * r[1:len(r)-1]
-                  + np.cos(a[1:len(a)-1]) * r[2:]) / denominator
+        x_cont = (np.sin(a[2:]) * r[1:len(r) - 1]
+                  - np.sin(a[1:len(a) - 1]) * r[2:]) / denominator
+        y_cont = (-np.cos(a[2:]) * r[1:len(r) - 1]
+                  + np.cos(a[1:len(a) - 1]) * r[2:]) / denominator
 
         self.coordinates = np.array([x_cont, y_cont]).T
