@@ -136,39 +136,18 @@ class Distribution(ABC):
         elif method.lower() == "lsq" or method.lower() == "wlsq":
             self._fit_lsq(data)
         else:
-            raise ValueError(f"Unknown method '{method}'. "
-                             "Only Maximum-Likelihood-Estimation (mle) "
-                             "and (weighted) least squares (lsq) are supported.")
+            raise ValueError(f"Unknown fit method '{method}'. "
+                             "Only maximum likelihood estimation (keyword: mle) "
+                             "and (weighted) least squares (keyword: lsq) are supported.")
         
     @abstractmethod
     def _fit_mle(self, data):
-        """Fit the distribution using Maximum-Likelihood-Estimation."""
+        """Fit the distribution using maximum likelihood estimation."""
         
     @abstractmethod
     def _fit_lsq(self, data):
         """Fit the distribution using (weighted) least squares."""
 
-    # @staticmethod
-    # def _adapt_array_dimensions(x, pars):
-    #     # x and pars broadcastable against each other
-    #     reshaped_pars = []
-    #     at_least_one_iterable = False
-    #     for par in pars:
-    #         try:
-    #             _ = iter(par)
-    #             reshaped_pars.append(np.reshape(par, (1, -1)))
-    #             at_least_one_iterable = True
-    #         except TypeError:
-    #             reshaped_pars.append(par)
-
-    #     if at_least_one_iterable:
-    #         try:
-    #             _ = iter(x)
-    #             x = x.reshape((-1,1))
-    #         except:
-    #             x = np.asarray(x).reshape((1, 1))
-
-    #     return x, reshaped_pars
 
     @staticmethod
     def _get_rvs_size(n, pars):
