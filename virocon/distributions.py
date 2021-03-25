@@ -77,11 +77,12 @@ class ConditionalDistribution:
     def draw_sample(self, n, given):
         return self.distribution.draw_sample(n, **self._get_param_values(given))
     
-    def fit(self, data, conditioning_values):
+    def fit(self, data, conditioning_values, conditioning_interval_boundaries):
         self.distributions_per_interval = []
         self.parameters_per_interval = []
         self.data_intervals = data
         self.conditioning_values = np.array(conditioning_values)
+        self.conditioning_interval_boundaries = conditioning_interval_boundaries
         # Fit distribution to each interval.
         for interval_data in data:
             #dist = self.distribution_class()

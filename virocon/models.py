@@ -87,11 +87,11 @@ class GlobalHierarchicalModel(MultivariateModel):
     def _split_in_intervals(self, data, dist_idx, conditioning_idx):
         slicer = self.interval_slicers[conditioning_idx]
         conditioning_data = data[:, conditioning_idx]
-        interval_slices, interval_centers = slicer.slice_(conditioning_data)
+        interval_slices, interval_centers, interval_boundaries = slicer.slice_(conditioning_data)
         
         dist_data = [data[int_slice, dist_idx] for int_slice in interval_slices]
         
-        return dist_data, interval_centers
+        return dist_data, interval_centers, interval_boundaries
         
     
     def fit(self, data):
@@ -111,11 +111,11 @@ class GlobalHierarchicalModel(MultivariateModel):
             if conditioning_idx is None:
                 dist.fit(data[:, i])
             else:
-                dist_data, conditioning_data = self._split_in_intervals(data, i, 
-                                                                        conditioning_idx)
+                dist_data, conditioning_data, conditioning_interval_boundaries = self._split_in_intervals(data, i,
+                                                                                                          conditioning_idx)
                 #dist data  is a list of ndarray 
                 # and conditioning_data is a list of interval points
-                dist.fit(dist_data, conditioning_data)
+                dist.fit(dist_data, conditioning_data, conditioning_interval_boundaries)
     
     
             self.distributions[i] = dist # TODO is the writeback necessary? -> probably not
