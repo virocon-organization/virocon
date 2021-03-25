@@ -11,10 +11,11 @@ class IntervalSlicer(ABC):
         self.center = None
 
     def slice_(self, data):
-        interval_slices, interval_centers = self._slice(data)
+        interval_slices, interval_centers, interval_boundaries = self._slice(data)
 
-        ok_slices, ok_centers = self._drop_too_small_intervals(interval_slices,
-                                                               interval_centers)
+        ok_slices, ok_centers, ok_boundaries = self._drop_too_small_intervals(interval_slices,
+                                                                              interval_centers,
+                                                                              interval_boundaries)
 
         if len(interval_slices) < self.min_n_intervals:
             raise RuntimeError("Slicing resulting in too few intervals. "
@@ -25,21 +26,23 @@ class IntervalSlicer(ABC):
             # assert that center is a callable
             ok_centers = [self.center(data[slice_]) for slice_ in ok_slices]
 
-        return ok_slices, ok_centers
+        return ok_slices, ok_centers, ok_boundaries
 
     @abstractmethod
     def _slice(self, data):
         pass
 
-    def _drop_too_small_intervals(self, interval_slices, interval_centers):
+    def _drop_too_small_intervals(self, interval_slices, interval_centers, interval_boundaries):
         ok_slices = []
         ok_centers = []
-        for slice_, int_cent in zip(interval_slices, interval_centers):
+        ok_boundaries = []
+        for slice_, int_cent, bounds in zip(interval_slices, interval_centers, interval_boundaries):
             # slice_ is a bool array, so sum returns number of points in interval
             if np.sum(slice_) >= self.min_n_points:
                 ok_slices.append(slice_)
                 ok_centers.append(int_cent)
-        return ok_slices, ok_centers
+                ok_boundaries.append(bounds)
+        return ok_slices, ok_centers, ok_boundaries
 
 
 class WidthOfIntervalSlicer(IntervalSlicer):
@@ -69,7 +72,10 @@ class WidthOfIntervalSlicer(IntervalSlicer):
                                 (data <= int_cent + 0.5 * width))
                                for int_cent in interval_centers]
 
-        return interval_slices, interval_centers
+        interval_boundaries = [(c - width / 2, c + width / 2)
+                               for c in interval_centers]
+
+        return interval_slices, interval_centers, interval_boundaries
     
     
 class NumberOfIntervalsSlicer(IntervalSlicer):
@@ -106,8 +112,11 @@ class NumberOfIntervalsSlicer(IntervalSlicer):
             interval_slices.append(((data >= int_start) & (data <= int_start + interval_width)))
         else:
             interval_slices.append(((data >= int_start) & (data < int_start + interval_width)))
+
+        interval_boundaries = [(c - interval_width / 2, c + interval_width / 2)
+                               for c in interval_centers]
             
-        return interval_slices, interval_centers
+        return interval_slices, interval_centers, interval_boundaries
 
 
 class PointsPerIntervalSlicer(IntervalSlicer):
@@ -140,5 +149,7 @@ class PointsPerIntervalSlicer(IntervalSlicer):
             
         interval_slices = [np.isin(sorted_idc, idc, assume_unique=True) for idc in interval_idc]
         interval_centers = [None] * len(interval_slices)  # gets overwritten in super().slice_ anyway
+        interval_boundaries = [(np.min(data[s]), np.max(data[s]))
+                               for s in interval_slices]
         
-        return interval_slices, interval_centers
+        return interval_slices, interval_centers, interval_boundaries

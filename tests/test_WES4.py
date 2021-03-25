@@ -45,17 +45,19 @@ def test_WES4(dataset, reference_data):
     
         def _slice(self, data):
             
-            interval_slices, interval_centers = super()._slice(data)
+            interval_slices, interval_centers, interval_boundaries = super()._slice(data)
             
             #discard slices below 4 m/s
             ok_slices = []
             ok_centers = []
-            for slice_, center in zip(interval_slices, interval_centers):
+            ok_boundaries = []
+            for slice_, center, boundaries in zip(interval_slices, interval_centers, interval_boundaries):
                 if center >=4:
                     ok_slices.append(slice_)
                     ok_centers.append(center)
+                    ok_boundaries.append(boundaries)
             
-            return ok_slices, ok_centers
+            return ok_slices, ok_centers, ok_boundaries
         
     def _poly3(x, a, b, c, d):
         return a * x ** 3 + b * x ** 2 + c * x + d
