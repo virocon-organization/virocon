@@ -4,7 +4,7 @@ from functools import partial
 
 import numpy as np
 
-from virocon.fitting import fit_function, fit_constrained_function
+from virocon._fitting import fit_function, fit_constrained_function
 
 __all__ = ["DependenceFunction"]
 
