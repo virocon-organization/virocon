@@ -6,7 +6,7 @@ from scipy.optimize import curve_fit
 from matplotlib import pyplot as plt
 
 from virocon.fitting import fit_function, fit_constrained_function, convert_bounds_for_curve_fit
-from virocon.dependencies import DependenceFunction
+from virocon import DependenceFunction
 
 def _linear(x, a, b):
     return x * a + b
@@ -65,16 +65,16 @@ plt.legend()
 
 # %%
 
-x_mu = np.load("x_mu.npy")
-y_mu = np.load("y_mu.npy")
+# x_mu = np.load("x_mu.npy")
+# y_mu = np.load("y_mu.npy")
 
-my_mu = fit_function(exp3, x_mu, y_mu, exp_p0, "lsq", exp3.bounds)
-ref_mu = curve_fit(exp3, x_mu, y_mu, exp_p0, 
-                   bounds=convert_bounds_for_curve_fit(exp3.bounds))[0]
+# my_mu = fit_function(exp3, x_mu, y_mu, exp_p0, "lsq", exp3.bounds)
+# ref_mu = curve_fit(exp3, x_mu, y_mu, exp_p0, 
+#                    bounds=convert_bounds_for_curve_fit(exp3.bounds))[0]
 
-plt.figure()
-plt.scatter(x_mu, y_mu, marker="x", c="k")
-plt.plot(x_mu, exp3(x_mu, *my_mu), label="my mu", linewidth=3)
-plt.plot(x_mu, exp3(x_mu, *ref_mu), label="ref_mu", linestyle="--")
+# plt.figure()
+# plt.scatter(x_mu, y_mu, marker="x", c="k")
+# plt.plot(x_mu, exp3(x_mu, *my_mu), label="my mu", linewidth=3)
+# plt.plot(x_mu, exp3(x_mu, *ref_mu), label="ref_mu", linestyle="--")
 
 

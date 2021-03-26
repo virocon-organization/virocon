@@ -2,12 +2,10 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from virocon.models import GlobalHierarchicalModel
-from virocon.distributions import (WeibullDistribution, 
-                                   LogNormalDistribution)
-from virocon.dependencies import DependenceFunction
-from virocon.contours import IFORMContour, calculate_alpha
-from virocon.intervals import WidthOfIntervalSlicer
+from virocon import (GlobalHierarchicalModel, WeibullDistribution, 
+                     LogNormalDistribution, DependenceFunction, IFORMContour,
+                     calculate_alpha, WidthOfIntervalSlicer)
+
 from virocon.plotting import (plot_2D_contour, 
                               plot_2D_isodensity, 
                               plot_dependence_functions, 

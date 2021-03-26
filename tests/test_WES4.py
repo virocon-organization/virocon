@@ -2,11 +2,11 @@ import pytest
 import numpy as np
 import pandas as pd
 
-from virocon.dependencies import DependenceFunction
-from virocon.distributions import WeibullDistribution, LogNormalNormFitDistribution
-from virocon.models import GlobalHierarchicalModel
-from virocon.contours import IFORMContour
-from virocon.intervals import WidthOfIntervalSlicer
+from virocon import (DependenceFunction, WeibullDistribution, 
+                     GlobalHierarchicalModel, IFORMContour, 
+                     WidthOfIntervalSlicer)
+
+from virocon.distributions import LogNormalNormFitDistribution
 
 @pytest.fixture(scope="module")
 def dataset():

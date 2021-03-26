@@ -13,12 +13,9 @@ x, dx = np.linspace([0.1, 0.1], [6, 22], num=100, retstep=True)
 #given_hs = list(range(1, 7))
 
 # %% # vc2
-from virocon.models import GlobalHierarchicalModel
-from virocon.distributions import (WeibullDistribution, 
-                                   LogNormalDistribution,
-                                   )
-from virocon.dependencies import DependenceFunction
-from virocon.intervals import WidthOfIntervalSlicer
+from virocon import (GlobalHierarchicalModel, WeibullDistribution, 
+                     LogNormalDistribution, DependenceFunction, 
+                     WidthOfIntervalSlicer)
 
 # A 3-parameter power function (a dependence function).
 def _power3(x, a, b, c):

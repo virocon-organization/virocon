@@ -2,6 +2,8 @@ import numpy as np
 
 from abc import ABC, abstractmethod
 
+__all__ = ["WidthOfIntervalSlicer", "NumberOfIntervalsSlicer",
+           "PointsPerIntervalSlicer"]
 
 class IntervalSlicer(ABC):
 

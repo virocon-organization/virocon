@@ -2,8 +2,8 @@ import pytest
 
 import numpy as np
 
-from virocon.intervals import (WidthOfIntervalSlicer, NumberOfIntervalsSlicer, 
-                               PointsPerIntervalSlicer)
+from virocon import (WidthOfIntervalSlicer, NumberOfIntervalsSlicer, 
+                     PointsPerIntervalSlicer)
 @pytest.fixture(scope="module")
 def test_data():
     return np.array([1.2, 1.5, 2.4, 2.5, 2.6, 3.1, 3.5, 3.6, 4.0, 5.0 ])

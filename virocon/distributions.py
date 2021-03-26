@@ -7,6 +7,8 @@ import scipy.stats as sts
 from abc import ABC, abstractmethod
 from scipy.optimize import fmin
 
+__all__ = ["WeibullDistribution", "LogNormalDistribution",
+           "ExponentiatedWeibullDistribution"]
 
 # The distributions parameters need to have an order, this order is defined by
 # the parameters dict. As of Python 3.7 dicts officially keep their order of creation.

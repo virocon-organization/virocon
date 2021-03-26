@@ -2,10 +2,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-from virocon.distributions import WeibullDistribution, LogNormalDistribution
-from virocon.models import GlobalHierarchicalModel
-from virocon.dependencies import DependenceFunction
-from virocon.contours import calculate_alpha, DirectSamplingContour
+from virocon import (WeibullDistribution, LogNormalDistribution, 
+                     GlobalHierarchicalModel, DependenceFunction, 
+                     calculate_alpha, DirectSamplingContour)
 
 
 def _power3(x, a=0.1000, b=1.489, c=0.1901):

@@ -15,10 +15,8 @@ data = data[["V", "Hs"]]
 x, dx = np.linspace([0.1, 0.1], [30, 12], num=100, retstep=True)
 
 # %% # vc2
-from virocon.models import GlobalHierarchicalModel
-from virocon.distributions import ExponentiatedWeibullDistribution
-from virocon.dependencies import DependenceFunction
-from virocon.intervals import WidthOfIntervalSlicer
+from virocon import (GlobalHierarchicalModel, ExponentiatedWeibullDistribution, 
+                     DependenceFunction, WidthOfIntervalSlicer)
 
 
 # # A 4-parameter logististics function (a dependence function).
