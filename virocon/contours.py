@@ -224,10 +224,10 @@ class HighestDensityContour(Contour):
         if limits is None:
             alpha = self.alpha
             marginal_icdf = self.model.marginal_icdf
+            distributions = self.model.distributions
             non_exceedance_p = 1 - 0.2 ** n_dim * alpha
-            limits = [(0, marginal_icdf(non_exceedance_p, dim))
+            limits = [(distributions[dim].lower_support_limit, marginal_icdf(non_exceedance_p, dim))
                       for dim in range(n_dim)]
-            # TODO use distributions lower bound instead of zero
         else:
             # Check limits length.
             if len(limits) != n_dim:
