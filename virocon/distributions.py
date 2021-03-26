@@ -106,6 +106,11 @@ class Distribution(ABC):
     """
     Abstract base class for distributions.
     """
+    
+    @property 
+    @abstractmethod
+    def lower_support_limit(self):
+        """The lower support limit of the distribution."""
 
     @property
     @abstractmethod
@@ -188,6 +193,11 @@ class WeibullDistribution(Distribution):
         self.fit_method = fit_method
         self.weights = weights
         
+    
+    @property 
+    def lower_support_limit(self):
+        return self.theta
+    
     @property
     def parameters(self):
         return {"lambda_" : self.lambda_,
@@ -248,6 +258,7 @@ class WeibullDistribution(Distribution):
         
 class LogNormalDistribution(Distribution):
     
+    lower_support_limit = 0
    
     def __init__(self, mu=0, sigma=1, f_mu=None, f_sigma=None, fit_method="mle",
                  weights=None):
@@ -416,6 +427,8 @@ class ExponentiatedWeibullDistribution(Distribution):
     We use the parametrization that is also used in
     https://arxiv.org/pdf/1911.12835.pdf .
     """
+    
+    lower_support_limit = 0
     
     @property
     def parameters(self):
