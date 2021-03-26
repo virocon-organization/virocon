@@ -4,7 +4,7 @@ import numpy as np
 
 import scipy.stats as sts
 
-from virocon.distributions import ExponentiatedWeibullDistribution
+from virocon import ExponentiatedWeibullDistribution
 
 
 

@@ -1,7 +1,7 @@
 
 import numpy as np
 
-from virocon.intervals import (WidthOfIntervalSlicer, NumberOfIntervalsSlicer, 
+from virocon import (WidthOfIntervalSlicer, NumberOfIntervalsSlicer, 
                                PointsPerIntervalSlicer)
 
 

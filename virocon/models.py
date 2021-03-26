@@ -8,7 +8,7 @@ import scipy.integrate as integrate
 from virocon.distributions import ConditionalDistribution
 from virocon.intervals import NumberOfIntervalsSlicer
 
-
+__all__ = ["GlobalHierarchicalModel"]
 
 class MultivariateModel(ABC):
     

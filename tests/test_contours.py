@@ -1,16 +1,10 @@
 import pytest
 import numpy as np
 
-from virocon.contours import (IFORMContour, 
-                              ISORMContour,
-                              HighestDensityContour, 
-                              DirectSamplingContour,
-                              calculate_alpha)
-from virocon.dependencies import DependenceFunction
-from virocon.distributions import (ExponentiatedWeibullDistribution, 
-                                   LogNormalDistribution, 
-                                   WeibullDistribution)
-from virocon.models import GlobalHierarchicalModel
+from virocon import (IFORMContour, ISORMContour, HighestDensityContour, 
+                     DirectSamplingContour, calculate_alpha, DependenceFunction,
+                     ExponentiatedWeibullDistribution, LogNormalDistribution, 
+                     WeibullDistribution, GlobalHierarchicalModel)
 
 @pytest.fixture(scope="module")
 def reference_coordinates_IFORM():

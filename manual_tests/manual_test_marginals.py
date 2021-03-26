@@ -4,11 +4,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from virocon.dependencies import DependenceFunction
-from virocon.distributions import (ExponentiatedWeibullDistribution,
-                                   LogNormalDistribution)
-from virocon.models import GlobalHierarchicalModel
 
+from virocon import (DependenceFunction, ExponentiatedWeibullDistribution,
+                     LogNormalDistribution, GlobalHierarchicalModel)
   
 # %%
 

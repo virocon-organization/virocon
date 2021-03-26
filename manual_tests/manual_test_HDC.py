@@ -1,10 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from virocon.distributions import WeibullDistribution, LogNormalDistribution
-from virocon.models import GlobalHierarchicalModel
-from virocon.dependencies import DependenceFunction
-from virocon.contours import calculate_alpha, HighestDensityContour
+from virocon import (WeibullDistribution, LogNormalDistribution, 
+                     GlobalHierarchicalModel, DependenceFunction, 
+                     calculate_alpha, HighestDensityContour)
 
 
 

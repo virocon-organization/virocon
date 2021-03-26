@@ -2,11 +2,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from virocon.models import GlobalHierarchicalModel
-from virocon.distributions import (ExponentiatedWeibullDistribution, 
-                                   LogNormalDistribution)
-from virocon.dependencies import DependenceFunction
-from virocon.contours import IFORMContour, calculate_alpha
+
+from virocon import (GlobalHierarchicalModel, ExponentiatedWeibullDistribution, 
+                     LogNormalDistribution, DependenceFunction, 
+                     calculate_alpha, IFORMContour)
 
 
 x = np.linspace((0, 0), (10, 10), num=100)

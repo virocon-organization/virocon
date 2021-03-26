@@ -12,6 +12,8 @@ from sklearn.neighbors import NearestNeighbors
 from virocon._n_sphere import NSphere
 from virocon.plotting import get_default_model_description
 
+__all__ = ["calculate_alpha", "save_contour_coordinates", "IFORMContour",
+           "ISORMContour", "HighestDensityContour", "DirectSamplingContour"]
 
 def calculate_alpha(state_duration, return_period):
     alpha = state_duration / (return_period * 365.25 * 24)

@@ -2,6 +2,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import scipy.stats as sts
 
+__all__ = ["plot_marginal_quantiles", "plot_dependence_functions",
+           "plot_2D_isodensity", "plot_2D_contour"]
+
 
  # TODO move to utility as it is also used in contours.py
 def get_default_model_description(n_dim):
