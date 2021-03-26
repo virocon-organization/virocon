@@ -1,3 +1,4 @@
+import os
 import warnings
 
 import numpy as np
@@ -9,6 +10,7 @@ from abc import ABC, abstractmethod
 from sklearn.neighbors import NearestNeighbors
 
 from virocon._n_sphere import NSphere
+from virocon.plotting import get_default_model_description
 
 
 def calculate_alpha(state_duration, return_period):
@@ -65,6 +67,23 @@ def sort_points_to_form_continuous_line(x, y, search_for_optimal_start=False):
         yy = y[opt_order]
 
     return xx, yy
+
+
+def save_contour_coordinates(contour, path, model_desc=None):
+    
+    root, ext = os.path.splitext(path)
+    if not ext:
+        path += ".txt"
+    
+    n_dim = contour.coordinates.shape[1]
+    if model_desc is None:
+        model_desc = get_default_model_description(n_dim)
+        
+    header = ";".join((f"{model_desc['names'][d]} ({model_desc['units'][d]})" 
+                        for d in range(n_dim)))
+    
+    np.savetxt(path, contour.coordinates, fmt="%1.6f", delimiter=";", 
+               header=header, comments="")
 
 
 class Contour(ABC):
