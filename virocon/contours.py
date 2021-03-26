@@ -9,7 +9,7 @@ import networkx as nx
 from abc import ABC, abstractmethod
 from sklearn.neighbors import NearestNeighbors
 
-from virocon._n_sphere import NSphere
+from virocon._nsphere import NSphere
 from virocon.plotting import get_default_model_description
 
 __all__ = ["calculate_alpha", "save_contour_coordinates", "IFORMContour",
