@@ -16,27 +16,26 @@ __all__ = ["calculate_alpha", "save_contour_coordinates", "IFORMContour",
            "ISORMContour", "HighestDensityContour", "DirectSamplingContour"]
 
 def calculate_alpha(state_duration, return_period):
+    """
+    Calculates the probability that an observation falls outside the 
+    environmental contour (exceedance probability).
     
-        """
-        Calculates the probability that an observation falls outside the 
-        environmental contour (exceedance probability).
+    Parameters
+    ----------
+    
+    state_duration : float
+        Time period for which an environmental state is measured,
+        expressed in hours.
+    return_period : float
+        The years to consider for calculation. Converted into hours.
         
-        Parameters
-        ----------
-        
-        state_duration : float
-            Time period for which an environmental state is measured,
-            expressed in hours.
-        return_period : float
-            The years to consider for calculation. Converted into hours.
-            
-        Returns
-        -------
-        alpha : float
-            Element, that was calculated by the function.
+    Returns
+    -------
+    alpha : float
+        Element, that was calculated by the function.
 
 
-        """
+    """
     
     alpha = state_duration / (return_period * 365.25 * 24)
     return alpha
