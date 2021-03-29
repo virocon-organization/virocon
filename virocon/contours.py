@@ -32,9 +32,8 @@ def calculate_alpha(state_duration, return_period):
     Returns
     -------
     alpha : float
-        Element, that was calculated by the function. Exceedanxe probability
-        of the environmental contour.
-
+        Element, that was calculated by the function.  Probability that an 
+        observation falls outside the environmental contour.
 
     """
     
@@ -95,6 +94,22 @@ def sort_points_to_form_continuous_line(x, y, search_for_optimal_start=False):
 
 
 def save_contour_coordinates(contour, path, model_desc=None):
+    """
+    Saves the coordinates of the calculated contour.
+    
+    Parameters
+    ----------
+    contour : Contour
+    path : string
+     Indictaes the path, where the contour coordinates are saved.
+    model_desc : boolean, optional
+     If true, the algorithm also includes a model description in the header. 
+     The model is used to calculate the contour.
+
+    Returns
+    -------
+    saves a .txt file to the indicated path
+    """
     
     root, ext = os.path.splitext(path)
     if not ext:
@@ -112,6 +127,14 @@ def save_contour_coordinates(contour, path, model_desc=None):
 
 
 class Contour(ABC):
+    """
+      Abstract base class for contours. 
+        
+      Method to define multivariate extremes based on a joint probabilistic 
+      description of variables like significant wave height, wind speed or
+      spectral peak period.
+
+    """
 
     def __init__(self):
         try:
@@ -520,6 +543,17 @@ class HighestDensityContour(Contour):
         Calculates the cell averaged joint probabilty density function.
 
         Multiplies the cell averaged probability densities of all distributions.
+        
+        Parameters
+        ----------
+        coords : array
+            Array of calculated contour coordinates.
+            
+        Returns
+        -------
+        fbar : array
+            Probability density funciton calculated by means of coordinates.
+           
 
         """
         
@@ -537,6 +571,19 @@ class HighestDensityContour(Contour):
         Calculates the pdf by approximating it with the finite differential quotient
         of the cumulative distributions function, evaluated at the grid cells borders.
         i.e. :math:`f(x) \\approx \\frac{F(x+ 0.5\\Delta x) - F(x- 0.5\\Delta x) }{\\Delta x}`
+        
+        Parameters
+        ----------
+        dist_idx : 
+        
+        coords : array
+           Array of calculated contour coordinates.
+           
+        Returns
+        -------
+        fbar : array
+            Probability density funciton calculated by means of coordinates.
+
 
         """
         
