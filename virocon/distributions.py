@@ -18,20 +18,20 @@ __all__ = ["WeibullDistribution", "LogNormalDistribution",
 
 
 class ConditionalDistribution:
+
+    """
+    Conditional distributions for two or more (environmental) parameters 
+    that are dependet on each other. 
     
-        """
-        Conditional distributions for two or more (environmental) parameters 
-        that are dependet on each other. 
-        
-        Parameters
-        ----------
-        distribution : Distribution
-            calculates the probabilities of occurence for different possbile 
-            (environmental) events.
-        parameters: type Distribution???
-           Parameters of the probability distribution.
-        
-        """
+    Parameters
+    ----------
+    distribution : Distribution
+        calculates the probabilities of occurence for different possbile 
+        (environmental) events.
+    parameters: type Distribution???
+       Parameters of the probability distribution.
+    
+    """
 
 
     
@@ -85,34 +85,40 @@ class ConditionalDistribution:
         return param_values
 
     def pdf(self, x, given):
-        """Probability density function.
+        """
+        Probability density function.
         
-           TODO: Beschreibung
+        TODO: Beschreibung
      
-           """
+        """
         
         return self.distribution.pdf(x, **self._get_param_values(given))
     
     def cdf(self, x, given):
-         """Cumulative distribution function.
-         
-            TODO: Beschreibung
-         
-         """
+        """
+        Cumulative distribution function.
         
+        TODO: Beschreibung
+        
+        """
+       
         return self.distribution.cdf(x, **self._get_param_values(given))
     
     def icdf(self, prob, given):
-        """Inverse cumulative distribution function.
+        """
+        Inverse cumulative distribution function.
         
-            TODO: Beschreibung
+        TODO: Beschreibung
         
         """
         
         return self.distribution.icdf(prob, **self._get_param_values(given))
         
     def draw_sample(self, n, given):
-         """Draw a random sample with length n."""
+        """
+        Draw a random sample with length n.
+        
+        """
          
         return self.distribution.draw_sample(n, **self._get_param_values(given))
     
@@ -143,14 +149,13 @@ class ConditionalDistribution:
 
 
 class Distribution(ABC):
-
-   """
-   Abstract base class for distributions. 
-        
-   Models the probabilities of occurence for different possbile 
-   (environmental) events.
-   """
-
+    """
+    Abstract base class for distributions. 
+         
+    Models the probabilities of occurence for different possbile 
+    (environmental) events.
+    
+    """
 
 
     @property
@@ -158,7 +163,7 @@ class Distribution(ABC):
     def parameters(self):
         
         """
-           Parameters of the probability distribution.
+        Parameters of the probability distribution.
         
         """
         
@@ -166,7 +171,8 @@ class Distribution(ABC):
 
     @abstractmethod
     def cdf(self, x, *args, **kwargs):
-        """Cumulative distribution function.
+        """
+        Cumulative distribution function.
         
         TODO: Beschreibung
         
@@ -174,7 +180,8 @@ class Distribution(ABC):
 
     @abstractmethod
     def pdf(self, x, *args, **kwargs):
-        """Probability density function.
+        """
+        Probability density function.
         
         TODO: Beschreibung
         
@@ -182,7 +189,8 @@ class Distribution(ABC):
 
     @abstractmethod
     def icdf(self, prob, *args, **kwargs):
-        """Inverse cumulative distribution function.
+        """
+        Inverse cumulative distribution function.
         
         TODO: Beschreibung
         
@@ -190,16 +198,18 @@ class Distribution(ABC):
         
     @abstractmethod
     def draw_sample(self, n,  *args, **kwargs):
-        """Draw sample from distribution.
+        """
+        Draw sample from distribution.
         
         TODO: Beschreibung
         
         """
 
+
     def fit(self, data, method="mle", weights=None):
         """Fit the distribution to the sampled data.
-        
-        TODO: Data format
+
+            TODO: Data format
         
         """
         method = self.fit_method
@@ -245,10 +255,10 @@ class Distribution(ABC):
 
 
 class WeibullDistribution(Distribution):
-     """
-     TODO: Beschreibung
-     
-     """
+    """
+    TODO: Beschreibung
+
+    """
     
     def __init__(self, alpha=1, beta=1, gamma=0, f_alpha=None, f_beta=None,
                  f_gamma=None):

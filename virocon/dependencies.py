@@ -10,7 +10,11 @@ __all__ = ["DependenceFunction"]
 
 #TODO test that order of execution does not matter
 # it should not matter if the dependent or the conditioner are fitted first
-class DependenceFunction():
+class DependenceFunction():   
+    """
+    TO DO: BESCHREIBUNG
+    
+    """
     
     #TODO implement check of bounds and constraints
     def __init__(self, func, bounds=None, constraints=None, weights=None, **kwargs):

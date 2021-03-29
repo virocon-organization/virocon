@@ -32,7 +32,8 @@ def calculate_alpha(state_duration, return_period):
     Returns
     -------
     alpha : float
-        Element, that was calculated by the function.
+        Element, that was calculated by the function. Exceedanxe probability
+        of the environmental contour.
 
 
     """
@@ -137,25 +138,24 @@ class Contour(ABC):
 
 
 class IFORMContour(Contour):
-        """
-        Contour based on the inverse first-order reliability method.
+    """
+    Contour based on the inverse first-order reliability method.
 
-        This method was proposed by Winterstein et al. (1993).
+    This method was proposed by Winterstein et al. (1993).
 
-        Parameters
-        ----------
-        model :  MultivariateModel
-            The model to be used to calculate the contour.
-        alpha : float
-            probability that an observation falls outside the 
-            environmental contour
-        n_points : int, optional
-            Number of points on the contour. Defaults to 180.
+    Parameters
+    ----------
+    model :  MultivariateModel
+        The model to be used to calculate the contour.
+    alpha : float
+        probability that an observation falls outside the 
+        environmental contour
+    n_points : int, optional
+        Number of points on the contour. Defaults to 180.
 
 
-        """
-   
-    
+    """
+  
     def __init__(self, model, alpha, n_points=180):
         self.model = model
         self.alpha = alpha
@@ -209,24 +209,24 @@ class IFORMContour(Contour):
 
 
 class ISORMContour(Contour):   
-        """
-        Contour based on the inverse second-order reliability method.
-
-        This method was proposed by Chai and Leira (2018). The paper's DOI
-        is 10.1016/j.marstruc.2018.03.007 .
-
-        Parameters
-        ----------
-       model : MultivariateModel
-            The model to be used to calculate the contour.
-        alpha : float
-            probability that an observation falls outside the 
-            environmental contour
-        n_points : int, optional
-            Number of points on the contour. Defaults to 180.
-        
-
-        """
+    """
+    Contour based on the inverse second-order reliability method.
+       
+    This method was proposed by Chai and Leira (2018). The paper's DOI
+    is 10.1016/j.marstruc.2018.03.007 .
+       
+    Parameters
+    ----------
+    model : MultivariateModel
+        The model to be used to calculate the contour.
+    alpha : float
+        probability that an observation falls outside the 
+        environmental contour
+    n_points : int, optional
+        Number of points on the contour. Defaults to 180.
+    
+       
+    """
     
     def __init__(self, model, alpha, n_points=180):
         self.model = model
@@ -461,8 +461,7 @@ class HighestDensityContour(Contour):
             # TODO raise warning
 
     @staticmethod
-    def cumsum_biggest_until(array, limit):
-        
+    def cumsum_biggest_until(array, limit):        
         """
         Find biggest elements to sum to reach limit.
 
@@ -516,8 +515,7 @@ class HighestDensityContour(Contour):
 
         return summed_fields, last_summed
 
-    def cell_averaged_joint_pdf(self, coords):
-        
+    def cell_averaged_joint_pdf(self, coords):  
         """
         Calculates the cell averaged joint probabilty density function.
 
@@ -532,8 +530,7 @@ class HighestDensityContour(Contour):
 
         return fbar
 
-    def cell_averaged_pdf(self, dist_idx, coords):
-        
+    def cell_averaged_pdf(self, dist_idx, coords): 
         """
         Calculates the cell averaged probabilty density function of a single distribution.
 
@@ -576,39 +573,39 @@ class HighestDensityContour(Contour):
         return fbar_out / dx
 
 class DirectSamplingContour(Contour):
-        """
-        Direct sampling contour as introduced by Huseby et al. (2013), see
-        doi.org/10.1016/j.oceaneng.2012.12.034 .
+    """
+    Direct sampling contour as introduced by Huseby et al. (2013), see
+    doi.org/10.1016/j.oceaneng.2012.12.034 .
 
-        This implementation only works for two-dimensional distributions.
+    This implementation only works for two-dimensional distributions.
 
-        Parameters
-        ----------
-        mul_var_dist : MultivariateDistribution
-            Must be 2-dimensional.
-        return_period : int, optional
-            Return period given in years. Defaults to 1.
-        state_duration : int, optional
-            Time period for which an environmental state is measured,
-            expressed in hours. Defaults to 3.
-        n : int, optional
-            Number of data points that shall be Monte Carlo simulated.
-        deg_step : float, optional
-            Directional step in degrees. Defaults to 5.
-        sample : 2-dimensional ndarray, optional
-            Monte Carlo simulated environmental states. Array is of shape (d, n)
-            with d being the number of variables and n being the number of
-            observations.
-        timeout : int, optional
-            The maximum time in seconds there the contour has to be computed.
-            This parameter also controls multiprocessing. If timeout is None
-            serial processing is performed, if it is not None multiprocessing
-            is used. Defaults to None.
-        Raises
-        ------
-        TimeoutError,
-            If the calculation takes too long and the given value for timeout is exceeded.
-        """
+    Parameters
+    ----------
+    mul_var_dist : MultivariateDistribution
+        Must be 2-dimensional.
+    return_period : int, optional
+        Return period given in years. Defaults to 1.
+    state_duration : int, optional
+        Time period for which an environmental state is measured,
+        expressed in hours. Defaults to 3.
+    n : int, optional
+        Number of data points that shall be Monte Carlo simulated.
+    deg_step : float, optional
+        Directional step in degrees. Defaults to 5.
+    sample : 2-dimensional ndarray, optional
+        Monte Carlo simulated environmental states. Array is of shape (d, n)
+        with d being the number of variables and n being the number of
+        observations.
+    timeout : int, optional
+        The maximum time in seconds there the contour has to be computed.
+        This parameter also controls multiprocessing. If timeout is None
+        serial processing is performed, if it is not None multiprocessing
+        is used. Defaults to None.
+    Raises
+    ------
+    TimeoutError,
+        If the calculation takes too long and the given value for timeout is exceeded.
+    """
 
     def __init__(self, model, alpha, n=100000, deg_step=5, sample=None):
         self.model = model
