@@ -89,7 +89,20 @@ class ConditionalDistribution:
         Probability density function.
         
         TODO: Beschreibung
-     
+        
+            
+        Parameters
+        ----------
+        x : 
+        
+        given : 
+        
+        
+        Returns
+        -------
+        distribution.pdf :  
+        
+        
         """
         
         return self.distribution.pdf(x, **self._get_param_values(given))
@@ -99,6 +112,20 @@ class ConditionalDistribution:
         Cumulative distribution function.
         
         TODO: Beschreibung
+        
+        
+        Parameters
+        ----------
+        x : 
+        
+        given : 
+        
+        
+        Returns
+        -------
+        distribution.cdf : 
+        
+        
         
         """
        
@@ -110,6 +137,19 @@ class ConditionalDistribution:
         
         TODO: Beschreibung
         
+        
+        Parameters
+        ----------
+        prob : 
+        
+        given : 
+        
+        
+        Returns
+        -------
+        distribution.icdf : 
+        
+        
         """
         
         return self.distribution.icdf(prob, **self._get_param_values(given))
@@ -118,12 +158,50 @@ class ConditionalDistribution:
         """
         Draw a random sample with length n.
         
+        
+        Parameters
+        ----------
+        n : 
+        
+        given : 
+        
+        
+        Returns
+        -------
+        distribution.draw_sample : 
+        
+        
         """
          
         return self.distribution.draw_sample(n, **self._get_param_values(given))
     
+
     def fit(self, data, conditioning_values, conditioning_interval_boundaries,
             fit_method="mle", weights=None):
+
+        
+        """
+        Fit statistical distribution to data. 
+        
+        TODO: Beschreibung
+        
+        
+        Parameters
+        ----------
+        data : 
+        
+        conditioning_values :
+        
+        conditioning_interval_boundaries : 
+        
+        
+        Returns
+        -------
+        
+        
+        
+        """
+        
         self.distributions_per_interval = []
         self.parameters_per_interval = []
         self.data_intervals = data
