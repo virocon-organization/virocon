@@ -21,19 +21,23 @@ def calculate_alpha(state_duration, return_period):
     environmental contour (exceedance probability).
     
     Parameters
-    ----------
-    
+    ---------- 
     state_duration : float
         Time period for which an environmental state is measured,
         expressed in hours.
     return_period : float
+        Describes the average time period between two consecutive 
+        environmental states above the threshold, x1. The threshold is called 
+        return value.
+    
+        :math:`F(x_1) =  P(X_1 \geq x_1)= \int_{- \infty}^{x_1} f(x) dx = 1- \\alpha`  
+    
         The years to consider for calculation. Converted into hours.
         
     Returns
     -------
     alpha : float
-        Element, that was calculated by the function.  Probability that an 
-        observation falls outside the environmental contour.
+        Exceedance probability.
 
     """
     
