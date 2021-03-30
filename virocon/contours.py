@@ -27,12 +27,10 @@ def calculate_alpha(state_duration, return_period):
         expressed in hours.
     return_period : float
         Describes the average time period between two consecutive 
-        environmental states above the threshold, x1. The threshold is called 
+        environmental states above a threshold, x1. The threshold is called 
         return value.
     
         :math:`F(x_1) =  P(X_1 \geq x_1)= \int_{- \infty}^{x_1} f(x) dx = 1- \\alpha`  
-    
-        The years to consider for calculation. Converted into hours.
         
     Returns
     -------
@@ -54,10 +52,12 @@ def sort_points_to_form_continuous_line(x, y, search_for_optimal_start=False):
     Parameters
     ----------
     x : array_like
+        ToDo: Beschreibung
     y : array_like
+        Todo: Beschreibung
     search_for_optimal_start : boolean, optional
-     If true, the algorithm also searches for the ideal starting node, see the
-     stackoverflow link for more info.
+        If True, the algorithm also searches for the ideal starting node, see the
+        stackoverflow link for more info. Defaults to False.
 
     Returns
     -------
@@ -550,12 +550,12 @@ class HighestDensityContour(Contour):
         
         Parameters
         ----------
-        coords : array
-            Array of calculated contour coordinates.
+        coords : list of array
+            List with one coordinate array for each dimension.
             
         Returns
         -------
-        fbar : array
+        fbar : array (shape1, shape2) TODO
             Probability density funciton calculated by means of coordinates.
            
 

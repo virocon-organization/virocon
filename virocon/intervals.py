@@ -6,7 +6,7 @@ __all__ = ["WidthOfIntervalSlicer", "NumberOfIntervalsSlicer",
            "PointsPerIntervalSlicer"]
 
 class IntervalSlicer(ABC):
-     """
+    """
         Interval Slicer
         
         TODO: Beschreibung

@@ -88,13 +88,12 @@ class ConditionalDistribution:
         """
         Probability density function.
 
-        The function f_x(x) gives us the probability density at point x. 
+        f_x(x) indicates the probability density at point x. 
         It is the limit of the probability of the interval (x,x+Δ] divided by 
         the length of the interval as the length of the interval goes to 0. 
         
-        :math: f_x(x) = \\frac{x<X(<=)x+\\widetilde{\\Delta}{x\\widetilde{\\sigma} \\sqrt{2\\pi}}\\exp \\left[ \\frac{-(\\ln x - \\widetilde{\\mu})^2}{2\\widetilde{\\sigma}^2}\\right]`
-
-        
+            :math:`f_X(x) =  \lim_{x\\to 0}\\frac{P(x<X \leq x+ \\Delta)}{ \\Delta}`
+     
             
         Parameters
         ----------
@@ -116,8 +115,15 @@ class ConditionalDistribution:
         """
         Cumulative distribution function.
         
-        TODO: Beschreibung
+        The cumulative distribution function of a continous random variable  X 
+        is the function given by:
         
+            :math:`F_X(x) =  P(X\leq x)`    
+        
+        or:
+             
+            :math:`F_X(x) =  \int_{- \infty}^{x} f_X(t) dt`   
+
         
         Parameters
         ----------
