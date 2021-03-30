@@ -20,8 +20,8 @@ __all__ = ["WeibullDistribution", "LogNormalDistribution",
 class ConditionalDistribution:
 
     """
-    Conditional distributions for two or more (environmental) parameters 
-    that are dependet on each other. 
+    Conditional statistical distributions for two or more (environmental) 
+    parameters that are dependet on each other. 
     
     Parameters
     ----------
@@ -87,8 +87,13 @@ class ConditionalDistribution:
     def pdf(self, x, given):
         """
         Probability density function.
+
+        The function f_x(x) gives us the probability density at point x. 
+        It is the limit of the probability of the interval (x,x+Δ] divided by 
+        the length of the interval as the length of the interval goes to 0. 
         
-        TODO: Beschreibung
+        :math: f_x(x) = \\frac{x<X(<=)x+\\widetilde{\\Delta}{x\\widetilde{\\sigma} \\sqrt{2\\pi}}\\exp \\left[ \\frac{-(\\ln x - \\widetilde{\\mu})^2}{2\\widetilde{\\sigma}^2}\\right]`
+
         
             
         Parameters
@@ -183,7 +188,9 @@ class ConditionalDistribution:
         """
         Fit statistical distribution to data. 
         
-        TODO: Beschreibung
+        When two variables are of importance, e.g. significant wave height, Hs,
+        and spectral peak period, Tp, a joint probability density function can 
+        be defined.
         
         
         Parameters
