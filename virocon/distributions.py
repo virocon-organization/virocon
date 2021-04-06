@@ -18,23 +18,22 @@ __all__ = ["WeibullDistribution", "LogNormalDistribution",
 
 
 class ConditionalDistribution:
-
     """
-    Conditional statistical distributions for two or more (environmental) 
-    parameters that are dependet on each other. 
+    Conditional statistical distributions for two or more random 
+    (environmental) variables that are dependet on each other. The conditional
+    distribution consists of two marginal distributions of the individual
+    variables.
     
     Parameters
     ----------
     distribution : Distribution
-        calculates the probabilities of occurence for different possbile 
+        Mathematical description of the probabilities for different possbile 
         (environmental) events.
-    parameters: type Distribution???
-       Parameters of the probability distribution.
+    parameters: float (KAI???)
+       Parameters of probability distributions are: scale, location, shape.
     
     """
-
-
-    
+  
     def __init__(self, distribution, parameters):
         # allow setting fitting initials on class creation?
         self.distribution = distribution
