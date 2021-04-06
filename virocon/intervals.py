@@ -15,36 +15,30 @@ class IntervalSlicer(ABC):
     def slice_(self, data):
         interval_slices, interval_centers, interval_boundaries = self._slice(data)
 
-        ok_slices, ok_centers, ok_boundaries = self._drop_too_small_intervals(interval_slices,
-                                                                              interval_centers,
-                                                                              interval_boundaries)
-
         if len(interval_slices) < self.min_n_intervals:
             raise RuntimeError("Slicing resulting in too few intervals. "
                                f"Need at least {self.min_n_intervals}, "
                                f"but got only {len(interval_slices)} intervals.")
 
         if self.center is not None:
-            # assert that center is a callable
-            ok_centers = [self.center(data[slice_]) for slice_ in ok_slices]
+            # assert that self.center is a callable
+            interval_centers = [self.center(data[slice_]) for slice_ in interval_slices]
 
-        return ok_slices, ok_centers, ok_boundaries
+        return interval_slices, interval_centers, interval_boundaries
 
     @abstractmethod
     def _slice(self, data):
         pass
 
-    def _drop_too_small_intervals(self, interval_slices, interval_centers, interval_boundaries):
+    def _drop_too_small_intervals(self, interval_slices, interval_centers):
         ok_slices = []
         ok_centers = []
-        ok_boundaries = []
-        for slice_, int_cent, bounds in zip(interval_slices, interval_centers, interval_boundaries):
-            # slice_ is a bool array, so sum returns number of points in interval
+        for slice_, int_cent in zip(interval_slices, interval_centers):
+            # slice_ is a boolean array, so sum returns number of points in interval
             if np.sum(slice_) >= self.min_n_points:
                 ok_slices.append(slice_)
                 ok_centers.append(int_cent)
-                ok_boundaries.append(bounds)
-        return ok_slices, ok_centers, ok_boundaries
+        return ok_slices, ok_centers
 
 
 class WidthOfIntervalSlicer(IntervalSlicer):
@@ -73,6 +67,9 @@ class WidthOfIntervalSlicer(IntervalSlicer):
             interval_slices = [((int_cent - 0.5 * width < data) & 
                                 (data <= int_cent + 0.5 * width))
                                for int_cent in interval_centers]
+
+        interval_slices, interval_centers = self._drop_too_small_intervals(interval_slices,
+                                                                           interval_centers)
 
         interval_boundaries = [(c - width / 2, c + width / 2)
                                for c in interval_centers]
@@ -115,6 +112,9 @@ class NumberOfIntervalsSlicer(IntervalSlicer):
         else:
             interval_slices.append(((data >= int_start) & (data < int_start + interval_width)))
 
+        interval_slices, interval_centers = self._drop_too_small_intervals(interval_slices,
+                                                                           interval_centers)
+
         interval_boundaries = [(c - interval_width / 2, c + interval_width / 2)
                                for c in interval_centers]
             
@@ -151,7 +151,29 @@ class PointsPerIntervalSlicer(IntervalSlicer):
             
         interval_slices = [np.isin(sorted_idc, idc, assume_unique=True) for idc in interval_idc]
         interval_centers = [None] * len(interval_slices)  # gets overwritten in super().slice_ anyway
-        interval_boundaries = [(np.min(data[s]), np.max(data[s]))
-                               for s in interval_slices]
-        
+
+        interval_slices, interval_centers = self._drop_too_small_intervals(interval_slices,
+                                                                           interval_centers)
+
+        # calculate the interval boundaries
+        # the boundary between two intervals shall be the mean of
+        # the max of the lower interval and the min of the higher interval
+        # for the first interval the lower limit is the min of the data in that interval
+        # for the last interval the upper limit is the max of the data in that interval
+        interval_boundaries = []
+        lower_boundary = np.min(data[interval_slices[0]])
+        interval = data[interval_slices[0]]
+        for i in range(len(interval_slices) - 1):
+            # calculate boundaries for ith interval
+            next_interval = data[interval_slices[i+1]]
+            upper_boundary = (np.max(interval) + np.min(next_interval)) / 2
+            interval_boundaries.append((lower_boundary, upper_boundary))
+            # prepare variables for next interval
+            lower_boundary = upper_boundary
+            interval = next_interval
+
+        # append boundaries for last interval
+        upper_boundary = np.max(interval)
+        interval_boundaries.append((lower_boundary, upper_boundary))
+
         return interval_slices, interval_centers, interval_boundaries
