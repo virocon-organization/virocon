@@ -155,28 +155,16 @@ class GlobalHierarchicalModel(MultivariateModel):
                 return self.pdf(x)
             
             return integral_func
-
-        dists = self.distributions
-        lower_integration_limits = [dists[d].lower_support_limit
-                                    for d in range(n_dim)]
+        
+        lower_integration_limits = [0] * n_dim
         
         integral_func = get_integral_func()
 
         p = np.empty(len(x))
         for i in range(len(x)):
-            p_i_set = False
-
-            integration_limits = []
-            for j in range(n_dim):
-                if x[i, j] < lower_integration_limits[j]:
-                    p[i] = 0
-                    p_i_set = True
-                    # p[i] must be zero, so we don't need to integrate
-                    break
-                integration_limits.append((lower_integration_limits[j], x[i, j]))
-
-            if p_i_set: # p[i] was set to zero already, so no need to integrate
-                continue
+            
+            integration_limits = [(lower_integration_limits[j], x[i, j])
+                                  for j in range(n_dim)]
             
             p[i], error = integrate.nquad(integral_func, integration_limits)
 
@@ -214,10 +202,12 @@ class GlobalHierarchicalModel(MultivariateModel):
                 return self.pdf(x)
             
             return integral_func
-
+            
+        # TODO make limits a property of the distributions?
         # "for var in integral_order append limits"
-        dists = self.distributions
-        limits = [(dists[d].lower_support_limit, np.inf) for d in integral_order]
+        # but for now we simplify that all vars have the same limits
+        limit = (0, np.inf)
+        limits = [limit] * (n_dim-1)
         
         f = np.empty_like(x)
         integral_func = get_integral_func()
@@ -259,19 +249,15 @@ class GlobalHierarchicalModel(MultivariateModel):
                 return self.pdf(x)
             
             return integral_func
-
-        dists = self.distributions
-        limits = [(dists[d].lower_support_limit, np.inf) for d in integral_order[:-1]]
-
-        dimth_lower_limit = dists[dim].lower_support_limit  # lower limit for dim'th variable
-
+            
+        # TODO make limits (or lower limit) a property of the distributions?
+        limit = (0, np.inf)
+        limits = [limit] * (n_dim-1)
+        
         F = np.empty_like(x)
         integral_func = get_integral_func()
         for i, x_i in enumerate(x):
-            if x_i < dimth_lower_limit:
-                F[i] = 0
-                continue
-            result, _ = integrate.nquad(integral_func, ranges=limits + [(dimth_lower_limit, x_i)])
+            result, _ = integrate.nquad(integral_func, ranges=limits + [(0, x_i)])
             F[i] = result
         return F
     
