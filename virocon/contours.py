@@ -203,6 +203,17 @@ class IFORMContour(Contour):
         outside the environmental contour.
     n_points : int, optional
         Number of points on the contour. Defaults to 180.
+        
+    Attributes
+    ----------
+    coordinates : 
+        Coordinates of the calculated contour.
+        
+    beta :
+        Reliability index.
+        
+    sphere_points : 
+          Points of the sphere in U space [1]_ . 
     
     References
     ----------
@@ -280,6 +291,17 @@ class ISORMContour(Contour):
         outside the environmental contour.
     n_points : int, optional
         Number of points on the contour. Defaults to 180.
+    
+    Attributes
+    ----------
+    coordinates : 
+        Coordinates of the calculated contour.
+        
+    beta :
+        Reliability index.
+        
+    sphere_points : 
+          Points of the sphere in U space [1]_ . 
     
     References
     ----------
@@ -370,6 +392,22 @@ class HighestDensityContour(Contour):
        is supplied it is used for all dimensions. If a list is supplied 
        there has to be one entry for each dimension of the model. Defaults 
        to 0.25% of the range defined by limits.
+       
+    Attributes
+    ----------
+    coordinates : ndarray
+        Coordinates of the calculated contour.
+        Shape: (number of points, number of dimensions). 
+        
+    cell_center_coordinates : list of array
+        Points at which the grid is evaluated.
+        A list with one entry for each dimension, each entry is an array with
+        the cell centers for that dimension.
+    
+    fm : float
+        Minimum probability density of the enclosed region / constant 
+        probability density along the contour. 
+                
     
     References
     ----------
@@ -694,7 +732,13 @@ class DirectSamplingContour(Contour):
         Monte Carlo simulated environmental states. Array is of shape (n, d)
         with d being the number of variables and n being the number of
         observations.
-        
+    
+    Attributes
+    ----------
+    coordinates : ndarray
+        Coordinates of the calculated contour.
+        Shape: (number of points, number of dimensions).          
+    
     References
     ----------
     .. [1] Huseby, A.B.; Vanem, E.; Natvig, B. (2013)

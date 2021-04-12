@@ -29,8 +29,11 @@ class ConditionalDistribution:
     distribution : Distribution
         Mathematical description of the probabilities for different possbile 
         (environmental) events.
-    parameters: float (KAI???)
+    parameters: float
        Parameters of probability distributions are: scale, location, shape.
+       All parametric distributions can be initalized with 'scale', 'shape'
+       and 'loc' (location) parameters. Some distribution have a second shape
+       parameter, 'shape2'.
     
     """
   
@@ -87,23 +90,26 @@ class ConditionalDistribution:
         """
         Probability density function.
 
-        f_x(x) indicates the probability density at point x. 
-        It is the limit of the probability of the interval (x,x+Δ] divided by 
-        the length of the interval as the length of the interval goes to 0. 
+        f_X(x) indicates the probability density at point x. 
+        It is the limit of the probability of the interval [x,x+Δ] divided by 
+        the length of the interval as the length of the interval goes to 0 
+        (x is a realization of a random variable X). 
         
             :math:`f_X(x) =  \lim_{x\\to 0}\\frac{P(x<X \leq x+ \\Delta)}{ \\Delta}`
-     
-            
+           
         Parameters
         ----------
-        x : 
+        x : array_like
+            Points at which the pdf is evaluated.
         
-        given : 
-        
-        
+        given : float or array_like
+           The conditioning value of the conditioning variable e.g. the
+           y in x|y.  
+            
         Returns
         -------
-        distribution.pdf :  
+        distribution.pdf :  array
+            Probability densities at x.
         
         
         """
@@ -122,20 +128,20 @@ class ConditionalDistribution:
         or:
              
             :math:`F_X(x) =  \int_{- \infty}^{x} f_X(t) dt`   
-
-        
+     
         Parameters
         ----------
-        x : 
+        x : array_like
+            Points at which the cdf is evaluated.
         
-        given : 
-        
-        
+        given : float or array_like
+           The conditioning value of the conditioning variable e.g. the
+           y in x|y.  
+   
         Returns
         -------
-        distribution.cdf : 
-        
-        
+        distribution.cdf : array
+            Cumulative distribution function evaluated at x.
         
         """
        
@@ -145,20 +151,23 @@ class ConditionalDistribution:
         """
         Inverse cumulative distribution function.
         
-        TODO: Beschreibung
+        Calculates percent-point function. 
         
         
         Parameters
         ----------
         prob : 
+            Probabilities for which the i_cdf is evaluated.
         
-        given : 
-        
-        
+        given : float or array_like
+           The conditioning value of the conditioning variable e.g. the
+           y in x|y.  
+            
         Returns
         -------
-        distribution.icdf : 
-        
+        ndarray or float
+            Inverse cumulative distribution function evaluated for given
+            probabilities.
         
         """
         
@@ -171,14 +180,17 @@ class ConditionalDistribution:
         
         Parameters
         ----------
-        n : 
+        n : float
+            Number of observations that shall be drawn.
         
-        given : 
-        
-        
+        given : float or array_like
+           The conditioning value of the conditioning variable e.g. the
+           y in x|y.  
+            
         Returns
         -------
-        distribution.draw_sample : 
+        ndarray or float
+            Sample of the requested size.
         
         
         """
@@ -188,29 +200,28 @@ class ConditionalDistribution:
 
     def fit(self, data, conditioning_values, conditioning_interval_boundaries,
             fit_method="mle", weights=None):
-
-        
         """
-        Fit statistical distribution to data. 
+        Fit statistical distribution to data.
         
-        When two variables are of importance, e.g. significant wave height, Hs,
-        and spectral peak period, Tp, a joint probability density function can 
-        be defined.
-        
+        Method of estimating the parameters of a probability distribution to
+        given data.
         
         Parameters
         ----------
-        data : 
+        data : list of array
+            The data that should be used to fit the distribution to.
+            Realizations of the distributions variable split into intervals. 
+            One array for each interval containing the data in that interval.
+            
         
-        conditioning_values :
+        conditioning_values : array_like
+            Realizations of the conditioning variable e.g. the y in x|y.  
+            Shape:
         
-        conditioning_interval_boundaries : 
-        
-        
-        Returns
-        -------
-        
-        
+        conditioning_interval_boundaries : array_like
+            Boundaries of the intervals the data of the conditioning variable
+            was split into.
+            Shape:
         
         """
         
@@ -264,17 +275,12 @@ class Distribution(ABC):
         """
         Cumulative distribution function.
         
-        TODO: Beschreibung
-        
         """
 
     @abstractmethod
     def pdf(self, x, *args, **kwargs):
         """
         Probability density function.
-        
-        TODO: Beschreibung
-        
         """
 
     @abstractmethod
@@ -282,17 +288,13 @@ class Distribution(ABC):
         """
         Inverse cumulative distribution function.
         
-        TODO: Beschreibung
-        
         """
         
     @abstractmethod
     def draw_sample(self, n,  *args, **kwargs):
         """
-        Draw sample from distribution.
-        
-        TODO: Beschreibung
-        
+        Draw a random sample with length n.
+       
         """
 
 
@@ -300,8 +302,9 @@ class Distribution(ABC):
         """Fit the distribution to the sampled data.
 
             TODO: Data format
-        
+
         """
+        
         method = self.fit_method
             
         if method.lower() == "mle":
@@ -343,10 +346,37 @@ class Distribution(ABC):
             return n
 
 
-
 class WeibullDistribution(Distribution):
     """
-    TODO: Beschreibung
+    A weibull distribution.
+    
+    :math:`f(x) = \\frac{k}{\\lambda}\\left( \\frac{x-\\theta}{\\lambda}\\right)^{k -1} \\exp \\left[-\\left( \\frac{x-\\theta}{\\lambda} \\right)^{k} \\right]`
+    
+    Parameters
+    ----------
+    lambda : float
+        Scale parameter of the weibull distribution. Defaults to 1.
+    k : float
+        Shape parameter of the weibull distribution. Defaults to 1.
+    theta : float
+        Location parameter of the weibull distribution (3-parameter weibull
+        distribution). Defaults to 0.
+    f_lambda : float
+        Fixed scale parameter of the weibull distribution (e.g. given physical
+        parameter). If this parameter is set, lambda is ignored. Defaults to 
+        None.
+    f_k : float
+       Fixed shape parameter of the weibull distribution (e.g. given physical
+       parameter). If this parameter is set, k is ignored. Defaults to 
+       None. 
+    f_theta : float
+        Fixed location parameter of the weibull distribution (e.g. given physical
+        parameter). If this parameter is set, theta is ignored. Defaults to 
+        None.
+    fit_method : float
+        Method of estimating the parameters of a probability distribution. 
+        Defaults to maximum likelihood estimation (mle).
+    weights : KAI???
 
     """
     
@@ -421,8 +451,30 @@ class WeibullDistribution(Distribution):
         
 class LogNormalDistribution(Distribution):
     """
-     TODO: Beschreibung
+    A Lognormal Distribution. 
+    
+    :math:`f(x) = \\frac{1}{x\\widetilde{\\sigma} \\sqrt{2\\pi}}\\exp \\left[ \\frac{-(\\ln x - \\widetilde{\\mu})^2}{2\\widetilde{\\sigma}^2}\\right]`
      
+    
+    Parameters
+    ----------
+    mu : float
+        Mean parameter of the lognormal distribution. Defaults to 0.
+    sigma : float
+        Variance parameter of the lognormal distribution. Defaults to 1.
+    f_mu : float
+        Fixed mean parameter of the lognormal distribution (e.g. given physical
+        parameter). If this parameter is set, mu is ignored. Defaults to 
+        None.
+    f_sigma : float
+       Fixed variance parameter of the lognormal distribution (e.g. given 
+       physical parameter). If this parameter is set, sigma is ignored. 
+       Defaults to None. 
+    fit_method : float
+        Method of estimating the parameters of a probability distribution. 
+        Defaults to maximum likelihood estimation (mle).
+    weights : KAI???
+    
     """
    
     def __init__(self, mu=0, sigma=1, f_mu=None, f_sigma=None):
@@ -496,7 +548,32 @@ class LogNormalDistribution(Distribution):
         
 class LogNormalNormFitDistribution(LogNormalDistribution):
     #https://en.wikipedia.org/wiki/Log-normal_distribution#Estimation_of_parameters
+    """
+    A Lognormal Distribution. 
     
+    :math:`f(x) = \\frac{1}{x\\widetilde{\\sigma} \\sqrt{2\\pi}}\\exp \\left[ \\frac{-(\\ln x - \\widetilde{\\mu})^2}{2\\widetilde{\\sigma}^2}\\right]`
+     
+    
+    Parameters
+    ----------
+    mu : float
+        Mean parameter of the lognormal distribution. Defaults to 0.
+    sigma : float
+        Variance parameter of the lognormal distribution. Defaults to 1.
+    f_mu : float
+        Fixed mean parameter of the lognormal distribution (e.g. given physical
+        parameter). If this parameter is set, mu is ignored. Defaults to 
+        None.
+    f_sigma : float
+       Fixed variance parameter of the lognormal distribution (e.g. given 
+       physical parameter). If this parameter is set, sigma is ignored. 
+       Defaults to None. 
+    fit_method : float
+        Method of estimating the parameters of a probability distribution. 
+        Defaults to maximum likelihood estimation (mle).
+    weights : KAI???
+    
+    """
    
     def __init__(self, mu_norm=0, sigma_norm=1, f_mu_norm=None, f_sigma_norm=None):
         
@@ -579,16 +656,46 @@ class LogNormalNormFitDistribution(LogNormalDistribution):
         
 class ExponentiatedWeibullDistribution(Distribution):
     """
-    An exponentiated Weibull distribution.
+    An exponentiated Weibull distribution by by Haselsteiner et al. (2019) [1]_
     
-
-     TODO: Beschreibung
-
+    :math:`F(x) = \\left[ 1- \\exp \\left(-\\left( \\frac{x}{\\alpha} \\right)^{beta} \\right) \\right] ^{\\delta}`
     
-    Note
-    -----
-    We use the parametrization that is also used in
-    https://arxiv.org/pdf/1911.12835.pdf .
+    Parameters
+    ----------
+    alpha : float
+        Scale parameter of the exponentiated weibull distribution. Defaults 
+        to 1.
+    beta : float
+        Shape parameter of the exponentiated weibull distribution. Defaults 
+        to 1.
+    delta : float
+        Shape 2 parameter of the exponentiated weibull distribution. Defaults 
+        to 1.
+    f_alpha : float
+        Fixed scale parameter of the weibull distribution (e.g. given physical
+        parameter). If this parameter is set, alpha is ignored. Defaults to 
+        None.
+    f_beta : float
+       Fixed shape parameter of the weibull distribution (e.g. given physical
+       parameter). If this parameter is set, beta is ignored. Defaults to 
+       None. 
+    f_delta : float
+        Fixed location parameter of the weibull distribution (e.g. given physical
+        parameter). If this parameter is set, delta is ignored. Defaults to 
+        None.
+    fit_method : float
+        Method of estimating the parameters of a probability distribution. 
+        Defaults to maximum likelihood estimation (mle).
+    weights : KAI???
+
+
+    References
+    ----------
+    .. [1] Haselsteiner, A.F.; Thoben, K.D. (2019)
+        Predicting wave heights for marine design by prioritizing extreme events in
+        a global model, Renewable Energy, Volume 156, August 2020, 
+        Pages 1146-1157; https://doi.org/10.1016/j.renene.2020.04.112
+
     """
     
     @property
