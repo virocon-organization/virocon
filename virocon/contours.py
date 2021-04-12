@@ -18,24 +18,37 @@ __all__ = ["calculate_alpha", "save_contour_coordinates", "IFORMContour",
 def calculate_alpha(state_duration, return_period):
     """
     Calculates the probability that an observation falls outside the 
-    environmental contour (exceedance probability).
+    environmental contour (exceedance probability). 
+    
+    The exceedance probability, α, corresponds to a certain recurrence or 
+    return period, T, which describes the average time period between two 
+    consecutive environmental states above the threshold, x1 
+    (Haselsteiner et. al (2017) [1]_).  
     
     Parameters
     ---------- 
     state_duration : float
         Time period for which an environmental state is measured,
-        expressed in hours.
+        expressed in hours :math:`(T_s)`.
     return_period : float
         Describes the average time period between two consecutive 
         environmental states above a threshold, x1. The threshold is called 
-        return value.
+        return value :math:`(T_r)`.
     
+        :math:`\\alpha= \\frac{T_s}{T_r}` 
+        
         :math:`F(x_1) =  P(X_1 \geq x_1)= \int_{- \infty}^{x_1} f(x) dx = 1- \\alpha`  
         
     Returns
     -------
     alpha : float
         Exceedance probability.
+    
+    References
+    ----------
+    .. [1] Haselsteiner, A.F.; Ohlendorf, J.H.; Wosniok, W.; Thoben, K.D. (2017)
+        Deriving environmental contours from highest density regions,
+        Coastal Engineering, Volume 123. DOI: 10.1016/j.coastaleng.2017.03.002.
 
     """
     
@@ -47,9 +60,9 @@ def sort_points_to_form_continuous_line(x, y, search_for_optimal_start=False):
     """
     Sorts contour points to form a a continous line / contour.
     
-     This function simply sorts 2 dimensional points. The points are given 
-     by x and y coordinates. This function is used to sort the coordinates 
-     of 2 dimensional contours.
+    This function simply sorts 2 dimensional points. The points are given 
+    by x and y coordinates. This function is used to sort the coordinates 
+    of 2 dimensional contours.
 
     Thanks to https://stackoverflow.com/a/37744549
 
@@ -111,7 +124,7 @@ def save_contour_coordinates(contour, file_path, model_desc=None):
     contour : Contour
      The contour with the coordinates to save.
     file_path : string
-     Indictaes the path, where the contour coordinates are saved.
+     Indicates the path, where the contour coordinates are saved.
     model_desc : dictionary
      The description of the model. model_desc has the keys 'names', 'symbols' 
      and 'units'. Each value is a list of strings. For each dimension of the 
@@ -194,8 +207,8 @@ class IFORMContour(Contour):
     References
     ----------
     .. [1] Winterstein, S.R.; Ude, T.C.; Cornell, C.A.; Bjerager, P.; Haver, S. (1993)
-    Environmental parameters  for extreme response: Inverse FORM with omission
-    factors. ICOSSAR 93, Innsbruck, Austria. 
+        Environmental parameters  for extreme response: Inverse FORM with omission
+        factors. ICOSSAR 93, Innsbruck, Austria. 
 
 
     """
@@ -271,8 +284,8 @@ class ISORMContour(Contour):
     References
     ----------
     .. [1] Chai, W.; Leira, B.J. (2018)
-    Environmental contours based on inverse SORM. Marine Structures Volume 60,
-    pp. 34-51. DOI: 10.1016/j.marstruc.2018.03.007 .
+        Environmental contours based on inverse SORM. Marine Structures Volume 60,
+        pp. 34-51. DOI: 10.1016/j.marstruc.2018.03.007 .
        
     """
     
@@ -335,36 +348,36 @@ class ISORMContour(Contour):
 
 class HighestDensityContour(Contour):
     """
-        Contour based on the highest density method.
+    Contour based on the highest density method.
 
-        This method was proposed by Haselsteiner et. al (2017) [1]_
+    This method was proposed by Haselsteiner et. al (2017) [1]_
 
-        Parameters
-        ----------
-        model : MultivariateModel
-            The model to be used to calculate the contour.
-        alpha : float
-            The exceedance probability. The probability that an observation 
-            falls outside the environmental contour.
-        limits : list of tuples, optional
-           The limits of the grid to use for calculation. One 2-element tuple 
-           for each dimension of the model, containing the minimum and maximum 
-           for that dimension. (min, max). If not given, reasonable values are 
-           choosen using the distributions lower support limit and the models 
-           marginal_icdf.
-        deltas : float or list of float, optional
-           The step size of the grid to use for calculation. If a single float 
-           is supplied it is used for all dimensions. If a list is supplied 
-           there has to be one entry for each dimension of the model. Defaults 
-           to 0.25% of the range defined by limits.
-        
-        References
-        ----------
-        .. [1] Haselsteiner, A.F.; Ohlendorf, J.H.; Wosniok, W.; Thoben, K.D. (2017)
+    Parameters
+    ----------
+    model : MultivariateModel
+        The model to be used to calculate the contour.
+    alpha : float
+        The exceedance probability. The probability that an observation 
+        falls outside the environmental contour.
+    limits : list of tuples, optional
+       The limits of the grid to use for calculation. One 2-element tuple 
+       for each dimension of the model, containing the minimum and maximum 
+       for that dimension. (min, max). If not given, reasonable values are 
+       choosen using the models marginal_icdf as upper limit and 0 as lower
+       limit.
+    deltas : float or list of float, optional
+       The step size of the grid to use for calculation. If a single float 
+       is supplied it is used for all dimensions. If a list is supplied 
+       there has to be one entry for each dimension of the model. Defaults 
+       to 0.25% of the range defined by limits.
+    
+    References
+    ----------
+    .. [1] Haselsteiner, A.F.; Ohlendorf, J.H.; Wosniok, W.; Thoben, K.D. (2017)
         Deriving environmental contours from highest density regions,
         Coastal Engineering, Volume 123. DOI: 10.1016/j.coastaleng.2017.03.002.
         
-        """
+    """
 
     def __init__(self, model, alpha, limits=None, deltas=None):
     
@@ -664,7 +677,7 @@ class HighestDensityContour(Contour):
 class DirectSamplingContour(Contour):
     """
     Direct sampling contour as introduced by Huseby et al. (2013) [1]_
-
+    The provided direct sampling contour method only works for 2D models.
 
     Parameters
     ----------
@@ -685,9 +698,9 @@ class DirectSamplingContour(Contour):
     References
     ----------
     .. [1] Huseby, A.B.; Vanem, E.; Natvig, B. (2013)
-    A new approach to environmental contours for ocean engineering applications
-    based on direct Monte Carlo simulations,
-    Ocean Engineering, Volume 60. DOI: doi.org/10.1016/j.oceaneng.2012.12.034
+        A new approach to environmental contours for ocean engineering applications
+        based on direct Monte Carlo simulations,
+        Ocean Engineering, Volume 60. DOI: doi.org/10.1016/j.oceaneng.2012.12.034
 
     """
 
