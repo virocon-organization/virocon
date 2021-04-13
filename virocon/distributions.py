@@ -101,15 +101,18 @@ class ConditionalDistribution:
         ----------
         x : array_like
             Points at which the pdf is evaluated.
+            Shape:
         
         given : float or array_like
            The conditioning value of the conditioning variable e.g. the
            y in x|y.  
+           Shape:
             
         Returns
         -------
-        distribution.pdf :  array
+        ndarray
             Probability densities at x.
+            Shape:
         
         
         """
@@ -133,15 +136,18 @@ class ConditionalDistribution:
         ----------
         x : array_like
             Points at which the cdf is evaluated.
+            Shape:
         
         given : float or array_like
            The conditioning value of the conditioning variable e.g. the
            y in x|y.  
+           Shape:
    
         Returns
         -------
-        distribution.cdf : array
+        ndarray
             Cumulative distribution function evaluated at x.
+            Shape:
         
         """
        
@@ -158,16 +164,19 @@ class ConditionalDistribution:
         ----------
         prob : 
             Probabilities for which the i_cdf is evaluated.
+            Shape:
         
         given : float or array_like
            The conditioning value of the conditioning variable e.g. the
            y in x|y.  
+           Shape:
             
         Returns
         -------
         ndarray or float
             Inverse cumulative distribution function evaluated for given
             probabilities.
+            Shape:
         
         """
         
@@ -182,15 +191,18 @@ class ConditionalDistribution:
         ----------
         n : float
             Number of observations that shall be drawn.
+            Shape:
         
         given : float or array_like
            The conditioning value of the conditioning variable e.g. the
            y in x|y.  
+           Shape:
             
         Returns
         -------
         ndarray or float
             Sample of the requested size.
+            Shape:
         
         
         """
@@ -212,7 +224,6 @@ class ConditionalDistribution:
             The data that should be used to fit the distribution to.
             Realizations of the distributions variable split into intervals. 
             One array for each interval containing the data in that interval.
-            
         
         conditioning_values : array_like
             Realizations of the conditioning variable e.g. the y in x|y.  
@@ -281,6 +292,7 @@ class Distribution(ABC):
     def pdf(self, x, *args, **kwargs):
         """
         Probability density function.
+        
         """
 
     @abstractmethod
