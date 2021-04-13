@@ -12,7 +12,50 @@ __all__ = ["DependenceFunction"]
 # it should not matter if the dependent or the conditioner are fitted first
 class DependenceFunction():   
     """
-    TO DO: BESCHREIBUNG
+    Function to describe the dependencies between the variables.
+    
+    The dependence function is a function of the parameters of the dependent
+    variable. E.g.the zero-upcrossing period is dependent on the 
+    significant wave height (Hs|Tp). Assuming, the zero-upcrossing period is
+    lognormally distributed, the parameters mu and sigma are described as
+    functions of the significant wave height (equations given by
+    Haselsteiner et. al(2021) [1]_ ). 
+    
+    :math:`\\mu_{tz}(h_s) =  ln \\left(c_1 + c_2 \\sqrt{ \\frac{h_s)}{ g}} \\right)`
+    
+    :math:`\\sigma_{tz}(h_s) = c_3 + \\frac{c_4)}{1+ c_5h_s}` 
+    
+    Parameters
+    ----------
+    func : string
+        Dependence functions for the parameters.
+        Possible functions are:
+            
+                :power3: :math:`a + b * x^c`
+                :exp3: :math:`a + b * e^{x * c}`
+                :lnsquare2: :math:`\ln[a + b * \sqrt(x / 9.81)]`
+                :powerdecrease3: :math:`a + 1 / (x + b)^c`
+                :asymdecrease3: :math:`a + b / (1 + c * x)`
+                :logistics4: :math:`a + b / [1 + e^{-1 * |c| * (x - d)}]`
+    
+    bounds : list
+        Bounds for function parameters.
+    
+    constraints : 
+        
+        
+    weights : 
+        
+    
+    References
+    ----------
+    .. [1] Andreas F. Haselsteiner, Ryan G. Coe, Lance Manuel, Wei Chai, 
+        Bernt Leira, Guilherme Clarindo, C. Guedes Soares, Ásta Hannesdóttir,
+        Nikolay Dimitrov, Aljoscha Sander, Jan-Hendrik Ohlendorf, 
+        Klaus-Dieter Thoben, Guillaume de Hauteclocque, Ed Mackay, Philip Jonathan,
+        Chi Qiao, Andrew Myers, Anna Rode, Arndt Hildebrandt, Boso Schmidt, 
+        Erik Vanem, Arne Bang Huseby(2021)    
+        A benchmarking exercise for environmental contours.
     
     """
     
