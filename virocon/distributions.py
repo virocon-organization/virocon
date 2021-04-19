@@ -19,21 +19,20 @@ __all__ = ["WeibullDistribution", "LogNormalDistribution",
 
 class ConditionalDistribution:
     """
-    Conditional statistical distributions for two or more random 
-    (environmental) variables that are dependet on each other. The conditional
-    distribution consists of two marginal distributions of the individual
-    variables.
+    Conditional statistical distributions describes one rabdom variable which
+    is dependent on another random variable.
+    The conditional distribution uses a Distribution as template and 
+    dynamically alters its parameters to model the dependence.
     
     Parameters
     ----------
     distribution : Distribution
-        Mathematical description of the probabilities for different possbile 
-        (environmental) events.
+        The distribution used as template. Its parameters can be replaced with 
+        dependence functions to model the dependency.
     parameters: float
-       Parameters of probability distributions are: scale, location, shape.
-       All parametric distributions can be initalized with 'scale', 'shape'
-       and 'loc' (location) parameters. Some distribution have a second shape
-       parameter, 'shape2'.
+       A dictionary describing the parameters of distribution. The keys are 
+       the parameter names, the values are the dependence functions. Every 
+       parameter that is not fixed in distribution has to be set here.
     
     """
   
@@ -88,14 +87,11 @@ class ConditionalDistribution:
 
     def pdf(self, x, given):
         """
-        Probability density function.
+        Probability density function for the described random variable.
 
-        f_X(x) indicates the probability density at point x. 
-        It is the limit of the probability of the interval [x,x+Δ] divided by 
-        the length of the interval as the length of the interval goes to 0 
-        (x is a realization of a random variable X). 
-        
-            :math:`f_X(x) =  \lim_{x\\to 0}\\frac{P(x<X \leq x+ \\Delta)}{ \\Delta}`
+        With x, a realization of this random variable and given a realisation 
+        of the conditioning random variable, pdf(x, given) returns the 
+        probability density function at x conditioned on given.
            
         Parameters
         ----------
@@ -104,14 +100,14 @@ class ConditionalDistribution:
             Shape:
         
         given : float or array_like
-           The conditioning value of the conditioning variable e.g. the
+           The conditioning value of the conditioning variable i.e. the
            y in x|y.  
            Shape:
             
         Returns
         -------
         ndarray
-            Probability densities at x.
+            Probability densities at x conditioned on given.
             Shape:
         
         
@@ -121,16 +117,11 @@ class ConditionalDistribution:
     
     def cdf(self, x, given):
         """
-        Cumulative distribution function.
-        
-        The cumulative distribution function of a continous random variable  X 
-        is the function given by:
-        
-            :math:`F_X(x) =  P(X\leq x)`    
-        
-        or:
-             
-            :math:`F_X(x) =  \int_{- \infty}^{x} f_X(t) dt`   
+        Cumulative distribution function for the described random variable.
+
+        With x, a realization of this random variable and given a realisation 
+        of the conditioning random variable, cdf(x, given) returns the 
+        cumulative distribution function at x conditioned on given. 
      
         Parameters
         ----------
@@ -139,7 +130,7 @@ class ConditionalDistribution:
             Shape:
         
         given : float or array_like
-           The conditioning value of the conditioning variable e.g. the
+           The conditioning value of the conditioning variable i.e. the
            y in x|y.  
            Shape:
    
@@ -157,7 +148,11 @@ class ConditionalDistribution:
         """
         Inverse cumulative distribution function.
         
-        Calculates percent-point function. 
+        Calculates percent-point function. Also known as quantile or 
+        percent-point function. With x, a realization of this random variable 
+        and given a realisation of the conditioning random variable, 
+        icdf(x, given) returns the inverse cumulative distribution function at 
+        x conditioned on given.
         
         
         Parameters
@@ -167,15 +162,15 @@ class ConditionalDistribution:
             Shape:
         
         given : float or array_like
-           The conditioning value of the conditioning variable e.g. the
+           The conditioning value of the conditioning variable i.e. the
            y in x|y.  
            Shape:
             
         Returns
         -------
         ndarray or float
-            Inverse cumulative distribution function evaluated for given
-            probabilities.
+            Inverse cumulative distribution function evaluated at given 
+            probabilities conditioned on given.
             Shape:
         
         """
@@ -184,24 +179,23 @@ class ConditionalDistribution:
         
     def draw_sample(self, n, given):
         """
-        Draw a random sample with length n.
+        Draw a random sample of size n, conditioned on given.
         
         
         Parameters
         ----------
         n : float
             Number of observations that shall be drawn.
-            Shape:
         
         given : float or array_like
-           The conditioning value of the conditioning variable e.g. the
+           The conditioning value of the conditioning variable i.e. the
            y in x|y.  
            Shape:
             
         Returns
         -------
         ndarray or float
-            Sample of the requested size.
+            Sample of the requested size conditioned on given.
             Shape:
         
         
@@ -226,13 +220,15 @@ class ConditionalDistribution:
             One array for each interval containing the data in that interval.
         
         conditioning_values : array_like
-            Realizations of the conditioning variable e.g. the y in x|y.  
-            Shape:
+            Realizations of the conditioning variable i.e. the y in x|y.  
+            
+            One value for each interval in data.
         
-        conditioning_interval_boundaries : array_like
+        conditioning_interval_boundaries : list of tuple
             Boundaries of the intervals the data of the conditioning variable
             was split into.
-            Shape:
+            
+            One 2-element tuple for each interval in data.
         
         """
         
@@ -277,6 +273,8 @@ class Distribution(ABC):
         """
         Parameters of the probability distribution.
         
+        Dict of the form: {"<parameter_name>" : <parameter_value>, ...}
+        
         """
         
         return {}
@@ -305,7 +303,7 @@ class Distribution(ABC):
     @abstractmethod
     def draw_sample(self, n,  *args, **kwargs):
         """
-        Draw a random sample with length n.
+        Draw a random sample of length n.
        
         """
 
@@ -360,8 +358,10 @@ class Distribution(ABC):
 
 class WeibullDistribution(Distribution):
     """
-    A weibull distribution.
-    
+    A weibull distribution. 
+     
+    The distributions probability density function is given by: 
+
     :math:`f(x) = \\frac{k}{\\lambda}\\left( \\frac{x-\\theta}{\\lambda}\\right)^{k -1} \\exp \\left[-\\left( \\frac{x-\\theta}{\\lambda} \\right)^{k} \\right]`
     
     Parameters
@@ -387,8 +387,7 @@ class WeibullDistribution(Distribution):
         None.
     fit_method : float
         Method of estimating the parameters of a probability distribution. 
-        Defaults to maximum likelihood estimation (mle).
-    weights : KAI???
+        Supported option: "mle" : maximum likelihood estimation (default).
 
     """
     

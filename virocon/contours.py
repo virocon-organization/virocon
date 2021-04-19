@@ -42,13 +42,18 @@ def calculate_alpha(state_duration, return_period):
     Returns
     -------
     alpha : float
-        Exceedance probability.
+        Exceedance probability. Exceedance probability is referred to as the 
+        probability that a certain value will be exceeded in a predefined 
+        future time period [2]_ . 
     
     References
     ----------
     .. [1] Haselsteiner, A.F.; Ohlendorf, J.H.; Wosniok, W.; Thoben, K.D. (2017)
         Deriving environmental contours from highest density regions,
         Coastal Engineering, Volume 123. DOI: 10.1016/j.coastaleng.2017.03.002.
+    .. [2] Timothy McDaniels; Mitchell Small (2004)
+        Risk Analysis and Society- An Interdisciplinary Characterization of 
+        the Field. ISBN: 9780521532631.
 
     """
     
@@ -156,6 +161,18 @@ class Contour(ABC):
       A contour implements a method to define multivariate extremes based on a
       joint probabilistic model of variables like significant wave height, 
       wind speed or spectral peak period.
+      
+      Contour curves or surfaces for more than two environmental parameters 
+      give combination of environmental parameters which approximately 
+      describe the various actions corresponding to the given exceedance 
+      probability [1]_.
+      
+      
+    References
+    ----------
+    .. [1] NORSOK standard N-003, Edition 2, September 2007. Actions and 
+        action effects.
+
 
     """
 
