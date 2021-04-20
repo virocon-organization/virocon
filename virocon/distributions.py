@@ -101,18 +101,18 @@ class ConditionalDistribution:
         ----------
         x : array_like
             Points at which the pdf is evaluated.
-            Shape: 1- dimensional
+            Shape: 1- dimensional.
         
         given : float or array_like
            The conditioning value of the conditioning variable i.e. the
            y in x|y.  
-           Shape: 1-dimensional
+           Shape: 1-dimensional. Same size as x.
             
         Returns
         -------
         ndarray
             Probability densities at x conditioned on given.
-            Shape:
+            Shape: 1- dimensional. Same size as x.
         
         
         """
@@ -131,18 +131,18 @@ class ConditionalDistribution:
         ----------
         x : array_like
             Points at which the cdf is evaluated.
-            Shape:
+            Shape: 1-dimensional.
         
         given : float or array_like
            The conditioning value of the conditioning variable i.e. the
            y in x|y.  
-           Shape:
+           Shape: 1-dimensional. Same size as x.
    
         Returns
         -------
         ndarray
             Cumulative distribution function evaluated at x.
-            Shape:
+            Shape: 1-dimensional. Same size as x.
         
         """
        
@@ -163,19 +163,19 @@ class ConditionalDistribution:
         ----------
         prob : 
             Probabilities for which the i_cdf is evaluated.
-            Shape:
+            Shape: 1-dimensional
         
         given : float or array_like
            The conditioning value of the conditioning variable i.e. the
            y in x|y.  
-           Shape:
+           Shape: 1-dimensional. Same size as prob.
             
         Returns
         -------
         ndarray or float
             Inverse cumulative distribution function evaluated at given 
             probabilities conditioned on given.
-            Shape:
+            Shape: 1-dimensional. Same size as prob.
         
         """
         
@@ -194,14 +194,12 @@ class ConditionalDistribution:
         given : float or array_like
            The conditioning value of the conditioning variable i.e. the
            y in x|y.  
-           Shape:
+           Shape: TODO
             
         Returns
         -------
         ndarray or float
-            Sample of the requested size conditioned on given.
-            Shape:
-        
+            Sample of the requested size conditioned on given. 
         
         """
          
