@@ -6,6 +6,8 @@ from virocon import (IFORMContour, ISORMContour, HighestDensityContour,
                      ExponentiatedWeibullDistribution, LogNormalDistribution, 
                      WeibullDistribution, GlobalHierarchicalModel)
 
+from virocon.contours import sort_points_to_form_continuous_line
+
 @pytest.fixture(scope="module")
 def reference_coordinates_IFORM():
     with np.load("tests/reference_data/contours/reference_data_IFORM.npz") as data:
@@ -177,5 +179,24 @@ def test_DirectSamplingContour(reference_data_DSContour):
     my_coordinates = my_ds_contour.coordinates
     
     np.testing.assert_allclose(my_coordinates, ref_coordinates)
+    
+    
+    
+def test_sort_points_to_form_continuous_line():
+    phi = np.linspace(0, 2 * np.pi, num=10, endpoint=False)
+    ref_x = np.cos(phi)
+    ref_y = np.sin(phi)
+    
+    rng = np.random.default_rng()
+    rand_idx = np.arange(len(ref_x))
+    rng.shuffle(rand_idx)
+    rand_x = ref_x[rand_idx]
+    rand_y = ref_y[rand_idx]
+
+    my_x, my_y = sort_points_to_form_continuous_line(rand_x, rand_y, 
+                                                     search_for_optimal_start=True)
+    
+    np.testing.assert_array_equal(my_x, ref_x)
+    np.testing.assert_array_equal(my_y, ref_y)
     
     
