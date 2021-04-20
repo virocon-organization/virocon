@@ -1,20 +1,13 @@
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 
-from virocon import (GlobalHierarchicalModel, WeibullDistribution, 
-                     LogNormalDistribution, DependenceFunction, IFORMContour,
-                     calculate_alpha, WidthOfIntervalSlicer)
+from virocon import (DependenceFunction, WeibullDistribution, 
+                     WidthOfIntervalSlicer, LogNormalDistribution, 
+                     GlobalHierarchicalModel, calculate_alpha, IFORMContour)
 
-from virocon.plotting import (plot_2D_contour, 
-                              plot_2D_isodensity, 
-                              plot_dependence_functions, 
-                              plot_marginal_quantiles
-                              )
+from virocon.utils import calculate_design_conditions
 
 
-
-# %% load data, prepare common variables
 
 data = pd.read_csv("datasets/NDBC_buoy_46025.csv", sep=",")[["Hs", "T"]]
 
@@ -60,28 +53,29 @@ model_description = {"names" : ["Significant wave height", "Energy wave period"]
                      "units" : ["m", "s"]
                      } # TODO check if correct or other wave period
 
-plt.close("all")
-# %% plot_qq
 
-axes = plot_marginal_quantiles(ghm, data, model_desc=model_description)
 
-# plt.show()
+# %%
+import matplotlib.pyplot as plt
 
-# %% plot_dependence_functions
 
-par_rename = {"mu": "$\mu$",
-             "sigma" : "$\sigma$"}
-axes = plot_dependence_functions(ghm, model_desc=model_description, par_rename=par_rename)
+
+
+
+
+
+plt.close()
+coords = iform_contour.coordinates
+x1 = np.append(coords[:, 1], coords[0, 1])
+y1 = np.append(coords[:, 0], coords[0, 0])
+plt.plot(x1, y1, c="#BB5566")
+design_conditions = calculate_design_conditions(iform_contour, swap_axis=True)
+plt.scatter(design_conditions[:, 0], design_conditions[:, 1], c="#004488", marker="x", 
+            zorder=2.5)
+my_steps = np.arange(3, 23, 0.5)
+design_conditions2 = calculate_design_conditions(iform_contour, steps=my_steps, swap_axis=True)
+plt.scatter(design_conditions2[:, 0], design_conditions2[:, 1], c="#DDAA33", marker="x", 
+            zorder=2.5)
+plt.show()
     
-# %% plot_isodensity
 
-ax = plot_2D_isodensity(ghm, model_desc=model_description, sample=data, swap_axis=True)
-
-
-# %% plot_contour
-
-
-ax = plot_2D_contour(iform_contour, model_desc=model_description, sample=data,
-                     design_conditions=True, swap_axis=True)
-
-    

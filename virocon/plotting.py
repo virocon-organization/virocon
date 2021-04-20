@@ -2,6 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import scipy.stats as sts
 
+from virocon.utils import calculate_design_conditions
+
 __all__ = ["plot_marginal_quantiles", "plot_dependence_functions",
            "plot_2D_isodensity", "plot_2D_contour"]
 
@@ -78,7 +80,6 @@ def plot_dependence_functions(model, model_desc=None, par_rename=None, axes=None
     for dim in conditional_dist_idc:
         dist = model.distributions[dim]
         conditioning_values = dist.conditioning_values
-        #x = np.linspace(0, model.marginal_icdf(1- 1E-6, model.conditional_on[dim]))
         x = np.linspace(0, max(conditioning_values))
         cond_idx = model.conditional_on[dim]
         x_name = model_desc["names"][cond_idx]
@@ -123,10 +124,6 @@ def plot_2D_isodensity(model, sample, model_desc=None, swap_axis=False, ax=None)
     sample = np.asarray(sample)
     ax.scatter(sample[:, x_idx], sample[:, y_idx], c="k", marker=".", alpha=0.3)
         
-    # x_lower = model.marginal_icdf(1E-4, 0)
-    # x_upper = model.marginal_icdf(1- 1E-4, 0)
-    # y_lower = model.marginal_icdf(1E-4, 1)
-    # y_upper = model.marginal_icdf(1- 1E-4, 1)
     x_lower = min(sample[:, 0])
     x_upper = max(sample[:, 0])
     y_lower = min(sample[:, 1])
@@ -157,8 +154,9 @@ def plot_2D_isodensity(model, sample, model_desc=None, swap_axis=False, ax=None)
     return ax
 
 
-def plot_2D_contour(contour, sample=None, model_desc=None, swap_axis=False, ax=None):
+def plot_2D_contour(contour, sample=None, design_conditions=None, model_desc=None, swap_axis=False, ax=None):
     
+    # design conditions can be True or array
     n_dim = 2
     if swap_axis:
         x_idx = 1
@@ -167,16 +165,27 @@ def plot_2D_contour(contour, sample=None, model_desc=None, swap_axis=False, ax=N
         x_idx = 0
         y_idx = 1
         
+        
     if model_desc is None:
         model_desc = get_default_model_description(n_dim)
     
     if ax is None:
         _, ax  = plt.subplots()
-    
+        
+        
+    if design_conditions:
+        try: # if iterable assume it's already the design conditions
+            iter(design_conditions)
+        except: # if it is not an array we compute the default design_conditions
+            design_conditions = calculate_design_conditions(contour, swap_axis=swap_axis)
+            
+        ax.scatter(design_conditions[:, 0], design_conditions[:, 1], c="#DDAA33", marker="x", 
+            zorder=2.5)
     
     if sample is not None:
         sample = np.asarray(sample)
         ax.scatter(sample[:, x_idx], sample[:, y_idx], c="k", marker=".", alpha=0.3)
+        
     
     coords = contour.coordinates
     x = coords[:, x_idx].tolist()
