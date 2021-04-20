@@ -19,10 +19,14 @@ __all__ = ["WeibullDistribution", "LogNormalDistribution",
 
 class ConditionalDistribution:
     """
-    Conditional statistical distributions describes one rabdom variable which
-    is dependent on another random variable.
     The conditional distribution uses a Distribution as template and 
     dynamically alters its parameters to model the dependence.
+    
+    The ConditionalDistribution wraps another distribution. When a method of 
+    the ConditionalDistribution is called it first computes the distributions 
+    parameters at given and then calls the corresponding method of the 
+    distribution with these parameters. Usually the parameters are defined by 
+    dependence functions of the form dep_func(given) -> param_val.
     
     Parameters
     ----------
@@ -97,12 +101,12 @@ class ConditionalDistribution:
         ----------
         x : array_like
             Points at which the pdf is evaluated.
-            Shape:
+            Shape: 1- dimensional
         
         given : float or array_like
            The conditioning value of the conditioning variable i.e. the
            y in x|y.  
-           Shape:
+           Shape: 1-dimensional
             
         Returns
         -------
@@ -462,7 +466,8 @@ class WeibullDistribution(Distribution):
         
 class LogNormalDistribution(Distribution):
     """
-    A Lognormal Distribution. 
+    A Lognormal Distribution. The distributions probability density function is 
+    given by: 
     
     :math:`f(x) = \\frac{1}{x\\widetilde{\\sigma} \\sqrt{2\\pi}}\\exp \\left[ \\frac{-(\\ln x - \\widetilde{\\mu})^2}{2\\widetilde{\\sigma}^2}\\right]`
      
@@ -470,21 +475,22 @@ class LogNormalDistribution(Distribution):
     Parameters
     ----------
     mu : float
-        Mean parameter of the lognormal distribution. Defaults to 0.
+        Mean parameter of the corresponding normal distribution. 
+        Defaults to 0.
     sigma : float
-        Variance parameter of the lognormal distribution. Defaults to 1.
+        Variance parameter of the corresponding normal distribution. 
+        Defaults to 1.
     f_mu : float
-        Fixed mean parameter of the lognormal distribution (e.g. given physical
+        Fixed parameter mu of the lognormal distribution (e.g. given physical
         parameter). If this parameter is set, mu is ignored. Defaults to 
         None.
     f_sigma : float
-       Fixed variance parameter of the lognormal distribution (e.g. given 
+       Fixed parameter sigma of the lognormal distribution (e.g. given 
        physical parameter). If this parameter is set, sigma is ignored. 
        Defaults to None. 
     fit_method : float
         Method of estimating the parameters of a probability distribution. 
         Defaults to maximum likelihood estimation (mle).
-    weights : KAI???
     
     """
    
@@ -560,7 +566,8 @@ class LogNormalDistribution(Distribution):
 class LogNormalNormFitDistribution(LogNormalDistribution):
     #https://en.wikipedia.org/wiki/Log-normal_distribution#Estimation_of_parameters
     """
-    A Lognormal Distribution. 
+    A Lognormal Distribution. The distributions probability density function is 
+    given by: 
     
     :math:`f(x) = \\frac{1}{x\\widetilde{\\sigma} \\sqrt{2\\pi}}\\exp \\left[ \\frac{-(\\ln x - \\widetilde{\\mu})^2}{2\\widetilde{\\sigma}^2}\\right]`
      
@@ -568,21 +575,22 @@ class LogNormalNormFitDistribution(LogNormalDistribution):
     Parameters
     ----------
     mu : float
-        Mean parameter of the lognormal distribution. Defaults to 0.
+        Mean parameter of the corresponding normal distribution. 
+        Defaults to 0.
     sigma : float
-        Variance parameter of the lognormal distribution. Defaults to 1.
+        Variance parameter of the corresponding normal distribution. 
+        Defaults to 1.
     f_mu : float
-        Fixed mean parameter of the lognormal distribution (e.g. given physical
+        Fixed parameter mu of the lognormal distribution (e.g. given physical
         parameter). If this parameter is set, mu is ignored. Defaults to 
         None.
     f_sigma : float
-       Fixed variance parameter of the lognormal distribution (e.g. given 
+       Fixed parameter sigma of the lognormal distribution (e.g. given 
        physical parameter). If this parameter is set, sigma is ignored. 
        Defaults to None. 
     fit_method : float
         Method of estimating the parameters of a probability distribution. 
-        Defaults to maximum likelihood estimation (mle).
-    weights : KAI???
+        Supported option: "mle" : maximum likelihood estimation (default).
     
     """
    
@@ -667,7 +675,8 @@ class LogNormalNormFitDistribution(LogNormalDistribution):
         
 class ExponentiatedWeibullDistribution(Distribution):
     """
-    An exponentiated Weibull distribution by by Haselsteiner et al. (2019) [1]_
+    An exponentiated Weibull distribution as used by Haselsteiner et al. (2019)
+    [1]_ The distributions cumulative distribution function is given by: 
     
     :math:`F(x) = \\left[ 1- \\exp \\left(-\\left( \\frac{x}{\\alpha} \\right)^{beta} \\right) \\right] ^{\\delta}`
     
@@ -677,27 +686,31 @@ class ExponentiatedWeibullDistribution(Distribution):
         Scale parameter of the exponentiated weibull distribution. Defaults 
         to 1.
     beta : float
-        Shape parameter of the exponentiated weibull distribution. Defaults 
-        to 1.
+        First shape parameter of the exponentiated weibull distribution. 
+        Defaults to 1.
     delta : float
-        Shape 2 parameter of the exponentiated weibull distribution. Defaults 
-        to 1.
+        Second shape parameter of the exponentiated weibull distribution. 
+        Defaults to 1.
     f_alpha : float
-        Fixed scale parameter of the weibull distribution (e.g. given physical
+        Fixed alpha parameter of the weibull distribution (e.g. given physical
         parameter). If this parameter is set, alpha is ignored. Defaults to 
         None.
     f_beta : float
-       Fixed shape parameter of the weibull distribution (e.g. given physical
+       Fixed beta parameter of the weibull distribution (e.g. given physical
        parameter). If this parameter is set, beta is ignored. Defaults to 
        None. 
     f_delta : float
-        Fixed location parameter of the weibull distribution (e.g. given physical
+        Fixed delta parameter of the weibull distribution (e.g. given physical
         parameter). If this parameter is set, delta is ignored. Defaults to 
         None.
     fit_method : float
         Method of estimating the parameters of a probability distribution. 
-        Defaults to maximum likelihood estimation (mle).
-    weights : KAI???
+        Supported options: "mle", maximum likelihood estimation (default) and 
+        "lsq", (weighted) least squares.
+    weights : array_like, float or str
+        The weights for the weighted least squares fit. Only used when 
+        fit_method="lsq", ignored otherwise. Defaults to None i.e. 
+        equal weights.
 
 
     References
