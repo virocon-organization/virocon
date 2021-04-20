@@ -99,6 +99,23 @@ class DependenceFunction():
             
             
     def fit(self, x, y):
+
+        """
+        Function to determine the parameters of the dependence function.
+         
+        Indicates the order the dependence functions are fitted.
+        
+        Parameters
+        ----------
+        
+        x :
+            
+        
+        y :
+            
+            
+        
+        """
         # The dependence function does not know in which order all the
         # dependence functions are fitted.
         # If another DependenceFunction has to be fitted before the current one,
@@ -115,7 +132,7 @@ class DependenceFunction():
         if self._may_fit:  # is the conditioner fitted, so that we can fit now?
             self._fit(self.x, self.y)
             
-    def _fit(self, x, y):
+    def _fit(self, x, y):        
         weights = self.weights
         if weights is not None:
             method = "wlsq" # weighted least squares
