@@ -196,7 +196,13 @@ def test_sort_points_to_form_continuous_line():
     my_x, my_y = sort_points_to_form_continuous_line(rand_x, rand_y, 
                                                      search_for_optimal_start=True)
     
-    np.testing.assert_array_equal(my_x, ref_x)
-    np.testing.assert_array_equal(my_y, ref_y)
+    # clockwise or anti-clockwise order is not deterministic,
+    # but both are okay
+    try: 
+        np.testing.assert_array_equal(my_x, ref_x)
+        np.testing.assert_array_equal(my_y, ref_y)
+    except AssertionError:
+        np.testing.assert_array_equal(my_x[::-1], ref_x)
+        np.testing.assert_array_equal(my_y[::-1], ref_y)
     
     
