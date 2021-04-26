@@ -19,10 +19,11 @@ __all__ = ["WeibullDistribution", "LogNormalDistribution",
 
 class ConditionalDistribution:
     """
-    The conditional distribution uses a Distribution as template and 
-    dynamically alters its parameters to model the dependence.
+    A conditional probability distribution.
     
-    The ConditionalDistribution wraps another distribution. When a method of 
+    The conditional distribution uses a Distribution as template and 
+    dynamically alters its parameters to model the dependence. The 
+    ConditionalDistribution wraps another distribution. When a method of 
     the ConditionalDistribution is called it first computes the distributions 
     parameters at given and then calls the corresponding method of the 
     distribution with these parameters. Usually the parameters are defined by 
@@ -93,9 +94,10 @@ class ConditionalDistribution:
         """
         Probability density function for the described random variable.
 
-        With x, a realization of this random variable and given a realisation 
-        of the conditioning random variable, pdf(x, given) returns the 
-        probability density function at x conditioned on given.
+        With x, value(s) from the sample space of this random variable and 
+        given value(s) from the sample space of the conditioning random 
+        variable, pdf(x, given) returns the probability density function at x 
+        conditioned on given.
            
         Parameters
         ----------
@@ -152,7 +154,7 @@ class ConditionalDistribution:
         """
         Inverse cumulative distribution function.
         
-        Calculates percent-point function. Also known as quantile or 
+        Calculate the inverse cumulative distribution function. Also known as quantile or 
         percent-point function. With x, a realization of this random variable 
         and given a realisation of the conditioning random variable, 
         icdf(x, given) returns the inverse cumulative distribution function at 
@@ -217,7 +219,7 @@ class ConditionalDistribution:
         Parameters
         ----------
         data : list of array
-            The data that should be used to fit the distribution to.
+            The data that should be used to fit the distribution.
             Realizations of the distributions variable split into intervals. 
             One array for each interval containing the data in that interval.
         
@@ -420,17 +422,68 @@ class WeibullDistribution(Distribution):
             gamma = self.gamma
         return beta, gamma, alpha  # shape, loc, scale
 
-    def cdf(self, x, alpha=None, beta=None, gamma=None):
+    def cdf(self, x, alpha=None, beta=None, gamma=None):      
+        """
+        Cumulative distribution function.
+        
+        Parameters
+        ----------
+        x : array_like, 
+            Points at which the cdf is evaluated.
+            Shape: 1-dimensional.
+        lambda_ : float, optional
+            The scale parameter. Defaults to self.lambda_ .
+        k : float, optional
+            The shape parameter. Defaults to self.k .
+        theta: float, optional
+            The location parameter . Defaults to self.theta .
+        
+        """ 
+        
         scipy_par = self._get_scipy_parameters(alpha, beta, gamma)
         return sts.weibull_min.cdf(x, *scipy_par)
 
 
     def icdf(self, prob, alpha=None, beta=None, gamma=None):
+        """
+        Inverse cumulative distribution function.
+        
+        Parameters
+        ----------
+         prob : 
+            Probabilities for which the i_cdf is evaluated.
+            Shape: 1-dimensional
+        lambda_ : float, optional
+            The scale parameter. Defaults to self.lambda_ .
+        k : float, optional
+            The shape parameter. Defaults to self.k .
+        theta: float, optional
+            The location parameter . Defaults to self.theta .
+        
+        """
+        
         scipy_par = self._get_scipy_parameters(alpha, beta, gamma)
         return sts.weibull_min.ppf(prob, *scipy_par)
 
 
     def pdf(self, x, alpha=None, beta=None, gamma=None):
+        """
+        Probability density function.
+        
+        Parameters
+        ----------
+        x : array_like, 
+            Points at which the cdf is evaluated.
+            Shape: 1-dimensional.
+        lambda_ : float, optional
+            The scale parameter. Defaults to self.lambda_ .
+        k : float, optional
+            The shape parameter. Defaults to self.k .
+        theta: float, optional
+            The location parameter . Defaults to self.theta .
+        
+        """ 
+        
         scipy_par = self._get_scipy_parameters(alpha, beta, gamma)
         return sts.weibull_min.pdf(x, *scipy_par)
 
@@ -464,8 +517,9 @@ class WeibullDistribution(Distribution):
         
 class LogNormalDistribution(Distribution):
     """
-    A Lognormal Distribution. The distributions probability density function is 
-    given by: 
+    A Lognormal Distribution. 
+    
+    The distributions probability density function is given by: 
     
     :math:`f(x) = \\frac{1}{x\\widetilde{\\sigma} \\sqrt{2\\pi}}\\exp \\left[ \\frac{-(\\ln x - \\widetilde{\\mu})^2}{2\\widetilde{\\sigma}^2}\\right]`
      
@@ -521,7 +575,7 @@ class LogNormalDistribution(Distribution):
             sigma = self.sigma
         return sigma, 0, scale # shape, loc, scale
         
-    def cdf(self, x, mu=None, sigma=None):
+    def cdf(self, x, mu=None, sigma=None):      
         scipy_par = self._get_scipy_parameters(mu, sigma)
         return sts.lognorm.cdf(x, *scipy_par)
 
@@ -564,8 +618,8 @@ class LogNormalDistribution(Distribution):
 class LogNormalNormFitDistribution(LogNormalDistribution):
     #https://en.wikipedia.org/wiki/Log-normal_distribution#Estimation_of_parameters
     """
-    A Lognormal Distribution. The distributions probability density function is 
-    given by: 
+    A Lognormal Distribution. 
+    The distributions probability density function is given by: 
     
     :math:`f(x) = \\frac{1}{x\\widetilde{\\sigma} \\sqrt{2\\pi}}\\exp \\left[ \\frac{-(\\ln x - \\widetilde{\\mu})^2}{2\\widetilde{\\sigma}^2}\\right]`
      
@@ -673,10 +727,13 @@ class LogNormalNormFitDistribution(LogNormalDistribution):
         
 class ExponentiatedWeibullDistribution(Distribution):
     """
-    An exponentiated Weibull distribution as used by Haselsteiner et al. (2019)
-    [1]_ The distributions cumulative distribution function is given by: 
+    An exponentiated Weibull distribution. 
     
-    :math:`F(x) = \\left[ 1- \\exp \\left(-\\left( \\frac{x}{\\alpha} \\right)^{beta} \\right) \\right] ^{\\delta}`
+    The parametrization used is the same as described by 
+    Haselsteiner et al. (2019) [1]_.  The distributions cumulative distribution 
+    function is given by:
+    
+    :math:`F(x) = \\left[ 1- \\exp \\left(-\\left( \\frac{x}{\\alpha} \\right)^{\\beta} \\right) \\right] ^{\\delta}`
     
     Parameters
     ----------

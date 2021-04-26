@@ -39,10 +39,11 @@ class DependenceFunction():
                 :logistics4: :math:`a + b / [1 + e^{-1 * |c| * (x - d)}]`
     
     bounds : list
-        Bounds for function parameters.
+        Boundaries for function parameters. E.g. a>=0 .
     
     constraints : 
-        
+        Indicate particular, more complex limits for function parameters. 
+        E.g 0>= a- 2b .
         
     weights : 
         
@@ -103,7 +104,7 @@ class DependenceFunction():
         """
         Function to determine the parameters of the dependence function.
          
-        Indicates the order the dependence functions are fitted.
+        Indicates the order in which the dependence functions are fitted.
         
         Parameters
         ----------
