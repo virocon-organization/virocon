@@ -473,7 +473,7 @@ class WeibullDistribution(Distribution):
         Parameters
         ----------
         x : array_like, 
-            Points at which the cdf is evaluated.
+            Points at which the pdf is evaluated.
             Shape: 1-dimensional.
         lambda_ : float, optional
             The scale parameter. Defaults to self.lambda_ .
@@ -519,7 +519,7 @@ class LogNormalDistribution(Distribution):
     """
     A Lognormal Distribution. 
     
-    The distributions probability density function is given by: 
+    The distributions probability density function is given by [1]_: 
     
     :math:`f(x) = \\frac{1}{x\\widetilde{\\sigma} \\sqrt{2\\pi}}\\exp \\left[ \\frac{-(\\ln x - \\widetilde{\\mu})^2}{2\\widetilde{\\sigma}^2}\\right]`
      
@@ -544,6 +544,12 @@ class LogNormalDistribution(Distribution):
         Method of estimating the parameters of a probability distribution. 
         Defaults to maximum likelihood estimation (mle).
     
+    References
+    ----------
+    .. [1] Forbes, C.; Evans, M.; Hastings, N; Peacock, B. (2011)
+        Statistical Distributions, 4th Edition, Published by 
+        John Wiley & Sons, Inc., Hoboken, New Jersey., 
+        Pages 131-132
     """
    
     def __init__(self, mu=0, sigma=1, f_mu=None, f_sigma=None):
@@ -575,15 +581,60 @@ class LogNormalDistribution(Distribution):
             sigma = self.sigma
         return sigma, 0, scale # shape, loc, scale
         
-    def cdf(self, x, mu=None, sigma=None):      
+    def cdf(self, x, mu=None, sigma=None): 
+        """
+        Cumulative distribution function.
+        
+        Parameters
+        ----------
+        x : array_like, 
+            Points at which the cdf is evaluated.
+            Shape: 1-dimensional.
+        mu : float, optional
+            The variance parameter. Defaults to self.mu .
+        sigma : float, optional
+            The shape parameter. Defaults to self.sigma .
+        
+        """ 
+        
+        
         scipy_par = self._get_scipy_parameters(mu, sigma)
         return sts.lognorm.cdf(x, *scipy_par)
 
     def icdf(self, prob, mu=None, sigma=None):
+        """
+        Inverse cumulative distribution function.
+        
+        Parameters
+        ----------
+        prob : Probabilities for which the i_cdf is evaluated.
+            Shape: 1-dimensional
+        mu : float, optional
+            The variance parameter. Defaults to self.mu .
+        sigma : float, optional
+            The shape parameter. Defaults to self.sigma .
+        
+        """ 
+        
         scipy_par = self._get_scipy_parameters(mu, sigma)
         return sts.lognorm.ppf(prob, *scipy_par)
 
     def pdf(self, x, mu=None, sigma=None):
+        """
+        Probability density function.
+        
+        Parameters
+        ----------
+        x : array_like, 
+            Points at which the pdf is evaluated.
+            Shape: 1-dimensional.
+        mu : float, optional
+            The variance parameter. Defaults to self.mu .
+        sigma : float, optional
+            The shape parameter. Defaults to self.sigma .
+        
+        """ 
+        
         scipy_par = self._get_scipy_parameters(mu, sigma)
         return sts.lognorm.pdf(x, *scipy_par)
 
