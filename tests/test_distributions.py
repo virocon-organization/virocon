@@ -54,9 +54,9 @@ def test_ExponentiatedWeibull_wlsq_fit(exp_weibull_reference_data_wlsq_fit):
                                            loc=0, scale=true_alpha, 
                                            size=100, random_state=42)
     
-    my_expweibull = ExponentiatedWeibullDistribution(fit_method="lsq", weights="quadratic")
-    
-    my_expweibull.fit(expweibull_samples)
+    my_expweibull = ExponentiatedWeibullDistribution()
+
+    my_expweibull.fit(expweibull_samples, method="lsq", weights="quadratic")
     
     my_pdf = my_expweibull.pdf(x)
     my_cdf = my_expweibull.cdf(x)
