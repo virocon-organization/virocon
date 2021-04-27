@@ -48,16 +48,12 @@ alpha_dep = DependenceFunction(_alpha3, alpha_bounds, d_of_x=beta_dep,
                                weights=lambda x, y : y)
 
 
-dist_description_vs = {"distribution" : ExponentiatedWeibullDistribution(fit_method="wlsq",
-                                                                         weights="quadratic",
-                                                                         ),
+dist_description_vs = {"distribution" : ExponentiatedWeibullDistribution(),
                        "intervals" : WidthOfIntervalSlicer(2, min_n_points=50,
                                                            offset=True)
                        }
 
-dist_description_hs = {"distribution" : ExponentiatedWeibullDistribution(f_delta=5, fit_method="wlsq",
-                                                                         weights="quadratic",
-                                                                         ),
+dist_description_hs = {"distribution" : ExponentiatedWeibullDistribution(f_delta=5),
                        "conditional_on" : 0,
                        "parameters" : {"alpha" : alpha_dep,
                                        "beta": beta_dep,
@@ -68,7 +64,10 @@ dist_description_hs = {"distribution" : ExponentiatedWeibullDistribution(f_delta
 ghm = GlobalHierarchicalModel([dist_description_vs, dist_description_hs])
 
 
-ghm.fit(data)
+fit_description_vs = {"method" : "wlsq", "weights" : "quadratic"}
+fit_description_hs = {"method" : "wlsq", "weights" : "quadratic"}
+
+ghm.fit(data, [fit_description_vs, fit_description_hs])
 
 # %%
 

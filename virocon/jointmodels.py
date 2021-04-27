@@ -92,11 +92,34 @@ class GlobalHierarchicalModel(MultivariateModel):
         dist_data = [data[int_slice, dist_idx] for int_slice in interval_slices]
         
         return dist_data, interval_centers, interval_boundaries
-        
+
+    def _check_and_fill_fit_desc(self, fit_descriptions):
+        default_fit_desc = {"method": "mle", "weights": None}
+        if fit_descriptions is None:
+            fit_descriptions = [default_fit_desc for i in range(self.n_dim)]
+
+        else:
+            if len(fit_descriptions) != self.n_dim:
+                raise ValueError("fit_description must have one entry per dimension, but "
+                                 f"a length of {len(fit_descriptions)} != {self.n_dim} was found.")
+
+            for i in range(len(fit_descriptions)):
+                if fit_descriptions[i] is None:
+                    fit_descriptions[i] = default_fit_desc
+                else:
+                    if not "method" in fit_descriptions[i]:
+                        raise ValueError("Mandatory key 'method' missing in "
+                                         f"fit_description for dimension {i}.")
+                    if not "weights" in fit_descriptions[i]:
+                        fit_descriptions[i]["weights"] = None
+
+        return fit_descriptions
     
-    def fit(self, data):
-        #data.shape = (n_samples, n_dim)
+    def fit(self, data, fit_descriptions=None):
+
         data = np.array(data)
+
+        fit_descriptions = self._check_and_fill_fit_desc(fit_descriptions)
         
         if data.shape[-1] != self.n_dim:
             raise ValueError("The dimension of data does not match the "
@@ -107,15 +130,17 @@ class GlobalHierarchicalModel(MultivariateModel):
         for i in range(self.n_dim):
             dist = self.distributions[i]
             conditioning_idx = self.conditional_on[i]
+            fit_method = fit_descriptions[i]["method"]
+            weights = fit_descriptions[i]["weights"]
             
             if conditioning_idx is None:
-                dist.fit(data[:, i])
+                dist.fit(data[:, i], fit_method, weights)
             else:
                 dist_data, conditioning_data, conditioning_interval_boundaries = self._split_in_intervals(data, i,
                                                                                                           conditioning_idx)
                 #dist data  is a list of ndarray 
                 # and conditioning_data is a list of interval points
-                dist.fit(dist_data, conditioning_data, conditioning_interval_boundaries)
+                dist.fit(dist_data, conditioning_data, conditioning_interval_boundaries, fit_method, weights)
     
     
             self.distributions[i] = dist # TODO is the writeback necessary? -> probably not

@@ -54,24 +54,24 @@ def test_OMAE2020(dataset, reference_data):
                                   weights=lambda x, y : y)
     alpha_dep = DependenceFunction(_alpha3, alpha_bounds, d_of_x=beta_dep, 
                                    weights=lambda x, y : y)
-    
-    
-    dist_description_vs = {"distribution" : ExponentiatedWeibullDistribution(fit_method="wlsq", weights="quadratic"),
+
+    dist_description_vs = {"distribution" : ExponentiatedWeibullDistribution(),
                            "intervals" : WidthOfIntervalSlicer(width=2, offset=True),
                            }
     
-    dist_description_hs = {"distribution" : ExponentiatedWeibullDistribution(f_delta=5, fit_method="wlsq", weights="quadratic"),
+    dist_description_hs = {"distribution" : ExponentiatedWeibullDistribution(f_delta=5),
                            "conditional_on" : 0,
                            "parameters" : {"alpha" : alpha_dep,
                                            "beta": beta_dep,
                                            },
                            }
-    
-    
+
     ghm = GlobalHierarchicalModel([dist_description_vs, dist_description_hs])
+
+    fit_description_vs = {"method" : "wlsq", "weights": "quadratic"}
+    fit_description_hs = {"method": "wlsq", "weights": "quadratic"}
     
-    
-    ghm.fit(dataset)
+    ghm.fit(dataset, [fit_description_vs, fit_description_hs])
     
     x = np.linspace([0.1, 0.1], [30, 12], num=100)
     

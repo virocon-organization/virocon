@@ -79,7 +79,8 @@ class ConditionalDistribution:
     def draw_sample(self, n, given):
         return self.distribution.draw_sample(n, **self._get_param_values(given))
     
-    def fit(self, data, conditioning_values, conditioning_interval_boundaries):
+    def fit(self, data, conditioning_values, conditioning_interval_boundaries,
+            fit_method="mle", weights=None):
         self.distributions_per_interval = []
         self.parameters_per_interval = []
         self.data_intervals = data
@@ -89,7 +90,7 @@ class ConditionalDistribution:
         for interval_data in data:
             #dist = self.distribution_class()
             dist = copy.deepcopy(self.distribution)
-            dist.fit(interval_data)
+            dist.fit(interval_data, fit_method, weights)
             self.distributions_per_interval.append(dist)
             self.parameters_per_interval.append(dist.parameters)
             
@@ -130,25 +131,24 @@ class Distribution(ABC):
     def draw_sample(self, n,  *args, **kwargs):
         """Draw sample from distribution."""
 
-    def fit(self, data):
+    def fit(self, data, method="mle", weights=None):
         """Fit the distribution to the sampled data"""
-        method = self.fit_method
             
         if method.lower() == "mle":
             self._fit_mle(data)
         elif method.lower() == "lsq" or method.lower() == "wlsq":
-            self._fit_lsq(data)
+            self._fit_lsq(data, weights)
         else:
             raise ValueError(f"Unknown fit method '{method}'. "
                              "Only maximum likelihood estimation (keyword: mle) "
-                             "and (weighted) least squares (keyword: lsq) are supported.")
+                             "and (weighted) least squares (keyword: (w)lsq) are supported.")
         
     @abstractmethod
     def _fit_mle(self, data):
         """Fit the distribution using maximum likelihood estimation."""
         
     @abstractmethod
-    def _fit_lsq(self, data):
+    def _fit_lsq(self, data, weights):
         """Fit the distribution using (weighted) least squares."""
 
 
@@ -178,7 +178,7 @@ class WeibullDistribution(Distribution):
     
     
     def __init__(self, lambda_=1, k=1, theta=0, f_lambda_=None, f_k=None, 
-                 f_theta=None, fit_method="mle", weights=None):
+                 f_theta=None):
         
         # TODO set parameters to fixed values if provided
         self.lambda_ = lambda_  # scale
@@ -187,8 +187,6 @@ class WeibullDistribution(Distribution):
         self.f_lambda_ = f_lambda_ 
         self.f_k = f_k
         self.f_theta = f_theta
-        self.fit_method = fit_method
-        self.weights = weights
         
     @property
     def parameters(self):
@@ -243,7 +241,7 @@ class WeibullDistribution(Distribution):
                                 scale=p0["lambda_"], **fparams)
              )
         
-    def _fit_lsq(self, data):
+    def _fit_lsq(self, data, weights):
         raise NotImplementedError()
         
 
@@ -251,15 +249,12 @@ class WeibullDistribution(Distribution):
 class LogNormalDistribution(Distribution):
     
    
-    def __init__(self, mu=0, sigma=1, f_mu=None, f_sigma=None, fit_method="mle",
-                 weights=None):
+    def __init__(self, mu=0, sigma=1, f_mu=None, f_sigma=None):
         
         self.mu = mu
         self.sigma = sigma  # shape
         self.f_mu = f_mu
         self.f_sigma = f_sigma
-        self.fit_method = fit_method
-        self.weights = weights
         #self.scale = math.exp(mu)
         
     @property
@@ -317,7 +312,7 @@ class LogNormalDistribution(Distribution):
         #self.mu = math.log(self._scale)
         
         
-    def _fit_lsq(self, data):
+    def _fit_lsq(self, data, weights):
         raise NotImplementedError()
         
 
@@ -327,15 +322,12 @@ class LogNormalNormFitDistribution(LogNormalDistribution):
     #https://en.wikipedia.org/wiki/Log-normal_distribution#Estimation_of_parameters
     
    
-    def __init__(self, mu_norm=0, sigma_norm=1, f_mu_norm=None, f_sigma_norm=None, 
-                 fit_method="mle", weights=None):
+    def __init__(self, mu_norm=0, sigma_norm=1, f_mu_norm=None, f_sigma_norm=None):
         
         self.mu_norm = mu_norm
         self.sigma_norm = sigma_norm
         self.f_mu_norm = f_mu_norm
         self.f_sigma_norm = f_sigma_norm
-        self.fit_method = fit_method
-        self.weights = weights
         
     @property
     def parameters(self):
@@ -405,7 +397,7 @@ class LogNormalNormFitDistribution(LogNormalDistribution):
             self.sigma_norm = self.f_sigma_norm
         
         
-    def _fit_lsq(self, data):
+    def _fit_lsq(self, data, weights):
         raise NotImplementedError()
         
         
@@ -426,15 +418,13 @@ class ExponentiatedWeibullDistribution(Distribution):
                 "delta" : self.delta}
 
     def __init__(self, alpha=1, beta=1, delta=1, f_alpha=None, f_beta=None, 
-                 f_delta=None, fit_method="mle", weights=None):
+                 f_delta=None):
         self.alpha = alpha  # scale
         self.beta = beta  # shape
         self.delta = delta  # shape2
         self.f_alpha = f_alpha
         self.f_beta = f_beta
         self.f_delta = f_delta
-        self.fit_method = fit_method
-        self.weights = weights
         # In scipy the order of the shape parameters is reversed:
         # a ^= delta
         # c ^= beta
@@ -495,10 +485,9 @@ class ExponentiatedWeibullDistribution(Distribution):
                                 scale=p0["alpha"], **fparams)
              )
         
-    def _fit_lsq(self, data):
+    def _fit_lsq(self, data, weights):
         # Based on Appendix A. in https://arxiv.org/pdf/1911.12835.pdf
         x = np.sort(np.asarray_chkfinite(data))
-        weights = self.weights
         if weights is None:
             weights = np.ones_like(x)
         elif isinstance(weights, str):
