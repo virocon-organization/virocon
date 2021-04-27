@@ -69,8 +69,8 @@ axes = plot_marginal_quantiles(ghm, data, model_desc=model_description)
 
 # %% plot_dependence_functions
 
-par_rename = {"mu": "$\mu$",
-             "sigma" : "$\sigma$"}
+par_rename = {"mu": r"$\mu$",
+             "sigma" : r"$\sigma$"}
 axes = plot_dependence_functions(ghm, model_desc=model_description, par_rename=par_rename)
     
 # %% plot_isodensity
