@@ -50,7 +50,7 @@ ghm.fit(data)
 my_f = ghm.pdf(x)
 
 my_f_weibull = ghm.distributions[0].pdf(x[:, 0])
-my_weibull_params = (ghm.distributions[0].k, ghm.distributions[0].theta, ghm.distributions[0].lambda_)
+my_weibull_params = (ghm.distributions[0].beta, ghm.distributions[0].gamma, ghm.distributions[0].alpha)
 
 
 my_ln = ghm.distributions[1]

@@ -20,9 +20,9 @@ def _exp3(x, a=0.0, b=0.308, c=-0.250):
 power3 = DependenceFunction(_power3)
 exp3 = DependenceFunction(_exp3)
 
-dist_description_0 = {"distribution" : WeibullDistribution(lambda_=0.944,
-                                                           k=1.48,
-                                                           theta=0.0981),
+dist_description_0 = {"distribution" : WeibullDistribution(alpha=0.944,
+                                                           beta=1.48,
+                                                           gamma=0.0981),
                       }
 
 dist_description_1 = {"distribution" : LogNormalDistribution(),

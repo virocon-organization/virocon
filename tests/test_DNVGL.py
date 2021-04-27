@@ -60,9 +60,9 @@ def test_DNVGL(test_data, reference_data):
     ghm = GlobalHierarchicalModel([dist_description_0, dist_description_1])
     ghm.fit(test_data)
     f_weibull = ghm.distributions[0].pdf(x[:, 0])
-    weibull_params = (ghm.distributions[0].k, 
-                      ghm.distributions[0].theta, 
-                      ghm.distributions[0].lambda_)
+    weibull_params = (ghm.distributions[0].beta,
+                      ghm.distributions[0].gamma,
+                      ghm.distributions[0].alpha)
     
     lognorm = ghm.distributions[1]
     intervals = lognorm.data_intervals

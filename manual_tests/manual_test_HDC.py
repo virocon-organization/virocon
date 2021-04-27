@@ -20,9 +20,9 @@ bounds = [(0, None),
 power3 = DependenceFunction(_power3, bounds)
 exp3 = DependenceFunction(_exp3, bounds)
 
-dist_description_0 = {"distribution" : WeibullDistribution(lambda_=2.776,
-                                                           k=1.471,
-                                                           theta=0.8888),
+dist_description_0 = {"distribution" : WeibullDistribution(alpha=2.776,
+                                                           beta=1.471,
+                                                           gamma=0.8888),
                       }
 dist_description_1 = {"distribution" : LogNormalDistribution(),
                       "conditional_on" : 0,

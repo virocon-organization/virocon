@@ -177,68 +177,68 @@ class Distribution(ABC):
 class WeibullDistribution(Distribution):
     
     
-    def __init__(self, lambda_=1, k=1, theta=0, f_lambda_=None, f_k=None, 
-                 f_theta=None):
+    def __init__(self, alpha=1, beta=1, gamma=0, f_alpha=None, f_beta=None,
+                 f_gamma=None):
         
         # TODO set parameters to fixed values if provided
-        self.lambda_ = lambda_  # scale
-        self.k = k  # shape
-        self.theta = theta  # loc
-        self.f_lambda_ = f_lambda_ 
-        self.f_k = f_k
-        self.f_theta = f_theta
+        self.alpha = alpha  # scale
+        self.beta = beta  # shape
+        self.gamma = gamma  # loc
+        self.f_alpha = f_alpha
+        self.f_beta = f_beta
+        self.f_gamma = f_gamma
         
     @property
     def parameters(self):
-        return {"lambda_" : self.lambda_,
-                "k" : self.k,
-                "theta" : self.theta}
+        return {"alpha" : self.alpha,
+                "beta" : self.beta,
+                "gamma" : self.gamma}
 
 
-    def _get_scipy_parameters(self, lambda_, k, theta):
-        if lambda_ is None:
-            lambda_ = self.lambda_
-        if k is None:
-            k = self.k
-        if theta is None:
-            theta = self.theta
-        return k, theta, lambda_  # shape, loc, scale
+    def _get_scipy_parameters(self, alpha, beta, gamma):
+        if alpha is None:
+            alpha = self.alpha
+        if beta is None:
+            beta = self.beta
+        if gamma is None:
+            gamma = self.gamma
+        return beta, gamma, alpha  # shape, loc, scale
 
-    def cdf(self, x, lambda_=None, k=None, theta=None):
-        scipy_par = self._get_scipy_parameters(lambda_, k, theta)
+    def cdf(self, x, alpha=None, beta=None, gamma=None):
+        scipy_par = self._get_scipy_parameters(alpha, beta, gamma)
         return sts.weibull_min.cdf(x, *scipy_par)
 
 
-    def icdf(self, prob, lambda_=None, k=None, theta=None):
-        scipy_par = self._get_scipy_parameters(lambda_, k, theta)
+    def icdf(self, prob, alpha=None, beta=None, gamma=None):
+        scipy_par = self._get_scipy_parameters(alpha, beta, gamma)
         return sts.weibull_min.ppf(prob, *scipy_par)
 
 
-    def pdf(self, x, lambda_=None, k=None, theta=None):
-        scipy_par = self._get_scipy_parameters(lambda_, k, theta)
+    def pdf(self, x, alpha=None, beta=None, gamma=None):
+        scipy_par = self._get_scipy_parameters(alpha, beta, gamma)
         return sts.weibull_min.pdf(x, *scipy_par)
 
 
-    def draw_sample(self, n,  lambda_=None, k=None, theta=None):
-        scipy_par = self._get_scipy_parameters(lambda_, k, theta)
+    def draw_sample(self, n, alpha=None, beta=None, gamma=None):
+        scipy_par = self._get_scipy_parameters(alpha, beta, gamma)
         rvs_size = self._get_rvs_size(n, scipy_par)
         return sts.weibull_min.rvs(*scipy_par, size=rvs_size)
 
 
     def _fit_mle(self, sample):
-        p0={"lambda_": self.lambda_, "k": self.k, "theta": self.theta}
+        p0={"alpha": self.alpha, "beta": self.beta, "gamma": self.gamma}
         
         fparams = {}
-        if self.f_k is not None:
-            fparams["f0"] = self.f_k
-        if self.f_theta is not None:
-            fparams["floc"] = self.f_theta
-        if self.f_lambda_ is not None:
-            fparams["fscale"] = self.f_lambda_
-        
-        self.k, self.theta, self.lambda_  = (
-            sts.weibull_min.fit(sample, p0["k"], loc=p0["theta"],
-                                scale=p0["lambda_"], **fparams)
+        if self.f_beta is not None:
+            fparams["f0"] = self.f_beta
+        if self.f_gamma is not None:
+            fparams["floc"] = self.f_gamma
+        if self.f_alpha is not None:
+            fparams["fscale"] = self.f_alpha
+
+        self.beta, self.gamma, self.alpha  = (
+            sts.weibull_min.fit(sample, p0["beta"], loc=p0["gamma"],
+                                scale=p0["alpha"], **fparams)
              )
         
     def _fit_lsq(self, data, weights):

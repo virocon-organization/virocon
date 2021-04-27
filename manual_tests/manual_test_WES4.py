@@ -80,9 +80,9 @@ poly2 = DependenceFunction(_poly2)
 
 dim0_description = {"distribution" : WeibullDistribution(),
                     "intervals" : MyIntervalSlicer(width=1, min_number_of_points=5),
-                    # "parameters" : {"lambda_" : 9.74,
-                    #                 "k" : 2.02,
-                    #                 "theta" : 2.2},
+                    # "parameters" : {"alpha" : 9.74,
+                    #                 "beta" : 2.02,
+                    #                 "gamma" : 2.2},
                     }
 
 dim1_description = {"distribution" : LogNormalNormFitDistribution(),
