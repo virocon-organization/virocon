@@ -209,7 +209,7 @@ class ConditionalDistribution:
     
 
     def fit(self, data, conditioning_values, conditioning_interval_boundaries,
-            method="mle", weights=None):
+            method=None, weights=None):
         """
         Fit statistical distribution to data.
         
@@ -222,16 +222,20 @@ class ConditionalDistribution:
             The data that should be used to fit the distribution.
             Realizations of the distributions variable split into intervals. 
             One array for each interval containing the data in that interval.
-        
         conditioning_values : array_like
             Realizations of the conditioning variable i.e. the y in x|y.  
             One value for each interval in data.
-        
         conditioning_interval_boundaries : list of tuple
             Boundaries of the intervals the data of the conditioning variable
             was split into.
             One 2-element tuple for each interval in data.
-        
+        method : str, optional
+            The method used to fit the distributions (self.distribution) for each interval.
+            Defaults to the distributions default.
+        weights :
+            The weights used to fit the distributions (self.distribution) for each interval,
+            when method is 'wlsq' = weighted least squares.
+
         """
         
         self.distributions_per_interval = []
@@ -262,7 +266,7 @@ class Distribution(ABC):
     """
     Abstract base class for distributions. 
          
-    Models the probabilities of occurence for different possbile 
+    Models the probabilities of occurrence for different possible
     (environmental) events.
     
     """
@@ -311,8 +315,19 @@ class Distribution(ABC):
 
 
     def fit(self, data, method="mle", weights=None):
-        """Fit the distribution to the sampled data.
+        """
+        Fit the distribution to the sampled data.
 
+        data : array_like
+            The observed data to fit the distribution.
+        method : str, optional
+            The method used for fitting. Defaults to 'mle' = maximum-likelihood estimation.
+            Other options are 'lsq' / 'wlsq' for (weighted) least squares.
+        weights : None, str, array_like,
+            The weights to use for weighted least squares fitting. Ignored otherwise.
+            Defaults to None = equal weights.
+            Can be either an array_like with one weight for each point in data or a str.
+            Valid options for str are: 'linear', 'quadratic', 'cubic'.
         """
             
         if method.lower() == "mle":
@@ -383,11 +398,7 @@ class WeibullDistribution(Distribution):
         Fixed location parameter of the weibull distribution (e.g. given physical
         parameter). If this parameter is set, theta is ignored. Defaults to 
         None.
-    fit_method : float
-        Method of estimating the parameters of a probability distribution. 
-        Supported option: "mle" : maximum likelihood estimation (default). 
 
-    
     References
     ----------
     .. [1] Haselsteiner, A.F.; Ohlendorf, J.H.; Wosniok, W.; Thoben, K.D.(2017)
@@ -432,12 +443,12 @@ class WeibullDistribution(Distribution):
         x : array_like, 
             Points at which the cdf is evaluated.
             Shape: 1-dimensional.
-        lambda_ : float, optional
-            The scale parameter. Defaults to self.lambda_ .
-        k : float, optional
-            The shape parameter. Defaults to self.k .
-        theta: float, optional
-            The location parameter . Defaults to self.theta .
+        alpha : float, optional
+            The scale parameter. Defaults to self.alpha.
+        beta : float, optional
+            The shape parameter. Defaults to self.beta.
+        gamma: float, optional
+            The location parameter . Defaults to self.gamma.
         
         """ 
         
@@ -454,12 +465,12 @@ class WeibullDistribution(Distribution):
          prob : 
             Probabilities for which the i_cdf is evaluated.
             Shape: 1-dimensional
-        lambda_ : float, optional
-            The scale parameter. Defaults to self.lambda_ .
-        k : float, optional
-            The shape parameter. Defaults to self.k .
-        theta: float, optional
-            The location parameter . Defaults to self.theta .
+        alpha : float, optional
+            The scale parameter. Defaults to self.aplha .
+        beta : float, optional
+            The shape parameter. Defaults to self.beta.
+        gamma: float, optional
+            The location parameter . Defaults to self.gamma.
         
         """
         
@@ -476,12 +487,12 @@ class WeibullDistribution(Distribution):
         x : array_like, 
             Points at which the pdf is evaluated.
             Shape: 1-dimensional.
-        lambda_ : float, optional
-            The scale parameter. Defaults to self.lambda_ .
-        k : float, optional
-            The shape parameter. Defaults to self.k .
-        theta: float, optional
-            The location parameter . Defaults to self.theta .
+        alpha_ : float, optional
+            The scale parameter. Defaults to self.alpha.
+        beta : float, optional
+            The shape parameter. Defaults to self.beta.
+        gamma: float, optional
+            The location parameter . Defaults to self.gamma.
         
         """ 
         
@@ -540,10 +551,7 @@ class LogNormalDistribution(Distribution):
     f_sigma : float
        Fixed parameter sigma of the lognormal distribution (e.g. given 
        physical parameter). If this parameter is set, sigma is ignored. 
-       Defaults to None. 
-    fit_method : float
-        Method of estimating the parameters of a probability distribution. 
-        Defaults to maximum likelihood estimation (mle).
+       Defaults to None
     
     References
     ----------
@@ -692,9 +700,6 @@ class LogNormalNormFitDistribution(LogNormalDistribution):
        Fixed parameter sigma of the lognormal distribution (e.g. given 
        physical parameter). If this parameter is set, sigma is ignored. 
        Defaults to None. 
-    fit_method : float
-        Method of estimating the parameters of a probability distribution. 
-        Supported option: "mle" : maximum likelihood estimation (default).
     
     """
    
@@ -810,15 +815,6 @@ class ExponentiatedWeibullDistribution(Distribution):
         Fixed delta parameter of the weibull distribution (e.g. given physical
         parameter). If this parameter is set, delta is ignored. Defaults to 
         None.
-    fit_method : float
-        Method of estimating the parameters of a probability distribution. 
-        Supported options: "mle", maximum likelihood estimation (default) and 
-        "lsq", (weighted) least squares.
-    weights : array_like, float or str
-        The weights for the weighted least squares fit. Only used when 
-        fit_method="lsq", ignored otherwise. Defaults to None i.e. 
-        equal weights.
-
 
     References
     ----------
