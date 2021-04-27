@@ -85,7 +85,7 @@ def plot_dependence_functions(model, model_desc=None, par_rename=None, axes=None
         x_name = model_desc["names"][cond_idx]
         x_symbol = model_desc["symbols"][cond_idx]
         x_unit = model_desc["units"][cond_idx]
-        x_label = f"{x_name}," + " $\it{" + f"{x_symbol}" + "}$" + f" ({x_unit})"
+        x_label = f"{x_name}," + r" $\it{" + f"{x_symbol}" + r"}$" + f" ({x_unit})"
         for par_name, dep_func in dist.conditional_parameters.items():
             par_values = [par[par_name] for par in dist.parameters_per_interval]
             ax = axes[axes_counter]
@@ -143,11 +143,11 @@ def plot_2D_isodensity(model, sample, model_desc=None, swap_axis=False, ax=None)
     x_name = model_desc["names"][x_idx]
     x_symbol = model_desc["symbols"][x_idx]
     x_unit = model_desc["units"][x_idx]
-    x_label = f"{x_name}," + " $\it{" + f"{x_symbol}" + "}$" + f" ({x_unit})"
+    x_label = f"{x_name}," + r" $\it{" + f"{x_symbol}" + r"}$" + f" ({x_unit})"
     y_name = model_desc["names"][y_idx]
     y_symbol = model_desc["symbols"][y_idx]
     y_unit = model_desc["units"][y_idx]
-    y_label = f"{y_name}," + " $\it{" + f"{y_symbol}" + "}$" + f" ({y_unit})"
+    y_label = f"{y_name}," + r" $\it{" + f"{y_symbol}" + r"}$" + f" ({y_unit})"
     ax.set_xlabel(x_label)
     ax.set_ylabel(y_label)
     
@@ -197,11 +197,11 @@ def plot_2D_contour(contour, sample=None, design_conditions=None, model_desc=Non
     x_name = model_desc["names"][x_idx]
     x_symbol = model_desc["symbols"][x_idx]
     x_unit = model_desc["units"][x_idx]
-    x_label = f"{x_name}," + " $\it{" + f"{x_symbol}" + "}$" + f" ({x_unit})"
+    x_label = f"{x_name}," + r" $\it{" + f"{x_symbol}" + r"}$" + f" ({x_unit})"
     y_name = model_desc["names"][y_idx]
     y_symbol = model_desc["symbols"][y_idx]
     y_unit = model_desc["units"][y_idx]
-    y_label = f"{y_name}," + " $\it{" + f"{y_symbol}" + "}$" + f" ({y_unit})"
+    y_label = f"{y_name}," + r" $\it{" + f"{y_symbol}" + r"}$" + f" ({y_unit})"
     ax.set_xlabel(x_label)
     ax.set_ylabel(y_label)
     
