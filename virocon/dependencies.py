@@ -72,30 +72,13 @@ class DependenceFunction():
         weights = self.weights
         if weights is not None:
             method = "wlsq" # weighted least squares
+            weights = weights(x, y)  # raises TypeError if not a callable
         else:
             method = "lsq"  # least squares
             
         bounds = self.bounds
         constraints = self.constraints
         
-        if weights is not None:
-            if isinstance(weights, str):
-                if weights.lower() == "linear":
-                    weights = x  / np.sum(x)
-                elif weights.lower() == "quadratic":
-                    weights = x ** 2 / np.sum(x ** 2)
-                elif weights.lower() == "cubic":
-                    weights = x ** 3 / np.sum(x ** 3)
-                else:
-                    raise ValueError(f"Unsupported value for weights={weights}.")
-            elif callable(weights):
-                weights = weights(x, y)
-            else:
-                try:
-                    _ = iter(weights)
-                    weights = np.asarray_chkfinite(weights)
-                except TypeError:
-                    raise ValueError(f"Unsupported value for weights={weights}.")
         # get initial parameters
         p0 = tuple(self.parameters.values())
         
