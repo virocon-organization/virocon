@@ -362,11 +362,11 @@ class Distribution(ABC):
 
 class WeibullDistribution(Distribution):
     """
-    A weibull distribution. 
-     
-    The distributions probability density function is given by: 
-
-    :math:`f(x) = \\frac{k}{\\lambda}\\left( \\frac{x-\\theta}{\\lambda}\\right)^{k -1} \\exp \\left[-\\left( \\frac{x-\\theta}{\\lambda} \\right)^{k} \\right]`
+     A weibull distribution. 
+   
+     The distributions probability density function is given by [1]_ :
+    
+    :math:`f(x) = \\left[ \\frac{k (x-\\theta)^{k -1}}{\\lambda ^k}\\right] \\exp \\left[-\\left( \\frac{x-\\theta}{\\lambda} \\right)^{k} \\right]`
     
     Parameters
     ----------
@@ -391,8 +391,15 @@ class WeibullDistribution(Distribution):
         None.
     fit_method : float
         Method of estimating the parameters of a probability distribution. 
-        Supported option: "mle" : maximum likelihood estimation (default).
+        Supported option: "mle" : maximum likelihood estimation (default). 
 
+    
+    References
+    ----------
+    .. [1] Forbes, C.; Evans, M.; Hastings, N; Peacock, B. (2011)
+        Statistical Distributions, 4th Edition, Published by 
+        John Wiley & Sons, Inc., Hoboken, New Jersey., 
+        Pages 131-132        
     """
     
     def __init__(self, alpha=1, beta=1, gamma=0, f_alpha=None, f_beta=None,

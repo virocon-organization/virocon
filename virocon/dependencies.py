@@ -14,7 +14,36 @@ class DependenceFunction():
     """
     Function to describe the dependencies between the variables.
     
-    The dependence function is a function of the parameters of the dependent
+    The dependence function is a function for the parameters of the dependent
+    variable.
+    
+    Parameters
+    ----------
+    func : callable
+        Dependence functions for the parameter.
+        Maps a conditioning value x and an arbitrary number of parameters to 
+        the value of a distributions parameter y. 
+        func(x, *args) -> y     
+    bounds : list
+        Boundaries for parameters of func.
+        Fixed scalar boundaries for func's parameters.
+        E.g. 0 <= z <= 0 . 
+    constraints : dict
+        More complex contraints modeled as unequality constraints with 
+        functions of the parameters of func z. 
+        I.e. c_j(z) >= 0 .
+        For further explanation see:
+        https://docs.scipy.org/doc/scipy-1.6.2/reference/tutorial/optimize.html#sequential-least-squares-programming-slsqp-algorithm-method-slsqp
+    weights : callable, optional
+        If given, weighted least squares fitting instead of least squares is
+        used. Defaults to None.
+        Given the data as observation tuples (x_i, y_i) maps from the vector 
+        x and y to the vector of weights. 
+        E.g. lambda x, y : y to linearly weight the observations with y_i.
+   
+    Examples 
+    --------
+    The dependence function is a function for the parameters of the dependent
     variable. E.g.the zero-upcrossing period is dependent on the 
     significant wave height (Hs|Tp). Assuming, the zero-upcrossing period is
     lognormally distributed, the parameters mu and sigma are described as
@@ -24,29 +53,6 @@ class DependenceFunction():
     :math:`\\mu_{tz}(h_s) =  ln \\left(c_1 + c_2 \\sqrt{ \\frac{h_s)}{ g}} \\right)`
     
     :math:`\\sigma_{tz}(h_s) = c_3 + \\frac{c_4)}{1+ c_5h_s}` 
-    
-    Parameters
-    ----------
-    func : string
-        Dependence functions for the parameters.
-        Possible functions are:
-            
-                :power3: :math:`a + b * x^c`
-                :exp3: :math:`a + b * e^{x * c}`
-                :lnsquare2: :math:`\ln[a + b * \sqrt(x / 9.81)]`
-                :powerdecrease3: :math:`a + 1 / (x + b)^c`
-                :asymdecrease3: :math:`a + b / (1 + c * x)`
-                :logistics4: :math:`a + b / [1 + e^{-1 * |c| * (x - d)}]`
-    
-    bounds : list
-        Boundaries for function parameters. E.g. a>=0 .
-    
-    constraints : 
-        Indicate particular, more complex limits for function parameters. 
-        E.g 0>= a- 2b .
-        
-    weights : 
-        
     
     References
     ----------
@@ -100,22 +106,17 @@ class DependenceFunction():
             
             
     def fit(self, x, y):
-
         """
-        Function to determine the parameters of the dependence function.
-         
-        Indicates the order in which the dependence functions are fitted.
+        Determine the parameters of the dependence function.
         
         Parameters
         ----------
         
-        x :
-            
-        
-        y :
-            
-            
-        
+        x : array-like
+            Input data (data consists of n observations (x_i, y_i)).
+        y :array-like
+            Target data (data consists of n observations (x_i, y_i)).
+
         """
         # The dependence function does not know in which order all the
         # dependence functions are fitted.
@@ -162,10 +163,30 @@ class DependenceFunction():
         
         
     def register(self, dependent):
+        """
+        Register a dependent DependenceFunction.
+        The callback method of all registered dependents is called once this
+        DependenceFunction was fitted.
+        
+        Parameters
+        ----------
+        dependent : DependenceFunction
+            The DependenceFunctions to register.
+        """
+        
         self.dependents.append(dependent)
         
         
     def callback(self, caller):
+        """
+        Call to signal, that caller was fitted.
+        
+        Parameters
+        ----------
+        caller : DependeneFunction
+            The DependenceFunctiom that is now fitted.
+        """
+        
         assert caller in self.dependent_parameters.values()
         # TODO raise proper error otherwise
         self._fitted_conditioners.add(caller)
