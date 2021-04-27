@@ -225,13 +225,11 @@ class ConditionalDistribution:
         
         conditioning_values : array_like
             Realizations of the conditioning variable i.e. the y in x|y.  
-            
             One value for each interval in data.
         
         conditioning_interval_boundaries : list of tuple
             Boundaries of the intervals the data of the conditioning variable
             was split into.
-            
             One 2-element tuple for each interval in data.
         
         """
