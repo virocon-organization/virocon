@@ -129,8 +129,18 @@ class GlobalHierarchicalModel(MultivariateModel):
 
     def fit(self, data, fit_descriptions=None):
         """
-        TODO: Beschreibung
-          
+        Fit joint model to data.
+        
+        Method of estimating the parameters of a probability distribution to
+        given data.
+        
+        Parameters
+        ----------
+        data : list of array
+            The data that should be used to fit the joint model.
+            Realizations of the distributions variable split into intervals. 
+            One array for each interval containing the data in that interval.
+
         """
 
         data = np.array(data)
@@ -163,10 +173,15 @@ class GlobalHierarchicalModel(MultivariateModel):
                     
                     
     def pdf(self, x):
-     
         """
-        TODO: Beschreibung
-  
+        Probability density function.
+        
+        Parameters
+        ----------
+        x : array_like, 
+            Points at which the pdf is evaluated.
+            Shape: 1-dimensional.
+            
         """
         
         x = np.asarray_chkfinite(x)        
@@ -187,11 +202,16 @@ class GlobalHierarchicalModel(MultivariateModel):
     
     
     def cdf(self, x):
-      
         """
-         TODO: Beschreibung
-   
-        """
+        Cumulative distribution function.
+        
+        Parameters
+        ----------
+        x : array_like, 
+            Points at which the cdf is evaluated.
+            Shape: 1-dimensional.
+        
+        """ 
         
         x = np.asarray_chkfinite(x)
         
@@ -358,6 +378,11 @@ class GlobalHierarchicalModel(MultivariateModel):
     
     
     def draw_sample(self, n):
+        """
+        Draw a random sample of length n.
+       
+        """
+        
         samples = np.zeros((n, self.n_dim))
         for i in range(self.n_dim):
             cond_idx = self.conditional_on[i]

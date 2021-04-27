@@ -17,13 +17,14 @@ __all__ = ["calculate_alpha", "save_contour_coordinates", "IFORMContour",
 
 def calculate_alpha(state_duration, return_period):
     """
-    Calculates the probability that an observation falls outside the 
-    environmental contour (exceedance probability). 
+    Calculates the probability that an environmental contour is exceeded
+    (exceedance probability). 
     
     The exceedance probability, α, corresponds to a certain recurrence or 
     return period, T, which describes the average time period between two 
-    consecutive environmental states above the threshold, x1 
-    (Haselsteiner et. al (2017) [1]_).  
+    consecutive environmental states that exceed the contour . Note that 
+    exceedance can be defined in various ways for environmental contours
+    (Mackay and Haselsteiner, 2021) [1]_
     
     Parameters
     ---------- 
@@ -32,28 +33,23 @@ def calculate_alpha(state_duration, return_period):
         expressed in hours :math:`(T_s)`.
     return_period : float
         Describes the average time period between two consecutive 
-        environmental states above a threshold, x1. The threshold is called 
-        return value :math:`(T_r)`.
+        environmental states that exceed a contour. In the univariate case the 
+        contour is a threshold, x1.
     
-        :math:`\\alpha= \\frac{T_s}{T_r}` 
+        :math:`\\alpha= \\frac{T_s}{T_r * 365.25 * 24}` 
         
         :math:`F(x_1) =  P(X_1 \geq x_1)= \int_{- \infty}^{x_1} f(x) dx = 1- \\alpha`  
         
     Returns
     -------
     alpha : float
-        Exceedance probability. Exceedance probability is referred to as the 
-        probability that a certain value will be exceeded in a predefined 
-        future time period [2]_ . 
+        The probability that an environmental contour is exceeded.
     
     References
     ----------
-    .. [1] Haselsteiner, A.F.; Ohlendorf, J.H.; Wosniok, W.; Thoben, K.D. (2017)
-        Deriving environmental contours from highest density regions,
-        Coastal Engineering, Volume 123. DOI: 10.1016/j.coastaleng.2017.03.002.
-    .. [2] Timothy McDaniels; Mitchell Small (2004)
-        Risk Analysis and Society- An Interdisciplinary Characterization of 
-        the Field. ISBN: 9780521532631.
+    .. [1] Mackay, E., & Haselsteiner, A. F. (2021). 
+       Marginal and total exceedance probabilities of environmental contours. 
+       Marine Structures, 75. https://doi.org/10.1016/j.marstruc.2020.102863
 
     """
     

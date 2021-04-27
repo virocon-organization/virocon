@@ -366,26 +366,26 @@ class WeibullDistribution(Distribution):
    
      The distributions probability density function is given by [1]_ :
     
-    :math:`f(x) = \\left[ \\frac{k (x-\\theta)^{k -1}}{\\lambda ^k}\\right] \\exp \\left[-\\left( \\frac{x-\\theta}{\\lambda} \\right)^{k} \\right]`
+    :math:`f(x) = \\frac{\\beta}{\\alpha} \\left (\\frac{x-\\gamma}{\\alpha} \\right)^{\\beta -1} \\exp \\left[-\\left( \\frac{x-\\gamma}{\\alpha} \\right)^{\\beta} \\right]`
     
     Parameters
     ----------
-    lambda : float
+    alpha : float
         Scale parameter of the weibull distribution. Defaults to 1.
-    k : float
+    beta : float
         Shape parameter of the weibull distribution. Defaults to 1.
-    theta : float
+    gamma : float
         Location parameter of the weibull distribution (3-parameter weibull
         distribution). Defaults to 0.
-    f_lambda : float
+    f_alpha : float
         Fixed scale parameter of the weibull distribution (e.g. given physical
         parameter). If this parameter is set, lambda is ignored. Defaults to 
         None.
-    f_k : float
+    f_beta : float
        Fixed shape parameter of the weibull distribution (e.g. given physical
        parameter). If this parameter is set, k is ignored. Defaults to 
        None. 
-    f_theta : float
+    f_gamma : float
         Fixed location parameter of the weibull distribution (e.g. given physical
         parameter). If this parameter is set, theta is ignored. Defaults to 
         None.
@@ -396,10 +396,10 @@ class WeibullDistribution(Distribution):
     
     References
     ----------
-    .. [1] Forbes, C.; Evans, M.; Hastings, N; Peacock, B. (2011)
-        Statistical Distributions, 4th Edition, Published by 
-        John Wiley & Sons, Inc., Hoboken, New Jersey., 
-        Pages 131-132        
+    .. [1] Haselsteiner, A.F.; Ohlendorf, J.H.; Wosniok, W.; Thoben, K.D.(2017)
+        Deriving environmental contours from highest density regions.  
+        Coastal Engineering 123 (2017) 42–51.
+        
     """
     
     def __init__(self, alpha=1, beta=1, gamma=0, f_alpha=None, f_beta=None,
@@ -537,7 +537,7 @@ class LogNormalDistribution(Distribution):
         Mean parameter of the corresponding normal distribution. 
         Defaults to 0.
     sigma : float
-        Variance parameter of the corresponding normal distribution. 
+        Standard deviation of the corresponding normal distribution. 
         Defaults to 1.
     f_mu : float
         Fixed parameter mu of the lognormal distribution (e.g. given physical
