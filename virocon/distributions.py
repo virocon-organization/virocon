@@ -315,11 +315,7 @@ class Distribution(ABC):
     def fit(self, data, method="mle", weights=None):
         """Fit the distribution to the sampled data.
 
-            TODO: Data format
-
         """
-        
-        method = self.fit_method
             
         if method.lower() == "mle":
             self._fit_mle(data)
@@ -362,9 +358,9 @@ class Distribution(ABC):
 
 class WeibullDistribution(Distribution):
     """
-     A weibull distribution. 
+    A weibull distribution. 
    
-     The distributions probability density function is given by [1]_ :
+    The distributions probability density function is given by [1]_ :
     
     :math:`f(x) = \\frac{\\beta}{\\alpha} \\left (\\frac{x-\\gamma}{\\alpha} \\right)^{\\beta -1} \\exp \\left[-\\left( \\frac{x-\\gamma}{\\alpha} \\right)^{\\beta} \\right]`
     
