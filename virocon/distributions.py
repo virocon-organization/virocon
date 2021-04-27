@@ -209,7 +209,7 @@ class ConditionalDistribution:
     
 
     def fit(self, data, conditioning_values, conditioning_interval_boundaries,
-            fit_method="mle", weights=None):
+            method="mle", weights=None):
         """
         Fit statistical distribution to data.
         
@@ -243,7 +243,7 @@ class ConditionalDistribution:
         for interval_data in data:
             #dist = self.distribution_class()
             dist = copy.deepcopy(self.distribution)
-            dist.fit(interval_data, fit_method, weights)
+            dist.fit(interval_data, method, weights)
             self.distributions_per_interval.append(dist)
             self.parameters_per_interval.append(dist.parameters)
             
