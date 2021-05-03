@@ -16,6 +16,43 @@ __all__ = ["calculate_alpha", "save_contour_coordinates", "IFORMContour",
            "ISORMContour", "HighestDensityContour", "DirectSamplingContour"]
 
 def calculate_alpha(state_duration, return_period):
+    """
+    Calculates the probability that an environmental contour is exceeded
+    (exceedance probability). 
+    
+    The exceedance probability, α, corresponds to a certain recurrence or 
+    return period, T, which describes the average time period between two 
+    consecutive environmental states that exceed the contour . Note that 
+    exceedance can be defined in various ways for environmental contours
+    (Mackay and Haselsteiner, 2021) [1]_
+    
+    Parameters
+    ---------- 
+    state_duration : float
+        Time period for which an environmental state is measured,
+        expressed in hours :math:`(T_s)`.
+    return_period : float
+        Describes the average time period between two consecutive 
+        environmental states that exceed a contour. In the univariate case the 
+        contour is a threshold, x1.
+    
+        :math:`\\alpha= \\frac{T_s}{T_r * 365.25 * 24}` 
+        
+        :math:`F(x_1) =  P(X_1 \geq x_1)= \int_{- \infty}^{x_1} f(x) dx = 1- \\alpha`  
+        
+    Returns
+    -------
+    alpha : float
+        The probability that an environmental contour is exceeded.
+    
+    References
+    ----------
+    .. [1] Mackay, E., & Haselsteiner, A. F. (2021). 
+       Marginal and total exceedance probabilities of environmental contours. 
+       Marine Structures, 75. https://doi.org/10.1016/j.marstruc.2020.102863
+
+    """
+    
     alpha = state_duration / (return_period * 365.25 * 24)
     return alpha
 
@@ -23,22 +60,29 @@ def calculate_alpha(state_duration, return_period):
 def sort_points_to_form_continuous_line(x, y, search_for_optimal_start=False):
     """
     Sorts contour points to form a a continous line / contour.
+    
+    This function simply sorts 2 dimensional points. The points are given 
+    by x and y coordinates. This function is used to sort the coordinates 
+    of 2 dimensional contours.
 
     Thanks to https://stackoverflow.com/a/37744549
 
     Parameters
     ----------
     x : array_like
+        x-coordinate of contour points.
     y : array_like
+        y-coordinate of contour points.
     search_for_optimal_start : boolean, optional
-     If true, the algorithm also searches for the ideal starting node, see the
-     stackoverflow link for more info.
+        If True, the algorithm also searches for the ideal starting node, see the
+        stackoverflow link for more info. Defaults to False.
 
     Returns
     -------
     sorted_points : tuple of array_like floats
         The sorted points.
     """
+    
     points = np.c_[x, y]
     clf = NearestNeighbors(n_neighbors=2).fit(points)
     G = clf.kneighbors_graph()
@@ -71,11 +115,29 @@ def sort_points_to_form_continuous_line(x, y, search_for_optimal_start=False):
     return xx, yy
 
 
-def save_contour_coordinates(contour, path, model_desc=None):
+def save_contour_coordinates(contour, file_path, model_desc=None):
+    """
+    Saves the coordinates of the calculated contour. 
+    Saves a .txt file to the given path.
     
-    root, ext = os.path.splitext(path)
+    Parameters
+    ----------
+    contour : Contour
+     The contour with the coordinates to save.
+    file_path : string
+     Indicates the path, where the contour coordinates are saved.
+    model_desc : dictionary
+     The description of the model. model_desc has the keys 'names', 'symbols' 
+     and 'units'. Each value is a list of strings. For each dimension of the 
+     model the strings describe the name, symbol or unit of that dimension, 
+     respectively. This information is used as the header of the created file.
+     Defaults to a dict with general descriptions.
+     
+    """
+    
+    root, ext = os.path.splitext(file_path)
     if not ext:
-        path += ".txt"
+        file_path += ".txt"
     
     n_dim = contour.coordinates.shape[1]
     if model_desc is None:
@@ -84,11 +146,31 @@ def save_contour_coordinates(contour, path, model_desc=None):
     header = ";".join((f"{model_desc['names'][d]} ({model_desc['units'][d]})" 
                         for d in range(n_dim)))
     
-    np.savetxt(path, contour.coordinates, fmt="%1.6f", delimiter=";", 
+    np.savetxt(file_path, contour.coordinates, fmt="%1.6f", delimiter=";", 
                header=header, comments="")
 
 
 class Contour(ABC):
+    """
+      Abstract base class for contours.
+      
+      A contour implements a method to define multivariate extremes based on a
+      joint probabilistic model of variables like significant wave height, 
+      wind speed or spectral peak period.
+      
+      Contour curves or surfaces for more than two environmental parameters 
+      give combination of environmental parameters which approximately 
+      describe the various actions corresponding to the given exceedance 
+      probability [1]_.
+      
+      
+    References
+    ----------
+    .. [1] NORSOK standard N-003, Edition 2, September 2007. Actions and 
+        action effects.
+
+
+    """
 
     def __init__(self):
         try:
@@ -111,11 +193,50 @@ class Contour(ABC):
 
     @abstractmethod
     def _compute(self):
+        """
+        Compute the contours coordinates.
+
+        Is automatically called in the __init__. 
+        """
         pass
 
 
 class IFORMContour(Contour):
+    """
+    Contour based on the inverse first-order reliability method.
 
+    This method was proposed by Winterstein et. al (1993) [1]_
+
+    Parameters
+    ----------
+    model :  MultivariateModel
+        The model to be used to calculate the contour.
+    alpha : float
+        The exceedance probability. The probability that an observation falls 
+        outside the environmental contour.
+    n_points : int, optional
+        Number of points on the contour. Defaults to 180.
+        
+    Attributes
+    ----------
+    coordinates : 
+        Coordinates of the calculated contour.
+        
+    beta :
+        Reliability index.
+        
+    sphere_points : 
+          Points of the sphere in U space [1]_ . 
+    
+    References
+    ----------
+    .. [1] Winterstein, S.R.; Ude, T.C.; Cornell, C.A.; Bjerager, P.; Haver, S. (1993)
+        Environmental parameters  for extreme response: Inverse FORM with omission
+        factors. ICOSSAR 93, Innsbruck, Austria. 
+
+
+    """
+  
     def __init__(self, model, alpha, n_points=180):
         self.model = model
         self.alpha = alpha
@@ -168,8 +289,41 @@ class IFORMContour(Contour):
         self.coordinates = coordinates
 
 
-class ISORMContour(Contour):
-
+class ISORMContour(Contour):   
+    """
+    Contour based on the inverse second-order reliability method.
+       
+    This method was proposed by Chai and Leira (2018) [1]_
+       
+    Parameters
+    ----------
+    model : MultivariateModel
+        The model to be used to calculate the contour.
+    alpha : float
+        The exceedance probability. The probability that an observation falls 
+        outside the environmental contour.
+    n_points : int, optional
+        Number of points on the contour. Defaults to 180.
+    
+    Attributes
+    ----------
+    coordinates : 
+        Coordinates of the calculated contour.
+        
+    beta :
+        Reliability index.
+        
+    sphere_points : 
+          Points of the sphere in U space [1]_ . 
+    
+    References
+    ----------
+    .. [1] Chai, W.; Leira, B.J. (2018)
+        Environmental contours based on inverse SORM. Marine Structures Volume 60,
+        pp. 34-51. DOI: 10.1016/j.marstruc.2018.03.007 .
+       
+    """
+    
     def __init__(self, model, alpha, n_points=180):
         self.model = model
         self.alpha = alpha
@@ -228,8 +382,57 @@ class ISORMContour(Contour):
 
 
 class HighestDensityContour(Contour):
+    """
+    Contour based on the highest density method.
+
+    This method was proposed by Haselsteiner et. al (2017) [1]_
+
+    Parameters
+    ----------
+    model : MultivariateModel
+        The model to be used to calculate the contour.
+    alpha : float
+        The exceedance probability. The probability that an observation 
+        falls outside the environmental contour.
+    limits : list of tuples, optional
+       The limits of the grid to use for calculation. One 2-element tuple 
+       for each dimension of the model, containing the minimum and maximum 
+       for that dimension. (min, max). If not given, reasonable values are 
+       choosen using the models marginal_icdf as upper limit and 0 as lower
+       limit.
+    deltas : float or list of float, optional
+       The step size of the grid to use for calculation. If a single float 
+       is supplied it is used for all dimensions. If a list is supplied 
+       there has to be one entry for each dimension of the model. Defaults 
+       to 0.25% of the range defined by limits.
+       
+    Attributes
+    ----------
+    coordinates : ndarray
+        Coordinates of the calculated contour.
+        Shape: (number of points, number of dimensions). 
+        
+    cell_center_coordinates : list of array
+        Points at which the grid is evaluated.
+        A list with one entry for each dimension, each entry is an array with
+        the cell centers for that dimension.
+    
+    fm : float
+        Minimum probability density of the enclosed region / constant 
+        probability density along the contour. 
+                
+    
+    References
+    ----------
+    .. [1] Haselsteiner, A.F.; Ohlendorf, J.H.; Wosniok, W.; Thoben, K.D. (2017)
+        Deriving environmental contours from highest density regions,
+        Coastal Engineering, Volume 123. DOI: 10.1016/j.coastaleng.2017.03.002.
+        
+    """
 
     def __init__(self, model, alpha, limits=None, deltas=None):
+    
+
         self.model = model
         self.alpha = alpha
         self.limits = limits
@@ -280,6 +483,11 @@ class HighestDensityContour(Contour):
         self.deltas = deltas
 
     def _compute(self):
+        """
+        Calculates coordinates using HDC.
+
+        """
+        
         limits = self.limits
         deltas = self.deltas
         n_dim = self.model.n_dim
@@ -372,7 +580,7 @@ class HighestDensityContour(Contour):
             # TODO raise warning
 
     @staticmethod
-    def cumsum_biggest_until(array, limit):
+    def cumsum_biggest_until(array, limit):        
         """
         Find biggest elements to sum to reach limit.
 
@@ -401,6 +609,7 @@ class HighestDensityContour(Contour):
         Notes
         ------
         A ``RuntimeWarning`` is raised if the limit cannot be reached by summing all values.
+        
         """
 
         flat_array = np.ravel(array)
@@ -425,13 +634,28 @@ class HighestDensityContour(Contour):
 
         return summed_fields, last_summed
 
-    def cell_averaged_joint_pdf(self, coords):
+    def cell_averaged_joint_pdf(self, coords):  
         """
         Calculates the cell averaged joint probabilty density function.
 
         Multiplies the cell averaged probability densities of all distributions.
+        
+        Parameters
+        ----------
+        coords : list of array
+            List with one coordinate array for each dimension.
+            
+        Returns
+        -------
+        fbar : array
+            Joint cell averaged probability density function evaluated at coords.
+            Cell averaged probability density function evaluated at coords.
+            n dimensional array, where n is the number of dimensions of the 
+            model used for calculation.
+           
 
         """
+        
         n_dim = len(coords)
         fbar = np.ones(((1,) * n_dim), dtype=np.float64)
         for dist_idx in range(n_dim):
@@ -439,15 +663,36 @@ class HighestDensityContour(Contour):
 
         return fbar
 
-    def cell_averaged_pdf(self, dist_idx, coords):
+    def cell_averaged_pdf(self, dist_idx, coords): 
         """
-        Calculates the cell averaged probabilty density function of a single distribution.
+        Calculates the cell averaged probabilty density function of a single 
+        distribution.
 
-        Calculates the pdf by approximating it with the finite differential quotient
-        of the cumulative distributions function, evaluated at the grid cells borders.
+        Calculates the pdf by approximating it with the finite differential 
+        quotient of the cumulative distributions function, evaluated at the 
+        grid cells borders.
         i.e. :math:`f(x) \\approx \\frac{F(x+ 0.5\\Delta x) - F(x- 0.5\\Delta x) }{\\Delta x}`
+        
+        Parameters
+        ----------
+        dist_idx : int
+            The index of the distribution to calcululate the pdf for.
+        
+        coords : list of array
+            List with one coordinate array for each dimension.
+           
+        Returns
+        -------
+        fbar : array
+            Cell averaged probability density function evaluated at coords.
+            n dimensional array, where n is the number of dimensions of the 
+            model used for calculation. All dimensions but, the dist_idx and 
+            the cond_idx dimensions are of length 1. The dist_idx and cond_idx 
+            dimensions are of length equal to the length of coords.
+
 
         """
+        
         n_dim = len(coords)
         dist = self.model.distributions[dist_idx]
         cond_idx = self.model.conditional_on[dist_idx]
@@ -480,8 +725,41 @@ class HighestDensityContour(Contour):
         fbar_out = fbar.reshape(fbar_out_shape)
         return fbar_out / dx
 
-
 class DirectSamplingContour(Contour):
+    """
+    Direct sampling contour as introduced by Huseby et al. (2013) [1]_
+    The provided direct sampling contour method only works for 2D models.
+
+    Parameters
+    ----------
+    model : MultivariateModel
+        The model to be used to calculate the contour.
+    alpha : float
+        The exceedance probability. The probability that an observation 
+        falls outside the environmental contour.
+    n : int, optional
+        Number of data points that shall be Monte Carlo simulated.
+    deg_step : float, optional
+        Directional step in degrees. Defaults to 5.
+    sample : 2-dimensional ndarray, optional
+        Monte Carlo simulated environmental states. Array is of shape (n, d)
+        with d being the number of variables and n being the number of
+        observations.
+    
+    Attributes
+    ----------
+    coordinates : ndarray
+        Coordinates of the calculated contour.
+        Shape: (number of points, number of dimensions).          
+    
+    References
+    ----------
+    .. [1] Huseby, A.B.; Vanem, E.; Natvig, B. (2013)
+        A new approach to environmental contours for ocean engineering applications
+        based on direct Monte Carlo simulations,
+        Ocean Engineering, Volume 60. DOI: doi.org/10.1016/j.oceaneng.2012.12.034
+
+    """
 
     def __init__(self, model, alpha, n=100000, deg_step=5, sample=None):
         self.model = model
