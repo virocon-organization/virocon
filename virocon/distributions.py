@@ -16,8 +16,52 @@ __all__ = ["WeibullDistribution", "LogNormalDistribution",
 # (Though the dict order might work as well in 3.6)
 
 
+
 class ConditionalDistribution:
+    """
+    A conditional probability distribution.
     
+    The conditional distribution uses a Distribution as template and 
+    dynamically alters its parameters to model the dependence. The 
+    ConditionalDistribution wraps another distribution. When a method of 
+    the ConditionalDistribution is called it first computes the distributions 
+    parameters at given and then calls the corresponding method of the 
+    distribution with these parameters. Usually the parameters are defined by 
+    dependence functions of the form dep_func(given) -> param_val.
+    
+    Parameters
+    ----------
+    distribution : Distribution
+        The distribution used as template. Its parameters can be replaced with 
+        dependence functions to model the dependency.
+    parameters: float
+       A dictionary describing the parameters of distribution. The keys are 
+       the parameter names, the values are the dependence functions. Every 
+       parameter that is not fixed in distribution has to be set here.
+
+    Attributes
+    ----------
+    distribution_class : type
+        The class of the distribution used.
+    param_names : list-like
+        Names of the parameters of the distribution.
+    conditional_parameters : dict
+        Dictionary of dependence functions for conditional parameters. Parameter names as keys.
+    fixed_parameters : dict
+        Values of the fixed parameters. Parameters as keys.
+    distributions_per_interval : list
+        Instances of distribution fitted to intervals
+    parameters_per_interval : list of dict
+        Values of the parameters of the distribution function. Parameter names as keys.
+    data_intervals : list of array
+        The data that was used to fit the distribution. Split into intervals.
+    conditioning_values : array_like
+        Realizations of the conditioning variable that where used for fitting.
+    conditioning_interval_boundaries : list of tuple
+        Boundaries of the intervals the data of the conditioning variable
+        was split into.
+    """
+  
     def __init__(self, distribution, parameters):
         # allow setting fitting initials on class creation?
         self.distribution = distribution
@@ -68,19 +112,153 @@ class ConditionalDistribution:
         return param_values
 
     def pdf(self, x, given):
+        """
+        Probability density function for the described random variable.
+
+        With x, value(s) from the sample space of this random variable and 
+        given value(s) from the sample space of the conditioning random 
+        variable, pdf(x, given) returns the probability density function at x 
+        conditioned on given.
+           
+        Parameters
+        ----------
+        x : array_like
+            Points at which the pdf is evaluated.
+            Shape: 1- dimensional.
+        
+        given : float or array_like
+           The conditioning value of the conditioning variable i.e. the
+           y in x|y.  
+           Shape: 1-dimensional. Same size as x.
+            
+        Returns
+        -------
+        ndarray
+            Probability densities at x conditioned on given.
+            Shape: 1- dimensional. Same size as x.
+        
+        
+        """
+        
         return self.distribution.pdf(x, **self._get_param_values(given))
     
     def cdf(self, x, given):
+        """
+        Cumulative distribution function for the described random variable.
+
+        With x, a realization of this random variable and given a realisation 
+        of the conditioning random variable, cdf(x, given) returns the 
+        cumulative distribution function at x conditioned on given. 
+     
+        Parameters
+        ----------
+        x : array_like
+            Points at which the cdf is evaluated.
+            Shape: 1-dimensional.
+        
+        given : float or array_like
+           The conditioning value of the conditioning variable i.e. the
+           y in x|y.  
+           Shape: 1-dimensional. Same size as x.
+   
+        Returns
+        -------
+        ndarray
+            Cumulative distribution function evaluated at x.
+            Shape: 1-dimensional. Same size as x.
+        
+        """
+       
         return self.distribution.cdf(x, **self._get_param_values(given))
     
     def icdf(self, prob, given):
+        """
+        Inverse cumulative distribution function.
+        
+        Calculate the inverse cumulative distribution function. Also known as quantile or 
+        percent-point function. With x, a realization of this random variable 
+        and given a realisation of the conditioning random variable, 
+        icdf(x, given) returns the inverse cumulative distribution function at 
+        x conditioned on given.
+        
+        
+        Parameters
+        ----------
+        prob : 
+            Probabilities for which the i_cdf is evaluated.
+            Shape: 1-dimensional
+        
+        given : float or array_like
+           The conditioning value of the conditioning variable i.e. the
+           y in x|y.  
+           Shape: 1-dimensional. Same size as prob.
+            
+        Returns
+        -------
+        ndarray or float
+            Inverse cumulative distribution function evaluated at given 
+            probabilities conditioned on given.
+            Shape: 1-dimensional. Same size as prob.
+        
+        """
+        
         return self.distribution.icdf(prob, **self._get_param_values(given))
         
     def draw_sample(self, n, given):
+        """
+        Draw a random sample of size n, conditioned on given.
+        
+        
+        Parameters
+        ----------
+        n : float
+            Number of observations that shall be drawn.
+        
+        given : float or array_like
+           The conditioning value of the conditioning variable i.e. the
+           y in x|y.  
+           Shape: TODO
+            
+        Returns
+        -------
+        ndarray or float
+            Sample of the requested size conditioned on given. 
+        
+        """
+         
         return self.distribution.draw_sample(n, **self._get_param_values(given))
     
+
     def fit(self, data, conditioning_values, conditioning_interval_boundaries,
-            fit_method="mle", weights=None):
+            method=None, weights=None):
+        """
+        Fit statistical distribution to data.
+        
+        Method of estimating the parameters of a probability distribution to
+        given data.
+        
+        Parameters
+        ----------
+        data : list of array
+            The data that should be used to fit the distribution.
+            Realizations of the distributions variable split into intervals. 
+            One array for each interval containing the data in that interval.
+        conditioning_values : array_like
+            Realizations of the conditioning variable i.e. the y in x|y.  
+            One value for each interval in data.
+        conditioning_interval_boundaries : list of tuple
+            Boundaries of the intervals the data of the conditioning variable
+            was split into.
+            One 2-element tuple for each interval in data.
+        method : str, optional
+            The method used to fit the distributions (self.distribution) for each interval.
+            Defaults to the distributions default.
+        weights :
+            The weights used to fit the distributions (self.distribution) for each interval,
+            when method is 'wlsq' = weighted least squares.
+
+        """
+        
         self.distributions_per_interval = []
         self.parameters_per_interval = []
         self.data_intervals = data
@@ -90,7 +268,7 @@ class ConditionalDistribution:
         for interval_data in data:
             #dist = self.distribution_class()
             dist = copy.deepcopy(self.distribution)
-            dist.fit(interval_data, fit_method, weights)
+            dist.fit(interval_data, method, weights)
             self.distributions_per_interval.append(dist)
             self.parameters_per_interval.append(dist.parameters)
             
@@ -107,32 +285,71 @@ class ConditionalDistribution:
 
 class Distribution(ABC):
     """
-    Abstract base class for distributions.
+    Abstract base class for distributions. 
+         
+    Models the probabilities of occurrence for different possible
+    (environmental) events.
+    
     """
+
 
     @property
     @abstractmethod
     def parameters(self):
+        
+        """
+        Parameters of the probability distribution.
+        
+        Dict of the form: {"<parameter_name>" : <parameter_value>, ...}
+        
+        """
+        
         return {}
 
     @abstractmethod
     def cdf(self, x, *args, **kwargs):
-        """Cumulative distribution function."""
+        """
+        Cumulative distribution function.
+        
+        """
 
     @abstractmethod
     def pdf(self, x, *args, **kwargs):
-        """Probability density function."""
+        """
+        Probability density function.
+        
+        """
 
     @abstractmethod
     def icdf(self, prob, *args, **kwargs):
-        """Inverse cumulative distribution function."""
+        """
+        Inverse cumulative distribution function.
+        
+        """
         
     @abstractmethod
     def draw_sample(self, n,  *args, **kwargs):
-        """Draw sample from distribution."""
+        """
+        Draw a random sample of length n.
+       
+        """
+
 
     def fit(self, data, method="mle", weights=None):
-        """Fit the distribution to the sampled data"""
+        """
+        Fit the distribution to the sampled data.
+
+        data : array_like
+            The observed data to fit the distribution.
+        method : str, optional
+            The method used for fitting. Defaults to 'mle' = maximum-likelihood estimation.
+            Other options are 'lsq' / 'wlsq' for (weighted) least squares.
+        weights : None, str, array_like,
+            The weights to use for weighted least squares fitting. Ignored otherwise.
+            Defaults to None = equal weights.
+            Can be either an array_like with one weight for each point in data or a str.
+            Valid options for str are: 'linear', 'quadratic', 'cubic'.
+        """
             
         if method.lower() == "mle":
             self._fit_mle(data)
@@ -173,9 +390,43 @@ class Distribution(ABC):
             return n
 
 
-
 class WeibullDistribution(Distribution):
+    """
+    A weibull distribution. 
+   
+    The distributions probability density function is given by [1]_ :
     
+    :math:`f(x) = \\frac{\\beta}{\\alpha} \\left (\\frac{x-\\gamma}{\\alpha} \\right)^{\\beta -1} \\exp \\left[-\\left( \\frac{x-\\gamma}{\\alpha} \\right)^{\\beta} \\right]`
+    
+    Parameters
+    ----------
+    alpha : float
+        Scale parameter of the weibull distribution. Defaults to 1.
+    beta : float
+        Shape parameter of the weibull distribution. Defaults to 1.
+    gamma : float
+        Location parameter of the weibull distribution (3-parameter weibull
+        distribution). Defaults to 0.
+    f_alpha : float
+        Fixed scale parameter of the weibull distribution (e.g. given physical
+        parameter). If this parameter is set, lambda is ignored. Defaults to 
+        None.
+    f_beta : float
+       Fixed shape parameter of the weibull distribution (e.g. given physical
+       parameter). If this parameter is set, k is ignored. Defaults to 
+       None. 
+    f_gamma : float
+        Fixed location parameter of the weibull distribution (e.g. given physical
+        parameter). If this parameter is set, theta is ignored. Defaults to 
+        None.
+
+    References
+    ----------
+    .. [1] Haselsteiner, A.F.; Ohlendorf, J.H.; Wosniok, W.; Thoben, K.D.(2017)
+        Deriving environmental contours from highest density regions.  
+        Coastal Engineering 123 (2017) 42–51.
+        
+    """
     
     def __init__(self, alpha=1, beta=1, gamma=0, f_alpha=None, f_beta=None,
                  f_gamma=None):
@@ -204,17 +455,68 @@ class WeibullDistribution(Distribution):
             gamma = self.gamma
         return beta, gamma, alpha  # shape, loc, scale
 
-    def cdf(self, x, alpha=None, beta=None, gamma=None):
+    def cdf(self, x, alpha=None, beta=None, gamma=None):      
+        """
+        Cumulative distribution function.
+        
+        Parameters
+        ----------
+        x : array_like, 
+            Points at which the cdf is evaluated.
+            Shape: 1-dimensional.
+        alpha : float, optional
+            The scale parameter. Defaults to self.alpha.
+        beta : float, optional
+            The shape parameter. Defaults to self.beta.
+        gamma: float, optional
+            The location parameter . Defaults to self.gamma.
+        
+        """ 
+        
         scipy_par = self._get_scipy_parameters(alpha, beta, gamma)
         return sts.weibull_min.cdf(x, *scipy_par)
 
 
     def icdf(self, prob, alpha=None, beta=None, gamma=None):
+        """
+        Inverse cumulative distribution function.
+        
+        Parameters
+        ----------
+         prob : 
+            Probabilities for which the i_cdf is evaluated.
+            Shape: 1-dimensional
+        alpha : float, optional
+            The scale parameter. Defaults to self.aplha .
+        beta : float, optional
+            The shape parameter. Defaults to self.beta.
+        gamma: float, optional
+            The location parameter . Defaults to self.gamma.
+        
+        """
+        
         scipy_par = self._get_scipy_parameters(alpha, beta, gamma)
         return sts.weibull_min.ppf(prob, *scipy_par)
 
 
     def pdf(self, x, alpha=None, beta=None, gamma=None):
+        """
+        Probability density function.
+        
+        Parameters
+        ----------
+        x : array_like, 
+            Points at which the pdf is evaluated.
+            Shape: 1-dimensional.
+        alpha_ : float, optional
+            The scale parameter. Defaults to self.alpha.
+        beta : float, optional
+            The shape parameter. Defaults to self.beta.
+        gamma: float, optional
+            The location parameter . Defaults to self.gamma.
+        
+        """ 
+        
         scipy_par = self._get_scipy_parameters(alpha, beta, gamma)
         return sts.weibull_min.pdf(x, *scipy_par)
 
@@ -247,7 +549,38 @@ class WeibullDistribution(Distribution):
 
         
 class LogNormalDistribution(Distribution):
+    """
+    A Lognormal Distribution. 
     
+    The distributions probability density function is given by [1]_: 
+    
+    :math:`f(x) = \\frac{1}{x\\widetilde{\\sigma} \\sqrt{2\\pi}}\\exp \\left[ \\frac{-(\\ln x - \\widetilde{\\mu})^2}{2\\widetilde{\\sigma}^2}\\right]`
+     
+    
+    Parameters
+    ----------
+    mu : float
+        Mean parameter of the corresponding normal distribution. 
+        Defaults to 0.
+    sigma : float
+        Standard deviation of the corresponding normal distribution. 
+        Defaults to 1.
+    f_mu : float
+        Fixed parameter mu of the lognormal distribution (e.g. given physical
+        parameter). If this parameter is set, mu is ignored. Defaults to 
+        None.
+    f_sigma : float
+       Fixed parameter sigma of the lognormal distribution (e.g. given 
+       physical parameter). If this parameter is set, sigma is ignored. 
+       Defaults to None
+    
+    References
+    ----------
+    .. [1] Forbes, C.; Evans, M.; Hastings, N; Peacock, B. (2011)
+        Statistical Distributions, 4th Edition, Published by 
+        John Wiley & Sons, Inc., Hoboken, New Jersey., 
+        Pages 131-132
+    """
    
     def __init__(self, mu=0, sigma=1, f_mu=None, f_sigma=None):
         
@@ -278,15 +611,60 @@ class LogNormalDistribution(Distribution):
             sigma = self.sigma
         return sigma, 0, scale # shape, loc, scale
         
-    def cdf(self, x, mu=None, sigma=None):
+    def cdf(self, x, mu=None, sigma=None): 
+        """
+        Cumulative distribution function.
+        
+        Parameters
+        ----------
+        x : array_like, 
+            Points at which the cdf is evaluated.
+            Shape: 1-dimensional.
+        mu : float, optional
+            The variance parameter. Defaults to self.mu .
+        sigma : float, optional
+            The shape parameter. Defaults to self.sigma .
+        
+        """ 
+        
+        
         scipy_par = self._get_scipy_parameters(mu, sigma)
         return sts.lognorm.cdf(x, *scipy_par)
 
     def icdf(self, prob, mu=None, sigma=None):
+        """
+        Inverse cumulative distribution function.
+        
+        Parameters
+        ----------
+        prob : Probabilities for which the i_cdf is evaluated.
+            Shape: 1-dimensional
+        mu : float, optional
+            The variance parameter. Defaults to self.mu .
+        sigma : float, optional
+            The shape parameter. Defaults to self.sigma .
+        
+        """ 
+        
         scipy_par = self._get_scipy_parameters(mu, sigma)
         return sts.lognorm.ppf(prob, *scipy_par)
 
     def pdf(self, x, mu=None, sigma=None):
+        """
+        Probability density function.
+        
+        Parameters
+        ----------
+        x : array_like, 
+            Points at which the pdf is evaluated.
+            Shape: 1-dimensional.
+        mu : float, optional
+            The variance parameter. Defaults to self.mu .
+        sigma : float, optional
+            The shape parameter. Defaults to self.sigma .
+        
+        """ 
+        
         scipy_par = self._get_scipy_parameters(mu, sigma)
         return sts.lognorm.pdf(x, *scipy_par)
 
@@ -320,7 +698,31 @@ class LogNormalDistribution(Distribution):
         
 class LogNormalNormFitDistribution(LogNormalDistribution):
     #https://en.wikipedia.org/wiki/Log-normal_distribution#Estimation_of_parameters
+    """
+    A Lognormal Distribution. 
+    The distributions probability density function is given by: 
     
+    :math:`f(x) = \\frac{1}{x\\widetilde{\\sigma} \\sqrt{2\\pi}}\\exp \\left[ \\frac{-(\\ln x - \\widetilde{\\mu})^2}{2\\widetilde{\\sigma}^2}\\right]`
+     
+    
+    Parameters
+    ----------
+    mu : float
+        Mean parameter of the corresponding normal distribution. 
+        Defaults to 0.
+    sigma : float
+        Variance parameter of the corresponding normal distribution. 
+        Defaults to 1.
+    f_mu : float
+        Fixed parameter mu of the lognormal distribution (e.g. given physical
+        parameter). If this parameter is set, mu is ignored. Defaults to 
+        None.
+    f_sigma : float
+       Fixed parameter sigma of the lognormal distribution (e.g. given 
+       physical parameter). If this parameter is set, sigma is ignored. 
+       Defaults to None. 
+    
+    """
    
     def __init__(self, mu_norm=0, sigma_norm=1, f_mu_norm=None, f_sigma_norm=None):
         
@@ -403,12 +805,45 @@ class LogNormalNormFitDistribution(LogNormalDistribution):
         
 class ExponentiatedWeibullDistribution(Distribution):
     """
-    An exponentiated Weibull distribution.
+    An exponentiated Weibull distribution. 
+    
+    The parametrization used is the same as described by 
+    Haselsteiner et al. (2019) [1]_.  The distributions cumulative distribution 
+    function is given by:
+    
+    :math:`F(x) = \\left[ 1- \\exp \\left(-\\left( \\frac{x}{\\alpha} \\right)^{\\beta} \\right) \\right] ^{\\delta}`
+    
+    Parameters
+    ----------
+    alpha : float
+        Scale parameter of the exponentiated weibull distribution. Defaults 
+        to 1.
+    beta : float
+        First shape parameter of the exponentiated weibull distribution. 
+        Defaults to 1.
+    delta : float
+        Second shape parameter of the exponentiated weibull distribution. 
+        Defaults to 1.
+    f_alpha : float
+        Fixed alpha parameter of the weibull distribution (e.g. given physical
+        parameter). If this parameter is set, alpha is ignored. Defaults to 
+        None.
+    f_beta : float
+       Fixed beta parameter of the weibull distribution (e.g. given physical
+       parameter). If this parameter is set, beta is ignored. Defaults to 
+       None. 
+    f_delta : float
+        Fixed delta parameter of the weibull distribution (e.g. given physical
+        parameter). If this parameter is set, delta is ignored. Defaults to 
+        None.
 
-    Note
-    -----
-    We use the parametrization that is also used in
-    https://arxiv.org/pdf/1911.12835.pdf .
+    References
+    ----------
+    .. [1] Haselsteiner, A.F.; Thoben, K.D. (2019)
+        Predicting wave heights for marine design by prioritizing extreme events in
+        a global model, Renewable Energy, Volume 156, August 2020, 
+        Pages 1146-1157; https://doi.org/10.1016/j.renene.2020.04.112
+
     """
     
     @property
