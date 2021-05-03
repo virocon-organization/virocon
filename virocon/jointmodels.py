@@ -12,6 +12,11 @@ __all__ = ["GlobalHierarchicalModel"]
 
 class MultivariateModel(ABC):
     
+    """
+    TODO: Beschreibung
+    
+    """
+    
     @abstractmethod
     def pdf(self, *args, **kwargs):
         pass
@@ -33,6 +38,11 @@ class MultivariateModel(ABC):
 
 
 class GlobalHierarchicalModel(MultivariateModel):
+   
+    """
+    TODO: Beschreibung
+    
+    """
     
     _dist_description_keys = {"distribution", "intervals", "conditional_on",
                               "parameters"}
@@ -123,7 +133,23 @@ class GlobalHierarchicalModel(MultivariateModel):
 
         return fit_descriptions
     
+
+
     def fit(self, data, fit_descriptions=None):
+        """
+        Fit joint model to data.
+        
+        Method of estimating the parameters of a probability distribution to
+        given data.
+        
+        Parameters
+        ----------
+        data : list of array
+            The data that should be used to fit the joint model.
+            Realizations of the distributions variable split into intervals. 
+            One array for each interval containing the data in that interval.
+
+        """
 
         data = np.array(data)
 
@@ -155,6 +181,17 @@ class GlobalHierarchicalModel(MultivariateModel):
                     
                     
     def pdf(self, x):
+        """
+        Probability density function.
+        
+        Parameters
+        ----------
+        x : array_like, 
+            Points at which the pdf is evaluated.
+            Shape: 1-dimensional.
+            
+        """
+        
         x = np.asarray_chkfinite(x)        
         fs = np.empty_like(x)
         
@@ -173,6 +210,17 @@ class GlobalHierarchicalModel(MultivariateModel):
     
     
     def cdf(self, x):
+        """
+        Cumulative distribution function.
+        
+        Parameters
+        ----------
+        x : array_like, 
+            Points at which the cdf is evaluated.
+            Shape: 1-dimensional.
+        
+        """ 
+        
         x = np.asarray_chkfinite(x)
         
         n_dim = self.n_dim
@@ -206,6 +254,12 @@ class GlobalHierarchicalModel(MultivariateModel):
 
 
     def marginal_pdf(self, x, dim):
+      
+        """
+         TODO: Beschreibung
+   
+        """
+        
         #x = x.reshape((-1, 1))
         if self.conditional_on[dim] is None:
             # the distribution is not conditional -> it is the marginal
@@ -251,6 +305,12 @@ class GlobalHierarchicalModel(MultivariateModel):
     
     
     def marginal_cdf(self, x, dim):
+      
+        """
+         TODO: Beschreibung
+  
+        """
+        
         #x = x.reshape((-1, 1))
         if self.conditional_on[dim] is None:
             # the distribution is not conditional -> it is the marginal
@@ -296,6 +356,12 @@ class GlobalHierarchicalModel(MultivariateModel):
     
     
     def marginal_icdf(self, p, dim, precision_factor=1):
+      
+        """
+         TODO: Beschreibung
+   
+        """
+        
         p = np.array(p)
         
         if self.conditional_on[dim] is None:
@@ -320,6 +386,11 @@ class GlobalHierarchicalModel(MultivariateModel):
     
     
     def draw_sample(self, n):
+        """
+        Draw a random sample of length n.
+       
+        """
+        
         samples = np.zeros((n, self.n_dim))
         for i in range(self.n_dim):
             cond_idx = self.conditional_on[i]
