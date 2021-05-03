@@ -38,7 +38,28 @@ class ConditionalDistribution:
        A dictionary describing the parameters of distribution. The keys are 
        the parameter names, the values are the dependence functions. Every 
        parameter that is not fixed in distribution has to be set here.
-    
+
+    Attributes
+    ----------
+    distribution_class : type
+        The class of the distribution used.
+    param_names : list-like
+        Names of the parameters of the distribution.
+    conditional_parameters : dict
+        Dictionary of dependence functions for conditional parameters. Parameter names as keys.
+    fixed_parameters : dict
+        Values of the fixed parameters. Parameters as keys.
+    distributions_per_interval : list
+        Instances of distribution fitted to intervals
+    parameters_per_interval : list of dict
+        Values of the parameters of the distribution function. Parameter names as keys.
+    data_intervals : list of array
+        The data that was used to fit the distribution. Split into intervals.
+    conditioning_values : array_like
+        Realizations of the conditioning variable that where used for fitting.
+    conditioning_interval_boundaries : list of tuple
+        Boundaries of the intervals the data of the conditioning variable
+        was split into.
     """
   
     def __init__(self, distribution, parameters):
