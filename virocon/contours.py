@@ -4,13 +4,12 @@ import warnings
 import numpy as np
 import scipy.stats as sts
 import scipy.ndimage as ndi
-import networkx as nx
 
 from abc import ABC, abstractmethod
-from sklearn.neighbors import NearestNeighbors
 
 from virocon._nsphere import NSphere
 from virocon.plotting import get_default_model_description
+from virocon.utils import sort_points_to_form_continuous_line
 
 __all__ = ["calculate_alpha", "save_contour_coordinates", "IFORMContour",
            "ISORMContour", "HighestDensityContour", "DirectSamplingContour"]
@@ -55,64 +54,6 @@ def calculate_alpha(state_duration, return_period):
     
     alpha = state_duration / (return_period * 365.25 * 24)
     return alpha
-
-
-def sort_points_to_form_continuous_line(x, y, search_for_optimal_start=False):
-    """
-    Sorts contour points to form a a continous line / contour.
-    
-    This function simply sorts 2 dimensional points. The points are given 
-    by x and y coordinates. This function is used to sort the coordinates 
-    of 2 dimensional contours.
-
-    Thanks to https://stackoverflow.com/a/37744549
-
-    Parameters
-    ----------
-    x : array_like
-        x-coordinate of contour points.
-    y : array_like
-        y-coordinate of contour points.
-    search_for_optimal_start : boolean, optional
-        If True, the algorithm also searches for the ideal starting node, see the
-        stackoverflow link for more info. Defaults to False.
-
-    Returns
-    -------
-    sorted_points : tuple of array_like floats
-        The sorted points.
-    """
-    
-    points = np.c_[x, y]
-    clf = NearestNeighbors(n_neighbors=2).fit(points)
-    G = clf.kneighbors_graph()
-    T = nx.from_scipy_sparse_matrix(G)
-    order = list(nx.dfs_preorder_nodes(T, 0))
-
-    xx = x[order]
-    yy = y[order]
-
-    if search_for_optimal_start:
-        paths = [list(nx.dfs_preorder_nodes(T, i)) for i in range(len(points))]
-        mindist = np.inf
-        minidx = 0
-
-        for i in range(len(points)):
-            p = paths[i]  # Order of nodes.
-            ordered = points[p]  # Ordered nodes.
-            # Find cost of that order by the sum of euclidean distances
-            # between points (i) and (i + 1).
-            cost = (((ordered[:-1] - ordered[1:]) ** 2).sum(1)).sum()
-            if cost < mindist:
-                mindist = cost
-                minidx = i
-
-        opt_order = paths[minidx]
-
-        xx = x[opt_order]
-        yy = y[opt_order]
-
-    return xx, yy
 
 
 def save_contour_coordinates(contour, file_path, model_desc=None):
