@@ -85,19 +85,19 @@ class GlobalHierarchicalModel(MultivariateModel):
        
     Parameters
     ----------   
-    dist_descriptions : type? 
+    dist_descriptions : dict
         Description of the distributions. 
         
     Attributes
     ----------
-    distributions : ?
+    distributions : list
         The distributions used in the GlobalHierachicalModel.
-    conditional_on : ?
+    conditional_on : list
         Indicates the dependencies between the variables of the model.
-    interval_slicers : ?
+    interval_slicers : list
         Sorts the conditional variable (e.g Tp|Hs) into intervals of the
         independent variable (Hs). 
-    n_dim : ?
+    n_dim : int
         Number of dimensions. Indicating the number of variables of the model.
         
        
@@ -216,7 +216,7 @@ class GlobalHierarchicalModel(MultivariateModel):
             The data that should be used to fit the joint model.
             Realizations of the distributions variable split into intervals. 
             One array for each interval containing the data in that interval.
-        fit_description : 
+        fit_description : dict
             Description of the fit method. Defaults to None.
 
         """
@@ -256,7 +256,7 @@ class GlobalHierarchicalModel(MultivariateModel):
         
         Parameters
         ----------
-        x : array_like, 
+        x : array_like
             Points at which the pdf is evaluated.
             Shape: 1-dimensional.
             
@@ -285,7 +285,7 @@ class GlobalHierarchicalModel(MultivariateModel):
         
         Parameters
         ----------
-        x : array_like, 
+        x : array_like
             Points at which the cdf is evaluated.
             Shape: 1-dimensional.
         
@@ -331,7 +331,7 @@ class GlobalHierarchicalModel(MultivariateModel):
                 
         Parameters
         ----------
-        x : array_like,
+        x : array_like
             Points at which the pdf is evaluated.
             Shape: 1-dimensional
         dim : ?
@@ -392,7 +392,7 @@ class GlobalHierarchicalModel(MultivariateModel):
                 
         Parameters
         ----------
-        x : array_like, 
+        x : array_like
             Points at which the cdf is evaluated.
             Shape: 1-dimensional
         dim : ?
@@ -453,7 +453,7 @@ class GlobalHierarchicalModel(MultivariateModel):
                         
         Parameters
         ----------
-        p : array_like,
+        p : array_like
             Probabilities for which the i_cdf is evaluated.
             Shape: 1-dimensional
         dim : ?
@@ -489,6 +489,11 @@ class GlobalHierarchicalModel(MultivariateModel):
     def draw_sample(self, n):
         """
         Draw a random sample of length n.
+        
+        Parameters
+        ----------
+        n : int
+            Sample length.
        
         """
         
