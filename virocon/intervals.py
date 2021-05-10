@@ -7,9 +7,10 @@ __all__ = ["WidthOfIntervalSlicer", "NumberOfIntervalsSlicer",
 
 class IntervalSlicer(ABC):
     """
-        Interval Slicer
+    Abstract base class for IntervalSlicer
         
-        TODO: Beschreibung
+    Sorts the conditional variable (e.g Tp|Hs) into intervals of the
+    independent variable (Hs). 
         
     """
     
@@ -19,13 +20,17 @@ class IntervalSlicer(ABC):
         self.center = None
 
     def slice_(self, data):
+        """
+        Slices the data into intervals of equal width.
+        
+        Parameters
+        ----------   
+        data : list of array
+            The data that should be split into intervals. Realizations of the 
+            conditional variable split into intervals of equal width. 
         
         """
-        Slice
         
-        TODO: Beschreibung
-        
-        """
         interval_slices, interval_centers, interval_boundaries = self._slice(data)
 
         if len(interval_slices) < self.min_n_intervals:
@@ -56,8 +61,22 @@ class IntervalSlicer(ABC):
 
 class WidthOfIntervalSlicer(IntervalSlicer):
     """
-       
-    TODO: Beschreibung
+        Width of the intervals. Inherits from IntervalSlicer.
+        
+        Parameters
+        ----------   
+        width : float
+            Indicates the width of the intervals. 
+        center : float
+            The center of the intervals. If indicated, the center is shifted 
+            to the specified value and the intervals are provided with an 
+            offset. Defaults to None.
+        offset : boolean
+            Offset of the intervals. If true, the center of the intervals
+            is shifted to the indicated value. Defaults to False. 
+        right_open : boolean
+            Determines how the boundaries of the intervals are defined. Either
+            the left or the right boundary is fixed. Defaults to True.
        
     """
    
@@ -96,10 +115,26 @@ class WidthOfIntervalSlicer(IntervalSlicer):
     
     
 class NumberOfIntervalsSlicer(IntervalSlicer):
-    """
-            
-    TODO: Beschreibung
-            
+    """     
+        Number of intervals. Inherits from IntervalSlicer.
+        
+        Parameters
+        ----------   
+        n_intervals : int
+            Number of intervals the dataset is split into.
+        center : float
+            The center of the intervals. If indicated, the center is shifted 
+            to the specified value and the intervals are provided with an 
+            offset. Defaults to None.
+        include_max : boolean
+            Determines how the boundaries of the intervals are defined.
+            Indicates whether to include the maximum value defined by the
+            right interval boundary or to define it as the left boundary of
+            the next interval. Defaults to True.
+        range_ : ?
+            Indicates the start and end value of the intervals within the data 
+            set. If None, the complete data set is used. Defaults to None. 
+        
     """
     
     def __init__(self, n_intervals, center=None, include_max=True, range_=None, **kwargs):
@@ -146,9 +181,20 @@ class NumberOfIntervalsSlicer(IntervalSlicer):
 
 class PointsPerIntervalSlicer(IntervalSlicer):
     """
-    
-            
-    TODO: Beschreibung
+        Number of data points per Interval. Inherits from IntervalSlicer.
+        
+        Parameters
+        ----------   
+        n_points : int
+            Number of ipoints per interval.
+        center : float
+            The center of the intervals. If indicated, the center is shifted 
+            to the specified value and the intervals are provided with an 
+            offset. Defaults to None.
+        last_full : boolean
+            Determines how the realizations of the dataset are sorted into
+            intervals if the quotient of the number of data points and the 
+            number of points per interval is not zero. Defaults to True.
             
     """
 
