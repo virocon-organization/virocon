@@ -154,7 +154,7 @@ def plot_dependence_functions(model, model_desc=None, par_rename={}, axes=None):
     model_desc: dict, optional
         Generated model description. Defaults to None.
     par_rename : optional
-        
+        ?
     axes: int, optional
         Indicates the number of subplots. If not further specified, axes are 
         dependend on the number of dimensions of the model. Defaults to None.
@@ -216,7 +216,7 @@ def plot_2D_isodensity(model, sample, model_desc=None, swap_axis=False, ax=None)
     model_desc: dict, optional
         Generated model description. Defaults to None.
     swap_axis : optional
-        
+        ?
     ax : matplotlib Axes, optional
         Axes object on the figure that shall be used for the plot.
        
@@ -299,7 +299,7 @@ def plot_2D_contour(contour, sample=None, design_conditions=None, model_desc=Non
     model_desc: dict, optional
         Generated model description. Defaults to None.
     swap_axis : boolean, optional
-        
+        ?
     ax : matplotlib Axes, optional
         Axes object on the figure that shall be used for the plot.
           
