@@ -29,9 +29,24 @@ def _rainbow_PuRd():
  # TODO move to utility as it is also used in contours.py
 def get_default_model_description(n_dim):  
     """
-       
-       TODO: Beschreibung
-       
+    Method to generate a default model description. 
+    
+    The description of the model. model_desc has the keys 'names', 'symbols' 
+    and 'units'. Each value is a list of strings. For each dimension of the 
+    model the strings describe the name, symbol or unit of that dimension, 
+    respectively. This information is used as the header of the created file.
+    Defaults to a dict with general descriptions.
+    
+    Parameters
+    ----------
+    n_dim : int
+        Number of dimensions. Indicating the number of variables of the model.
+        
+    Returns
+    -------
+    model_desc: dict
+        Generated model description. 
+    
     """
         
     model_desc = {"names" : [f"Variable {dim+1}" for dim in range(n_dim)],
@@ -43,9 +58,20 @@ def get_default_model_description(n_dim):
 
 def plot_marginal_quantiles(model, sample, model_desc=None, axes=None):
     """
-       
-       TODO: Beschreibung
-       
+    Method to plot marignal quantiles of a distribution. 
+    
+    Parameters
+    ----------
+    model :  MultivariateModel
+        The model to be used to plot the marignal quantiles.
+    sample : list of array
+        The data that is used to fit the MultivariateModel.
+    model_desc: dict
+        Generated model description. Defaults to None.
+    axes: int
+        Indicates the number of subplots. If not further specified, axes are 
+        dependend on the number of dimensions of the model. Defaults to None.
+    
     """
         
     sample = np.asarray(sample)
@@ -63,10 +89,16 @@ def plot_marginal_quantiles(model, sample, model_desc=None, axes=None):
     # probplot expects an object that has a ppf method, but we name it icdf
     # therefor we create a wrapper that maps the ppf to the icdf method
     class MarginalDistWrapper:
-            
         """
+           Creates a wrapper that maps the ppf to the icdf method. 
            
-        TODO: Beschreibung
+           Parameters
+           ----------
+           model :  MultivariateModel
+               The model to be used to calculate the marignals of the
+               distribution.      
+           dist_idx : int
+               The index of the distribution.
            
         """
         
@@ -76,6 +108,17 @@ def plot_marginal_quantiles(model, sample, model_desc=None, axes=None):
             self.idx = idx
             
         def ppf(self, q):
+            
+            """
+            Percent-point-function. 
+            
+            Parameters
+            ----------
+            q : array-like
+                Probabilities for which the ppf is evaluated.
+                Shape: 1-dimensional
+            
+            """
             return self.model.marginal_icdf(q, self.idx)
         
     for dim in range(n_dim):
@@ -99,8 +142,19 @@ def plot_marginal_quantiles(model, sample, model_desc=None, axes=None):
 
 def plot_dependence_functions(model, model_desc=None, par_rename={}, axes=None):
     """
+    Function to plot the dependence functions of the indicated model.
        
-    TODO: Beschreibung
+    Parameters
+    ----------
+    model :  MultivariateModel
+        The model to be used to plot the dependence functions.      
+    model_desc: dict
+        Generated model description. Defaults to None.
+    par_rename : 
+        
+    axes: int
+        Indicates the number of subplots. If not further specified, axes are 
+        dependend on the number of dimensions of the model. Defaults to None.
        
     """
         
@@ -148,8 +202,19 @@ def plot_dependence_functions(model, model_desc=None, par_rename={}, axes=None):
 
 def plot_2D_isodensity(model, sample, model_desc=None, swap_axis=False, ax=None):   
     """
+    Function to plot the 2-dimensional isodensities of the indicated model.
        
-       TODO: Beschreibung
+    Parameters
+    ----------
+    model :  MultivariateModel
+        The model to be used to plot the isodensities.  
+    sample : list of array
+        The data that is used to fit the MultivariateModel.
+    model_desc: dict
+        Generated model description. Defaults to None.
+    swap_axis : 
+        
+    ax : 
        
     """
         
@@ -215,11 +280,26 @@ def plot_2D_isodensity(model, sample, model_desc=None, swap_axis=False, ax=None)
 
 
 def plot_2D_contour(contour, sample=None, design_conditions=None, model_desc=None, swap_axis=False, ax=None):
-
-    """ 
-       TODO: Beschreibung
-       
     """
+    Beschreibung 
+       
+    Parameters
+    ----------
+    contour: dict
+        The environmental contour that should be plotted.
+    sample : list of array
+        The data that is used to fit the MultivariateModel.
+    design_conditions : array-like
+        Specified environmental conditions under which the system must operate.
+        If None, default design conditions are computed. Defaults to None.
+    model_desc: dict
+        Generated model description. Defaults to None.
+    swap_axis : boolean
+        
+    ax : 
+          
+    """
+        
     
     # design conditions can be True or array
     n_dim = 2
