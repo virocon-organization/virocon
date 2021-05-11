@@ -214,7 +214,9 @@ def plot_2D_isodensity(model, sample, model_desc=None, swap_axis=False, ax=None)
         Generated model description. Defaults to None.
     swap_axis : 
         
-    ax : 
+    ax : int
+        Indicates the number of subplots. If not further specified, axes are 
+        dependend on the number of dimensions of the model. Defaults to None.
        
     """
         
@@ -285,7 +287,7 @@ def plot_2D_contour(contour, sample=None, design_conditions=None, model_desc=Non
        
     Parameters
     ----------
-    contour: dict
+    contour: Contour
         The environmental contour that should be plotted.
     sample : list of array
         The data that is used to fit the MultivariateModel.
@@ -296,7 +298,9 @@ def plot_2D_contour(contour, sample=None, design_conditions=None, model_desc=Non
         Generated model description. Defaults to None.
     swap_axis : boolean
         
-    ax : 
+    ax : int
+        Indicates the number of subplots. If not further specified, axes are 
+        dependend on the number of dimensions of the model. Defaults to None.
           
     """
         
