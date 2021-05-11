@@ -60,15 +60,18 @@ def plot_marginal_quantiles(model, sample, model_desc=None, axes=None):
     """
     Method to plot marignal quantiles of a distribution. 
     
+    Plots the fitted marginal distribution versus a dataset in a quantile-
+    quantile (QQ) plot.
+    
     Parameters
     ----------
     model :  MultivariateModel
         The model to be used to plot the marignal quantiles.
-    sample : list of array
-        The data that is used to fit the MultivariateModel.
-    model_desc: dict
+    sample : ndarray of floats
+        The environmental data sample that should be plotted against the fit.
+    model_desc: dict, optional
         Generated model description. Defaults to None.
-    axes: int
+    axes: int, optional
         Indicates the number of subplots. If not further specified, axes are 
         dependend on the number of dimensions of the model. Defaults to None.
     
@@ -148,11 +151,11 @@ def plot_dependence_functions(model, model_desc=None, par_rename={}, axes=None):
     ----------
     model :  MultivariateModel
         The model to be used to plot the dependence functions.      
-    model_desc: dict
+    model_desc: dict, optional
         Generated model description. Defaults to None.
-    par_rename : 
+    par_rename : optional
         
-    axes: int
+    axes: int, optional
         Indicates the number of subplots. If not further specified, axes are 
         dependend on the number of dimensions of the model. Defaults to None.
        
@@ -208,15 +211,14 @@ def plot_2D_isodensity(model, sample, model_desc=None, swap_axis=False, ax=None)
     ----------
     model :  MultivariateModel
         The model to be used to plot the isodensities.  
-    sample : list of array
-        The data that is used to fit the MultivariateModel.
-    model_desc: dict
+    sample : ndarray of floats
+        The environmental data sample that should be plotted against the fit.
+    model_desc: dict, optional
         Generated model description. Defaults to None.
-    swap_axis : 
+    swap_axis : optional
         
-    ax : int
-        Indicates the number of subplots. If not further specified, axes are 
-        dependend on the number of dimensions of the model. Defaults to None.
+    ax : matplotlib Axes, optional
+        Axes object on the figure that shall be used for the plot.
        
     """
         
@@ -289,18 +291,17 @@ def plot_2D_contour(contour, sample=None, design_conditions=None, model_desc=Non
     ----------
     contour: Contour
         The environmental contour that should be plotted.
-    sample : list of array
-        The data that is used to fit the MultivariateModel.
-    design_conditions : array-like
+    sample : ndarray of floats, optional
+        The environmental data sample that should be plotted against the fit.
+    design_conditions : array-like, optional
         Specified environmental conditions under which the system must operate.
         If None, default design conditions are computed. Defaults to None.
-    model_desc: dict
+    model_desc: dict, optional
         Generated model description. Defaults to None.
-    swap_axis : boolean
+    swap_axis : boolean, optional
         
-    ax : int
-        Indicates the number of subplots. If not further specified, axes are 
-        dependend on the number of dimensions of the model. Defaults to None.
+    ax : matplotlib Axes, optional
+        Axes object on the figure that shall be used for the plot.
           
     """
         
