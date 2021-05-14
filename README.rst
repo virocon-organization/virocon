@@ -8,16 +8,14 @@ ViroCon: viroconcom
 .. image:: https://coveralls.io/repos/github/virocon-organization/viroconcom/badge.svg?branch=master
     :target: https://coveralls.io/github/virocon-organization/viroconcom?branch=master
 
-ViroCon is a software to compute environmental contours.
+ViroCon is a software to compute environmental contours. `User Guide`_
 
 About
 -----
 
-viroconcom is a software package to compute environmental contours. It
-is written in Python 3.8 and belongs to the software ViroCon, which also
-offers a GUI for some functionality via the package viroconweb_.
+viroconcom is a Python software package to compute environmental contours. 
 
-ViroCon helps you to design marine structures, which need to withstand
+The software can support you to design marine structures, which need to withstand
 load combinations based on wave, wind and current. It lets you define
 extreme environmental conditions with a given return period using the
 environmental contour method.
@@ -89,6 +87,7 @@ Our documentation contains a user guide, with  examples how to
 
 Documentation
 -------------
+**Learn.** Our `User Guide`_ covers installation, requirementss and overall work flow.
 
 **Code.** The code’s documentation can be found `here`_.
 
@@ -129,6 +128,7 @@ License
 This software is licensed under the MIT license. For more information,
 read the file `LICENSE`_.
 
+.. _User Guide: https://virocon-organization.github.io/viroconcom/user_guide.html
 .. _viroconweb: https://github.com/virocon-organization/viroconweb
 .. _shell: https://en.wikipedia.org/wiki/Command-line_interface#Modern_usage_as_an_operating_system_shell
 .. _pyenv: https://github.com/pyenv/pyenv
