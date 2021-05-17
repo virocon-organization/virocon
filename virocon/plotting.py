@@ -2,10 +2,28 @@ import numpy as np
 import matplotlib.pyplot as plt
 import scipy.stats as sts
 
+from matplotlib.colors import LinearSegmentedColormap
+
 from virocon.utils import calculate_design_conditions
 
 __all__ = ["plot_marginal_quantiles", "plot_dependence_functions",
            "plot_2D_isodensity", "plot_2D_contour"]
+
+# colors (schemes) choosen according to https://personal.sron.nl/~pault/
+
+def _rainbow_PuRd():
+    """
+    Thanks to Paul Tol (https://personal.sron.nl/~pault/data/tol_colors.py)
+    License:  Standard 3-clause BSD
+    """
+    clrs = ['#6F4C9B', '#6059A9', '#5568B8', '#4E79C5', '#4D8AC6',
+            '#4E96BC', '#549EB3', '#59A5A9', '#60AB9E', '#69B190',
+            '#77B77D', '#8CBC68', '#A6BE54', '#BEBC48', '#D1B541',
+            '#DDAA3C', '#E49C39', '#E78C35', '#E67932', '#E4632D',
+            '#DF4828', '#DA2222']
+    cmap = LinearSegmentedColormap.from_list("rainbow_PuRd", clrs)
+    cmap.set_bad('#FFFFFF')
+    return cmap
 
 
  # TODO move to utility as it is also used in contours.py
@@ -139,7 +157,16 @@ def plot_2D_isodensity(model, sample, model_desc=None, swap_axis=False, ax=None)
         X = Y
         Y = tmp
         
-    ax.contour(X, Y, Z, colors="#BB5566")
+    q = str(np.quantile(Z, q=0.4))
+    min_lvl = int(q.split("e")[1])
+    n_levels = np.abs(min_lvl)
+    levels = np.logspace(-1, min_lvl, num=n_levels)[::-1]
+    lvl_labels = [f"1E{int(i)}" for i in np.linspace(-1, min_lvl, num=n_levels)][::-1]
+    cmap = _rainbow_PuRd()
+    colors = cmap(np.linspace(0, 1, num=n_levels))
+    CS = ax.contour(X, Y, Z, levels=levels, colors=colors)
+    ax.legend(CS.collections, lvl_labels, loc="upper left", ncol=1,
+               prop={"size": 8}, frameon=False, title="Probabilty density")
     x_name = model_desc["names"][x_idx]
     x_symbol = model_desc["symbols"][x_idx]
     x_unit = model_desc["units"][x_idx]
