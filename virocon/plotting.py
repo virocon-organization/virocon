@@ -77,7 +77,7 @@ def plot_marginal_quantiles(model, sample, model_desc=None, axes=None):
         
     return axes
 
-def plot_dependence_functions(model, model_desc=None, par_rename=None, axes=None):
+def plot_dependence_functions(model, model_desc=None, par_rename={}, axes=None):
     n_dim = model.n_dim
     conditional_dist_idc = [dim for dim  in range(n_dim) 
                             if model.conditional_on[dim] is not None]
