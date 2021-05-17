@@ -232,4 +232,7 @@ def plot_2D_contour(contour, sample=None, design_conditions=None, model_desc=Non
     ax.set_xlabel(x_label)
     ax.set_ylabel(y_label)
     
-    return ax
+    if design_conditions is None:
+        return ax
+    else:
+        return ax, design_conditions
