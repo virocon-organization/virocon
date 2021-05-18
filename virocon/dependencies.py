@@ -116,6 +116,11 @@ class DependenceFunction():
             Input data (data consists of n observations (x_i, y_i)).
         y :array-like
             Target data (data consists of n observations (x_i, y_i)).
+            
+        Raises
+        ------
+        RuntimeError
+            if the fit fails.
 
         """
         # The dependence function does not know in which order all the
@@ -149,8 +154,13 @@ class DependenceFunction():
         p0 = tuple(self.parameters.values())
         
         if constraints is None:
-            popt = fit_function(self, x, y, p0, method, bounds, weights)
+            try:
+                popt = fit_function(self, x, y, p0, method, bounds, weights)
+            except RuntimeError as e:
+                raise RuntimeError(f"Failed to fit dependence function {self}."
+                                   "Consider choosing different bounds.") from e
         else:
+            # TODO proper error handling for constrained fit
             popt = fit_constrained_function(self, x, y, p0, method, bounds, constraints, weights)
         
         # update self with fitted parameters
