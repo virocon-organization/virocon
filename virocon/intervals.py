@@ -6,13 +6,42 @@ __all__ = ["WidthOfIntervalSlicer", "NumberOfIntervalsSlicer",
            "PointsPerIntervalSlicer"]
 
 class IntervalSlicer(ABC):
-
+    """
+    Abstract base class for IntervalSlicer
+        
+    Sorts the conditional variable (e.g Tp|Hs) into intervals of the
+    independent variable (Hs). 
+        
+    """
+    
     def __init__(self, **kwargs):
         self.min_n_points = kwargs.get("min_n_points", 50)
         self.min_n_intervals = kwargs.get("min_n_intervals", 3)
         self.center = None
 
     def slice_(self, data):
+        """
+        Slices the data into intervals of equal width.
+        
+        Parameters
+        ----------   
+        data : one-dimensional ndarray.
+            Contains the data of the independent variable.
+            
+        Returns
+        -------
+        interval_slices: list of ndarray
+            Boolean arrays with same length as data. One for each interval. 
+            True where a value in data falls in the corresponding interval.
+
+        interval_centers: ndarray
+            Center points of intervals. Length equal to number of intervals.
+
+        interval_boundaries: list of tuple
+            List of (upper, lower) limit tuples. One tuple for each interval.
+        
+        """
+        
         interval_slices, interval_centers, interval_boundaries = self._slice(data)
 
         if len(interval_slices) < self.min_n_intervals:
@@ -42,7 +71,29 @@ class IntervalSlicer(ABC):
 
 
 class WidthOfIntervalSlicer(IntervalSlicer):
-    
+    """
+        IntervalSlicer that uses width of intervals to define intervals.
+        
+        Parameters
+        ----------   
+        width : float
+            The width of each interval.
+        center : Callable or None
+            Takes a callable as argument, that maps from an array with the 
+            values of an interval to the center of that interval. Defaults to 
+            None. If None either the start or the middle ((end - start)/2) of 
+            the interval, depending on offset, are used as center.
+        offset : boolean
+            Offset of the intervals. If true, the center of the intervals
+            is shifted to the indicated value. Defaults to False. 
+        right_open : boolean
+            Determines how the boundaries of the intervals are defined. Either 
+            the left or the right boundary is inclusive. Defaults to True, 
+            meaning the left boundary is inclusive and the right exclusive, 
+            i.e. :math:`[lower, upper)`.
+       
+    """
+   
     def __init__(self, width, center=None, offset=False, right_open=True, **kwargs):
         super().__init__(**kwargs)
         self.width = width
@@ -78,6 +129,29 @@ class WidthOfIntervalSlicer(IntervalSlicer):
     
     
 class NumberOfIntervalsSlicer(IntervalSlicer):
+    """     
+        IntervalSlicer that uses a number of intervals to define intervals of 
+        equal width.
+        
+        Parameters
+        ----------   
+        n_intervals : int
+            Number of intervals the dataset is split into.
+        center : Callable or None
+            Takes a callable as argument, that maps from an array with the 
+            values of an interval to the center of that interval. Defaults to 
+            None. If None either the start or the middle ((end - start)/2) of 
+            the interval, depending on offset, are used as center.
+        include_max : boolean
+            Determines if the upper boundary of the last interval is inclusive.
+            True if inclusive. Defaults to True.
+        range_ : tuple or None
+            Determines the value range used for creating n_intervals equally 
+            sized intervals. If a tuple it contains the upper and lower limit 
+            of the range. If None the min and max of the data are used. 
+            Defaults to None.
+        
+    """
     
     def __init__(self, n_intervals, center=None, include_max=True, range_=None, **kwargs):
         super().__init__(**kwargs)
@@ -122,6 +196,28 @@ class NumberOfIntervalsSlicer(IntervalSlicer):
 
 
 class PointsPerIntervalSlicer(IntervalSlicer):
+    """
+        Uses a number of points per interval to define intervals.
+
+        Sorts the data and splits it into intervals with the same number of 
+        points. In general this results in intervals with varying width.
+        
+        Parameters
+        ----------   
+        n_points : int
+            The number of points per interval.
+        center : callable or None
+            Takes a callable as argument, that maps from an array with the 
+            values of an interval to the center of that interval. Defaults to 
+            np.median.
+        last_full : boolean
+            If it is not possible to split the data in chunks with the same 
+            number of points, one interval will have fewer points. This 
+            determines if the last or the first interval should have n_points 
+            points. If True the last interval contains n_points points and the 
+            first interval contains the remaining points. Defaults to True.
+            
+    """
 
     def __init__(self, n_points, center=None, last_full=True, **kwargs):
         super().__init__(**kwargs)
