@@ -448,19 +448,20 @@ class GlobalHierarchicalModel(MultivariateModel):
         """
         Marginal inverse cumulative distribution function.
         
-        Estimates the marginal i_cdf by drawing a Monte-Carlo sample.
+        Estimates the marginal icdf by drawing a Monte-Carlo sample.
                         
         Parameters
         ----------
         p : array_like
-            Probabilities for which the i_cdf is evaluated.
+            Probabilities for which the icdf is evaluated.
             Shape: 1-dimensional
         dim : int
             The dimension for which the marginal is calculated.
         precision_factor : float
             Precision factor that determines the size of the sample to draw. 
-            A higher factor means more realizations are sampled. Defaults 
-            to 1.0.
+            A sample is drawn of which on average precision_factor * 100 
+            realizations exceed the quantile. Minimum sample size is 100000.
+            Defaults to 1.0
    
         """
         
@@ -469,19 +470,13 @@ class GlobalHierarchicalModel(MultivariateModel):
         if self.conditional_on[dim] is None:
             # the distribution is not conditional -> it is the marginal
             return self.distributions[dim].icdf(p)
-        
 
-        # If very low/high quantiles are of interest, a bigger
-        # Monte Carlo sample should be drawn.
         p_min = np.min(p) 
         p_max = np.max(p)
-        # if p_min < 0.001 or p_max > 0.999:
         nr_exceeding_points = 100 * precision_factor
         p_small = np.min([p_min, 1 - p_max])
         n = int((1 / p_small) * nr_exceeding_points)
-        # else:
-        #     # Minimum to draw for minimum precesision.
-        #     n = 100000 * precision_factor
+        n = max([n, 100000])
         sample = self.draw_sample(n)
         x = np.quantile(sample[:, dim], p)
         return x   
