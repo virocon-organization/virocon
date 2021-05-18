@@ -25,9 +25,20 @@ class IntervalSlicer(ABC):
         
         Parameters
         ----------   
-        data : list of array
-            The data that should be split into intervals. Realizations of the 
-            conditional variable split into intervals of equal width. 
+        data : one-dimensional ndarray.
+            Contains the data of the independent variable.
+            
+        Returns
+        -------
+        interval_slices: list of ndarray
+            Boolean arrays with same length as data. One for each interval. 
+            True where a value in data falls in the corresponding interval.
+
+        interval_centers: ndarray
+            Center points of intervals. Length equal to number of intervals.
+
+        interval_boundaries: list of tuple
+            List of (upper, lower) limit tuples. One tuple for each interval.
         
         """
         
@@ -61,22 +72,25 @@ class IntervalSlicer(ABC):
 
 class WidthOfIntervalSlicer(IntervalSlicer):
     """
-        Width of the intervals. Inherits from IntervalSlicer.
+        IntervalSlicer that uses width of intervals to define intervals.
         
         Parameters
         ----------   
         width : float
-            Indicates the width of the intervals. 
-        center : float
-            The center of the intervals. If indicated, the center is shifted 
-            to the specified value and the intervals are provided with an 
-            offset. Defaults to None.
+            The width of each interval.
+        center : Callable or None
+            Takes a callable as argument, that maps from an array with the 
+            values of an interval to the center of that interval. Defaults to 
+            None. If None either the start or the middle ((end - start)/2) of 
+            the interval, depending on offset, are used as center.
         offset : boolean
             Offset of the intervals. If true, the center of the intervals
             is shifted to the indicated value. Defaults to False. 
         right_open : boolean
-            Determines how the boundaries of the intervals are defined. Either
-            the left or the right boundary is fixed. Defaults to True.
+            Determines how the boundaries of the intervals are defined. Either 
+            the left or the right boundary is inclusive. Defaults to True, 
+            meaning the left boundary is inclusive and the right exclusive, 
+            i.e. :math:`[lower, upper)`.
        
     """
    
@@ -116,24 +130,26 @@ class WidthOfIntervalSlicer(IntervalSlicer):
     
 class NumberOfIntervalsSlicer(IntervalSlicer):
     """     
-        Number of intervals. Inherits from IntervalSlicer.
+        IntervalSlicer that uses a number of intervals to define intervals of 
+        equal width.
         
         Parameters
         ----------   
         n_intervals : int
             Number of intervals the dataset is split into.
-        center : float
-            The center of the intervals. If indicated, the center is shifted 
-            to the specified value and the intervals are provided with an 
-            offset. Defaults to None.
+        center : Callable or None
+            Takes a callable as argument, that maps from an array with the 
+            values of an interval to the center of that interval. Defaults to 
+            None. If None either the start or the middle ((end - start)/2) of 
+            the interval, depending on offset, are used as center.
         include_max : boolean
-            Determines how the boundaries of the intervals are defined.
-            Indicates whether to include the maximum value defined by the
-            right interval boundary or to define it as the left boundary of
-            the next interval. Defaults to True.
-        range_ : ?
-            Indicates the start and end value of the intervals within the data 
-            set. If None, the complete data set is used. Defaults to None. 
+            Determines if the upper boundary of the last interval is inclusive.
+            True if inclusive. Defaults to True.
+        range_ : tuple or None
+            Determines the value range used for creating n_intervals equally 
+            sized intervals. If a tuple it contains the upper and lower limit 
+            of the range. If None the min and max of the data are used. 
+            Defaults to None.
         
     """
     
@@ -181,20 +197,25 @@ class NumberOfIntervalsSlicer(IntervalSlicer):
 
 class PointsPerIntervalSlicer(IntervalSlicer):
     """
-        Number of data points per Interval. Inherits from IntervalSlicer.
+        Uses a number of points per interval to define intervals.
+
+        Sorts the data and splits it into intervals with the same number of 
+        points. In general this results in intervals with varying width.
         
         Parameters
         ----------   
         n_points : int
-            Number of ipoints per interval.
-        center : float
-            The center of the intervals. If indicated, the center is shifted 
-            to the specified value and the intervals are provided with an 
-            offset. Defaults to None.
+            The number of points per interval.
+        center : callable or None
+            Takes a callable as argument, that maps from an array with the 
+            values of an interval to the center of that interval. Defaults to 
+            np.median.
         last_full : boolean
-            Determines how the realizations of the dataset are sorted into
-            intervals if the quotient of the number of data points and the 
-            number of points per interval is not zero. Defaults to True.
+            If it is not possible to split the data in chunks with the same 
+            number of points, one interval will have fewer points. This 
+            determines if the last or the first interval should have n_points 
+            points. If True the last interval contains n_points points and the 
+            first interval contains the remaining points. Defaults to True.
             
     """
 

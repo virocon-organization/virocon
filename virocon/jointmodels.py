@@ -39,8 +39,6 @@ class MultivariateModel(ABC):
         """
         Marginal probability density function.
         
-        Probability distribution of the individual variables.
-        
         """
         pass
     
@@ -49,8 +47,6 @@ class MultivariateModel(ABC):
         """
         Marginal cumulative distribution function.
         
-        Probability distribution of the individual variables.
-        
         """
         pass   
     
@@ -58,8 +54,6 @@ class MultivariateModel(ABC):
     def marginal_icdf(self, *args, **kwargs):
         """
         Marginal inverse cumulative distribution function.
-        
-        Probability distribution of the individual variables.
         
         """
         pass
@@ -75,7 +69,7 @@ class MultivariateModel(ABC):
 
 class GlobalHierarchicalModel(MultivariateModel):
     """
-    Probabilistic model. Inherits from MultivariateModel.
+    Hierarchical probabilistic model.
     
     Probabilistic model that covers the complete range of an environmental 
     variable (’global’), following a particular hierarchical dependence 
@@ -86,19 +80,25 @@ class GlobalHierarchicalModel(MultivariateModel):
     Parameters
     ----------   
     dist_descriptions : dict
-        Description of the distributions. 
+        Description of the distributions.
+        E.g.:    
+        :math:`distdescription_0 = {"distribution" : WeibullDistribution(), "intervals" : WidthOfIntervalSlicer(width=0.5, offset=True)}`
         
     Attributes
     ----------
     distributions : list
         The distributions used in the GlobalHierachicalModel.
     conditional_on : list
-        Indicates the dependencies between the variables of the model.
+        Indicates the dependencies between the variables of the model. One 
+        entry per distribution/dimension. Contains either None or int. If the 
+        ith entry is None, the ith distribution is unconditional. If the ith 
+        entry is an int j, the ith distribution depends on the jth dimension.
     interval_slicers : list
-        Sorts the conditional variable (e.g Tp|Hs) into intervals of the
-        independent variable (Hs). 
+        One interval slicer per dimension. The interval slicer used for 
+        slicing the intervals of the corresponding dimension, when necessary 
+        during fitting.
     n_dim : int
-        Number of dimensions. Indicating the number of variables of the model.
+        The number of dimensions, i.e. the number of variables of the model.
         
        
     References
@@ -212,12 +212,13 @@ class GlobalHierarchicalModel(MultivariateModel):
         
         Parameters
         ----------
-        data : list of array
-            The data that should be used to fit the joint model.
-            Realizations of the distributions variable split into intervals. 
-            One array for each interval containing the data in that interval.
+        data : array-like
+            The data that should be used to fit the joint model. 
+            Shape: (number of realizations, n_dim)
         fit_description : dict
             Description of the fit method. Defaults to None.
+            E.g.:
+                :math:`alphadep = DependenceFunction(_alpha3, alpha_bounds, d_of_x=beta_dep, weights=lambda x, y : y)`
 
         """
 
@@ -258,7 +259,8 @@ class GlobalHierarchicalModel(MultivariateModel):
         ----------
         x : array_like
             Points at which the pdf is evaluated.
-            Shape: 1-dimensional.
+            Shape: (n, n_dim), where n is the number of points at which the 
+            pdf should be evaluated.
             
         """
         
@@ -287,7 +289,8 @@ class GlobalHierarchicalModel(MultivariateModel):
         ----------
         x : array_like
             Points at which the cdf is evaluated.
-            Shape: 1-dimensional.
+            Shape: (n, n_dim), where n is the number of points at which the 
+            cdf should be evaluated.
         
         """ 
         
@@ -326,16 +329,14 @@ class GlobalHierarchicalModel(MultivariateModel):
     def marginal_pdf(self, x, dim):
         """
         Marginal probability density function.
-        
-        Probability distribution of the individual variables.
                 
         Parameters
         ----------
         x : array_like
             Points at which the pdf is evaluated.
             Shape: 1-dimensional
-        dim : ?
-            Dimension of the GlobalHierachicalModel. 
+        dim : int
+            The dimension for which the marginal is calculated.
    
         """
         
@@ -387,16 +388,14 @@ class GlobalHierarchicalModel(MultivariateModel):
       
         """
         Marginal cumulative distribution function.
-        
-        Probability distribution of the individual variables.
                 
         Parameters
         ----------
         x : array_like
             Points at which the cdf is evaluated.
             Shape: 1-dimensional
-        dim : ?
-            Dimension of the GlobalHierachicalModel. 
+        dim : int
+            The dimension for which the marginal is calculated.
   
         """
         
@@ -449,17 +448,19 @@ class GlobalHierarchicalModel(MultivariateModel):
         """
         Marginal inverse cumulative distribution function.
         
-        Probability distribution of the individual variables.
+        Estimates the marginal i_cdf by drawing a Monte-Carlo sample.
                         
         Parameters
         ----------
         p : array_like
             Probabilities for which the i_cdf is evaluated.
             Shape: 1-dimensional
-        dim : ?
-            Dimension of the GlobalHierachicalModel. 
-        precision_factor : ?
-            Defaults to 1. 
+        dim : int
+            The dimension for which the marginal is calculated.
+        precision_factor : float
+            Precision factor that determines the size of the sample to draw. 
+            A higher factor means more realizations are sampled. Defaults 
+            to 1.0.
    
         """
         
@@ -488,12 +489,12 @@ class GlobalHierarchicalModel(MultivariateModel):
     
     def draw_sample(self, n):
         """
-        Draw a random sample of length n.
+        Draw a random sample of size n.
         
         Parameters
         ----------
         n : int
-            Sample length.
+            Sample size.
        
         """
         
