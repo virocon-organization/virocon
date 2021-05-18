@@ -11,28 +11,106 @@ from virocon.intervals import NumberOfIntervalsSlicer
 __all__ = ["GlobalHierarchicalModel"]
 
 class MultivariateModel(ABC):
+    """
+    Abstract base class for MultivariateModel.
+    
+    Statistical model of multiple variables.
+    
+    """
     
     @abstractmethod
     def pdf(self, *args, **kwargs):
+        """
+        Probability density function.
+        
+        """
         pass
+    
     @abstractmethod
     def cdf(self, *args, **kwargs):
+        """
+        Cumulative distribution function.
+        
+        """
         pass
+    
     @abstractmethod
     def marginal_pdf(self, *args, **kwargs):
+        """
+        Marginal probability density function.
+        
+        """
         pass
+    
     @abstractmethod        
     def marginal_cdf(self, *args, **kwargs):
+        """
+        Marginal cumulative distribution function.
+        
+        """
         pass   
+    
     @abstractmethod        
     def marginal_icdf(self, *args, **kwargs):
+        """
+        Marginal inverse cumulative distribution function.
+        
+        """
         pass
+    
     @abstractmethod
     def draw_sample(self, *args, **kwargs):
+        """
+        Draw a random sample of length n.
+       
+        """
         pass
 
 
 class GlobalHierarchicalModel(MultivariateModel):
+    """
+    Hierarchical probabilistic model.
+    
+    Probabilistic model that covers the complete range of an environmental 
+    variable (’global’), following a particular hierarchical dependence 
+    structure. The factorization describes a hierarchy where a random 
+    variable with index i can only depend upon random variables with 
+    indices less than i [1]_ .
+       
+    Parameters
+    ----------   
+    dist_descriptions : dict
+        Description of the distributions.
+        E.g.:    
+        :math:`distdescription_0 = {"distribution" : WeibullDistribution(), "intervals" : WidthOfIntervalSlicer(width=0.5, offset=True)}`
+        
+    Attributes
+    ----------
+    distributions : list
+        The distributions used in the GlobalHierachicalModel.
+    conditional_on : list
+        Indicates the dependencies between the variables of the model. One 
+        entry per distribution/dimension. Contains either None or int. If the 
+        ith entry is None, the ith distribution is unconditional. If the ith 
+        entry is an int j, the ith distribution depends on the jth dimension.
+    interval_slicers : list
+        One interval slicer per dimension. The interval slicer used for 
+        slicing the intervals of the corresponding dimension, when necessary 
+        during fitting.
+    n_dim : int
+        The number of dimensions, i.e. the number of variables of the model.
+        
+       
+    References
+    ----------
+    .. [1] Haselsteiner, A.F.; Sander, A.; Ohlendorf, J.H.; Thoben, K.D. (2020)
+        Global hierarchical models for wind and wave contours: physical
+        interpretations of the dependence functions. OMAE 2020, Fort Lauderdale,
+        USA. Proceedings of the 39th International Conference on Ocean, 
+        Offshore and Arctic Engineering.
+    
+    
+    """
     
     _dist_description_keys = {"distribution", "intervals", "conditional_on",
                               "parameters"}
@@ -123,7 +201,26 @@ class GlobalHierarchicalModel(MultivariateModel):
 
         return fit_descriptions
     
+
+
     def fit(self, data, fit_descriptions=None):
+        """
+        Fit joint model to data.
+        
+        Method of estimating the parameters of a probability distribution to
+        given data.
+        
+        Parameters
+        ----------
+        data : array-like
+            The data that should be used to fit the joint model. 
+            Shape: (number of realizations, n_dim)
+        fit_description : dict
+            Description of the fit method. Defaults to None.
+            E.g.:
+                :math:`alphadep = DependenceFunction(_alpha3, alpha_bounds, d_of_x=beta_dep, weights=lambda x, y : y)`
+
+        """
 
         data = np.array(data)
 
@@ -155,6 +252,18 @@ class GlobalHierarchicalModel(MultivariateModel):
                     
                     
     def pdf(self, x):
+        """
+        Probability density function.
+        
+        Parameters
+        ----------
+        x : array_like
+            Points at which the pdf is evaluated.
+            Shape: (n, n_dim), where n is the number of points at which the 
+            pdf should be evaluated.
+            
+        """
+        
         x = np.asarray_chkfinite(x)        
         fs = np.empty_like(x)
         
@@ -173,6 +282,18 @@ class GlobalHierarchicalModel(MultivariateModel):
     
     
     def cdf(self, x):
+        """
+        Cumulative distribution function.
+        
+        Parameters
+        ----------
+        x : array_like
+            Points at which the cdf is evaluated.
+            Shape: (n, n_dim), where n is the number of points at which the 
+            cdf should be evaluated.
+        
+        """ 
+        
         x = np.asarray_chkfinite(x)
         
         n_dim = self.n_dim
@@ -206,6 +327,19 @@ class GlobalHierarchicalModel(MultivariateModel):
 
 
     def marginal_pdf(self, x, dim):
+        """
+        Marginal probability density function.
+                
+        Parameters
+        ----------
+        x : array_like
+            Points at which the pdf is evaluated.
+            Shape: 1-dimensional
+        dim : int
+            The dimension for which the marginal is calculated.
+   
+        """
+        
         #x = x.reshape((-1, 1))
         if self.conditional_on[dim] is None:
             # the distribution is not conditional -> it is the marginal
@@ -251,6 +385,20 @@ class GlobalHierarchicalModel(MultivariateModel):
     
     
     def marginal_cdf(self, x, dim):
+      
+        """
+        Marginal cumulative distribution function.
+                
+        Parameters
+        ----------
+        x : array_like
+            Points at which the cdf is evaluated.
+            Shape: 1-dimensional
+        dim : int
+            The dimension for which the marginal is calculated.
+  
+        """
+        
         #x = x.reshape((-1, 1))
         if self.conditional_on[dim] is None:
             # the distribution is not conditional -> it is the marginal
@@ -296,30 +444,55 @@ class GlobalHierarchicalModel(MultivariateModel):
     
     
     def marginal_icdf(self, p, dim, precision_factor=1):
+      
+        """
+        Marginal inverse cumulative distribution function.
+        
+        Estimates the marginal icdf by drawing a Monte-Carlo sample.
+                        
+        Parameters
+        ----------
+        p : array_like
+            Probabilities for which the icdf is evaluated.
+            Shape: 1-dimensional
+        dim : int
+            The dimension for which the marginal is calculated.
+        precision_factor : float
+            Precision factor that determines the size of the sample to draw. 
+            A sample is drawn of which on average precision_factor * 100 
+            realizations exceed the quantile. Minimum sample size is 100000.
+            Defaults to 1.0
+   
+        """
+        
         p = np.array(p)
         
         if self.conditional_on[dim] is None:
             # the distribution is not conditional -> it is the marginal
             return self.distributions[dim].icdf(p)
-        
 
-        # If very low/high quantiles are of interest, a bigger
-        # Monte Carlo sample should be drawn.
         p_min = np.min(p) 
         p_max = np.max(p)
-        # if p_min < 0.001 or p_max > 0.999:
         nr_exceeding_points = 100 * precision_factor
         p_small = np.min([p_min, 1 - p_max])
         n = int((1 / p_small) * nr_exceeding_points)
-        # else:
-        #     # Minimum to draw for minimum precesision.
-        #     n = 100000 * precision_factor
+        n = max([n, 100000])
         sample = self.draw_sample(n)
         x = np.quantile(sample[:, dim], p)
         return x   
     
     
     def draw_sample(self, n):
+        """
+        Draw a random sample of size n.
+        
+        Parameters
+        ----------
+        n : int
+            Sample size.
+       
+        """
+        
         samples = np.zeros((n, self.n_dim))
         for i in range(self.n_dim):
             cond_idx = self.conditional_on[i]
