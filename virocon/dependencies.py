@@ -1,4 +1,6 @@
-from inspect import signature
+import re
+
+from inspect import signature, getsourcelines
 
 from functools import partial
 
@@ -104,7 +106,20 @@ class DependenceFunction():
         else:
             raise ValueError() # TODO helpful error message
             
-            
+    def __repr__(self):
+        if isinstance(self.func, partial):
+            func = self.func.func
+        else:
+            func = self.func
+        params = ", ".join([f"{par_name}={par_value}" 
+                            for par_name, par_value in self.parameters.items()])
+        dep_params = ", ".join([f"{par_name}={par_value}" 
+                                for par_name, par_value in self.dependent_parameters.items()])
+        combined_params = params + ", " + dep_params
+        combined_params = combined_params.strip(", ")
+        return f"DependenceFunction(func={func.__name__}, {combined_params})"
+    
+        
     def fit(self, x, y):
         """
         Determine the parameters of the dependence function.

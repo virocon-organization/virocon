@@ -63,6 +63,14 @@ class GlobalHierarchicalModel(MultivariateModel):
             raise RuntimeError("Illegal state encountered. The first dimension "
                                "has to be independent, but was conditional on "
                                f"{self.conditional_on[0]}.")
+            
+    def __repr__(self):
+        name = "GlobalHierarchicalModel"
+        dists = repr(self.distributions)
+        # dists = dists.replace("), ", "),\n")
+        cond_on = repr(self.conditional_on)
+        
+        return f"{name}(distributions={dists}, conditional_on={cond_on})"
                    
                      
     def _check_dist_descriptions(self, dist_descriptions):
