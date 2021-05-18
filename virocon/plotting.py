@@ -27,7 +27,22 @@ def _rainbow_PuRd():
 
 
  # TODO move to utility as it is also used in contours.py
-def get_default_model_description(n_dim):
+def get_default_model_description(n_dim):  
+    """
+    Generate a default model description for n_dim dimensions.
+    
+    Parameters
+    ----------
+    n_dim : int
+        Number of dimensions. Indicating the number of variables of the model.
+        
+    Returns
+    -------
+    model_desc: dict
+        Generated model description. 
+    
+    """
+        
     model_desc = {"names" : [f"Variable {dim+1}" for dim in range(n_dim)],
                   "symbols" : [f"V{dim+1}" for dim in range(n_dim)],
                   "units" : ["arb. unit" for dim in range(n_dim)]
@@ -36,6 +51,34 @@ def get_default_model_description(n_dim):
 
 
 def plot_marginal_quantiles(model, sample, model_desc=None, axes=None):
+    """
+    Plot all marginal quantiles of a model.
+    
+    Plots the fitted marginal distribution versus a dataset in a quantile-
+    quantile (QQ) plot.
+    
+    Parameters
+    ----------
+    model :  MultivariateModel
+        The model used to plot the marginal quantiles.
+    sample : ndarray of floats
+        The environmental data sample that should be plotted against the fit.
+        Shape: (sample_size, n_dim)
+    model_desc: dict, optional
+        The description of the model. If None (the default) a generic model 
+        description will be used.
+        E.g.:
+          :math:`modeldesc = {"names" : ["Name of variables"], "symbols" : ["Description of symbols"], "units" : ["Units of variables"]}`
+    axes: list, optional
+        The matplotlib axes objects to plot into. One for each dimension. If 
+        None (the default) a new figure will be created for each dimension.
+        
+    Returns
+    -------
+    The used matplotlib axes object.    
+    
+    """
+        
     sample = np.asarray(sample)
     n_dim = model.n_dim
     if model_desc is None:
@@ -50,13 +93,14 @@ def plot_marginal_quantiles(model, sample, model_desc=None, axes=None):
     
     # probplot expects an object that has a ppf method, but we name it icdf
     # therefor we create a wrapper that maps the ppf to the icdf method
-    class MarginalDistWrapper:
+    class MarginalDistWrapper:  
         
         def __init__(self, model, idx):
             self.model = model
             self.idx = idx
             
         def ppf(self, q):
+
             return self.model.marginal_icdf(q, self.idx)
         
     for dim in range(n_dim):
@@ -77,7 +121,32 @@ def plot_marginal_quantiles(model, sample, model_desc=None, axes=None):
         
     return axes
 
+
 def plot_dependence_functions(model, model_desc=None, par_rename={}, axes=None):
+    """
+    Plot the fitted dependence functions of a model.
+       
+    Parameters
+    ----------
+    model :  MultivariateModel
+        The model with the fitted dependence functions.      
+    model_desc: dict, optional
+        The description of the model. If None (the default) a generic model description will be used.
+    par_rename : dict, optional
+        A dictionary that maps from names of conditional parameters to a 
+        string. If e.g. the model has a distribution with a conditional 
+        parameter named 'mu' one could change that in the plot to '$mu$' with 
+        {'mu': '$mu$'}.
+    axes: int, optional
+        Indicates the number of subplots. If not further specified, axes are 
+        dependend on the number of dimensions of the model. Defaults to None.
+        
+    Returns
+    -------
+    The used matplotlib axes object.    
+       
+    """
+        
     n_dim = model.n_dim
     conditional_dist_idc = [dim for dim  in range(n_dim) 
                             if model.conditional_on[dim] is not None]
@@ -120,7 +189,32 @@ def plot_dependence_functions(model, model_desc=None, par_rename={}, axes=None):
     return axes
 
 
-def plot_2D_isodensity(model, sample, model_desc=None, swap_axis=False, ax=None):
+def plot_2D_isodensity(model, sample, model_desc=None, swap_axis=False, ax=None):   
+    """
+    Plot isodensity contours and a data sample for a 2D model.
+       
+    Parameters
+    ----------
+    model :  MultivariateModel
+        The 2D model to use.
+    sample : ndarray of floats
+        The 2D data sample that should be plotted.
+    model_desc: dict, optional
+        The description of the model. If None (the default) a generic model 
+        description will be used.
+    swap_axis : boolean, optional
+        If True the second dimension of the model is plotted on the x-axis and 
+        the first on the y-axis. Otherwise vice-versa. Defaults to False.
+    ax : matplotlib Axes, optional
+        Matplotlib axes object to use for plotting. If None (default) a new 
+        figure will be created.
+    
+    Returns
+    -------
+    The used matplotlib axes object.    
+    
+    """
+        
 
     n_dim = model.n_dim
     assert n_dim == 2
@@ -181,7 +275,41 @@ def plot_2D_isodensity(model, sample, model_desc=None, swap_axis=False, ax=None)
     return ax
 
 
+
 def plot_2D_contour(contour, sample=None, design_conditions=None, model_desc=None, swap_axis=False, ax=None):
+    """
+    Plot a 2D contour.
+       
+    Parameters
+    ----------
+    contour: Contour
+        The 2D contour that should be plotted.
+    sample : ndarray of floats, optional
+        A 2D data sample that should be plotted along the contour. 
+        Shape: (number of realizations, 2)
+    design_conditions : array-like or boolean, optional
+       Specified environmental conditions under which the system must operate.
+       If an array it is assumed to be a 2D array of shape 
+       (number of points, 2) and should contain the precalulated design 
+       conditions. If it is True design_conditions are computed with default 
+       values and plotted. Otherwise no design conditions will be plotted 
+       (the default).
+    model_desc: dict, optional
+        Generated model description. Defaults to None.
+    swap_axis : boolean, optional
+        f True the second dimension of the model is plotted on the x-axis and 
+        the first on the y-axis. Otherwise vice-versa. Defaults to False.
+    ax : matplotlib Axes, optional
+        Matplotlib axes object to use for plotting. If None (default) a new 
+        figure will be created.
+       
+    Returns
+    -------
+    The matplotlib axes objects plotted into.
+    (optional: the design_conditions if not None, yet to implement)   
+       
+    """
+        
     
     # design conditions can be True or array
     n_dim = 2
