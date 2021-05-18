@@ -100,6 +100,16 @@ class ConditionalDistribution:
                 else:
                     self.conditional_parameters[par_name] = parameters[par_name]
 
+    def __repr__(self):
+        dist = "Conditional" + self.distribution_class.__name__
+        fixed_params = ", ".join([f"f_{par_name}={par_value}" 
+                                for par_name, par_value in self.fixed_parameters.items()])
+        cond_params = ", ".join([f"{par_name}={repr(par_value)}" 
+                                for par_name, par_value in self.conditional_parameters.items()])
+        combined_params = fixed_params + ", " + cond_params
+        combined_params = combined_params.strip(", ")
+        return f"{dist}({combined_params})"
+
 
     def _get_param_values(self, given):
         param_values = {}
@@ -291,6 +301,24 @@ class Distribution(ABC):
     (environmental) events.
     
     """
+    
+    def __repr__(self):
+        dist_name = self.__class__.__name__
+        param_names = self.parameters.keys()
+        set_params = {}
+        for par_name in param_names:
+            f_attr = getattr(self, f"f_{par_name}")
+            if f_attr is not None:
+                set_params[f"f_{par_name}"] = f_attr
+            else:
+                set_params[par_name] = getattr(self, par_name)
+                
+        params = ", ".join([f"{par_name}={par_value}" 
+                            for par_name, par_value in set_params.items()])
+        
+        return f"{dist_name}({params})"
+
+                
 
 
     @property
