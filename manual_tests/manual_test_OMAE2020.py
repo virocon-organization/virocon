@@ -49,8 +49,7 @@ alpha_dep = DependenceFunction(_alpha3, alpha_bounds, d_of_x=beta_dep,
 
 
 dist_description_vs = {"distribution" : ExponentiatedWeibullDistribution(),
-                       "intervals" : WidthOfIntervalSlicer(2, min_n_points=50,
-                                                           offset=True)
+                       "intervals" : WidthOfIntervalSlicer(2, min_n_points=50)
                        }
 
 dist_description_hs = {"distribution" : ExponentiatedWeibullDistribution(f_delta=5),

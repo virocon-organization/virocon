@@ -54,18 +54,19 @@ class MyIntervalSlicer(WidthOfIntervalSlicer):
     
     def _slice(self, data):
         
-        interval_slices, interval_centers = super()._slice(data)
+        interval_slices, interval_references, interval_boundaries = super()._slice(data)
         
         #discard slices below 4 m/s
         ok_slices = []
-        ok_centers = []
-        # ok_slices, ok_centers = zip(*filter(lambda x: x[1] >=4, zip(interval_slices, interval_centers)))
-        for slice_, center in zip(interval_slices, interval_centers):
-            if center >=4:
+        ok_references = []
+        ok_boundaries = []
+        for slice_, reference, boundaries in zip(interval_slices, interval_references, interval_boundaries):
+            if reference >=4:
                 ok_slices.append(slice_)
-                ok_centers.append(center)
+                ok_references.append(reference)
+                ok_boundaries.append(boundaries)
         
-        return ok_slices, ok_centers
+        return ok_slices, ok_references, ok_boundaries
 
 # %%
 def _poly3(x, a, b, c, d):
@@ -79,7 +80,7 @@ poly3 = DependenceFunction(_poly3)
 poly2 = DependenceFunction(_poly2)
 
 dim0_description = {"distribution" : WeibullDistribution(),
-                    "intervals" : MyIntervalSlicer(width=1, min_number_of_points=5),
+                    "intervals" : MyIntervalSlicer(width=1, reference="left", min_n_points=5),
                     # "parameters" : {"alpha" : 9.74,
                     #                 "beta" : 2.02,
                     #                 "gamma" : 2.2},

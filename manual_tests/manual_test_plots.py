@@ -34,7 +34,7 @@ power3 = DependenceFunction(_power3, bounds)
 exp3 = DependenceFunction(_exp3, bounds)
 
 dist_description_0 = {"distribution" : WeibullDistribution(),
-                      "intervals" : WidthOfIntervalSlicer(width=0.5, offset=True)
+                      "intervals" : WidthOfIntervalSlicer(width=0.5)
                       }
 
 dist_description_1 = {"distribution" : LogNormalDistribution(),
