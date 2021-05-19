@@ -45,19 +45,19 @@ def test_WES4(dataset, reference_data):
     
         def _slice(self, data):
             
-            interval_slices, interval_centers, interval_boundaries = super()._slice(data)
+            interval_slices, interval_references, interval_boundaries = super()._slice(data)
             
             #discard slices below 4 m/s
             ok_slices = []
-            ok_centers = []
+            ok_references = []
             ok_boundaries = []
-            for slice_, center, boundaries in zip(interval_slices, interval_centers, interval_boundaries):
-                if center >=4:
+            for slice_, reference, boundaries in zip(interval_slices, interval_references, interval_boundaries):
+                if reference >=4:
                     ok_slices.append(slice_)
-                    ok_centers.append(center)
+                    ok_references.append(reference)
                     ok_boundaries.append(boundaries)
             
-            return ok_slices, ok_centers, ok_boundaries
+            return ok_slices, ok_references, ok_boundaries
         
     def _poly3(x, a, b, c, d):
         return a * x ** 3 + b * x ** 2 + c * x + d
@@ -69,7 +69,7 @@ def test_WES4(dataset, reference_data):
     poly2 = DependenceFunction(_poly2)
     
     dim0_description = {"distribution" : WeibullDistribution(),
-                        "intervals" : MyIntervalSlicer(width=1, min_n_points=5),
+                        "intervals" : MyIntervalSlicer(width=1, reference="left", min_n_points=5),
                         }
     
     dim1_description = {"distribution" : LogNormalNormFitDistribution(),

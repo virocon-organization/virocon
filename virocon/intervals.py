@@ -15,9 +15,16 @@ class IntervalSlicer(ABC):
     """
     
     def __init__(self, **kwargs):
+        #check if there are unknown kwargs
+        kwarg_keys = kwargs.keys()
+        unknown_kwarg_keys = set(kwarg_keys).difference({"min_n_intervals", "min_n_points"})
+        if len(unknown_kwarg_keys) != 0:
+            raise TypeError("__init__() got an unexpected keyword argument "
+                            f"'{unknown_kwarg_keys.pop()}'")
+            
         self.min_n_points = kwargs.get("min_n_points", 50)
         self.min_n_intervals = kwargs.get("min_n_intervals", 3)
-        self.center = None
+        self.reference = None
 
     def slice_(self, data):
         """
@@ -34,40 +41,39 @@ class IntervalSlicer(ABC):
             Boolean arrays with same length as data. One for each interval. 
             True where a value in data falls in the corresponding interval.
 
-        interval_centers: ndarray
-            Center points of intervals. Length equal to number of intervals.
+        interval_references: ndarray
+            Reference points of intervals. Length equal to number of intervals.
 
         interval_boundaries: list of tuple
             List of (upper, lower) limit tuples. One tuple for each interval.
         
         """
         
-        interval_slices, interval_centers, interval_boundaries = self._slice(data)
+        interval_slices, interval_references, interval_boundaries = self._slice(data)
 
         if len(interval_slices) < self.min_n_intervals:
             raise RuntimeError("Slicing resulting in too few intervals. "
                                f"Need at least {self.min_n_intervals}, "
                                f"but got only {len(interval_slices)} intervals.")
 
-        if self.center is not None:
-            # assert that self.center is a callable
-            interval_centers = [self.center(data[slice_]) for slice_ in interval_slices]
+        if callable(self.reference):
+            interval_references = [self.reference(data[slice_]) for slice_ in interval_slices]
 
-        return interval_slices, interval_centers, interval_boundaries
+        return interval_slices, interval_references, interval_boundaries
 
     @abstractmethod
     def _slice(self, data):
         pass
 
-    def _drop_too_small_intervals(self, interval_slices, interval_centers):
+    def _drop_too_small_intervals(self, interval_slices, interval_references):
         ok_slices = []
-        ok_centers = []
-        for slice_, int_cent in zip(interval_slices, interval_centers):
+        ok_references = []
+        for slice_, int_cent in zip(interval_slices, interval_references):
             # slice_ is a boolean array, so sum returns number of points in interval
             if np.sum(slice_) >= self.min_n_points:
                 ok_slices.append(slice_)
-                ok_centers.append(int_cent)
-        return ok_slices, ok_centers
+                ok_references.append(int_cent)
+        return ok_slices, ok_references
 
 
 class WidthOfIntervalSlicer(IntervalSlicer):
@@ -78,19 +84,26 @@ class WidthOfIntervalSlicer(IntervalSlicer):
         ----------   
         width : float
             The width of each interval.
-        center : Callable or None
-            Takes a callable as argument, that maps from an array with the 
-            values of an interval to the center of that interval. Defaults to 
-            None. If None either the start or the middle ((end - start)/2) of 
-            the interval, depending on offset, are used as center.
-        offset : boolean
-            Offset of the intervals. If true, the center of the intervals
-            is shifted to the indicated value. Defaults to False. 
-        right_open : boolean
+        reference : str or callable, optional
+            Determines the reference value for each interval. 
+            If a string the following keywords are available: 
+            'center': use the center / midpoint of the interval as reference,
+            'left': use the left / lower bound of the interval and 
+            'right': use the right / upper bound of the interval as reference.
+            If a callable, a function is expected, that maps from an array with 
+            the values of an interval to the reference of that interval
+            (e.g. np.median). Defaults to 'center'.
+        right_open : boolean, optional
             Determines how the boundaries of the intervals are defined. Either 
             the left or the right boundary is inclusive. Defaults to True, 
             meaning the left boundary is inclusive and the right exclusive, 
-            i.e. :math:`[lower, upper)`.
+            i.e. :math:`[a, b)`.
+        value_range : tuple, optional
+            Determines the value range used for creating the intervals. 
+            If None, 0 and np.max(data) are used.
+            If a 2-tuple it contains the lower and upper limit of the range. 
+            If either entry of the tuple is None the default for that entry is 
+            used. Defaults to None.
         min_n_points : int, optional
             Minimal number of points per interval. Intervals with fewer points 
             are discarded. Defaults to 50.
@@ -104,38 +117,65 @@ class WidthOfIntervalSlicer(IntervalSlicer):
             if slicing resulted in fewer than min_n_intervals intervals.
     """
    
-    def __init__(self, width, center=None, offset=False, right_open=True, **kwargs):
+    def __init__(self, width, reference="center", right_open=True, value_range=None, **kwargs):
         super().__init__(**kwargs)
         self.width = width
-        self.center = center
-        self.offset = offset
+        self.reference = reference
         self.right_open = right_open
+        self.value_range = value_range
+        
+        
         
     def _slice(self, data):
-        # TODO floor min with precision of width instead of 0
-        data_min = 0
-        data_max = np.max(data)
+        
+        if self.value_range is None:
+            data_min = 0
+            data_max = np.max(data)
+        else:
+            if self.value_range[0] is not None:
+                data_min = self.value_range[0]
+            else:
+                data_min = 0
+            if self.value_range[1] is not None:
+                 data_max = self.value_range[1] 
+            else:
+                data_max = np.max(data)
+            
         width = self.width
-        interval_centers = np.arange(data_min, data_max + width, width)
-        if self.offset:
-            interval_centers += 0.5 * width
+        interval_references = np.arange(data_min, data_max + width, width)
+        if isinstance(self.reference, str):
+            if self.reference.lower() == "center":
+                interval_references += 0.5 * width
+            elif self.reference.lower() == "right":
+                interval_references += width
+            elif self.reference.lower() == "left":
+                pass # interval_references are already left bounds of intervals
+            else:
+                raise ValueError("Unknown value for 'reference'. "
+                                 "Supported values are 'center', 'left', "
+                                 f"and 'right', but got '{self.reference}'.")
+        elif callable(self.reference):
+            pass #  handled in super class
+        else:
+            raise TypeError("Wrong type for reference. Expected str or callable, "
+                            f"but got {type(self.reference)}.")
             
         if self.right_open:
             interval_slices = [((int_cent - 0.5 * width <= data) & 
                                 (data < int_cent + 0.5 * width))
-                               for int_cent in interval_centers]
+                               for int_cent in interval_references]
         else:
             interval_slices = [((int_cent - 0.5 * width < data) & 
                                 (data <= int_cent + 0.5 * width))
-                               for int_cent in interval_centers]
+                               for int_cent in interval_references]
 
-        interval_slices, interval_centers = self._drop_too_small_intervals(interval_slices,
-                                                                           interval_centers)
+        interval_slices, interval_references = self._drop_too_small_intervals(interval_slices,
+                                                                           interval_references)
 
         interval_boundaries = [(c - width / 2, c + width / 2)
-                               for c in interval_centers]
+                               for c in interval_references]
 
-        return interval_slices, interval_centers, interval_boundaries
+        return interval_slices, interval_references, interval_boundaries
     
     
 class NumberOfIntervalsSlicer(IntervalSlicer):
@@ -147,15 +187,19 @@ class NumberOfIntervalsSlicer(IntervalSlicer):
         ----------   
         n_intervals : int
             Number of intervals the dataset is split into.
-        center : Callable or None
-            Takes a callable as argument, that maps from an array with the 
-            values of an interval to the center of that interval. Defaults to 
-            None. If None either the start or the middle ((end - start)/2) of 
-            the interval, depending on offset, are used as center.
-        include_max : boolean
+        reference : str or callable, optional
+            Determines the reference value for each interval. 
+            If a string the following keywords are available: 
+            'center': use the center / midpoint of the interval as reference,
+            'left': use the left / lower bound of the interval and 
+            'right': use the right / upper bound of the interval as reference.
+            If a callable, a function is expected, that maps from an array with 
+            the values of an interval to the reference of that interval
+            (e.g. np.median). Defaults to 'center'.
+        include_max : boolean, optional
             Determines if the upper boundary of the last interval is inclusive.
             True if inclusive. Defaults to True.
-        range_ : tuple or None
+        value_range : tuple or None, optional
             Determines the value range used for creating n_intervals equally 
             sized intervals. If a tuple it contains the upper and lower limit 
             of the range. If None the min and max of the data are used. 
@@ -173,28 +217,46 @@ class NumberOfIntervalsSlicer(IntervalSlicer):
             if slicing resulted in fewer than min_n_intervals intervals.
     """
     
-    def __init__(self, n_intervals, center=None, include_max=True, range_=None, **kwargs):
+    def __init__(self, n_intervals, reference="center", include_max=True, value_range=None, **kwargs):
         super().__init__(**kwargs)
         if n_intervals < self.min_n_intervals:
             self.min_n_intervals = n_intervals
         self.n_intervals = n_intervals
-        self.center = center
+        self.reference = reference
         self.include_max = include_max
-        self.range_ = range_
+        self.value_range = value_range
 
     def _slice(self, data):
-        if self.range_ is not None:
-            range_ = self.range_ 
+        if self.value_range is not None:
+            value_range = self.value_range 
         else:
-            range_ = (min(data), max(data))
+            value_range = (min(data), max(data))
         
-        interval_starts, interval_width = np.linspace(range_[0], 
-                                                      range_[1],
+        interval_starts, interval_width = np.linspace(value_range[0], 
+                                                      value_range[1],
                                                       num=self.n_intervals,
                                                       endpoint=False,
                                                       retstep=True
                                                       )
-        interval_centers = interval_starts + 0.5 * interval_width
+        interval_references = interval_starts + 0.5 * interval_width
+        if isinstance(self.reference, str):
+            if self.reference.lower() == "center":
+                pass # default
+            elif self.reference.lower() == "right":
+                interval_references = interval_starts + interval_width
+            elif self.reference.lower() == "left":
+                interval_references = interval_starts
+            else:
+                raise ValueError("Unknown value for 'reference'. "
+                                 "Supported values are 'center', 'left', "
+                                 f"and 'right', but got '{self.reference}'.")
+        elif callable(self.reference):
+            pass #  handled in super class
+        else:
+            raise TypeError("Wrong type for reference. Expected str or callable, "
+                            f"but got {type(self.reference)}.")
+            
+        
         interval_slices = [((data >= int_start) & 
                             (data < int_start + interval_width)) 
                            for int_start in interval_starts[:-1]]
@@ -206,13 +268,13 @@ class NumberOfIntervalsSlicer(IntervalSlicer):
         else:
             interval_slices.append(((data >= int_start) & (data < int_start + interval_width)))
 
-        interval_slices, interval_centers = self._drop_too_small_intervals(interval_slices,
-                                                                           interval_centers)
+        interval_slices, interval_references = self._drop_too_small_intervals(interval_slices,
+                                                                           interval_references)
 
         interval_boundaries = [(c - interval_width / 2, c + interval_width / 2)
-                               for c in interval_centers]
+                               for c in interval_references]
             
-        return interval_slices, interval_centers, interval_boundaries
+        return interval_slices, interval_references, interval_boundaries
 
 
 class PointsPerIntervalSlicer(IntervalSlicer):
@@ -226,11 +288,12 @@ class PointsPerIntervalSlicer(IntervalSlicer):
         ----------   
         n_points : int
             The number of points per interval.
-        center : callable or None
-            Takes a callable as argument, that maps from an array with the 
-            values of an interval to the center of that interval. Defaults to 
-            np.median.
-        last_full : boolean
+        reference : callable, optional
+            Determines the reference value for each interval. 
+            A function is expected, that maps from an array with 
+            the values of an interval to the reference of that interval. 
+            Defaults to np.median.
+        last_full : boolean, optional
             If it is not possible to split the data in chunks with the same 
             number of points, one interval will have fewer points. This 
             determines if the last or the first interval should have n_points 
@@ -249,13 +312,13 @@ class PointsPerIntervalSlicer(IntervalSlicer):
             if slicing resulted in fewer than min_n_intervals intervals.
     """
 
-    def __init__(self, n_points, center=None, last_full=True, **kwargs):
+    def __init__(self, n_points, reference=np.median, last_full=True, **kwargs):
         super().__init__(**kwargs)
         if n_points < self.min_n_points:
             self.min_n_points = n_points
             
         self.n_points = n_points
-        self.center = center if center is not None else np.median
+        self.reference = reference
         self.last_full = last_full
 
     def _slice(self, data):
@@ -276,10 +339,10 @@ class PointsPerIntervalSlicer(IntervalSlicer):
             interval_idc = np.split(sorted_idc, n_full_chunks)
             
         interval_slices = [np.isin(sorted_idc, idc, assume_unique=True) for idc in interval_idc]
-        interval_centers = [None] * len(interval_slices)  # gets overwritten in super().slice_ anyway
+        interval_references = [None] * len(interval_slices)  # gets overwritten in super().slice_ anyway
 
-        interval_slices, interval_centers = self._drop_too_small_intervals(interval_slices,
-                                                                           interval_centers)
+        interval_slices, interval_references = self._drop_too_small_intervals(interval_slices,
+                                                                           interval_references)
 
         # calculate the interval boundaries
         # the boundary between two intervals shall be the mean of
@@ -302,4 +365,4 @@ class PointsPerIntervalSlicer(IntervalSlicer):
         upper_boundary = np.max(interval)
         interval_boundaries.append((lower_boundary, upper_boundary))
 
-        return interval_slices, interval_centers, interval_boundaries
+        return interval_slices, interval_references, interval_boundaries

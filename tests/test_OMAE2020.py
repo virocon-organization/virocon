@@ -56,7 +56,7 @@ def test_OMAE2020(dataset, reference_data):
                                    weights=lambda x, y : y)
 
     dist_description_vs = {"distribution" : ExponentiatedWeibullDistribution(),
-                           "intervals" : WidthOfIntervalSlicer(width=2, offset=True),
+                           "intervals" : WidthOfIntervalSlicer(width=2),
                            }
     
     dist_description_hs = {"distribution" : ExponentiatedWeibullDistribution(f_delta=5),
