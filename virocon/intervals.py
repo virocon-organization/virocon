@@ -91,7 +91,17 @@ class WidthOfIntervalSlicer(IntervalSlicer):
             the left or the right boundary is inclusive. Defaults to True, 
             meaning the left boundary is inclusive and the right exclusive, 
             i.e. :math:`[lower, upper)`.
-       
+        min_n_points : int, optional
+            Minimal number of points per interval. Intervals with fewer points 
+            are discarded. Defaults to 50.
+        min_n_intervals : int, optional
+            Minimal number of intervals. Raises a RuntimeError if slicing 
+            resulted in fewer intervals. Defaults to 3.
+            
+        Raises
+        ------
+        RuntimeError
+            if slicing resulted in fewer than min_n_intervals intervals.
     """
    
     def __init__(self, width, center=None, offset=False, right_open=True, **kwargs):
@@ -150,7 +160,17 @@ class NumberOfIntervalsSlicer(IntervalSlicer):
             sized intervals. If a tuple it contains the upper and lower limit 
             of the range. If None the min and max of the data are used. 
             Defaults to None.
-        
+        min_n_points : int, optional
+            Minimal number of points per interval. Intervals with fewer points 
+            are discarded. Defaults to 50.
+        min_n_intervals : int, optional
+            Minimal number of intervals. Raises a RuntimeError if slicing 
+            resulted in fewer intervals. Defaults to 3.
+            
+        Raises
+        ------
+        RuntimeError
+            if slicing resulted in fewer than min_n_intervals intervals.
     """
     
     def __init__(self, n_intervals, center=None, include_max=True, range_=None, **kwargs):
@@ -216,7 +236,17 @@ class PointsPerIntervalSlicer(IntervalSlicer):
             determines if the last or the first interval should have n_points 
             points. If True the last interval contains n_points points and the 
             first interval contains the remaining points. Defaults to True.
+        min_n_points : int, optional
+            Minimal number of points per interval. Intervals with fewer points 
+            are discarded. Defaults to 50.
+        min_n_intervals : int, optional
+            Minimal number of intervals. Raises a RuntimeError if slicing 
+            resulted in fewer intervals. Defaults to 3.
             
+        Raises
+        ------
+        RuntimeError
+            if slicing resulted in fewer than min_n_intervals intervals.
     """
 
     def __init__(self, n_points, center=None, last_full=True, **kwargs):
