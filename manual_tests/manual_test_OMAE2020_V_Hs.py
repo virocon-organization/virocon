@@ -15,52 +15,57 @@ data = data[["V", "Hs"]]
 x, dx = np.linspace([0.1, 0.1], [30, 12], num=100, retstep=True)
 
 # %% # vc2
-from virocon import (GlobalHierarchicalModel, ExponentiatedWeibullDistribution, 
-                     DependenceFunction, WidthOfIntervalSlicer)
+# from virocon import (GlobalHierarchicalModel, ExponentiatedWeibullDistribution, 
+#                      DependenceFunction, WidthOfIntervalSlicer)
 
+
+# # # A 4-parameter logististics function (a dependence function).
+# # def _logistics4(x, a, b, c, d):
+# #     return a + b / (1 + np.exp(-1 * np.abs(c) * (x - d)))
 
 # # A 4-parameter logististics function (a dependence function).
-# def _logistics4(x, a, b, c, d):
-#     return a + b / (1 + np.exp(-1 * np.abs(c) * (x - d)))
+# def _logistics4(x, a=1, b=1, c=-1, d=1):
+#     return a + b / (1 + np.exp(c * (x - d)))
 
-# A 4-parameter logististics function (a dependence function).
-def _logistics4(x, a=1, b=1, c=-1, d=1):
-    return a + b / (1 + np.exp(c * (x - d)))
+# # A 3-parameter function designed for the scale parameter (alpha) of an
+# # exponentiated Weibull distribution with shape2=5 (see 'Global hierarchical
+# # models for wind and wave contours').
+# def _alpha3(x, a, b, c, d_of_x):
+#     return (a + b * x ** c) / 2.0445 ** (1 / d_of_x(x))
 
-# A 3-parameter function designed for the scale parameter (alpha) of an
-# exponentiated Weibull distribution with shape2=5 (see 'Global hierarchical
-# models for wind and wave contours').
-def _alpha3(x, a, b, c, d_of_x):
-    return (a + b * x ** c) / 2.0445 ** (1 / d_of_x(x))
+# logistics_bounds = [(0, None),
+#                     (0, None),
+#                     (None, 0),
+#                     (0, None)]
 
-logistics_bounds = [(0, None),
-                    (0, None),
-                    (None, 0),
-                    (0, None)]
+# alpha_bounds = [(0, None), 
+#                 (0, None), 
+#                 (None, None)]
 
-alpha_bounds = [(0, None), 
-                (0, None), 
-                (None, None)]
-
-beta_dep = DependenceFunction(_logistics4, logistics_bounds, 
-                              weights=lambda x, y : y)
-alpha_dep = DependenceFunction(_alpha3, alpha_bounds, d_of_x=beta_dep, 
-                               weights=lambda x, y : y)
+# beta_dep = DependenceFunction(_logistics4, logistics_bounds, 
+#                               weights=lambda x, y : y)
+# alpha_dep = DependenceFunction(_alpha3, alpha_bounds, d_of_x=beta_dep, 
+#                                weights=lambda x, y : y)
 
 
-dist_description_vs = {"distribution" : ExponentiatedWeibullDistribution(),
-                       "intervals" : WidthOfIntervalSlicer(2, min_n_points=50)
-                       }
+# dist_description_vs = {"distribution" : ExponentiatedWeibullDistribution(),
+#                        "intervals" : WidthOfIntervalSlicer(2, min_n_points=50)
+#                        }
 
-dist_description_hs = {"distribution" : ExponentiatedWeibullDistribution(f_delta=5),
-                       "conditional_on" : 0,
-                       "parameters" : {"alpha" : alpha_dep,
-                                       "beta": beta_dep,
-                                       },
-                       }
+# dist_description_hs = {"distribution" : ExponentiatedWeibullDistribution(f_delta=5),
+#                        "conditional_on" : 0,
+#                        "parameters" : {"alpha" : alpha_dep,
+#                                        "beta": beta_dep,
+#                                        },
+#                        }
+
+# ghm = GlobalHierarchicalModel([dist_description_vs, dist_description_hs])
+
+from virocon.predefined import get_OMAE2020_V_Hs
+
+ghm = get_OMAE2020_V_Hs()
 
 
-ghm = GlobalHierarchicalModel([dist_description_vs, dist_description_hs])
 
 
 fit_description_vs = {"method" : "wlsq", "weights" : "quadratic"}

@@ -13,37 +13,40 @@ x, dx = np.linspace([0.1, 0.1], [6, 22], num=100, retstep=True)
 #given_hs = list(range(1, 7))
 
 # %% # vc2
-from virocon import (GlobalHierarchicalModel, WeibullDistribution, 
-                     LogNormalDistribution, DependenceFunction, 
-                     WidthOfIntervalSlicer)
+# from virocon import (GlobalHierarchicalModel, WeibullDistribution, 
+#                      LogNormalDistribution, DependenceFunction, 
+#                      WidthOfIntervalSlicer)
 
-# A 3-parameter power function (a dependence function).
-def _power3(x, a, b, c):
-    return a + b * x ** c
+# # A 3-parameter power function (a dependence function).
+# def _power3(x, a, b, c):
+#     return a + b * x ** c
 
-# A 3-parameter exponential function (a dependence function).
-def _exp3(x, a, b, c):
-    return a + b * np.exp(c * x)
+# # A 3-parameter exponential function (a dependence function).
+# def _exp3(x, a, b, c):
+#     return a + b * np.exp(c * x)
 
-bounds = [(0, None), 
-          (0, None), 
-          (None, None)]
+# bounds = [(0, None), 
+#           (0, None), 
+#           (None, None)]
 
-power3 = DependenceFunction(_power3, bounds)
-exp3 = DependenceFunction(_exp3, bounds)
+# power3 = DependenceFunction(_power3, bounds)
+# exp3 = DependenceFunction(_exp3, bounds)
 
-dist_description_0 = {"distribution" : WeibullDistribution(),
-                      "intervals" : WidthOfIntervalSlicer(width=0.5)
-                      }
+# dist_description_0 = {"distribution" : WeibullDistribution(),
+#                       "intervals" : WidthOfIntervalSlicer(width=0.5)
+#                       }
 
-dist_description_1 = {"distribution" : LogNormalDistribution(),
-                      "conditional_on" : 0,
-                      "parameters" : {"mu": power3,
-                                      "sigma" : exp3},
-                      }
+# dist_description_1 = {"distribution" : LogNormalDistribution(),
+#                       "conditional_on" : 0,
+#                       "parameters" : {"mu": power3,
+#                                       "sigma" : exp3},
+#                       }
 
-ghm = GlobalHierarchicalModel([dist_description_0, dist_description_1])
+# ghm = GlobalHierarchicalModel([dist_description_0, dist_description_1])
 
+from virocon.predefined import get_DNVGL_Hs_Tp
+
+ghm = get_DNVGL_Hs_Tp()
 
 ghm.fit(data)
 
