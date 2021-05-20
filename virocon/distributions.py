@@ -1003,6 +1003,13 @@ class ExponentiatedWeibullDistribution(Distribution):
     @staticmethod   
     def _estimate_alpha_beta(delta, x, p, w, falpha=None, fbeta=None):
         
+        # As x = 0 causes problems when x_star is calculated, zero-elements
+        # are not considered in the parameter estimation.
+        indices = np.nonzero(x)
+        x = x[indices]
+        p = p[indices]
+        w = w[indices]
+        
         # First, transform x and p to get a linear relationship.
         x_star = np.log10(x)
         p_star = np.log10(-np.log(1 - p ** (1 / delta)))
@@ -1029,6 +1036,7 @@ class ExponentiatedWeibullDistribution(Distribution):
         indices = np.nonzero(x)
         x = x[indices]
         p = p[indices]
+        w = w[indices]
         
         alpha_hat, beta_hat = ExponentiatedWeibullDistribution._estimate_alpha_beta(delta, x, p, w)
         
