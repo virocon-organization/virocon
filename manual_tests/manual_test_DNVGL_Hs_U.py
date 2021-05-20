@@ -15,12 +15,20 @@ x, dx = np.linspace([0.1, 0.1], [6, 22], num=100, retstep=True)
 #given_hs = list(range(1, 7))
 
 # %% # vc2
-
+from virocon import GlobalHierarchicalModel
 from virocon.predefined import get_DNVGL_Hs_U
 
-ghm = get_DNVGL_Hs_U()
+dist_descriptions, fit_descriptions, model_description = get_DNVGL_Hs_U()
 
-ghm.fit(data)
+ghm = GlobalHierarchicalModel(dist_descriptions)
+ghm.fit(data, fit_descriptions=fit_descriptions)
+
+# %%
+from virocon.plotting import plot_2D_isodensity
+
+plot_2D_isodensity(ghm, data, model_desc=model_description)
+
+# %%
 
 my_f = ghm.pdf(x)
 

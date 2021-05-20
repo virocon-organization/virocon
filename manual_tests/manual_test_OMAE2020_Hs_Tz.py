@@ -13,15 +13,18 @@ data = pd.read_csv("datasets/NDBC_buoy_46025.csv", sep=",")[["Hs", "T"]]
 x, dx = np.linspace([0.1, 0.1], [30, 12], num=100, retstep=True)
 
 # %% # vc2
-
+from virocon import GlobalHierarchicalModel
 from virocon.predefined import get_OMAE2020_Hs_Tz
 
-ghm = get_OMAE2020_Hs_Tz()
+dist_descriptions, fit_descriptions, model_description = get_OMAE2020_Hs_Tz()
 
-fit_description_hs = {"method" : "wlsq", "weights" : "quadratic"}
+ghm = GlobalHierarchicalModel(dist_descriptions)
+ghm.fit(data, fit_descriptions=fit_descriptions)
 
+# %%
+from virocon.plotting import plot_2D_isodensity
 
-ghm.fit(data, fit_descriptions=[fit_description_hs, None])
+plot_2D_isodensity(ghm, data, model_desc=model_description)
 
 # %%
 

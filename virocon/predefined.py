@@ -1,10 +1,32 @@
 import numpy as np
 
-from virocon import (GlobalHierarchicalModel, WeibullDistribution, 
-                     LogNormalDistribution, ExponentiatedWeibullDistribution,
-                     DependenceFunction, WidthOfIntervalSlicer)
+from virocon import (WeibullDistribution, LogNormalDistribution, 
+                     ExponentiatedWeibullDistribution, DependenceFunction, 
+                     WidthOfIntervalSlicer)
 
 def get_DNVGL_Hs_Tz():
+    """
+    Get DNVGL significant wave height and wave period model.
+    
+    Get the descriptions necessary to create th significant wave height 
+    and wave period model as defined in DNVGL [1]_ in section 3.6.3.
+    
+    Returns
+    -------
+    dist_descriptions : list of dict
+        List of dictionaries containing the dist descriptions for each dimension.
+        Can be used to create a GlobalHierarchicalModel.
+    fit_descriptions : None
+        Default fit is used so None is returned. 
+        Can be passed to fit function of GlobalHierarchicalModel.
+    model_description : dict
+        Dictionary with a semantic description of the model.
+        Can be passed to plot functions.
+        
+    References
+    ----------
+    .. [1] TODO
+    """
     #TODO docstrings with links to literature
     # DNVGL 3.6.3
     def _power3(x, a, b, c):
@@ -30,13 +52,41 @@ def get_DNVGL_Hs_Tz():
                                           "sigma" : exp3},
                           }
     
-    ghm = GlobalHierarchicalModel([dist_description_hs, dist_description_tz])
+    dist_descriptions = [dist_description_hs, dist_description_tz]
     
-    return ghm
+    fit_descriptions = None
+    
+    model_description = {"names" : ["Significant wave height", "Zero-crossing wave period"],
+                         "symbols" : ["H_s", "T_z"], 
+                         "units" : ["m", "s"]
+                         }
+    
+    return dist_descriptions, fit_descriptions, model_description
 
 
 def get_DNVGL_Hs_U():
-    # 3.6.4 DNVGL
+    """
+    Get DNVGL significant wave height and wind speed model.
+    
+    Get the descriptions necessary to create the significant wave height 
+    and wind speed model as defined in DNVGL [1]_ in section 3.6.4.
+    
+    Returns
+    -------
+    dist_descriptions : list of dict
+        List of dictionaries containing the dist descriptions for each dimension.
+        Can be used to create a GlobalHierarchicalModel.
+    fit_descriptions : None
+        Default fit is used so None is returned. 
+        Can be passed to fit function of GlobalHierarchicalModel.
+    model_description : dict
+        Dictionary with a semantic description of the model.
+        Can be passed to plot functions.
+        
+    References
+    ----------
+    .. [1] TODO
+    """
     def _power3(x, a, b, c):
         return a + b * x ** c
     
@@ -59,13 +109,41 @@ def get_DNVGL_Hs_U():
                                           },
                           }
 
-    ghm = GlobalHierarchicalModel([dist_description_hs, dist_description_u])
+    dist_descriptions = [dist_description_hs, dist_description_u]
     
-    return ghm
+    fit_descriptions = None
+    
+    model_description = {"names" : ["Significant wave height", "Mean wind speed"],
+                         "symbols" : ["H_s", "U"], 
+                         "units" : ["m", "m s$^{-1}$"]
+                         }
+    
+    return dist_descriptions, fit_descriptions, model_description
 
 
 def get_OMAE2020_Hs_Tz():
-    # ref
+    """
+    Get OMAE2020 significant wave height and wave period model.
+    
+    Get the descriptions necessary to create the significant wave height 
+    and wave period model as described by Haselsteiner et al. [1]_. 
+    
+    Returns
+    -------
+    dist_descriptions : list of dict
+        List of dictionaries containing the dist descriptions for each dimension.
+        Can be used to create a GlobalHierarchicalModel.
+    fit_descriptions : list of dict
+        List of dictionaries containing the fit description for each dimension.
+        Can be passed to fit function of GlobalHierarchicalModel.
+    model_description : dict
+        Dictionary with a semantic description of the model.
+        Can be passed to plot functions.
+        
+    References
+    ----------
+    .. [1] TODO
+    """
     def _asymdecrease3(x, a, b, c):
         return a + b / (1 + c * x)
     
@@ -93,13 +171,42 @@ def get_OMAE2020_Hs_Tz():
                           }
 
     
-    ghm = GlobalHierarchicalModel([dist_description_hs, dist_description_tz])
+    dist_descriptions = [dist_description_hs, dist_description_tz]
     
-    return ghm
+    fit_description_hs = {"method" : "wlsq", "weights" : "quadratic"}
+    fit_descriptions = [fit_description_hs, None]
+    
+    model_description = {"names" : ["Significant wave height", "Zero-crossing wave period"],
+                         "symbols" : ["H_s", "T_z"], 
+                         "units" : ["m", "s"]
+                         }
+    
+    return dist_descriptions, fit_descriptions, model_description
     
 
 def get_OMAE2020_V_Hs():
-    #TODO ref
+    """
+    Get OMAE2020 wind speed and significant wave height model.
+    
+    Get the descriptions necessary to create the wind speed and 
+    significant wave height model as described by Haselsteiner et al. [1]_. 
+    
+    Returns
+    -------
+    dist_descriptions : list of dict
+        List of dictionaries containing the dist descriptions for each dimension.
+        Can be used to create a GlobalHierarchicalModel.
+    fit_descriptions : list of dict
+        List of dictionaries containing the fit description for each dimension.
+        Can be passed to fit function of GlobalHierarchicalModel.
+    model_description : dict
+        Dictionary with a semantic description of the model.
+        Can be passed to plot functions.
+        
+    References
+    ----------
+    .. [1] TODO
+    """
 
     def _logistics4(x, a=1, b=1, c=-1, d=1):
         return a + b / (1 + np.exp(c * (x - d)))
@@ -134,7 +241,16 @@ def get_OMAE2020_V_Hs():
                            }
     
     
-    ghm = GlobalHierarchicalModel([dist_description_v, dist_description_hs])
+    dist_descriptions = [dist_description_v, dist_description_hs]
     
-    return ghm
+    fit_description_v = {"method" : "wlsq", "weights" : "quadratic"}
+    fit_description_hs = {"method" : "wlsq", "weights" : "quadratic"}
+    fit_descriptions = [fit_description_v, fit_description_hs]
+    
+    model_description = {"names" : ["Mean wind speed", "Significant wave height"],
+                         "symbols" : ["V", "H_s"], 
+                         "units" : ["m s$^{-1}$", "m", ]
+                         }
+    
+    return dist_descriptions, fit_descriptions, model_description
     
