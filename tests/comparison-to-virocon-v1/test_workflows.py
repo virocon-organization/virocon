@@ -9,7 +9,8 @@ import pandas as pd
 
 from virocon import (GlobalHierarchicalModel, WeibullDistribution, 
                      LogNormalDistribution, DependenceFunction, 
-                     WidthOfIntervalSlicer)
+                     WidthOfIntervalSlicer, )
+                     
 
 @pytest.fixture(scope="module")
 def dataset_dnvgl_hstz():

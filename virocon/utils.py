@@ -8,6 +8,8 @@ from sklearn.neighbors import NearestNeighbors
 
 from virocon._intersection import intersection
 
+__all__ = ["read_ec_benchmark_dataset", "calculate_design_conditions",
+           "sort_points_to_form_continuous_line"]
 
 ROOT_DIR = Path(__file__).parent.parent
 
