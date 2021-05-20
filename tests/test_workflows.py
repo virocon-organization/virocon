@@ -1,5 +1,5 @@
 # This module contains broad integration tests that are based on 
-# workflows how virocon is used.
+# workflows how virocon is typically used.
 
 # Test a workflow with the DNVGL sea state model (Hs, Tz)
 import pytest
