@@ -1,5 +1,5 @@
 
-Welcome to viroconcom's documentation
+Welcome to virocon's documentation
 =====================================
 
 .. toctree::
