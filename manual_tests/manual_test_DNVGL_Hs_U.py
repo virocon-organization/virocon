@@ -16,9 +16,9 @@ x, dx = np.linspace([0.1, 0.1], [6, 22], num=100, retstep=True)
 
 # %% # vc2
 
-from virocon.predefined import get_DNVGL_Hs_V
+from virocon.predefined import get_DNVGL_Hs_U
 
-ghm = get_DNVGL_Hs_V()
+ghm = get_DNVGL_Hs_U()
 
 ghm.fit(data)
 
