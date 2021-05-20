@@ -40,7 +40,33 @@ def seastate_model():
     model = GlobalHierarchicalModel([dist_description_0, dist_description_1])
 
     return model
-  
+
+def test_IFORMContour(seastate_model):
+    """
+    Compare the coordinates of an IFORM contour with the results from Haselsteiner 
+    et al. (2017; DOI: 10.1016/j.coastaleng.2017.03.002)
+    """
+    alpha = calculate_alpha(3, 25)
+    my_contour = IFORMContour(seastate_model, alpha)
+    
+    my_coordinates = my_contour.coordinates
+    np.testing.assert_allclose(max(my_coordinates[:,0]), 15.23, atol=0.05)
+    np.testing.assert_allclose(max(my_coordinates[:,1]), 13.96, atol=0.05)
+
+
+def test_ISORMContour(seastate_model):
+    """
+    Compare the coordinates of an ISORM contour with the results from Haselsteiner 
+    et al. (2017; DOI: 10.1016/j.coastaleng.2017.03.002, Fig. 8). The shown
+    308.8-year IFORM contour is the same as an 25-year IFORM contour.
+    """
+    alpha = calculate_alpha(3, 25)
+    my_contour = ISORMContour(seastate_model, alpha)
+    
+    my_coordinates = my_contour.coordinates
+    np.testing.assert_allclose(max(my_coordinates[:,0]), 17.4, atol=0.1)
+    np.testing.assert_allclose(max(my_coordinates[:,1]), 14.9, atol=0.1)
+
     
 def test_DirectSamplingContour(seastate_model):
     """
@@ -84,4 +110,3 @@ def test_HighestDensityContour(seastate_model):
     np.testing.assert_allclose(max(my_coordinates[:,0]), 16.79, atol=0.05)
     np.testing.assert_allclose(max(my_coordinates[:,1]), 14.64, atol=0.05)
     
- 
