@@ -13,42 +13,20 @@ x, dx = np.linspace([0.1, 0.1], [6, 22], num=100, retstep=True)
 #given_hs = list(range(1, 7))
 
 # %% # vc2
-# from virocon import (GlobalHierarchicalModel, WeibullDistribution, 
-#                      LogNormalDistribution, DependenceFunction, 
-#                      WidthOfIntervalSlicer)
-
-# # A 3-parameter power function (a dependence function).
-# def _power3(x, a, b, c):
-#     return a + b * x ** c
-
-# # A 3-parameter exponential function (a dependence function).
-# def _exp3(x, a, b, c):
-#     return a + b * np.exp(c * x)
-
-# bounds = [(0, None), 
-#           (0, None), 
-#           (None, None)]
-
-# power3 = DependenceFunction(_power3, bounds)
-# exp3 = DependenceFunction(_exp3, bounds)
-
-# dist_description_0 = {"distribution" : WeibullDistribution(),
-#                       "intervals" : WidthOfIntervalSlicer(width=0.5)
-#                       }
-
-# dist_description_1 = {"distribution" : LogNormalDistribution(),
-#                       "conditional_on" : 0,
-#                       "parameters" : {"mu": power3,
-#                                       "sigma" : exp3},
-#                       }
-
-# ghm = GlobalHierarchicalModel([dist_description_0, dist_description_1])
-
+from virocon import GlobalHierarchicalModel
 from virocon.predefined import get_DNVGL_Hs_Tz
 
-ghm = get_DNVGL_Hs_Tz()
+dist_descriptions, fit_descriptions, model_description = get_DNVGL_Hs_Tz()
 
-ghm.fit(data)
+ghm = GlobalHierarchicalModel(dist_descriptions)
+ghm.fit(data, fit_descriptions=fit_descriptions)
+
+# %%
+from virocon.plotting import plot_2D_isodensity
+
+plot_2D_isodensity(ghm, data, model_desc=model_description)
+
+# %%
 
 my_f = ghm.pdf(x)
 

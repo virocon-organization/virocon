@@ -2,10 +2,8 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from virocon import (GlobalHierarchicalModel, WeibullDistribution, 
-                     LogNormalDistribution, DependenceFunction, IFORMContour,
-                     calculate_alpha, WidthOfIntervalSlicer)
-
+from virocon import GlobalHierarchicalModel, calculate_alpha, IFORMContour
+from virocon.predefined import get_DNVGL_Hs_Tz
 from virocon.plotting import (plot_2D_contour, 
                               plot_2D_isodensity, 
                               plot_dependence_functions, 
@@ -18,35 +16,10 @@ from virocon.plotting import (plot_2D_contour,
 
 data = pd.read_csv("datasets/NDBC_buoy_46025.csv", sep=",")[["Hs", "T"]]
 
-# A 3-parameter power function (a dependence function).
-def _power3(x, a, b, c):
-    return a + b * x ** c
 
-# A 3-parameter exponential function (a dependence function).
-def _exp3(x, a, b, c):
-    return a + b * np.exp(c * x)
-
-bounds = [(0, None), 
-          (0, None), 
-          (None, None)]
-
-power3 = DependenceFunction(_power3, bounds)
-exp3 = DependenceFunction(_exp3, bounds)
-
-dist_description_0 = {"distribution" : WeibullDistribution(),
-                      "intervals" : WidthOfIntervalSlicer(width=0.5)
-                      }
-
-dist_description_1 = {"distribution" : LogNormalDistribution(),
-                      "conditional_on" : 0,
-                      "parameters" : {"mu": power3,
-                                      "sigma" : exp3},
-                      }
-
-ghm = GlobalHierarchicalModel([dist_description_0, dist_description_1])
-
-
-ghm.fit(data)
+dist_descriptions, fit_descriptions, model_description = get_DNVGL_Hs_Tz()
+ghm = GlobalHierarchicalModel(dist_descriptions)
+ghm.fit(data, fit_descriptions=fit_descriptions)
 
 state_duration = 3
 return_period = 50 
@@ -54,11 +27,6 @@ alpha = calculate_alpha(state_duration, return_period)
 iform_contour = IFORMContour(ghm, alpha)
 
 
-
-model_description = {"names" : ["Significant wave height", "Energy wave period"],
-                     "symbols" : ["H_s", "T_e"], 
-                     "units" : ["m", "s"]
-                     } # TODO check if correct or other wave period
 
 plt.close("all")
 # %% plot_qq
