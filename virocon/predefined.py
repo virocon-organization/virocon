@@ -4,6 +4,9 @@ from virocon import (WeibullDistribution, LogNormalDistribution,
                      ExponentiatedWeibullDistribution, DependenceFunction, 
                      WidthOfIntervalSlicer)
 
+__all__ = ["get_DNVGL_Hs_Tz", "get_DNVGL_Hs_U",
+           "get_OMAE2020_Hs_Tz", "get_OMAE2020_V_Hs"]
+
 def get_DNVGL_Hs_Tz():
     """
     Get DNVGL significant wave height and wave period model.
