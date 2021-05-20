@@ -4,7 +4,9 @@ from virocon import (GlobalHierarchicalModel, WeibullDistribution,
                      LogNormalDistribution, ExponentiatedWeibullDistribution,
                      DependenceFunction, WidthOfIntervalSlicer)
 
-def get_DNVGL_Hs_Tp():
+def get_DNVGL_Hs_Tz():
+    #TODO docstrings with links to literature
+    # DNVGL 3.6.3
     def _power3(x, a, b, c):
         return a + b * x ** c
     
@@ -22,19 +24,19 @@ def get_DNVGL_Hs_Tp():
                           "intervals" : WidthOfIntervalSlicer(width=0.5)
                           }
     
-    dist_description_tp = {"distribution" : LogNormalDistribution(),
+    dist_description_tz = {"distribution" : LogNormalDistribution(),
                           "conditional_on" : 0,
                           "parameters" : {"mu": power3,
                                           "sigma" : exp3},
                           }
     
-    ghm = GlobalHierarchicalModel([dist_description_hs, dist_description_tp])
+    ghm = GlobalHierarchicalModel([dist_description_hs, dist_description_tz])
     
     return ghm
 
 
-def get_DNVGL_Hs_V():
-    
+def get_DNVGL_Hs_U():
+    # 3.6.4 DNVGL
     def _power3(x, a, b, c):
         return a + b * x ** c
     
@@ -50,20 +52,20 @@ def get_DNVGL_Hs_V():
                                                                min_n_points=20)
                           }
     
-    dist_description_v = {"distribution" : WeibullDistribution(f_gamma=0),
+    dist_description_u = {"distribution" : WeibullDistribution(f_gamma=0),
                           "conditional_on" : 0,
                           "parameters" : {"alpha" : alpha_dep,
                                           "beta": beta_dep,
                                           },
                           }
 
-    ghm = GlobalHierarchicalModel([dist_description_hs, dist_description_v])
+    ghm = GlobalHierarchicalModel([dist_description_hs, dist_description_u])
     
     return ghm
 
 
 def get_OMAE2020_Hs_Tz():
-    
+    # ref
     def _asymdecrease3(x, a, b, c):
         return a + b / (1 + c * x)
     
@@ -83,7 +85,7 @@ def get_OMAE2020_Hs_Tz():
                                                                min_n_points=50)
                           }
     
-    dist_description_v = {"distribution" : LogNormalDistribution(),
+    dist_description_tz = {"distribution" : LogNormalDistribution(),
                           "conditional_on" : 0,
                           "parameters" : {"sigma" : sigma_dep,
                                           "mu": mu_dep,
@@ -91,19 +93,17 @@ def get_OMAE2020_Hs_Tz():
                           }
 
     
-    ghm = GlobalHierarchicalModel([dist_description_hs, dist_description_v])
+    ghm = GlobalHierarchicalModel([dist_description_hs, dist_description_tz])
     
     return ghm
     
 
 def get_OMAE2020_V_Hs():
-    # A 4-parameter logististics function (a dependence function).
+    #TODO ref
+
     def _logistics4(x, a=1, b=1, c=-1, d=1):
         return a + b / (1 + np.exp(c * (x - d)))
     
-    # A 3-parameter function designed for the scale parameter (alpha) of an
-    # exponentiated Weibull distribution with shape2=5 (see 'Global hierarchical
-    # models for wind and wave contours').
     def _alpha3(x, a, b, c, d_of_x):
         return (a + b * x ** c) / 2.0445 ** (1 / d_of_x(x))
     
@@ -116,15 +116,15 @@ def get_OMAE2020_V_Hs():
                     (0, None), 
                     (None, None)]
     
-    beta_dep = DependenceFunction(_logistics4, logistics_bounds, 
+    beta_dep = DependenceFunction(_logistics4, logistics_bounds,
                                   weights=lambda x, y : y)
     alpha_dep = DependenceFunction(_alpha3, alpha_bounds, d_of_x=beta_dep, 
                                    weights=lambda x, y : y)
     
     
-    dist_description_vs = {"distribution" : ExponentiatedWeibullDistribution(),
-                           "intervals" : WidthOfIntervalSlicer(2, min_n_points=50)
-                           }
+    dist_description_v = {"distribution" : ExponentiatedWeibullDistribution(),
+                          "intervals" : WidthOfIntervalSlicer(2, min_n_points=50)
+                          }
     
     dist_description_hs = {"distribution" : ExponentiatedWeibullDistribution(f_delta=5),
                            "conditional_on" : 0,
@@ -134,7 +134,7 @@ def get_OMAE2020_V_Hs():
                            }
     
     
-    ghm = GlobalHierarchicalModel([dist_description_vs, dist_description_hs])
+    ghm = GlobalHierarchicalModel([dist_description_v, dist_description_hs])
     
     return ghm
     

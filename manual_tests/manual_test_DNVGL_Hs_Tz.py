@@ -44,9 +44,9 @@ x, dx = np.linspace([0.1, 0.1], [6, 22], num=100, retstep=True)
 
 # ghm = GlobalHierarchicalModel([dist_description_0, dist_description_1])
 
-from virocon.predefined import get_DNVGL_Hs_Tp
+from virocon.predefined import get_DNVGL_Hs_Tz
 
-ghm = get_DNVGL_Hs_Tp()
+ghm = get_DNVGL_Hs_Tz()
 
 ghm.fit(data)
 
