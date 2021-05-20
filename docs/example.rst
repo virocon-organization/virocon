@@ -44,7 +44,7 @@ Haselsteiner et al. (2020) ::
 
 
     ax = plot_2D_contour(my_iform, model_desc=model_description, sample=data,
-                     design_conditions=True, swap_axis=True)
+                         swap_axis=True)
 
 The code, which is available as a Python file here_, will create this plot:
 
