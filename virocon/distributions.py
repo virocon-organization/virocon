@@ -7,7 +7,7 @@ import scipy.stats as sts
 from abc import ABC, abstractmethod
 from scipy.optimize import fmin
 
-__all__ = ["WeibullDistribution", "LogNormalDistribution",
+__all__ = ["WeibullDistribution", "LogNormalDistribution", "NormalDistribution",
            "ExponentiatedWeibullDistribution"]
 
 # The distributions parameters need to have an order, this order is defined by
@@ -721,9 +721,140 @@ class LogNormalDistribution(Distribution):
     def _fit_lsq(self, data, weights):
         raise NotImplementedError()
         
+    
+class NormalDistribution(Distribution):
+    """
+    A Normal (Gaussian) Distribution. 
+    
+    The distributions probability density function is given by [1]_: 
+    
+    :math:`f(x) = \\frac{1}{{\\sigma} \\sqrt{2\\pi}} \\exp \\left( - \\frac{( x - \\mu)^2}{2\\sigma^2}\\right)`
+     
+    
+    Parameters
+    ----------
+    mu : float
+        Location parameter, the mean.
+        Defaults to 0.
+    sigma : float
+        Scale parameter, the standard deviation.
+        Defaults to 1.
+    f_mu : float
+        Fixed parameter mu of the normal distribution (e.g. given physical
+        parameter). If this parameter is set, mu is ignored. Defaults to 
+        None.
+    f_sigma : float
+       Fixed parameter sigma of the normal distribution (e.g. given 
+       physical parameter). If this parameter is set, sigma is ignored. 
+       Defaults to None
+    
+    References
+    ----------
+    .. [1] Forbes, C.; Evans, M.; Hastings, N; Peacock, B. (2011)
+        Statistical Distributions, 4th Edition, Published by 
+        John Wiley & Sons, Inc., Hoboken, New Jersey., 
+        Page 143
+    """
+   
+    def __init__(self, mu=0, sigma=1, f_mu=None, f_sigma=None):
+        
+        self.mu = mu # location
+        self.sigma = sigma  # scale
+        self.f_mu = f_mu  
+        self.f_sigma = f_sigma
+        
+    @property
+    def parameters(self):
+        return {"mu" : self.mu,
+                "sigma" : self.sigma}
 
+    def _get_scipy_parameters(self, mu, sigma):
+        if mu is None:
+            loc = self.mu
+        else:
+            loc = mu
+        if sigma is None:
+            scale = self.sigma
+        else:
+            scale = self.sigma
+        return loc, scale # loc, scale
         
+    def cdf(self, x, mu=None, sigma=None): 
+        """
+        Cumulative distribution function.
         
+        Parameters
+        ----------
+        x : array_like, 
+            Points at which the cdf is evaluated.
+            Shape: 1-dimensional.
+        mu : float, optional
+            The location parameter. Defaults to self.mu .
+        sigma : float, optional
+            The scale parameter. Defaults to self.sigma .
+        
+        """ 
+        scipy_par = self._get_scipy_parameters(mu, sigma)
+        return sts.norm.cdf(x, *scipy_par)
+
+    def icdf(self, prob, mu=None, sigma=None):
+        """
+        Inverse cumulative distribution function.
+        
+        Parameters
+        ----------
+        prob : Probabilities for which the i_cdf is evaluated.
+            Shape: 1-dimensional
+        mu : float, optional
+            The location parameter. Defaults to self.mu .
+        sigma : float, optional
+            The scale parameter. Defaults to self.sigma .
+        
+        """ 
+        scipy_par = self._get_scipy_parameters(mu, sigma)
+        return sts.norm.ppf(prob, *scipy_par)
+
+    def pdf(self, x, mu=None, sigma=None):
+        """
+        Probability density function.
+        
+        Parameters
+        ----------
+        x : array_like, 
+            Points at which the pdf is evaluated.
+            Shape: 1-dimensional.
+        mu : float, optional
+            The location parameter. Defaults to self.mu .
+        sigma : float, optional
+            The scale parameter. Defaults to self.sigma .
+        
+        """ 
+        scipy_par = self._get_scipy_parameters(mu, sigma)
+        return sts.norm.pdf(x, *scipy_par)
+
+    def draw_sample(self, n, mu=None, sigma=None):
+        scipy_par = self._get_scipy_parameters(mu, sigma)
+        rvs_size = self._get_rvs_size(n, scipy_par)
+        return sts.norm.rvs(*scipy_par, size=rvs_size)
+    
+    def _fit_mle(self, sample):
+        p0={"loc": self.mu, "scale": self.sigma}
+        
+        fparams = {}
+        
+        if self.f_mu is not None:
+            fparams["floc"] = self.f_mu
+        if self.f_sigma is not None:
+            fparams["fscale"] = self.f_sigma
+        
+        self.mu, self.sigma  = (
+            sts.lognorm.fit(sample, loc=p0["loc"], scale=p0["scale"], **fparams)
+             )
+        
+    def _fit_lsq(self, data, weights):
+        raise NotImplementedError()
+        
+
 class LogNormalNormFitDistribution(LogNormalDistribution):
     #https://en.wikipedia.org/wiki/Log-normal_distribution#Estimation_of_parameters
     """
