@@ -139,3 +139,4 @@ def test_v_hs_hd_contour():
     np.testing.assert_allclose(max(coordinates[:,1]), 15.5, atol=0.2)
     np.testing.assert_allclose(min(coordinates[:,0]), 0, atol=0.1)
     np.testing.assert_allclose(min(coordinates[:,1]), 0, atol=0.1)
+    
