@@ -1,7 +1,5 @@
-*.cpython-35.pyc
 *.pyc
 *.xml
-*.cpython-35.*
 *.aux
 *.toc
 *.synctex.gz
@@ -9,7 +7,6 @@
 *.log
 *.DS_Store
 .idea/*
-.DS_Store
 .coverage*
 *.pytest_cache/*
 *_build
@@ -17,5 +14,5 @@
 build/*
 htmlcov/
 dist/*
-viroconcom.egg-info/*
+virocon.egg-info/*
 .vscode
