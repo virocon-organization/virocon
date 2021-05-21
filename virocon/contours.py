@@ -384,7 +384,7 @@ class HighestDensityContour(Contour):
             alpha = self.alpha
             marginal_icdf = self.model.marginal_icdf
             non_exceedance_p = 1 - 0.2 ** n_dim * alpha
-            limits = [(0, marginal_icdf(non_exceedance_p, dim))
+            limits = [(0, marginal_icdf(non_exceedance_p, dim, precision_factor=0.05))
                       for dim in range(n_dim)]
             # TODO use distributions lower bound instead of zero
         else:

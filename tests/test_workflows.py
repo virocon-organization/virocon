@@ -4,7 +4,8 @@ import numpy as np
 import pandas as pd
 
 from virocon import (read_ec_benchmark_dataset, GlobalHierarchicalModel, 
-                     WeibullDistribution, LogNormalDistribution, DependenceFunction, 
+                     WeibullDistribution, ExponentiatedWeibullDistribution, 
+                     LogNormalDistribution, DependenceFunction, 
                      WidthOfIntervalSlicer, IFORMContour, HighestDensityContour, 
                      calculate_alpha, )
 
@@ -75,3 +76,44 @@ def test_v_hs_hd_contour():
     """
 
     data = read_ec_benchmark_dataset("datasets/ec-benchmark_dataset_D.txt")
+
+    def _logistics4(x, a=1, b=1, c=-1, d=1):
+        return a + b / (1 + np.exp(c * (x - d)))
+    
+    def _alpha3(x, a, b, c, d_of_x):
+        return (a + b * x ** c) / 2.0445 ** (1 / d_of_x(x))
+
+    logistics_bounds = [(0, None),
+                        (0, None),
+                        (None, 0),
+                        (0, None)]
+    
+    alpha_bounds = [(0, None), 
+                    (0, None), 
+                    (None, None)]
+    
+    beta_dep = DependenceFunction(_logistics4, logistics_bounds, 
+                                  weights=lambda x, y : y)
+    alpha_dep = DependenceFunction(_alpha3, alpha_bounds, d_of_x=beta_dep, 
+                                   weights=lambda x, y : y)
+
+    dist_description_v = {"distribution" : ExponentiatedWeibullDistribution(),
+                           "intervals" : WidthOfIntervalSlicer(width=2),
+                           }
+    
+    dist_description_hs = {"distribution" : ExponentiatedWeibullDistribution(f_delta=5),
+                           "conditional_on" : 0,
+                           "parameters" : {"alpha" : alpha_dep,
+                                           "beta": beta_dep,
+                                           },
+                           }
+
+    model = GlobalHierarchicalModel([dist_description_v, dist_description_hs])
+
+    fit_description_vs = {"method" : "wlsq", "weights": "quadratic"}
+    fit_description_hs = {"method": "wlsq", "weights": "quadratic"}
+    
+    model.fit(data, [fit_description_vs, fit_description_hs])
+
+    alpha = calculate_alpha(1, 50)
+    contour = HighestDensityContour(model, alpha, deltas=[0.2, 0.2])
