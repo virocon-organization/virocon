@@ -109,47 +109,61 @@ class GlobalHierarchicalModel(MultivariateModel):
     
     Examples
     --------
-    Example 1: 
+    Create a Hs-Tz model and fit it to the available data. The following 
+    example follows the methodology of OMAE2020 [1]_ . 
     
-    >>> from virocon import (GlobalHierarchicalModel, get_DNVGL_Hs_Tz, read_ec_benchmark_dataset)
-    >>> data = read_ec_benchmark_dataset("ec-benchmark_dataset_A_1year.txt")
-    >>> dist_descriptions, fit_descriptions, model_description = get_DNVGL_Hs_Tz()
-    >>> ghm = GlobalHierarchicalModel(dist_descriptions)
-    >>> ghm.fit(data, fit_descriptions=fit_descriptions)
+    Example 1.1: 
+        
+    Load the predefined OMAE 2020 model of Hs-Tz.
+  
+    >>>  from virocon import (GlobalHierarchicalModel, get_OMAE2020_Hs_Tz,read_ec_benchmark_dataset) 
+    >>>  data = pd.read_csv("datasets/NDBC_buoy_46025.csv", sep=",")[["Hs", "T"]]
+    >>>  dist_descriptions, fit_descriptions, model_description = get_OMAE2020_Hs_Tz()
+    >>>  ghm = GlobalHierarchicalModel(dist_descriptions)
+    >>>  ghm.fit(data, fit_descriptions=fit_descriptions)
     
-    Example 2: 
+    Example 1.2: 
+        
+    Create the same OMEA 2020 model manually.
     
-    >>> def _power3(x, a, b, c):
-    >>>     return a + b * x ** c
+    >>> def _asymdecrease3(x, a, b, c):
+    >>>     return a + b / (1 + c * x)
     
-    >>> def _exp3(x, a, b, c):
-    >>>     return a + b * np.exp(c * x)
+    >>> def _lnsquare2(x, a, b, c):
+    >>>     return np.log(a + b * np.sqrt(np.divide(x, 9.81)))
     
     >>> bounds = [(0, None), 
     >>>           (0, None), 
     >>>           (None, None)]
     
-    >>> power3 = DependenceFunction(_power3, bounds)
-    >>> exp3 = DependenceFunction(_exp3, bounds)
+    >>> sigma_dep = DependenceFunction(_asymdecrease3, bounds=bounds)
+    >>> mu_dep = DependenceFunction(_lnsquare2, bounds=bounds)
     
-    >>> dist_description_hs = {"distribution" : WeibullDistribution(),
-    >>>                       "intervals" : WidthOfIntervalSlicer(width=0.5)
+    >>> dist_description_hs = {"distribution" : ExponentiatedWeibullDistribution(),
+    >>>                        "intervals" : WidthOfIntervalSlicer(width=0.5, 
+    >>>                                                            min_n_points=50)
     >>>                       }
     
     >>> dist_description_tz = {"distribution" : LogNormalDistribution(),
     >>>                       "conditional_on" : 0,
-    >>>                       "parameters" : {"mu": power3,
-    >>>                                       "sigma" : exp3},
+    >>>                       "parameters" : {"sigma" : sigma_dep,
+    >>>                                       "mu": mu_dep,
+    >>>                                       },
     >>>                       }
+
     
     >>> dist_descriptions = [dist_description_hs, dist_description_tz]
     
-    >>> fit_descriptions = None
+    >>> fit_description_hs = {"method" : "wlsq", "weights" : "quadratic"}
+    >>> fit_descriptions = [fit_description_hs, None]
     
     >>> model_description = {"names" : ["Significant wave height", "Zero-crossing wave period"],
     >>>                      "symbols" : ["H_s", "T_z"], 
     >>>                      "units" : ["m", "s"]
     >>>                      }
+    
+    >>>  ghm = GlobalHierarchicalModel(dist_descriptions)
+    >>>  ghm.fit(data, fit_descriptions=fit_descriptions)
     
     """
     
