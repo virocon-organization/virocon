@@ -81,8 +81,6 @@ class GlobalHierarchicalModel(MultivariateModel):
     ----------   
     dist_descriptions : dict
         Description of the distributions.
-        E.g.:    
-        :math:`distdescription_0 = {"distribution" : WeibullDistribution(), "intervals" : WidthOfIntervalSlicer(width=0.5, offset=True)}`
         
     Attributes
     ----------
@@ -109,6 +107,49 @@ class GlobalHierarchicalModel(MultivariateModel):
         USA. Proceedings of the 39th International Conference on Ocean, 
         Offshore and Arctic Engineering.
     
+    Examples
+    --------
+    Example 1: 
+    
+    >>> from virocon import (GlobalHierarchicalModel, get_DNVGL_Hs_Tz, read_ec_benchmark_dataset)
+    >>> data = read_ec_benchmark_dataset("ec-benchmark_dataset_A_1year.txt")
+    >>> dist_descriptions, fit_descriptions, model_description = get_DNVGL_Hs_Tz()
+    >>> ghm = GlobalHierarchicalModel(dist_descriptions)
+    >>> ghm.fit(data, fit_descriptions=fit_descriptions)
+    
+    Example 2: 
+    
+    >>> def _power3(x, a, b, c):
+    >>>     return a + b * x ** c
+    
+    >>> def _exp3(x, a, b, c):
+    >>>     return a + b * np.exp(c * x)
+    
+    >>> bounds = [(0, None), 
+    >>>           (0, None), 
+    >>>           (None, None)]
+    
+    >>> power3 = DependenceFunction(_power3, bounds)
+    >>> exp3 = DependenceFunction(_exp3, bounds)
+    
+    >>> dist_description_hs = {"distribution" : WeibullDistribution(),
+    >>>                       "intervals" : WidthOfIntervalSlicer(width=0.5)
+    >>>                       }
+    
+    >>> dist_description_tz = {"distribution" : LogNormalDistribution(),
+    >>>                       "conditional_on" : 0,
+    >>>                       "parameters" : {"mu": power3,
+    >>>                                       "sigma" : exp3},
+    >>>                       }
+    
+    >>> dist_descriptions = [dist_description_hs, dist_description_tz]
+    
+    >>> fit_descriptions = None
+    
+    >>> model_description = {"names" : ["Significant wave height", "Zero-crossing wave period"],
+    >>>                      "symbols" : ["H_s", "T_z"], 
+    >>>                      "units" : ["m", "s"]
+    >>>                      }
     
     """
     
@@ -217,8 +258,6 @@ class GlobalHierarchicalModel(MultivariateModel):
             Shape: (number of realizations, n_dim)
         fit_description : dict
             Description of the fit method. Defaults to None.
-            E.g.:
-                :math:`alphadep = DependenceFunction(_alpha3, alpha_bounds, d_of_x=beta_dep, weights=lambda x, y : y)`
 
         """
 
