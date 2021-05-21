@@ -7,7 +7,8 @@ from virocon import (read_ec_benchmark_dataset, GlobalHierarchicalModel,
                      WeibullDistribution, ExponentiatedWeibullDistribution, 
                      LogNormalDistribution, DependenceFunction, 
                      WidthOfIntervalSlicer, IFORMContour, HighestDensityContour, 
-                     calculate_alpha, )
+                     calculate_alpha, plot_marginal_quantiles, plot_dependence_functions,
+                     plot_2D_isodensity, plot_2D_contour)
 
 def test_hs_tz_iform_contour():
     """
@@ -57,12 +58,18 @@ def test_hs_tz_iform_contour():
     model = GlobalHierarchicalModel([dist_description_0, dist_description_1])
     model.fit(data)
 
+    axs = plot_marginal_quantiles(model, data)
+    axs = plot_dependence_functions(model)
+    ax = plot_2D_isodensity(model, data)
+
     alpha = calculate_alpha(1, 20)
     contour = IFORMContour(model, alpha)
 
     coordinates = contour.coordinates
     np.testing.assert_allclose(max(coordinates[:,0]), 5.0, atol=0.5)
     np.testing.assert_allclose(max(coordinates[:,1]), 16.1, atol=0.5)
+
+    ax = plot_2D_contour(contour, sample=data)
 
 
 def test_v_hs_hd_contour():
@@ -130,6 +137,10 @@ def test_v_hs_hd_contour():
     
     model.fit(data, [fit_description_vs, fit_description_hs])
 
+    axs = plot_marginal_quantiles(model, data)
+    axs = plot_dependence_functions(model)
+    ax = plot_2D_isodensity(model, data)
+
     alpha = calculate_alpha(1, 50)
     limits = [(0, 35), (0, 20)]
     contour = HighestDensityContour(model, alpha, limits=limits, deltas=[0.2, 0.2])
@@ -139,4 +150,5 @@ def test_v_hs_hd_contour():
     np.testing.assert_allclose(max(coordinates[:,1]), 15.5, atol=0.2)
     np.testing.assert_allclose(min(coordinates[:,0]), 0, atol=0.1)
     np.testing.assert_allclose(min(coordinates[:,1]), 0, atol=0.1)
-    
+
+    ax = plot_2D_contour(contour, sample=data)
