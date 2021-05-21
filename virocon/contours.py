@@ -8,7 +8,7 @@ import scipy.ndimage as ndi
 from abc import ABC, abstractmethod
 
 from virocon._nsphere import NSphere
-from virocon.plotting import get_default_model_description
+from virocon.plotting import get_default_semantics
 from virocon.utils import sort_points_to_form_continuous_line
 
 __all__ = ["calculate_alpha", "save_contour_coordinates", "IFORMContour",
@@ -56,7 +56,7 @@ def calculate_alpha(state_duration, return_period):
     return alpha
 
 
-def save_contour_coordinates(contour, file_path, model_desc=None):
+def save_contour_coordinates(contour, file_path, semantics=None):
     """
     Saves the coordinates of the calculated contour. 
     Saves a .txt file to the given path.
@@ -67,8 +67,8 @@ def save_contour_coordinates(contour, file_path, model_desc=None):
      The contour with the coordinates to save.
     file_path : string
      Indicates the path, where the contour coordinates are saved.
-    model_desc : dictionary
-     The description of the model. model_desc has the keys 'names', 'symbols' 
+    semantics : dictionary
+     The description of the model. semantics has the keys 'names', 'symbols'
      and 'units'. Each value is a list of strings. For each dimension of the 
      model the strings describe the name, symbol or unit of that dimension, 
      respectively. This information is used as the header of the created file.
@@ -81,10 +81,10 @@ def save_contour_coordinates(contour, file_path, model_desc=None):
         file_path += ".txt"
     
     n_dim = contour.coordinates.shape[1]
-    if model_desc is None:
-        model_desc = get_default_model_description(n_dim)
+    if semantics is None:
+        semantics = get_default_semantics(n_dim)
         
-    header = ";".join((f"{model_desc['names'][d]} ({model_desc['units'][d]})" 
+    header = ";".join((f"{semantics['names'][d]} ({semantics['units'][d]})"
                         for d in range(n_dim)))
     
     np.savetxt(file_path, contour.coordinates, fmt="%1.6f", delimiter=";", 

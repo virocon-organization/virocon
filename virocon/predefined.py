@@ -22,7 +22,7 @@ def get_DNVGL_Hs_Tz():
     fit_descriptions : None
         Default fit is used so None is returned. 
         Can be passed to fit function of GlobalHierarchicalModel.
-    model_description : dict
+    semantics : dict
         Dictionary with a semantic description of the model.
         Can be passed to plot functions.
     
@@ -61,12 +61,12 @@ def get_DNVGL_Hs_Tz():
     
     fit_descriptions = None
     
-    model_description = {"names" : ["Significant wave height", "Zero-crossing wave period"],
-                         "symbols" : ["H_s", "T_z"], 
-                         "units" : ["m", "s"]
-                         }
+    semantics = {"names" : ["Significant wave height", "Zero-crossing wave period"],
+                 "symbols" : ["H_s", "T_z"],
+                 "units" : ["m", "s"]
+                 }
     
-    return dist_descriptions, fit_descriptions, model_description
+    return dist_descriptions, fit_descriptions, semantics
 
 
 def get_DNVGL_Hs_U():
@@ -84,7 +84,7 @@ def get_DNVGL_Hs_U():
     fit_descriptions : None
         Default fit is used so None is returned. 
         Can be passed to fit function of GlobalHierarchicalModel.
-    model_description : dict
+    semantics : dict
         Dictionary with a semantic description of the model.
         Can be passed to plot functions.
         
@@ -119,12 +119,12 @@ def get_DNVGL_Hs_U():
     
     fit_descriptions = None
     
-    model_description = {"names" : ["Significant wave height", "Mean wind speed"],
-                         "symbols" : ["H_s", "U"], 
-                         "units" : ["m", "m s$^{-1}$"]
-                         }
+    semantics = {"names" : ["Significant wave height", "Mean wind speed"],
+                 "symbols" : ["H_s", "U"],
+                 "units" : ["m", "m s$^{-1}$"]
+                 }
     
-    return dist_descriptions, fit_descriptions, model_description
+    return dist_descriptions, fit_descriptions, semantics
 
 
 def get_OMAE2020_Hs_Tz():
@@ -142,7 +142,7 @@ def get_OMAE2020_Hs_Tz():
     fit_descriptions : list of dict
         List of dictionaries containing the fit description for each dimension.
         Can be passed to fit function of GlobalHierarchicalModel.
-    model_description : dict
+    semantics : dict
         Dictionary with a semantic description of the model.
         Can be passed to plot functions.
         
@@ -186,12 +186,12 @@ def get_OMAE2020_Hs_Tz():
     fit_description_hs = {"method" : "wlsq", "weights" : "quadratic"}
     fit_descriptions = [fit_description_hs, None]
     
-    model_description = {"names" : ["Significant wave height", "Zero-crossing wave period"],
-                         "symbols" : ["H_s", "T_z"], 
-                         "units" : ["m", "s"]
-                         }
+    semantics = {"names" : ["Significant wave height", "Zero-crossing wave period"],
+                 "symbols" : ["H_s", "T_z"],
+                 "units" : ["m", "s"]
+                 }
     
-    return dist_descriptions, fit_descriptions, model_description
+    return dist_descriptions, fit_descriptions, semantics
     
 
 def get_OMAE2020_V_Hs():
@@ -209,7 +209,7 @@ def get_OMAE2020_V_Hs():
     fit_descriptions : list of dict
         List of dictionaries containing the fit description for each dimension.
         Can be passed to fit function of GlobalHierarchicalModel.
-    model_description : dict
+    semantics : dict
         Dictionary with a semantic description of the model.
         Can be passed to plot functions.
         
@@ -261,10 +261,10 @@ def get_OMAE2020_V_Hs():
     fit_description_hs = {"method" : "wlsq", "weights" : "quadratic"}
     fit_descriptions = [fit_description_v, fit_description_hs]
     
-    model_description = {"names" : ["Mean wind speed", "Significant wave height"],
-                         "symbols" : ["V", "H_s"], 
-                         "units" : ["m s$^{-1}$", "m", ]
-                         }
+    semantics = {"names" : ["Mean wind speed", "Significant wave height"],
+                 "symbols" : ["V", "H_s"],
+                 "units" : ["m s$^{-1}$", "m", ]
+                 }
     
-    return dist_descriptions, fit_descriptions, model_description
+    return dist_descriptions, fit_descriptions, semantics
     

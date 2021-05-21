@@ -27,9 +27,9 @@ def _rainbow_PuRd():
 
 
  # TODO move to utility as it is also used in contours.py
-def get_default_model_description(n_dim):  
+def get_default_semantics(n_dim):
     """
-    Generate a default model description for n_dim dimensions.
+    Generate default semantics for n_dim dimensions.
     
     Parameters
     ----------
@@ -38,19 +38,19 @@ def get_default_model_description(n_dim):
         
     Returns
     -------
-    model_desc: dict
+    semantics: dict
         Generated model description. 
     
     """
         
-    model_desc = {"names" : [f"Variable {dim+1}" for dim in range(n_dim)],
-                  "symbols" : [f"V{dim+1}" for dim in range(n_dim)],
+    semantics = {"names" : [f"Variable {dim+1}" for dim in range(n_dim)],
+                 "symbols" : [f"V{dim+1}" for dim in range(n_dim)],
                   "units" : ["arb. unit" for dim in range(n_dim)]
-                  }
-    return model_desc
+                 }
+    return semantics
 
 
-def plot_marginal_quantiles(model, sample, model_desc=None, axes=None):
+def plot_marginal_quantiles(model, sample, semantics=None, axes=None):
     """
     Plot all marginal quantiles of a model.
     
@@ -64,9 +64,9 @@ def plot_marginal_quantiles(model, sample, model_desc=None, axes=None):
     sample : ndarray of floats
         The environmental data sample that should be plotted against the fit.
         Shape: (sample_size, n_dim)
-    model_desc: dict, optional
-        The description of the model. If None (the default) a generic model 
-        description will be used.
+    semantics: dict, optional
+        The description of the model. If None (the default) generic semantics
+        will be used.
         E.g.:
           :math:`modeldesc = {"names" : ["Name of variables"], "symbols" : ["Description of symbols"], "units" : ["Units of variables"]}`
     axes: list, optional
@@ -81,8 +81,8 @@ def plot_marginal_quantiles(model, sample, model_desc=None, axes=None):
         
     sample = np.asarray(sample)
     n_dim = model.n_dim
-    if model_desc is None:
-        model_desc = get_default_model_description(n_dim)
+    if semantics is None:
+        semantics = get_default_semantics(n_dim)
     
     if axes is None:
         axes = []
@@ -114,7 +114,7 @@ def plot_marginal_quantiles(model, sample, model_desc=None, axes=None):
         ax.get_lines()[0].set_marker("x")
         ax.get_lines()[0].set_markersize(3)
         ax.get_lines()[1].set_color("#004488")
-        name_and_unit = f"{model_desc['names'][dim].lower()} ({model_desc['units'][dim]})"
+        name_and_unit = f"{semantics['names'][dim].lower()} ({semantics['units'][dim]})"
         ax.set_xlabel(f"Theoretical quantiles of {name_and_unit}")
         ax.set_ylabel(f"Ordered values of {name_and_unit}")
         ax.title.set_text("")
@@ -122,7 +122,7 @@ def plot_marginal_quantiles(model, sample, model_desc=None, axes=None):
     return axes
 
 
-def plot_dependence_functions(model, model_desc=None, par_rename={}, axes=None):
+def plot_dependence_functions(model, semantics=None, par_rename={}, axes=None):
     """
     Plot the fitted dependence functions of a model.
        
@@ -130,8 +130,8 @@ def plot_dependence_functions(model, model_desc=None, par_rename={}, axes=None):
     ----------
     model :  MultivariateModel
         The model with the fitted dependence functions.      
-    model_desc: dict, optional
-        The description of the model. If None (the default) a generic model description will be used.
+    semantics: dict, optional
+        The description of the model. If None (the default) generic semantics will be used.
     par_rename : dict, optional
         A dictionary that maps from names of conditional parameters to a 
         string. If e.g. the model has a distribution with a conditional 
@@ -151,8 +151,8 @@ def plot_dependence_functions(model, model_desc=None, par_rename={}, axes=None):
     conditional_dist_idc = [dim for dim  in range(n_dim) 
                             if model.conditional_on[dim] is not None]
     
-    if model_desc is None:
-        model_desc = get_default_model_description(n_dim)
+    if semantics is None:
+        semantics = get_default_semantics(n_dim)
     
     if axes is None:
         n_axes = 0
@@ -169,9 +169,9 @@ def plot_dependence_functions(model, model_desc=None, par_rename={}, axes=None):
         conditioning_values = dist.conditioning_values
         x = np.linspace(0, max(conditioning_values))
         cond_idx = model.conditional_on[dim]
-        x_name = model_desc["names"][cond_idx]
-        x_symbol = model_desc["symbols"][cond_idx]
-        x_unit = model_desc["units"][cond_idx]
+        x_name = semantics["names"][cond_idx]
+        x_symbol = semantics["symbols"][cond_idx]
+        x_unit = semantics["units"][cond_idx]
         x_label = f"{x_name}," + r" $\it{" + f"{x_symbol}" + r"}$" + f" ({x_unit})"
         for par_name, dep_func in dist.conditional_parameters.items():
             par_values = [par[par_name] for par in dist.parameters_per_interval]
@@ -189,7 +189,7 @@ def plot_dependence_functions(model, model_desc=None, par_rename={}, axes=None):
     return axes
 
 
-def plot_2D_isodensity(model, sample, model_desc=None, swap_axis=False, ax=None):   
+def plot_2D_isodensity(model, sample, semantics=None, swap_axis=False, ax=None):
     """
     Plot isodensity contours and a data sample for a 2D model.
        
@@ -199,9 +199,9 @@ def plot_2D_isodensity(model, sample, model_desc=None, swap_axis=False, ax=None)
         The 2D model to use.
     sample : ndarray of floats
         The 2D data sample that should be plotted.
-    model_desc: dict, optional
-        The description of the model. If None (the default) a generic model 
-        description will be used.
+    semantics: dict, optional
+        The description of the model. If None (the default) generic semantics
+        will be used.
     swap_axis : boolean, optional
         If True the second dimension of the model is plotted on the x-axis and 
         the first on the y-axis. Otherwise vice-versa. Defaults to False.
@@ -227,8 +227,8 @@ def plot_2D_isodensity(model, sample, model_desc=None, swap_axis=False, ax=None)
         y_idx = 1
         
     
-    if model_desc is None:
-        model_desc = get_default_model_description(n_dim)
+    if semantics is None:
+        semantics = get_default_semantics(n_dim)
         
     if ax is None:
             _, ax  = plt.subplots()
@@ -261,13 +261,13 @@ def plot_2D_isodensity(model, sample, model_desc=None, swap_axis=False, ax=None)
     CS = ax.contour(X, Y, Z, levels=levels, colors=colors)
     ax.legend(CS.collections, lvl_labels, loc="upper left", ncol=1,
                prop={"size": 8}, frameon=False, title="Probabilty density")
-    x_name = model_desc["names"][x_idx]
-    x_symbol = model_desc["symbols"][x_idx]
-    x_unit = model_desc["units"][x_idx]
+    x_name = semantics["names"][x_idx]
+    x_symbol = semantics["symbols"][x_idx]
+    x_unit = semantics["units"][x_idx]
     x_label = f"{x_name}," + r" $\it{" + f"{x_symbol}" + r"}$" + f" ({x_unit})"
-    y_name = model_desc["names"][y_idx]
-    y_symbol = model_desc["symbols"][y_idx]
-    y_unit = model_desc["units"][y_idx]
+    y_name = semantics["names"][y_idx]
+    y_symbol = semantics["symbols"][y_idx]
+    y_unit = semantics["units"][y_idx]
     y_label = f"{y_name}," + r" $\it{" + f"{y_symbol}" + r"}$" + f" ({y_unit})"
     ax.set_xlabel(x_label)
     ax.set_ylabel(y_label)
@@ -276,7 +276,7 @@ def plot_2D_isodensity(model, sample, model_desc=None, swap_axis=False, ax=None)
 
 
 
-def plot_2D_contour(contour, sample=None, design_conditions=None, model_desc=None, swap_axis=False, ax=None):
+def plot_2D_contour(contour, sample=None, design_conditions=None, semantics=None, swap_axis=False, ax=None):
     """
     Plot a 2D contour.
        
@@ -294,7 +294,7 @@ def plot_2D_contour(contour, sample=None, design_conditions=None, model_desc=Non
        conditions. If it is True design_conditions are computed with default 
        values and plotted. Otherwise no design conditions will be plotted 
        (the default).
-    model_desc: dict, optional
+    semantics: dict, optional
         Generated model description. Defaults to None.
     swap_axis : boolean, optional
         f True the second dimension of the model is plotted on the x-axis and 
@@ -321,8 +321,8 @@ def plot_2D_contour(contour, sample=None, design_conditions=None, model_desc=Non
         y_idx = 1
         
         
-    if model_desc is None:
-        model_desc = get_default_model_description(n_dim)
+    if semantics is None:
+        semantics = get_default_semantics(n_dim)
     
     if ax is None:
         _, ax  = plt.subplots()
@@ -349,13 +349,13 @@ def plot_2D_contour(contour, sample=None, design_conditions=None, model_desc=Non
     y.append(y[0])
     ax.plot(x, y, c="#BB5566")
     
-    x_name = model_desc["names"][x_idx]
-    x_symbol = model_desc["symbols"][x_idx]
-    x_unit = model_desc["units"][x_idx]
+    x_name = semantics["names"][x_idx]
+    x_symbol = semantics["symbols"][x_idx]
+    x_unit = semantics["units"][x_idx]
     x_label = f"{x_name}," + r" $\it{" + f"{x_symbol}" + r"}$" + f" ({x_unit})"
-    y_name = model_desc["names"][y_idx]
-    y_symbol = model_desc["symbols"][y_idx]
-    y_unit = model_desc["units"][y_idx]
+    y_name = semantics["names"][y_idx]
+    y_symbol = semantics["symbols"][y_idx]
+    y_unit = semantics["units"][y_idx]
     y_label = f"{y_name}," + r" $\it{" + f"{y_symbol}" + r"}$" + f" ({y_unit})"
     ax.set_xlabel(x_label)
     ax.set_ylabel(y_label)

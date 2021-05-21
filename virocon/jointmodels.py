@@ -119,7 +119,7 @@ class GlobalHierarchicalModel(MultivariateModel):
     >>> from virocon import (GlobalHierarchicalModel, get_OMAE2020_Hs_Tz, 
     ...                      read_ec_benchmark_dataset) 
     >>> data = read_ec_benchmark_dataset("datasets/ec-benchmark_dataset_D_1year.txt")
-    >>> dist_descriptions, fit_descriptions, model_description = get_OMAE2020_Hs_Tz()
+    >>> dist_descriptions, fit_descriptions, semantics = get_OMAE2020_Hs_Tz()
     >>> ghm = GlobalHierarchicalModel(dist_descriptions)
     >>> ghm.fit(data, fit_descriptions=fit_descriptions)
     
@@ -161,10 +161,10 @@ class GlobalHierarchicalModel(MultivariateModel):
     >>> fit_description_hs = {"method" : "wlsq", "weights" : "quadratic"}
     >>> fit_descriptions = [fit_description_hs, None]
     
-    >>> model_description = {"names" : ["Significant wave height", "Zero-crossing wave period"],
-    ...                      "symbols" : ["H_s", "T_z"], 
-    ...                      "units" : ["m", "s"]
-    ...                      }
+    >>> semantics = {"names" : ["Significant wave height", "Zero-crossing wave period"],
+    ...              "symbols" : ["H_s", "T_z"],
+    ...              "units" : ["m", "s"]
+    ...              }
     
     >>> ghm = GlobalHierarchicalModel(dist_descriptions)
     >>> ghm.fit(data, fit_descriptions=fit_descriptions)

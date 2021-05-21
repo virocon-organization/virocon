@@ -48,10 +48,10 @@ iform_contour = IFORMContour(ghm, alpha)
 
 
 
-model_description = {"names" : ["Significant wave height", "Energy wave period"],
-                     "symbols" : ["H_s", "T_e"], 
-                     "units" : ["m", "s"]
-                     } # TODO check if correct or other wave period
+semantics = {"names" : ["Significant wave height", "Energy wave period"],
+             "symbols" : ["H_s", "T_e"],
+             "units" : ["m", "s"]
+             } # TODO check if correct or other wave period
 
 
 
