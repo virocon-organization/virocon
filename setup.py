@@ -29,21 +29,14 @@ def get_version(rel_path):
     else:
         raise RuntimeError("Unable to find version string.")
 
-#version = {}
-#with codecs.open(os.path.join(here, "viroconcom/version.py")) as version_file:
-#    exec(version_file.read(), version)
-
 setup(
     name="virocon",
 
-    #version=version["__version__"],
     version=get_version("virocon/__init__.py"),
 
     description="ViroCon is a software to compute environmental contours",
 
     long_description=long_description,
-
-    #long_description_content_type="text/x-rst",
 
     url="https://github.com/virocon-organization/viroconcom",
 
