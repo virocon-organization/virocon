@@ -57,7 +57,7 @@ by typing
 
 .. code:: console
 
-   pip install https://github.com/virocon-organization/viroconcom/archive/master.zip
+   pip install https://github.com/virocon-organization/virocon/archive/master.zip
 
 
 Usage
