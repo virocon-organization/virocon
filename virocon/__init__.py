@@ -1,3 +1,4 @@
+__version__="2.0dev"
 from virocon.contours import *
 from virocon.dependencies import *
 from virocon.distributions import *

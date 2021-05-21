@@ -1,0 +1,8 @@
+#include datasets
+graft datasets
+#include examples
+graft examples
+#include docs
+graft docs
+prune docs/__pycache__
+prune docs/_build

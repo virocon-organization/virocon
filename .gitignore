@@ -14,5 +14,5 @@
 build/*
 htmlcov/
 dist/*
-viroconcom.egg-info/*
+virocon.egg-info/*
 .vscode
