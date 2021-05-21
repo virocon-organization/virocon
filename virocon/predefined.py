@@ -25,10 +25,12 @@ def get_DNVGL_Hs_Tz():
     model_description : dict
         Dictionary with a semantic description of the model.
         Can be passed to plot functions.
-        
+    
     References
     ----------
-    .. [1] TODO
+    .. [1] DNVGL standard DNVGL-RP-C205. Environmental conditions and
+        environmental loads Edition August 2017.
+        
     """
     #TODO docstrings with links to literature
     # DNVGL 3.6.3
@@ -88,7 +90,8 @@ def get_DNVGL_Hs_U():
         
     References
     ----------
-    .. [1] TODO
+    .. [1] DNVGL standard DNVGL-RP-C205. Environmental conditions and
+        environmental loads Edition August 2017.
     """
     def _power3(x, a, b, c):
         return a + b * x ** c
@@ -145,7 +148,11 @@ def get_OMAE2020_Hs_Tz():
         
     References
     ----------
-    .. [1] TODO
+    .. [1] Haselsteiner, A.F.; Sander, A.; Ohlendorf, J.H.; Thoben, K.D. (2020)
+        Global hierarchical models for wind and wave contours: physical
+        interpretations of the dependence functions. OMAE 2020, Fort Lauderdale,
+        USA. Proceedings of the 39th International Conference on Ocean, 
+        Offshore and Arctic Engineering.
     """
     def _asymdecrease3(x, a, b, c):
         return a + b / (1 + c * x)
@@ -208,7 +215,11 @@ def get_OMAE2020_V_Hs():
         
     References
     ----------
-    .. [1] TODO
+    .. [1] Haselsteiner, A.F.; Sander, A.; Ohlendorf, J.H.; Thoben, K.D. (2020)
+        Global hierarchical models for wind and wave contours: physical
+        interpretations of the dependence functions. OMAE 2020, Fort Lauderdale,
+        USA. Proceedings of the 39th International Conference on Ocean, 
+        Offshore and Arctic Engineering.
     """
 
     def _logistics4(x, a=1, b=1, c=-1, d=1):
