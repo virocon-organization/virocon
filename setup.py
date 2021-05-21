@@ -1,84 +1,83 @@
-"""Virocon's numerical core
-"""
-
 # This is based on the setup.py example at:
 # https://github.com/pypa/sampleproject/blob/master/setup.py
 
 from setuptools import setup
 # To use a consistent encoding
-from codecs import open
-from os import path
+import codecs
+import os.path
 
-here = path.abspath(path.dirname(__file__))
 
-# Get the long description from the README file
-#with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
-#    long_description = f.read()
 long_description = """
-ViroCon: viroconcom
-===================
+virocon
+=======
 
-ViroCon is a software to compute environmental contours.
+virocon is a software to compute environmental contours.
 
 A longer description is available at: https://github.com/virocon-organization/viroconcom
 """
 
+def read(rel_path):
+    here = os.path.abspath(os.path.dirname(__file__))
+    with codecs.open(os.path.join(here, rel_path), 'r') as fp:
+        return fp.read()
 
-version = {}
-with open(path.join(here, 'viroconcom/version.py')) as version_file:
-    exec(version_file.read(), version)
+def get_version(rel_path):
+    for line in read(rel_path).splitlines():
+        if line.startswith("__version__"):
+            delim = '"' if '"' in line else "'"
+            return line.split(delim)[1]
+    else:
+        raise RuntimeError("Unable to find version string.")
 
 setup(
-    name='viroconcom',
+    name="virocon",
 
-    version=version['__version__'],
+    version=get_version("virocon/__init__.py"),
 
-    description='ViroCon is a software to compute environmental contour',
+    description="ViroCon is a software to compute environmental contours",
 
     long_description=long_description,
 
-    #long_description_content_type='text/x-rst',
-
-    url='https://github.com/virocon-organization/viroconcom',
+    url="https://github.com/virocon-organization/viroconcom",
 
     # We use git tags for this download_url. This approach is based on:
     # https://peterdowns.com/posts/first-time-with-pypi.html
-    download_url = 'https://github.com/virocon-organization/viroconcom/archive/' + version['__version__'] + '.tar.gz',
+    download_url="https://github.com/virocon-organization/viroconcom/archive/" + get_version("virocon/__init__.py") + ".tar.gz",
 
-    author='ViroCon Team',
+    author="virocon team",
 
-    author_email='virocon@uni-bremen.de',
+    author_email="virocon@uni-bremen.de",
 
 
     classifiers=[ 
-        'Development Status :: 5 - Production/Stable',
-        'Intended Audience :: Science/Research',
-        'Topic :: Scientific/Engineering',
-        'License :: OSI Approved :: MIT License',
-        'Programming Language :: Python :: 3.8',
+        "Development Status :: 5 - Production/Stable",
+        "Intended Audience :: Science/Research",
+        "Topic :: Scientific/Engineering",
+        "License :: OSI Approved :: MIT License",
+        "Programming Language :: Python :: 3",
     ],
+    
+    python_requires=">=3.7",
 
-    packages=['viroconcom'],
+    packages=["virocon"],
+    
+    install_requires=["matplotlib>=2.2.0"
+                      "networkx",
+                      "numpy",
+                      "pandas",
+                      "scikit-learn",
+                      "scipy" ],
 
-    install_requires=['matplotlib>=2.2.0'
-                      'networkx',
-                      'numpy',
-                      'pandas',
-                      'scikit-learn',
-                      'scipy',
-                      'statsmodels'],
 
-
-    extras_require={
-        'dev': ['Sphinx'],
-        'test': ['pytest',
-                 'pytest-cov',
-                 'coverage',
-                 'coveralls'],
+    extras_require={"dev": ["Sphinx"],
+                    "test": ["pytest",
+                             "pytest-cov",
+                             "coverage",
+                             "coveralls"],
     },
 
     project_urls={  # Optional
-        'Documentation': 'https://virocon-organization.github.io/viroconcom/',
-        'Source Code': 'https://github.com/virocon-organization/viroconcom',
+        "Documentation": "https://virocon-organization.github.io/viroconcom/",
+        "Source Code": "https://github.com/virocon-organization/viroconcom",
     },
 )

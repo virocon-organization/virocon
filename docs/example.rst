@@ -6,46 +6,45 @@ Let's start this user guide with a simple example.
 
 Based on a dataset, the long-term joint distribution of sea states is estimated
 and this distribution will be used to construct an environmental contour with a
-return period of 50 years. ::
+return period of 50 years. This example follows the OMAE2020 model by
+Haselsteiner et al. (2020) ::
 
-    import matplotlib.pyplot as plt
+    import numpy as np
+    import pandas as pd
+    from matplotlib import pyplot as plt
 
-    from viroconcom.fitting import Fit
-    from viroconcom.contours import IFormContour
-    from viroconcom.read_write import read_ecbenchmark_dataset
-    from viroconcom.plot import plot_contour
+    from virocon import (GlobalHierarchicalModel, get_OMAE2020_Hs_Tz,
+                         calculate_alpha, IFORMContour, plot_2D_contour)
 
+    # Load sea state measurements from the NDBC buoy 46025.
 
-    # Load sea state measurements from the NDBC buoy 44007.
-    sample_hs, sample_tz, label_hs, label_tz = \
-        read_ecbenchmark_dataset('datasets/1year_dataset_A.txt')
+    data = pd.read_csv("datasets/NDBC_buoy_46025.csv", sep=",")[["Hs", "T"]]
 
     # Define the structure of the probabilistic model that will be fitted to the
     # dataset. This model structure has been proposed in the paper "Global
     # hierarchical models for wind and wave contours: Physical interpretations
     # of the dependence functions" by Haselsteiner et al. (2020).
-    dist_description_hs = {'name': 'Weibull_Exp'}
-    dist_description_tz = {'name': 'Lognormal_SigmaMu',
-                          'dependency': (0,  None, 0),
-                          'functions': ('asymdecrease3', None, 'lnsquare2')}
-    model_structure = (dist_description_hs, dist_description_tz)
+
+    dist_descriptions, fit_descriptions, semantics = get_OMAE2020_Hs_Tz()
 
     # Fit the model to the data.
-    fit = Fit((sample_hs, sample_tz), model_structure)
-    fitted_distribution = fit.mul_var_dist
 
+    ghm = GlobalHierarchicalModel(dist_descriptions)
+    ghm.fit(data, fit_descriptions=fit_descriptions)
 
     # Compute an IFORM contour with a return period of 50 years.
-    tr = 50 # Return period in years.
-    ts = 1 # Sea state duration in hours.
-    contour = IFormContour(fitted_distribution, tr, ts)
+
+    state_duration = 1 # Sea state duration in hours
+    return_period = 50 # Return period in years
+    alpha = calculate_alpha(state_duration, return_period)
+    my_iform = IFORMContour(ghm, alpha)
+    my_coordinates = my_iform.coordinates
 
     # Plot the data and the contour.
-    fig, ax = plt.subplots(1, 1)
-    plt.scatter(sample_tz, sample_hs, c='black', alpha=0.5)
-    plot_contour(contour.coordinates[1], contour.coordinates[0],
-                 ax=ax, x_label=label_tz, y_label=label_hs)
-    plt.show()
+
+
+    ax = plot_2D_contour(my_iform, semantics=semantics, sample=data,
+                         swap_axis=True)
 
 The code, which is available as a Python file here_, will create this plot:
 
