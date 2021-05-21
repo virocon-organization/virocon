@@ -65,12 +65,6 @@ author = 'virocon developers'
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
 # built documents.
-#
-# version_dict = {}
-# with open(path.join(here, '../viroconcom/version.py')) as version_file:
-#     exec(version_file.read(), version_dict)
-# version = version_dict['__version__']
-
 def read(rel_path):
     here = path.abspath(path.dirname(__file__))
     with codecs.open(os.path.join(here, rel_path), 'r') as fp:
