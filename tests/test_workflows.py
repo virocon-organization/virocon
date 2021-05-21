@@ -13,11 +13,18 @@ def test_hs_tz_iform_contour():
     """
     Use a sea state dataset with the variables Hs and Tz,
     fit the join distribution recommended in DNVGL-RP-C203 to 
-    it and compute an IFORM contour.
+    it and compute an IFORM contour. This tests reproduces
+    the results published in Haseltseiner et al. (2019).
 
-    Such a work flow is for example typical when generating a
-    50-year contour when a ship is designed.
+    Such a work flow is for example typical in ship design.
 
+    Haselsteiner, A. F., Coe, R. G., Manuel, L., Nguyen, P. T. T., 
+    Martin, N., & Eckert-Gallup, A. (2019). A benchmarking exercise 
+    on estimating extreme environmental conditions: Methodology & 
+    baseline results. Proc. 38th International Conference on Ocean, 
+    Offshore and Arctic Engineering (OMAE 2019). 
+    https://doi.org/10.1115/OMAE2019-96523
+    
     DNV GL. (2017). Recommended practice DNVGL-RP-C205: 
     Environmental conditions and environmental loads.
     """
@@ -50,15 +57,23 @@ def test_hs_tz_iform_contour():
     model = GlobalHierarchicalModel([dist_description_0, dist_description_1])
     model.fit(data)
 
-    alpha = calculate_alpha(1, 50)
+    alpha = calculate_alpha(1, 20)
     contour = IFORMContour(model, alpha)
+
+    coordinates = contour.coordinates
+    np.testing.assert_allclose(max(coordinates[:,0]), 5.0, atol=0.5)
+    np.testing.assert_allclose(max(coordinates[:,1]), 16.1, atol=0.5)
 
 
 def test_v_hs_hd_contour():
     """
     Use a wind speed - wave height dataset, fit the joint 
-    distribution that was proposed by Haselsteiner et al (2020)
-    and compute a highest density contour.
+    distribution that was proposed by Haselsteiner et al. (2020)
+    and compute a highest density contour. This test reproduces
+    the results presented in Haselestiner et al. (2020). The
+    coorindates are availble at https://github.com/ec-benchmark-organizers/
+    ec-benchmark/blob/master/results/exercise-1/contribution-4/haselsteiner_
+    andreas_dataset_d_50.txt
 
     Such a work flow is for example typical when generationg 
     a 50-year contour for DLC 1.6 in the offshore wind standard
@@ -116,4 +131,11 @@ def test_v_hs_hd_contour():
     model.fit(data, [fit_description_vs, fit_description_hs])
 
     alpha = calculate_alpha(1, 50)
-    contour = HighestDensityContour(model, alpha, deltas=[0.2, 0.2])
+    limits = [(0, 35), (0, 20)]
+    contour = HighestDensityContour(model, alpha, limits=limits, deltas=[0.2, 0.2])
+
+    coordinates = contour.coordinates
+    np.testing.assert_allclose(max(coordinates[:,0]), 29.9, atol=0.2)
+    np.testing.assert_allclose(max(coordinates[:,1]), 15.5, atol=0.2)
+    np.testing.assert_allclose(min(coordinates[:,0]), 0, atol=0.1)
+    np.testing.assert_allclose(min(coordinates[:,1]), 0, atol=0.1)
