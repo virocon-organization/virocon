@@ -10,9 +10,9 @@ from virocon._fitting import fit_function, fit_constrained_function
 
 __all__ = ["DependenceFunction"]
 
-#TODO test that order of execution does not matter
+# TODO test that order of execution does not matter
 # it should not matter if the dependent or the conditioner are fitted first
-class DependenceFunction():   
+class DependenceFunction:
     """
     Function to describe the dependencies between the variables.
     
@@ -67,23 +67,24 @@ class DependenceFunction():
         A benchmarking exercise for environmental contours.
     
     """
-    
-    #TODO implement check of bounds and constraints
+
+    # TODO implement check of bounds and constraints
     def __init__(self, func, bounds=None, constraints=None, weights=None, **kwargs):
-        #TODO add fitting method 
+        # TODO add fitting method
         self.func = func
         self.bounds = bounds
         self.constraints = constraints
         self.weights = weights
-        
+
         # Read default values from function or set default as 1 if not specified.
         sig = signature(func)
-        self.parameters = {par.name : (par.default if par.default is not par.empty else 1) 
-                           for par in list(sig.parameters.values())[1:]
-                           }
-        
+        self.parameters = {
+            par.name: (par.default if par.default is not par.empty else 1)
+            for par in list(sig.parameters.values())[1:]
+        }
+
         self.dependents = []
-        
+
         self._may_fit = True
         self.dependent_parameters = {}
         self._fitted_conditioners = set()
@@ -93,33 +94,39 @@ class DependenceFunction():
                 dep_param = kwargs[key]
                 self.dependent_parameters[key] = dep_param
                 dep_param.register(self)
-                dep_param_dict = {key : dep_param}
+                dep_param_dict = {key: dep_param}
                 self.func = partial(self.func, **dep_param_dict)
                 del self.parameters[key]
-        
-        
+
     def __call__(self, x, *args, **kwargs):
         if len(args) + len(kwargs) == 0:
             return self.func(x, *self.parameters.values())
         elif len(args) + len(kwargs) == len(self.parameters):
             return self.func(x, *args, **kwargs)
         else:
-            raise ValueError() # TODO helpful error message
-            
+            raise ValueError()  # TODO helpful error message
+
     def __repr__(self):
         if isinstance(self.func, partial):
             func = self.func.func
         else:
             func = self.func
-        params = ", ".join([f"{par_name}={par_value}" 
-                            for par_name, par_value in self.parameters.items()])
-        dep_params = ", ".join([f"{par_name}={par_value}" 
-                                for par_name, par_value in self.dependent_parameters.items()])
+        params = ", ".join(
+            [
+                f"{par_name}={par_value}"
+                for par_name, par_value in self.parameters.items()
+            ]
+        )
+        dep_params = ", ".join(
+            [
+                f"{par_name}={par_value}"
+                for par_name, par_value in self.dependent_parameters.items()
+            ]
+        )
         combined_params = params + ", " + dep_params
         combined_params = combined_params.strip(", ")
         return f"DependenceFunction(func={func.__name__}, {combined_params})"
-    
-        
+
     def fit(self, x, y):
         """
         Determine the parameters of the dependence function.
@@ -153,40 +160,42 @@ class DependenceFunction():
         self.y = y
         if self._may_fit:  # is the conditioner fitted, so that we can fit now?
             self._fit(self.x, self.y)
-            
-    def _fit(self, x, y):        
+
+    def _fit(self, x, y):
         weights = self.weights
         if weights is not None:
-            method = "wlsq" # weighted least squares
+            method = "wlsq"  # weighted least squares
             weights = weights(x, y)  # raises TypeError if not a callable
         else:
             method = "lsq"  # least squares
-            
+
         bounds = self.bounds
         constraints = self.constraints
-        
+
         # get initial parameters
         p0 = tuple(self.parameters.values())
-        
+
         if constraints is None:
             try:
                 popt = fit_function(self, x, y, p0, method, bounds, weights)
             except RuntimeError as e:
-                raise RuntimeError(f"Failed to fit dependence function {self}."
-                                   "Consider choosing different bounds.") from e
+                raise RuntimeError(
+                    f"Failed to fit dependence function {self}."
+                    "Consider choosing different bounds."
+                ) from e
         else:
             # TODO proper error handling for constrained fit
-            popt = fit_constrained_function(self, x, y, p0, method, bounds, constraints, weights)
-        
+            popt = fit_constrained_function(
+                self, x, y, p0, method, bounds, constraints, weights
+            )
+
         # update self with fitted parameters
         self.parameters = dict(zip(self.parameters.keys(), popt))
-        
+
         # after fitting inform dependents:
         for dependent in self.dependents:
             dependent.callback(self)
-            
-        
-        
+
     def register(self, dependent):
         """
         Register a dependent DependenceFunction.
@@ -198,10 +207,9 @@ class DependenceFunction():
         dependent : DependenceFunction
             The DependenceFunctions to register.
         """
-        
+
         self.dependents.append(dependent)
-        
-        
+
     def callback(self, caller):
         """
         Call to signal, that caller was fitted.
@@ -211,13 +219,14 @@ class DependenceFunction():
         caller : DependeneFunction
             The DependenceFunctiom that is now fitted.
         """
-        
+
         assert caller in self.dependent_parameters.values()
         # TODO raise proper error otherwise
         self._fitted_conditioners.add(caller)
         # check that all conditioners are already fitted, then we may fit self
         if self._fitted_conditioners.issubset(self.dependent_parameters.values()):
             self._may_fit = True
-            if hasattr(self, "x") and hasattr(self, "y"): # did we try to fit earlier, but could not?
+            if hasattr(self, "x") and hasattr(
+                self, "y"
+            ):  # did we try to fit earlier, but could not?
                 self.fit(self.x, self.y)
-

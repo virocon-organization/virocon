@@ -2,9 +2,13 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from virocon import (DependenceFunction, WeibullDistribution, 
-                     GlobalHierarchicalModel, IFORMContour, 
-                     WidthOfIntervalSlicer)
+from virocon import (
+    DependenceFunction,
+    WeibullDistribution,
+    GlobalHierarchicalModel,
+    IFORMContour,
+    WidthOfIntervalSlicer,
+)
 
 from virocon.distributions import LogNormalNormFitDistribution
 
@@ -47,30 +51,34 @@ from virocon.distributions import LogNormalNormFitDistribution
 data = pd.read_csv("datasets/WES4_sample.csv", index_col="time")
 data.index = pd.to_timedelta(data.index)
 sigma_data_key = "sigma"
-      
+
 # %%
 
+
 class MyIntervalSlicer(WidthOfIntervalSlicer):
-    
     def _slice(self, data):
-        
+
         interval_slices, interval_references, interval_boundaries = super()._slice(data)
-        
-        #discard slices below 4 m/s
+
+        # discard slices below 4 m/s
         ok_slices = []
         ok_references = []
         ok_boundaries = []
-        for slice_, reference, boundaries in zip(interval_slices, interval_references, interval_boundaries):
-            if reference >=4:
+        for slice_, reference, boundaries in zip(
+            interval_slices, interval_references, interval_boundaries
+        ):
+            if reference >= 4:
                 ok_slices.append(slice_)
                 ok_references.append(reference)
                 ok_boundaries.append(boundaries)
-        
+
         return ok_slices, ok_references, ok_boundaries
+
 
 # %%
 def _poly3(x, a, b, c, d):
     return a * x ** 3 + b * x ** 2 + c * x + d
+
 
 def _poly2(x, a, b, c):
     return a * x ** 2 + b * x + c
@@ -79,18 +87,19 @@ def _poly2(x, a, b, c):
 poly3 = DependenceFunction(_poly3)
 poly2 = DependenceFunction(_poly2)
 
-dim0_description = {"distribution" : WeibullDistribution(),
-                    "intervals" : MyIntervalSlicer(width=1, reference="left", min_n_points=5),
-                    # "parameters" : {"alpha" : 9.74,
-                    #                 "beta" : 2.02,
-                    #                 "gamma" : 2.2},
-                    }
+dim0_description = {
+    "distribution": WeibullDistribution(),
+    "intervals": MyIntervalSlicer(width=1, reference="left", min_n_points=5),
+    # "parameters" : {"alpha" : 9.74,
+    #                 "beta" : 2.02,
+    #                 "gamma" : 2.2},
+}
 
-dim1_description = {"distribution" : LogNormalNormFitDistribution(),
-                    "conditional_on" : 0,
-                    "parameters" : {"mu_norm": poly3,
-                                    "sigma_norm" : poly2},
-                    }
+dim1_description = {
+    "distribution": LogNormalNormFitDistribution(),
+    "conditional_on": 0,
+    "parameters": {"mu_norm": poly3, "sigma_norm": poly2},
+}
 
 # shape, loc, scale lognorm?
 
@@ -133,7 +142,7 @@ plt.xlim(0, 40)
 plt.ylim(0, 6)
 plt.tight_layout()
 
-# %% 
+# %%
 U_dist = ghm.distributions[0]
 
 x_U = np.linspace(2, 40, num=100)
@@ -164,15 +173,15 @@ my_intervals = my_ln.data_intervals
 # intervals = my_intervals[::3][1:]
 # sigma_fs = my_f_ln[::3][1:]
 # for i in range(len(givens)):
-#     ax = axes.flatten()[i]    
+#     ax = axes.flatten()[i]
 #     ax.plot(x_sigma, sigma_fs[i], label="my_ln")
 #     ax.hist(intervals[i], density=True)
 #     ax.set_title(f"{int(givens[i]-0.5)}" + "$ \leq U <$" + f"{int(givens[i]+0.5)}"
 #                   + " m/s")
 #     # ax.legend()
-    
+
 # fig.suptitle('LogNormal pdf')
-    
+
 i_ref = 0.14
 
 
@@ -183,10 +192,12 @@ mu_x = my_ln.conditioning_values
 mu_y = [dist.mu for dist in my_ln.distributions_per_interval]
 sigma_norm_dep = my_ln.conditional_parameters["sigma_norm"]
 mu_norm_dep = my_ln.conditional_parameters["mu_norm"]
-sigma_dep = lambda x : my_ln.distribution_class.calculate_sigma(mu_norm_dep(x), 
-                                                                sigma_norm_dep(x))
-mu_dep = lambda x: my_ln.distribution_class.calculate_mu(mu_norm_dep(x), 
-                                                         sigma_norm_dep(x))
+sigma_dep = lambda x: my_ln.distribution_class.calculate_sigma(
+    mu_norm_dep(x), sigma_norm_dep(x)
+)
+mu_dep = lambda x: my_ln.distribution_class.calculate_mu(
+    mu_norm_dep(x), sigma_norm_dep(x)
+)
 plt.figure()
 plt.plot(x, sigma_dep(x), label="sigma dependence function", color="orange")
 plt.scatter(sigma_x, sigma_y)
@@ -201,7 +212,9 @@ plt.xlabel("U")
 plt.title("mu")
 plt.legend()
 
-sigma_norm_y = [dist.parameters["sigma_norm"] for dist in my_ln.distributions_per_interval]
+sigma_norm_y = [
+    dist.parameters["sigma_norm"] for dist in my_ln.distributions_per_interval
+]
 plt.figure()
 plt.plot(x, sigma_norm_dep(x), label="2nd order poly", color="orange")
 plt.scatter(sigma_x, sigma_norm_y)

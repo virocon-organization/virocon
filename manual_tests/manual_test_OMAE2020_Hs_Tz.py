@@ -31,7 +31,11 @@ plot_2D_isodensity(ghm, data, semantics=semantics)
 my_f = ghm.pdf(x)
 
 my_f_expweib = ghm.distributions[0].pdf(x[:, 0])
-my_expweib_params = (ghm.distributions[0].alpha, ghm.distributions[0].beta, ghm.distributions[0].delta)
+my_expweib_params = (
+    ghm.distributions[0].alpha,
+    ghm.distributions[0].beta,
+    ghm.distributions[0].delta,
+)
 
 
 my_ln = ghm.distributions[1]
@@ -48,7 +52,8 @@ my_intervals = my_ln.data_intervals
 
 
 # %% viroconcom
-import sys 
+import sys
+
 sys.path.append("../viroconcom")
 from viroconcom.fitting import Fit
 
@@ -57,19 +62,22 @@ sample_tz = data["T"]
 
 # Define the structure of the probabilistic model that will be fitted to the
 # dataset.
-dist_description_hs = {'name': 'Weibull_Exp',
-                      'dependency': (None, None, None, None),
-                      'width_of_intervals': 0.5}
-dist_description_tz = {'name': 'Lognormal_SigmaMu',
-                      'dependency': (0,  None, 0), #Shape, Location, Scale
-                      'functions': ('asymdecrease3', None, 'lnsquare2'), #Shape, Location, Scale
-                      'min_datapoints_for_fit': 50
-                      }
+dist_description_hs = {
+    "name": "Weibull_Exp",
+    "dependency": (None, None, None, None),
+    "width_of_intervals": 0.5,
+}
+dist_description_tz = {
+    "name": "Lognormal_SigmaMu",
+    "dependency": (0, None, 0),  # Shape, Location, Scale
+    "functions": ("asymdecrease3", None, "lnsquare2"),  # Shape, Location, Scale
+    "min_datapoints_for_fit": 50,
+}
 
 # Fit the model to the data.
 fit = Fit((sample_hs, sample_tz), (dist_description_hs, dist_description_tz))
 
-# %% 
+# %%
 
 dist0 = fit.mul_var_dist.distributions[0]
 
@@ -80,7 +88,11 @@ ref_f = mul_var_dist.pdf(x.T)
 
 ref_f_expweib = mul_var_dist.distributions[0].pdf(x[:, 0])
 ref_expweib = mul_var_dist.distributions[0]
-ref_expweib_params = (ref_expweib.scale(None), ref_expweib.shape(None), ref_expweib.shape2(None))
+ref_expweib_params = (
+    ref_expweib.scale(None),
+    ref_expweib.shape(None),
+    ref_expweib.shape2(None),
+)
 
 ref_ln = mul_var_dist.distributions[1]
 ref_f_ln = []
@@ -88,7 +100,7 @@ ref_givens = fit.multiple_fit_inspection_data[1].scale_at
 assert all(ref_givens == my_givens)
 for given in ref_givens:
     y = np.stack([np.full_like(x[:, 1], given), x[:, 1]])
-    ref_f_ln.append(ref_ln.pdf(x[:, 1], y, (0,  None, 0, None)))
+    ref_f_ln.append(ref_ln.pdf(x[:, 1], y, (0, None, 0, None)))
 
 ref_f_ln = np.stack(ref_f_ln, axis=1)
 
@@ -98,9 +110,9 @@ ref_intervals = fit.multiple_fit_inspection_data[1].scale_samples
 
 # %% save reference data
 
-# reference_data = {"ref_expweib_params" : ref_expweib_params, 
+# reference_data = {"ref_expweib_params" : ref_expweib_params,
 #                   "ref_f_expweib" : ref_f_expweib,
-#                   "ref_givens" : ref_givens, 
+#                   "ref_givens" : ref_givens,
 #                   "ref_mus" : ref_mus,
 #                   "ref_sigmas" : ref_sigmas,
 #                   "ref_f_ln" : ref_f_ln
@@ -112,7 +124,7 @@ ref_intervals = fit.multiple_fit_inspection_data[1].scale_samples
 # np.savez_compressed("reference_data_OMAE2020", **reference_data)
 
 
-# %% 
+# %%
 
 plt.close("all")
 plt.plot(my_f, label="my_f")
@@ -127,8 +139,8 @@ plt.legend()
 fig, axes = plt.subplots(3, 4, sharex=True, sharey=True,)
 givens = fit.multiple_fit_inspection_data[1].scale_at
 for i in range(len(ref_givens)):
-    ax = axes.flatten()[i]    
-    ax.plot(x[:, 1], my_f_ln[:,i], label="my_exp_weibull1")
+    ax = axes.flatten()[i]
+    ax.plot(x[:, 1], my_f_ln[:, i], label="my_exp_weibull1")
     ax.plot(x[:, 1], ref_f_ln[:, i], label="ref_exp_weibull1")
     ax.hist(fit.multiple_fit_inspection_data[1].scale_samples[i], density=True)
     ax.set_title(f"V = {ref_givens[i]}")
@@ -174,6 +186,3 @@ np.testing.assert_almost_equal(my_givens, ref_givens)
 np.testing.assert_almost_equal(my_mus, np.log(ref_mus))
 np.testing.assert_almost_equal(my_sigmas, ref_sigmas)
 np.testing.assert_almost_equal(my_f_ln, ref_f_ln)
-
-
-

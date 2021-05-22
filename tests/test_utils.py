@@ -5,17 +5,20 @@ import numpy as np
 
 from pathlib import Path
 
-from virocon.utils import (read_ec_benchmark_dataset, ROOT_DIR,
-                           sort_points_to_form_continuous_line)
+from virocon.utils import (
+    read_ec_benchmark_dataset,
+    ROOT_DIR,
+    sort_points_to_form_continuous_line,
+)
 
 
 def test_read_ec_benchmark_dataset():
     path = str(ROOT_DIR.joinpath(Path("datasets/ec-benchmark_dataset_A.txt")))
     data = read_ec_benchmark_dataset(path)
     assert isinstance(data, pd.DataFrame)
-    assert (data.columns == ["significant wave height (m)", 
-                             "zero-up-crossing period (s)"]
-            ).all()
+    assert (
+        data.columns == ["significant wave height (m)", "zero-up-crossing period (s)"]
+    ).all()
     assert isinstance(data.index, pd.DatetimeIndex)
     assert len(data) == 82805
 
@@ -29,8 +32,9 @@ def test_sort_points_to_form_continuous_line():
     rand_x = ref_x[shuffle_idx]
     rand_y = ref_y[shuffle_idx]
 
-    my_x, my_y = sort_points_to_form_continuous_line(rand_x, rand_y,
-                                                     search_for_optimal_start=True)
+    my_x, my_y = sort_points_to_form_continuous_line(
+        rand_x, rand_y, search_for_optimal_start=True
+    )
 
     # clockwise or anti-clockwise order is not deterministic,
     # but both are okay

@@ -2,15 +2,21 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-from virocon import (ExponentiatedWeibullDistribution, LogNormalDistribution, 
-                     GlobalHierarchicalModel, DependenceFunction, 
-                     calculate_alpha, ISORMContour)
+from virocon import (
+    ExponentiatedWeibullDistribution,
+    LogNormalDistribution,
+    GlobalHierarchicalModel,
+    DependenceFunction,
+    calculate_alpha,
+    ISORMContour,
+)
 
 x = np.linspace((0, 0), (10, 10), num=100)
 
 # Logarithmic square function.
 def _lnsquare2(x, a=3.62, b=5.77):
     return np.log(a + b * np.sqrt(x / 9.81))
+
 
 # 3-parameter function that asymptotically decreases (a dependence function).
 def _asymdecrease3(x, a=0, b=0.324, c=0.404):
@@ -20,16 +26,17 @@ def _asymdecrease3(x, a=0, b=0.324, c=0.404):
 lnsquare2 = DependenceFunction(_lnsquare2)
 asymdecrease3 = DependenceFunction(_asymdecrease3)
 
-dist_description_0 = {"distribution" : ExponentiatedWeibullDistribution(alpha=0.207,
-                                                                        beta=0.684,
-                                                                        delta=7.79),
-                      }
+dist_description_0 = {
+    "distribution": ExponentiatedWeibullDistribution(
+        alpha=0.207, beta=0.684, delta=7.79
+    ),
+}
 
-dist_description_1 = {"distribution" : LogNormalDistribution(),
-                      "conditional_on" : 0,
-                      "parameters" : {"mu": lnsquare2,
-                                      "sigma" : asymdecrease3},
-                      }
+dist_description_1 = {
+    "distribution": LogNormalDistribution(),
+    "conditional_on": 0,
+    "parameters": {"mu": lnsquare2, "sigma": asymdecrease3},
+}
 
 ghm = GlobalHierarchicalModel([dist_description_0, dist_description_1])
 
@@ -37,7 +44,11 @@ ghm = GlobalHierarchicalModel([dist_description_0, dist_description_1])
 my_f = ghm.pdf(x)
 
 my_f_expweib = ghm.distributions[0].pdf(x[:, 0])
-my_expweib_param = (ghm.distributions[0].delta, ghm.distributions[0].beta, ghm.distributions[0].alpha)
+my_expweib_param = (
+    ghm.distributions[0].delta,
+    ghm.distributions[0].beta,
+    ghm.distributions[0].alpha,
+)
 
 
 my_ln = ghm.distributions[1]
@@ -47,7 +58,6 @@ for given in my_given:
     my_f_ln.append(my_ln.pdf(x[:, 1], given))
 
 my_f_ln = np.stack(my_f_ln, axis=1)
-
 
 
 state_duration = 3
@@ -60,20 +70,23 @@ my_coordinates = my_isorm.coordinates
 
 # %%
 
-import sys 
+import sys
+
 sys.path.append("../viroconcom")
 from viroconcom.params import FunctionParam
-from viroconcom.distributions import (ExponentiatedWeibullDistribution, 
-                                      LognormalDistribution, 
-                                      MultivariateDistribution)
+from viroconcom.distributions import (
+    ExponentiatedWeibullDistribution,
+    LognormalDistribution,
+    MultivariateDistribution,
+)
 from viroconcom.contours import ISormContour
 
 
 dist0 = ExponentiatedWeibullDistribution(shape=0.684, scale=0.207, shape2=7.79)
 dep0 = (None, None, None, None)
 
-ref_mu = FunctionParam('lnsquare2', 3.62, 5.77, None)
-ref_sigma = FunctionParam('asymdecrease3', 0, 0.324, 0.404)
+ref_mu = FunctionParam("lnsquare2", 3.62, 5.77, None)
+ref_sigma = FunctionParam("asymdecrease3", 0, 0.324, 0.404)
 
 dist1 = LognormalDistribution(sigma=ref_sigma, mu=ref_mu)
 
@@ -93,7 +106,7 @@ ref_ln = mul_dist.distributions[1]
 ref_f_ln = []
 for given in my_given:
     y = np.stack([np.full_like(x[:, 1], given), x[:, 1]])
-    ref_f_ln.append(ref_ln.pdf(x[:, 1], y, (0,  None, 0)))
+    ref_f_ln.append(ref_ln.pdf(x[:, 1], y, (0, None, 0)))
 
 ref_f_ln = np.stack(ref_f_ln, axis=1)
 
@@ -101,8 +114,8 @@ ref_f_ln = np.stack(ref_f_ln, axis=1)
 ref_isorm = ISormContour(mul_dist, return_period, state_duration)
 
 ref_coordinates = np.stack(ref_isorm.coordinates, axis=1)
-       
-# %% 
+
+# %%
 
 # np.savez_compressed("reference_data_ISORM.npz", ref_coordinates=ref_coordinates)
 
@@ -121,8 +134,8 @@ plt.legend()
 
 fig, axes = plt.subplots(3, 3, sharex=True, sharey=True,)
 for i in range(len(my_given)):
-    ax = axes.flatten()[i]    
-    ax.plot(x[:, 1], my_f_ln[:,i], label="my_ln")
+    ax = axes.flatten()[i]
+    ax.plot(x[:, 1], my_f_ln[:, i], label="my_ln")
     ax.plot(x[:, 1], ref_f_ln[:, i], label="ref_ln")
     ax.set_title(f"Hs = {my_given[i]}")
     ax.legend()
@@ -134,10 +147,6 @@ plt.plot(ref_coordinates[:, 1], ref_coordinates[:, 0], label="ref ISORM")
 plt.legend()
 
 
-
 np.testing.assert_allclose(my_f_expweib, ref_f_expweib)
 
 np.testing.assert_allclose(my_coordinates, ref_coordinates)
- 
-        
-
