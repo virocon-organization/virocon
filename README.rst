@@ -1,10 +1,10 @@
 virocon
 =======
 
-.. image:: https://travis-ci.org/virocon-organization/viroconcom.svg?branch=master
-    :target: https://travis-ci.org/virocon-organization/viroconcom
+.. image:: https://travis-ci.com/virocon-organization/virocon.svg?branch=master
+    :target: https://travis-ci.com/virocon-organization/virocon
     :alt: Build status
-
+    
 .. image:: https://coveralls.io/repos/github/virocon-organization/viroconcom/badge.svg?branch=master
     :target: https://coveralls.io/github/virocon-organization/viroconcom?branch=master
     
