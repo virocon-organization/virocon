@@ -2,8 +2,12 @@ import numpy as np
 
 from abc import ABC, abstractmethod
 
-__all__ = ["WidthOfIntervalSlicer", "NumberOfIntervalsSlicer",
-           "PointsPerIntervalSlicer"]
+__all__ = [
+    "WidthOfIntervalSlicer",
+    "NumberOfIntervalsSlicer",
+    "PointsPerIntervalSlicer",
+]
+
 
 class IntervalSlicer(ABC):
     """
@@ -13,15 +17,19 @@ class IntervalSlicer(ABC):
     independent variable (Hs). 
         
     """
-    
+
     def __init__(self, **kwargs):
-        #check if there are unknown kwargs
+        # check if there are unknown kwargs
         kwarg_keys = kwargs.keys()
-        unknown_kwarg_keys = set(kwarg_keys).difference({"min_n_intervals", "min_n_points"})
+        unknown_kwarg_keys = set(kwarg_keys).difference(
+            {"min_n_intervals", "min_n_points"}
+        )
         if len(unknown_kwarg_keys) != 0:
-            raise TypeError("__init__() got an unexpected keyword argument "
-                            f"'{unknown_kwarg_keys.pop()}'")
-            
+            raise TypeError(
+                "__init__() got an unexpected keyword argument "
+                f"'{unknown_kwarg_keys.pop()}'"
+            )
+
         self.min_n_points = kwargs.get("min_n_points", 50)
         self.min_n_intervals = kwargs.get("min_n_intervals", 3)
         self.reference = None
@@ -48,16 +56,20 @@ class IntervalSlicer(ABC):
             List of (upper, lower) limit tuples. One tuple for each interval.
         
         """
-        
+
         interval_slices, interval_references, interval_boundaries = self._slice(data)
 
         if len(interval_slices) < self.min_n_intervals:
-            raise RuntimeError("Slicing resulting in too few intervals. "
-                               f"Need at least {self.min_n_intervals}, "
-                               f"but got only {len(interval_slices)} intervals.")
+            raise RuntimeError(
+                "Slicing resulting in too few intervals. "
+                f"Need at least {self.min_n_intervals}, "
+                f"but got only {len(interval_slices)} intervals."
+            )
 
         if callable(self.reference):
-            interval_references = [self.reference(data[slice_]) for slice_ in interval_slices]
+            interval_references = [
+                self.reference(data[slice_]) for slice_ in interval_slices
+            ]
 
         return interval_slices, interval_references, interval_boundaries
 
@@ -116,18 +128,18 @@ class WidthOfIntervalSlicer(IntervalSlicer):
         RuntimeError
             if slicing resulted in fewer than min_n_intervals intervals.
     """
-   
-    def __init__(self, width, reference="center", right_open=True, value_range=None, **kwargs):
+
+    def __init__(
+        self, width, reference="center", right_open=True, value_range=None, **kwargs
+    ):
         super().__init__(**kwargs)
         self.width = width
         self.reference = reference
         self.right_open = right_open
         self.value_range = value_range
-        
-        
-        
+
     def _slice(self, data):
-        
+
         if self.value_range is None:
             data_min = 0
             data_max = np.max(data)
@@ -137,10 +149,10 @@ class WidthOfIntervalSlicer(IntervalSlicer):
             else:
                 data_min = 0
             if self.value_range[1] is not None:
-                 data_max = self.value_range[1] 
+                data_max = self.value_range[1]
             else:
                 data_max = np.max(data)
-            
+
         width = self.width
         interval_references = np.arange(data_min, data_max + width, width)
         if isinstance(self.reference, str):
@@ -149,35 +161,43 @@ class WidthOfIntervalSlicer(IntervalSlicer):
             elif self.reference.lower() == "right":
                 interval_references += width
             elif self.reference.lower() == "left":
-                pass # interval_references are already left bounds of intervals
+                pass  # interval_references are already left bounds of intervals
             else:
-                raise ValueError("Unknown value for 'reference'. "
-                                 "Supported values are 'center', 'left', "
-                                 f"and 'right', but got '{self.reference}'.")
+                raise ValueError(
+                    "Unknown value for 'reference'. "
+                    "Supported values are 'center', 'left', "
+                    f"and 'right', but got '{self.reference}'."
+                )
         elif callable(self.reference):
-            pass #  handled in super class
+            pass  #  handled in super class
         else:
-            raise TypeError("Wrong type for reference. Expected str or callable, "
-                            f"but got {type(self.reference)}.")
-            
+            raise TypeError(
+                "Wrong type for reference. Expected str or callable, "
+                f"but got {type(self.reference)}."
+            )
+
         if self.right_open:
-            interval_slices = [((int_cent - 0.5 * width <= data) & 
-                                (data < int_cent + 0.5 * width))
-                               for int_cent in interval_references]
+            interval_slices = [
+                ((int_cent - 0.5 * width <= data) & (data < int_cent + 0.5 * width))
+                for int_cent in interval_references
+            ]
         else:
-            interval_slices = [((int_cent - 0.5 * width < data) & 
-                                (data <= int_cent + 0.5 * width))
-                               for int_cent in interval_references]
+            interval_slices = [
+                ((int_cent - 0.5 * width < data) & (data <= int_cent + 0.5 * width))
+                for int_cent in interval_references
+            ]
 
-        interval_slices, interval_references = self._drop_too_small_intervals(interval_slices,
-                                                                           interval_references)
+        interval_slices, interval_references = self._drop_too_small_intervals(
+            interval_slices, interval_references
+        )
 
-        interval_boundaries = [(c - width / 2, c + width / 2)
-                               for c in interval_references]
+        interval_boundaries = [
+            (c - width / 2, c + width / 2) for c in interval_references
+        ]
 
         return interval_slices, interval_references, interval_boundaries
-    
-    
+
+
 class NumberOfIntervalsSlicer(IntervalSlicer):
     """     
         IntervalSlicer that uses a number of intervals to define intervals of 
@@ -216,8 +236,15 @@ class NumberOfIntervalsSlicer(IntervalSlicer):
         RuntimeError
             if slicing resulted in fewer than min_n_intervals intervals.
     """
-    
-    def __init__(self, n_intervals, reference="center", include_max=True, value_range=None, **kwargs):
+
+    def __init__(
+        self,
+        n_intervals,
+        reference="center",
+        include_max=True,
+        value_range=None,
+        **kwargs,
+    ):
         super().__init__(**kwargs)
         if n_intervals < self.min_n_intervals:
             self.min_n_intervals = n_intervals
@@ -228,52 +255,64 @@ class NumberOfIntervalsSlicer(IntervalSlicer):
 
     def _slice(self, data):
         if self.value_range is not None:
-            value_range = self.value_range 
+            value_range = self.value_range
         else:
             value_range = (min(data), max(data))
-        
-        interval_starts, interval_width = np.linspace(value_range[0], 
-                                                      value_range[1],
-                                                      num=self.n_intervals,
-                                                      endpoint=False,
-                                                      retstep=True
-                                                      )
+
+        interval_starts, interval_width = np.linspace(
+            value_range[0],
+            value_range[1],
+            num=self.n_intervals,
+            endpoint=False,
+            retstep=True,
+        )
         interval_references = interval_starts + 0.5 * interval_width
         if isinstance(self.reference, str):
             if self.reference.lower() == "center":
-                pass # default
+                pass  # default
             elif self.reference.lower() == "right":
                 interval_references = interval_starts + interval_width
             elif self.reference.lower() == "left":
                 interval_references = interval_starts
             else:
-                raise ValueError("Unknown value for 'reference'. "
-                                 "Supported values are 'center', 'left', "
-                                 f"and 'right', but got '{self.reference}'.")
+                raise ValueError(
+                    "Unknown value for 'reference'. "
+                    "Supported values are 'center', 'left', "
+                    f"and 'right', but got '{self.reference}'."
+                )
         elif callable(self.reference):
-            pass #  handled in super class
+            pass  #  handled in super class
         else:
-            raise TypeError("Wrong type for reference. Expected str or callable, "
-                            f"but got {type(self.reference)}.")
-            
-        
-        interval_slices = [((data >= int_start) & 
-                            (data < int_start + interval_width)) 
-                           for int_start in interval_starts[:-1]]
-        
+            raise TypeError(
+                "Wrong type for reference. Expected str or callable, "
+                f"but got {type(self.reference)}."
+            )
+
+        interval_slices = [
+            ((data >= int_start) & (data < int_start + interval_width))
+            for int_start in interval_starts[:-1]
+        ]
+
         # include max in last interval ?
         int_start = interval_starts[-1]
         if self.include_max:
-            interval_slices.append(((data >= int_start) & (data <= int_start + interval_width)))
+            interval_slices.append(
+                ((data >= int_start) & (data <= int_start + interval_width))
+            )
         else:
-            interval_slices.append(((data >= int_start) & (data < int_start + interval_width)))
+            interval_slices.append(
+                ((data >= int_start) & (data < int_start + interval_width))
+            )
 
-        interval_slices, interval_references = self._drop_too_small_intervals(interval_slices,
-                                                                           interval_references)
+        interval_slices, interval_references = self._drop_too_small_intervals(
+            interval_slices, interval_references
+        )
 
-        interval_boundaries = [(c - interval_width / 2, c + interval_width / 2)
-                               for c in interval_references]
-            
+        interval_boundaries = [
+            (c - interval_width / 2, c + interval_width / 2)
+            for c in interval_references
+        ]
+
         return interval_slices, interval_references, interval_boundaries
 
 
@@ -316,33 +355,38 @@ class PointsPerIntervalSlicer(IntervalSlicer):
         super().__init__(**kwargs)
         if n_points < self.min_n_points:
             self.min_n_points = n_points
-            
+
         self.n_points = n_points
         self.reference = reference
         self.last_full = last_full
 
     def _slice(self, data):
-        sorted_idc = np.argsort(data) 
-        n_full_chunks = len(data) // self.n_points 
+        sorted_idc = np.argsort(data)
+        n_full_chunks = len(data) // self.n_points
         remainder = len(data) % self.n_points
         if remainder != 0:
             if self.last_full:
-                interval_idc = np.split(sorted_idc[remainder:], 
-                                        n_full_chunks)
+                interval_idc = np.split(sorted_idc[remainder:], n_full_chunks)
                 interval_idc.insert(0, sorted_idc[:remainder])
-                
+
             else:
-                interval_idc = np.split(sorted_idc[:len(data)-remainder], 
-                                        n_full_chunks)
-                interval_idc.append(sorted_idc[len(data)-remainder:])
+                interval_idc = np.split(
+                    sorted_idc[: len(data) - remainder], n_full_chunks
+                )
+                interval_idc.append(sorted_idc[len(data) - remainder :])
         else:
             interval_idc = np.split(sorted_idc, n_full_chunks)
-            
-        interval_slices = [np.isin(sorted_idc, idc, assume_unique=True) for idc in interval_idc]
-        interval_references = [None] * len(interval_slices)  # gets overwritten in super().slice_ anyway
 
-        interval_slices, interval_references = self._drop_too_small_intervals(interval_slices,
-                                                                           interval_references)
+        interval_slices = [
+            np.isin(sorted_idc, idc, assume_unique=True) for idc in interval_idc
+        ]
+        interval_references = [None] * len(
+            interval_slices
+        )  # gets overwritten in super().slice_ anyway
+
+        interval_slices, interval_references = self._drop_too_small_intervals(
+            interval_slices, interval_references
+        )
 
         # calculate the interval boundaries
         # the boundary between two intervals shall be the mean of
@@ -354,7 +398,7 @@ class PointsPerIntervalSlicer(IntervalSlicer):
         interval = data[interval_slices[0]]
         for i in range(len(interval_slices) - 1):
             # calculate boundaries for ith interval
-            next_interval = data[interval_slices[i+1]]
+            next_interval = data[interval_slices[i + 1]]
             upper_boundary = (np.max(interval) + np.min(next_interval)) / 2
             interval_boundaries.append((lower_boundary, upper_boundary))
             # prepare variables for next interval

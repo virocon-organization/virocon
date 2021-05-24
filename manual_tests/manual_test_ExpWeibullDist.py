@@ -5,9 +5,8 @@ import scipy.stats as sts
 from virocon import ExponentiatedWeibullDistribution
 
 
-
-# OMAE2020_param = {"alpha" : 10.0, 
-#                   "beta" : 2.42, 
+# OMAE2020_param = {"alpha" : 10.0,
+#                   "beta" : 2.42,
 #                   "delta" : 0.761
 #                   }
 
@@ -17,9 +16,9 @@ p = np.linspace(0.01, 0.99, num=100)
 true_alpha = 10
 true_beta = 2.42
 true_delta = 0.761
-expweibull_samples = sts.exponweib.rvs(a=true_delta, c=true_beta, 
-                                       loc=0, scale=true_alpha, 
-                                       size=100, random_state=42)
+expweibull_samples = sts.exponweib.rvs(
+    a=true_delta, c=true_beta, loc=0, scale=true_alpha, size=100, random_state=42
+)
 
 # %%
 # my_expweibull = ExponentiatedWeibullDistribution(**OMAE2020_param)
@@ -36,7 +35,8 @@ my_beta = my_expweibull.beta
 my_delta = my_expweibull.delta
 
 # %%
-import sys 
+import sys
+
 sys.path.append("../viroconcom")
 from viroconcom.distributions import ExponentiatedWeibullDistribution
 
@@ -61,7 +61,7 @@ ref_icdf = ref_expweibull.i_cdf(p)
 # ref_data = {"ref_alpha" : ref_alpha,
 #             "ref_beta" : ref_beta,
 #             "ref_delta" : ref_delta,
-#             "ref_pdf" : ref_pdf, 
+#             "ref_pdf" : ref_pdf,
 #             "ref_cdf" : ref_cdf,
 #             "ref_icdf" : ref_icdf,
 #             }
@@ -75,11 +75,15 @@ plt.close("all")
 plt.figure()
 plt.plot(x, my_pdf, label="my pdf")
 plt.plot(x, ref_pdf, label="ref pdf")
-plt.plot(x, sts.exponweib.pdf(x, a=true_delta, c=true_beta, loc=0, scale=true_alpha,), label="true pdf")
+plt.plot(
+    x,
+    sts.exponweib.pdf(x, a=true_delta, c=true_beta, loc=0, scale=true_alpha,),
+    label="true pdf",
+)
 plt.hist(expweibull_samples, density=True)
 plt.legend()
 plt.figure()
-plt.plot(x, my_cdf,  label="my cdf")
+plt.plot(x, my_cdf, label="my cdf")
 plt.plot(x, ref_cdf, label="ref cdf")
 plt.legend()
 plt.figure()
@@ -90,5 +94,3 @@ plt.legend()
 np.testing.assert_allclose(my_pdf, ref_pdf)
 np.testing.assert_allclose(my_cdf, ref_cdf)
 np.testing.assert_allclose(my_icdf, ref_icdf)
-
-

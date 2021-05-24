@@ -6,27 +6,51 @@ from matplotlib.colors import LinearSegmentedColormap
 
 from virocon.utils import calculate_design_conditions
 
-__all__ = ["plot_marginal_quantiles", "plot_dependence_functions",
-           "plot_2D_isodensity", "plot_2D_contour"]
+__all__ = [
+    "plot_marginal_quantiles",
+    "plot_dependence_functions",
+    "plot_2D_isodensity",
+    "plot_2D_contour",
+]
 
 # colors (schemes) choosen according to https://personal.sron.nl/~pault/
+
 
 def _rainbow_PuRd():
     """
     Thanks to Paul Tol (https://personal.sron.nl/~pault/data/tol_colors.py)
     License:  Standard 3-clause BSD
     """
-    clrs = ['#6F4C9B', '#6059A9', '#5568B8', '#4E79C5', '#4D8AC6',
-            '#4E96BC', '#549EB3', '#59A5A9', '#60AB9E', '#69B190',
-            '#77B77D', '#8CBC68', '#A6BE54', '#BEBC48', '#D1B541',
-            '#DDAA3C', '#E49C39', '#E78C35', '#E67932', '#E4632D',
-            '#DF4828', '#DA2222']
+    clrs = [
+        "#6F4C9B",
+        "#6059A9",
+        "#5568B8",
+        "#4E79C5",
+        "#4D8AC6",
+        "#4E96BC",
+        "#549EB3",
+        "#59A5A9",
+        "#60AB9E",
+        "#69B190",
+        "#77B77D",
+        "#8CBC68",
+        "#A6BE54",
+        "#BEBC48",
+        "#D1B541",
+        "#DDAA3C",
+        "#E49C39",
+        "#E78C35",
+        "#E67932",
+        "#E4632D",
+        "#DF4828",
+        "#DA2222",
+    ]
     cmap = LinearSegmentedColormap.from_list("rainbow_PuRd", clrs)
-    cmap.set_bad('#FFFFFF')
+    cmap.set_bad("#FFFFFF")
     return cmap
 
 
- # TODO move to utility as it is also used in contours.py
+# TODO move to utility as it is also used in contours.py
 def get_default_semantics(n_dim):
     """
     Generate default semantics for n_dim dimensions.
@@ -42,11 +66,12 @@ def get_default_semantics(n_dim):
         Generated model description. 
     
     """
-        
-    semantics = {"names" : [f"Variable {dim+1}" for dim in range(n_dim)],
-                 "symbols" : [f"V{dim+1}" for dim in range(n_dim)],
-                  "units" : ["arb. unit" for dim in range(n_dim)]
-                 }
+
+    semantics = {
+        "names": [f"Variable {dim+1}" for dim in range(n_dim)],
+        "symbols": [f"V{dim+1}" for dim in range(n_dim)],
+        "units": ["arb. unit" for dim in range(n_dim)],
+    }
     return semantics
 
 
@@ -78,36 +103,33 @@ def plot_marginal_quantiles(model, sample, semantics=None, axes=None):
     The used matplotlib axes object.    
     
     """
-        
+
     sample = np.asarray(sample)
     n_dim = model.n_dim
     if semantics is None:
         semantics = get_default_semantics(n_dim)
-    
+
     if axes is None:
         axes = []
         for i in range(n_dim):
             _, ax = plt.subplots()
             axes.append(ax)
-            
-    
+
     # probplot expects an object that has a ppf method, but we name it icdf
     # therefor we create a wrapper that maps the ppf to the icdf method
-    class MarginalDistWrapper:  
-        
+    class MarginalDistWrapper:
         def __init__(self, model, idx):
             self.model = model
             self.idx = idx
-            
+
         def ppf(self, q):
 
             return self.model.marginal_icdf(q, self.idx)
-        
+
     for dim in range(n_dim):
         dist_wrapper = MarginalDistWrapper(model, dim)
         ax = axes[dim]
-        
-        
+
         sts.probplot(sample[:, dim], dist=dist_wrapper, fit=False, plot=ax)
         ax.get_lines()[0].set_markerfacecolor("k")
         ax.get_lines()[0].set_markeredgecolor("k")
@@ -118,7 +140,7 @@ def plot_marginal_quantiles(model, sample, semantics=None, axes=None):
         ax.set_xlabel(f"Theoretical quantiles of {name_and_unit}")
         ax.set_ylabel(f"Ordered values of {name_and_unit}")
         ax.title.set_text("")
-        
+
     return axes
 
 
@@ -146,14 +168,15 @@ def plot_dependence_functions(model, semantics=None, par_rename={}, axes=None):
     The used matplotlib axes object.    
        
     """
-        
+
     n_dim = model.n_dim
-    conditional_dist_idc = [dim for dim  in range(n_dim) 
-                            if model.conditional_on[dim] is not None]
-    
+    conditional_dist_idc = [
+        dim for dim in range(n_dim) if model.conditional_on[dim] is not None
+    ]
+
     if semantics is None:
         semantics = get_default_semantics(n_dim)
-    
+
     if axes is None:
         n_axes = 0
         for dim in conditional_dist_idc:
@@ -162,7 +185,7 @@ def plot_dependence_functions(model, semantics=None, par_rename={}, axes=None):
         for i in range(n_axes):
             _, ax = plt.subplots()
             axes.append(ax)
-            
+
     axes_counter = 0
     for dim in conditional_dist_idc:
         dist = model.distributions[dim]
@@ -184,8 +207,8 @@ def plot_dependence_functions(model, semantics=None, par_rename={}, axes=None):
                 y_label = par_rename[par_name]
             else:
                 y_label = par_name
-            ax.set_ylabel(y_label)    
-            
+            ax.set_ylabel(y_label)
+
     return axes
 
 
@@ -214,28 +237,26 @@ def plot_2D_isodensity(model, sample, semantics=None, swap_axis=False, ax=None):
     The used matplotlib axes object.    
     
     """
-        
 
     n_dim = model.n_dim
     assert n_dim == 2
-    
+
     if swap_axis:
         x_idx = 1
         y_idx = 0
     else:
         x_idx = 0
         y_idx = 1
-        
-    
+
     if semantics is None:
         semantics = get_default_semantics(n_dim)
-        
+
     if ax is None:
-            _, ax  = plt.subplots()
-            
+        _, ax = plt.subplots()
+
     sample = np.asarray(sample)
     ax.scatter(sample[:, x_idx], sample[:, y_idx], c="k", marker=".", alpha=0.3)
-        
+
     x_lower = min(sample[:, 0])
     x_upper = max(sample[:, 0])
     y_lower = min(sample[:, 1])
@@ -245,12 +266,12 @@ def plot_2D_isodensity(model, sample, semantics=None, swap_axis=False, ax=None):
     grid_flat = np.c_[X.ravel(), Y.ravel()]
     f = model.pdf(grid_flat)
     Z = f.reshape(X.shape)
-    
+
     if swap_axis:
         tmp = X
         X = Y
         Y = tmp
-        
+
     q = str(np.quantile(Z, q=0.4))
     min_lvl = int(q.split("e")[1])
     n_levels = np.abs(min_lvl)
@@ -259,8 +280,15 @@ def plot_2D_isodensity(model, sample, semantics=None, swap_axis=False, ax=None):
     cmap = _rainbow_PuRd()
     colors = cmap(np.linspace(0, 1, num=n_levels))
     CS = ax.contour(X, Y, Z, levels=levels, colors=colors)
-    ax.legend(CS.collections, lvl_labels, loc="upper left", ncol=1,
-               prop={"size": 8}, frameon=False, title="Probabilty density")
+    ax.legend(
+        CS.collections,
+        lvl_labels,
+        loc="upper left",
+        ncol=1,
+        prop={"size": 8},
+        frameon=False,
+        title="Probabilty density",
+    )
     x_name = semantics["names"][x_idx]
     x_symbol = semantics["symbols"][x_idx]
     x_unit = semantics["units"][x_idx]
@@ -271,12 +299,18 @@ def plot_2D_isodensity(model, sample, semantics=None, swap_axis=False, ax=None):
     y_label = f"{y_name}," + r" $\it{" + f"{y_symbol}" + r"}$" + f" ({y_unit})"
     ax.set_xlabel(x_label)
     ax.set_ylabel(y_label)
-    
+
     return ax
 
 
-
-def plot_2D_contour(contour, sample=None, design_conditions=None, semantics=None, swap_axis=False, ax=None):
+def plot_2D_contour(
+    contour,
+    sample=None,
+    design_conditions=None,
+    semantics=None,
+    swap_axis=False,
+    ax=None,
+):
     """
     Plot a 2D contour.
        
@@ -309,8 +343,7 @@ def plot_2D_contour(contour, sample=None, design_conditions=None, semantics=None
     (optional: the design_conditions if not None, yet to implement)   
        
     """
-        
-    
+
     # design conditions can be True or array
     n_dim = 2
     if swap_axis:
@@ -319,36 +352,40 @@ def plot_2D_contour(contour, sample=None, design_conditions=None, semantics=None
     else:
         x_idx = 0
         y_idx = 1
-        
-        
+
     if semantics is None:
         semantics = get_default_semantics(n_dim)
-    
+
     if ax is None:
-        _, ax  = plt.subplots()
-        
-        
+        _, ax = plt.subplots()
+
     if design_conditions:
-        try: # if iterable assume it's already the design conditions
+        try:  # if iterable assume it's already the design conditions
             iter(design_conditions)
-        except: # if it is not an array we compute the default design_conditions
-            design_conditions = calculate_design_conditions(contour, swap_axis=swap_axis)
-            
-        ax.scatter(design_conditions[:, 0], design_conditions[:, 1], c="#DDAA33", marker="x", 
-            zorder=2.5)
-    
+        except:  # if it is not an array we compute the default design_conditions
+            design_conditions = calculate_design_conditions(
+                contour, swap_axis=swap_axis
+            )
+
+        ax.scatter(
+            design_conditions[:, 0],
+            design_conditions[:, 1],
+            c="#DDAA33",
+            marker="x",
+            zorder=2.5,
+        )
+
     if sample is not None:
         sample = np.asarray(sample)
         ax.scatter(sample[:, x_idx], sample[:, y_idx], c="k", marker=".", alpha=0.3)
-        
-    
+
     coords = contour.coordinates
     x = coords[:, x_idx].tolist()
     x.append(x[0])
     y = coords[:, y_idx].tolist()
     y.append(y[0])
     ax.plot(x, y, c="#BB5566")
-    
+
     x_name = semantics["names"][x_idx]
     x_symbol = semantics["symbols"][x_idx]
     x_unit = semantics["units"][x_idx]
@@ -359,7 +396,7 @@ def plot_2D_contour(contour, sample=None, design_conditions=None, semantics=None
     y_label = f"{y_name}," + r" $\it{" + f"{y_symbol}" + r"}$" + f" ({y_unit})"
     ax.set_xlabel(x_label)
     ax.set_ylabel(y_label)
-    
+
     if design_conditions is None:
         return ax
     else:

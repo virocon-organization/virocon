@@ -3,12 +3,23 @@ import pytest
 import numpy as np
 import pandas as pd
 
-from virocon import (read_ec_benchmark_dataset, GlobalHierarchicalModel, 
-                     WeibullDistribution, ExponentiatedWeibullDistribution, 
-                     LogNormalDistribution, DependenceFunction, 
-                     WidthOfIntervalSlicer, IFORMContour, HighestDensityContour, 
-                     calculate_alpha, plot_marginal_quantiles, plot_dependence_functions,
-                     plot_2D_isodensity, plot_2D_contour)
+from virocon import (
+    read_ec_benchmark_dataset,
+    GlobalHierarchicalModel,
+    WeibullDistribution,
+    ExponentiatedWeibullDistribution,
+    LogNormalDistribution,
+    DependenceFunction,
+    WidthOfIntervalSlicer,
+    IFORMContour,
+    HighestDensityContour,
+    calculate_alpha,
+    plot_marginal_quantiles,
+    plot_dependence_functions,
+    plot_2D_isodensity,
+    plot_2D_contour,
+)
+
 
 def test_hs_tz_iform_contour():
     """
@@ -32,29 +43,27 @@ def test_hs_tz_iform_contour():
 
     data = read_ec_benchmark_dataset("datasets/ec-benchmark_dataset_A.txt")
 
-
     # A 3-parameter power function (a dependence function).
     def _power3(x, a, b, c):
         return a + b * x ** c
-    
+
     # A 3-parameter exponential function (a dependence function).
     def _exp3(x, a, b, c):
         return a + b * np.exp(c * x)
-    
-    bounds = [(0, None), 
-              (0, None), 
-              (None, None)]
+
+    bounds = [(0, None), (0, None), (None, None)]
     power3 = DependenceFunction(_power3, bounds)
     exp3 = DependenceFunction(_exp3, bounds)
-        
-    dist_description_0 = {"distribution" : WeibullDistribution(),
-                          "intervals" : WidthOfIntervalSlicer(width=0.5)
-                          }
-    dist_description_1 = {"distribution" : LogNormalDistribution(),
-                          "conditional_on" : 0,
-                          "parameters" : {"mu": power3,
-                                          "sigma" : exp3},
-                          }
+
+    dist_description_0 = {
+        "distribution": WeibullDistribution(),
+        "intervals": WidthOfIntervalSlicer(width=0.5),
+    }
+    dist_description_1 = {
+        "distribution": LogNormalDistribution(),
+        "conditional_on": 0,
+        "parameters": {"mu": power3, "sigma": exp3},
+    }
     model = GlobalHierarchicalModel([dist_description_0, dist_description_1])
     model.fit(data)
 
@@ -66,8 +75,8 @@ def test_hs_tz_iform_contour():
     contour = IFORMContour(model, alpha)
 
     coordinates = contour.coordinates
-    np.testing.assert_allclose(max(coordinates[:,0]), 5.0, atol=0.5)
-    np.testing.assert_allclose(max(coordinates[:,1]), 16.1, atol=0.5)
+    np.testing.assert_allclose(max(coordinates[:, 0]), 5.0, atol=0.5)
+    np.testing.assert_allclose(max(coordinates[:, 1]), 16.1, atol=0.5)
 
     ax = plot_2D_contour(contour, sample=data)
 
@@ -101,40 +110,35 @@ def test_v_hs_hd_contour():
 
     def _logistics4(x, a=1, b=1, c=-1, d=1):
         return a + b / (1 + np.exp(c * (x - d)))
-    
+
     def _alpha3(x, a, b, c, d_of_x):
         return (a + b * x ** c) / 2.0445 ** (1 / d_of_x(x))
 
-    logistics_bounds = [(0, None),
-                        (0, None),
-                        (None, 0),
-                        (0, None)]
-    
-    alpha_bounds = [(0, None), 
-                    (0, None), 
-                    (None, None)]
-    
-    beta_dep = DependenceFunction(_logistics4, logistics_bounds, 
-                                  weights=lambda x, y : y)
-    alpha_dep = DependenceFunction(_alpha3, alpha_bounds, d_of_x=beta_dep, 
-                                   weights=lambda x, y : y)
+    logistics_bounds = [(0, None), (0, None), (None, 0), (0, None)]
 
-    dist_description_v = {"distribution" : ExponentiatedWeibullDistribution(),
-                           "intervals" : WidthOfIntervalSlicer(width=2),
-                           }
-    
-    dist_description_hs = {"distribution" : ExponentiatedWeibullDistribution(f_delta=5),
-                           "conditional_on" : 0,
-                           "parameters" : {"alpha" : alpha_dep,
-                                           "beta": beta_dep,
-                                           },
-                           }
+    alpha_bounds = [(0, None), (0, None), (None, None)]
+
+    beta_dep = DependenceFunction(_logistics4, logistics_bounds, weights=lambda x, y: y)
+    alpha_dep = DependenceFunction(
+        _alpha3, alpha_bounds, d_of_x=beta_dep, weights=lambda x, y: y
+    )
+
+    dist_description_v = {
+        "distribution": ExponentiatedWeibullDistribution(),
+        "intervals": WidthOfIntervalSlicer(width=2),
+    }
+
+    dist_description_hs = {
+        "distribution": ExponentiatedWeibullDistribution(f_delta=5),
+        "conditional_on": 0,
+        "parameters": {"alpha": alpha_dep, "beta": beta_dep,},
+    }
 
     model = GlobalHierarchicalModel([dist_description_v, dist_description_hs])
 
-    fit_description_vs = {"method" : "wlsq", "weights": "quadratic"}
+    fit_description_vs = {"method": "wlsq", "weights": "quadratic"}
     fit_description_hs = {"method": "wlsq", "weights": "quadratic"}
-    
+
     model.fit(data, [fit_description_vs, fit_description_hs])
 
     axs = plot_marginal_quantiles(model, data)
@@ -146,9 +150,9 @@ def test_v_hs_hd_contour():
     contour = HighestDensityContour(model, alpha, limits=limits, deltas=[0.2, 0.2])
 
     coordinates = contour.coordinates
-    np.testing.assert_allclose(max(coordinates[:,0]), 29.9, atol=0.2)
-    np.testing.assert_allclose(max(coordinates[:,1]), 15.5, atol=0.2)
-    np.testing.assert_allclose(min(coordinates[:,0]), 0, atol=0.1)
-    np.testing.assert_allclose(min(coordinates[:,1]), 0, atol=0.1)
+    np.testing.assert_allclose(max(coordinates[:, 0]), 29.9, atol=0.2)
+    np.testing.assert_allclose(max(coordinates[:, 1]), 15.5, atol=0.2)
+    np.testing.assert_allclose(min(coordinates[:, 0]), 0, atol=0.1)
+    np.testing.assert_allclose(min(coordinates[:, 1]), 0, atol=0.1)
 
     ax = plot_2D_contour(contour, sample=data)

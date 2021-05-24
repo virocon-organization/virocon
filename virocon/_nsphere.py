@@ -11,7 +11,7 @@ import numpy as np
 __all__ = ["NSphere"]
 
 
-class NSphere():
+class NSphere:
     """
     This class calculates almost equally spaced points on a n-sphere.
 
@@ -57,15 +57,16 @@ class NSphere():
         self.dim = dim
         self.n_samples = n_samples
 
-        #combinations for selecting all different indice
-        self.combs = np.array([comb for comb in itertools.combinations(range(self.n_samples), 2)])
+        # combinations for selecting all different indice
+        self.combs = np.array(
+            [comb for comb in itertools.combinations(range(self.n_samples), 2)]
+        )
 
         self.unit_sphere_points = self._random_unit_sphere_points()
         self.init_e_pot = self._pot_energy()
         self._relax_points()
         self.rela_e_pot = self._pot_energy()
         self.improvement = (self.init_e_pot - self.rela_e_pot) / self.init_e_pot * 100
-
 
     def _relax_points(self,):
         """
@@ -83,7 +84,6 @@ class NSphere():
         # At least 10 iterations should be performed. 10 is an empirical value.
         max_iters = max([10, int(10000 / self.n_samples)])
 
-
         for iteration in range(1, max_iters):
 
             # Tau controls the step size of the optimization. With each iteration
@@ -97,9 +97,9 @@ class NSphere():
             tang_forces /= max_force
 
             self.unit_sphere_points += tang_forces * tau
-            self.unit_sphere_points /= np.linalg.norm(self.unit_sphere_points,
-                                                      axis=1,
-                                                      keepdims=True)
+            self.unit_sphere_points /= np.linalg.norm(
+                self.unit_sphere_points, axis=1, keepdims=True
+            )
 
             curr_pot = self._pot_energy()
             if curr_pot < best_pot:
@@ -130,8 +130,7 @@ class NSphere():
         # normalize
         return rand_points / radii
 
-
-    def _pot_energy(self, ):
+    def _pot_energy(self,):
         """
         Calculates the potential energy of the current state.
 
@@ -148,12 +147,14 @@ class NSphere():
 
         """
 
-        dist_vectors = (self.unit_sphere_points[self.combs[:, 0]]
-                        - self.unit_sphere_points[self.combs[:, 1]])
+        dist_vectors = (
+            self.unit_sphere_points[self.combs[:, 0]]
+            - self.unit_sphere_points[self.combs[:, 1]]
+        )
 
         distances = np.linalg.norm(dist_vectors, axis=1, keepdims=True)
 
-        return np.sum(distances**-1)
+        return np.sum(distances ** -1)
 
     def _get_forces(self,):
         """
@@ -168,10 +169,11 @@ class NSphere():
             0 \\leq j \\leq N
         """
         r_dash = self.unit_sphere_points[:, np.newaxis, :] - self.unit_sphere_points
-        with np.errstate(divide='ignore', invalid='ignore'):
-            single_forces = r_dash / (np.linalg.norm(r_dash, axis=2, keepdims=True)**3)
+        with np.errstate(divide="ignore", invalid="ignore"):
+            single_forces = r_dash / (
+                np.linalg.norm(r_dash, axis=2, keepdims=True) ** 3
+            )
         return np.nansum(single_forces, axis=1)
-
 
     def _tangential_forces(self, forces):
         """
@@ -207,35 +209,36 @@ class NSphere():
 
 if __name__ == "__main__":
 
-#    sphere = NSphere(3, 1000)
-#
-#    samples = sphere.unit_sphere_points
-#
-#    print("Initial : E_pot = {}".format(sphere.init_e_pot))
-#    print("Relaxed : E_pot = {}".format(sphere.rela_e_pot))
-#    print("Verbesserung: {} %".format(sphere.improvement))
-#
-#    #%% plot sphere
-#    from mpl_toolkits.mplot3d import Axes3D
-#    import matplotlib.pyplot as plt
-#    plt.close('all')
-#    fig = plt.figure(figsize=plt.figaspect(1))
-#    ax2 = fig.add_subplot(111, projection='3d')
-#
-#    u = np.linspace(0, 2 * np.pi, 50)
-#    v = np.linspace(0, np.pi, 30)
-#
-#    x = np.outer(np.cos(u), np.sin(v))
-#    y = np.outer(np.sin(u), np.sin(v))
-#    z = np.outer(np.ones(np.size(u)), np.cos(v))
-#
-#    ax2.plot_wireframe(x, y, z, rcount=10, ccount=10,)
-#
-#
-#    ax2.scatter(samples[:, 0], samples[:, 1], samples[:, 2],
-#                c='green', depthshade=False, label="verteilt")
-#
-#    ax2.legend()
-#    plt.show()
+    #    sphere = NSphere(3, 1000)
+    #
+    #    samples = sphere.unit_sphere_points
+    #
+    #    print("Initial : E_pot = {}".format(sphere.init_e_pot))
+    #    print("Relaxed : E_pot = {}".format(sphere.rela_e_pot))
+    #    print("Verbesserung: {} %".format(sphere.improvement))
+    #
+    #    #%% plot sphere
+    #    from mpl_toolkits.mplot3d import Axes3D
+    #    import matplotlib.pyplot as plt
+    #    plt.close('all')
+    #    fig = plt.figure(figsize=plt.figaspect(1))
+    #    ax2 = fig.add_subplot(111, projection='3d')
+    #
+    #    u = np.linspace(0, 2 * np.pi, 50)
+    #    v = np.linspace(0, np.pi, 30)
+    #
+    #    x = np.outer(np.cos(u), np.sin(v))
+    #    y = np.outer(np.sin(u), np.sin(v))
+    #    z = np.outer(np.ones(np.size(u)), np.cos(v))
+    #
+    #    ax2.plot_wireframe(x, y, z, rcount=10, ccount=10,)
+    #
+    #
+    #    ax2.scatter(samples[:, 0], samples[:, 1], samples[:, 2],
+    #                c='green', depthshade=False, label="verteilt")
+    #
+    #    ax2.legend()
+    #    plt.show()
     import doctest
+
     doctest.testmod()

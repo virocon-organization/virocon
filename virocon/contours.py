@@ -11,8 +11,15 @@ from virocon._nsphere import NSphere
 from virocon.plotting import get_default_semantics
 from virocon.utils import sort_points_to_form_continuous_line
 
-__all__ = ["calculate_alpha", "save_contour_coordinates", "IFORMContour",
-           "ISORMContour", "HighestDensityContour", "DirectSamplingContour"]
+__all__ = [
+    "calculate_alpha",
+    "save_contour_coordinates",
+    "IFORMContour",
+    "ISORMContour",
+    "HighestDensityContour",
+    "DirectSamplingContour",
+]
+
 
 def calculate_alpha(state_duration, return_period):
     """
@@ -51,7 +58,7 @@ def calculate_alpha(state_duration, return_period):
        Marine Structures, 75. https://doi.org/10.1016/j.marstruc.2020.102863
 
     """
-    
+
     alpha = state_duration / (return_period * 365.25 * 24)
     return alpha
 
@@ -75,20 +82,27 @@ def save_contour_coordinates(contour, file_path, semantics=None):
      Defaults to a dict with general descriptions.
      
     """
-    
+
     root, ext = os.path.splitext(file_path)
     if not ext:
         file_path += ".txt"
-    
+
     n_dim = contour.coordinates.shape[1]
     if semantics is None:
         semantics = get_default_semantics(n_dim)
-        
-    header = ";".join((f"{semantics['names'][d]} ({semantics['units'][d]})"
-                        for d in range(n_dim)))
-    
-    np.savetxt(file_path, contour.coordinates, fmt="%1.6f", delimiter=";", 
-               header=header, comments="")
+
+    header = ";".join(
+        (f"{semantics['names'][d]} ({semantics['units'][d]})" for d in range(n_dim))
+    )
+
+    np.savetxt(
+        file_path,
+        contour.coordinates,
+        fmt="%1.6f",
+        delimiter=";",
+        header=header,
+        comments="",
+    )
 
 
 class Contour(ABC):
@@ -117,20 +131,26 @@ class Contour(ABC):
         try:
             _ = self.model
         except AttributeError:
-            raise NotImplementedError(f"Can't instantiate abstract class {type(self).__name__} "
-                                      "with abstract attribute model.")
+            raise NotImplementedError(
+                f"Can't instantiate abstract class {type(self).__name__} "
+                "with abstract attribute model."
+            )
         try:
             _ = self.alpha
         except AttributeError:
-            raise NotImplementedError(f"Can't instantiate abstract class {type(self).__name__} "
-                                      "with abstract attribute model.")
+            raise NotImplementedError(
+                f"Can't instantiate abstract class {type(self).__name__} "
+                "with abstract attribute model."
+            )
 
         self._compute()
         try:
             _ = self.coordinates
         except AttributeError:
-            raise NotImplementedError(f"Can't instantiate abstract class {type(self).__name__} "
-                                      "with abstract attribute coordinates.")
+            raise NotImplementedError(
+                f"Can't instantiate abstract class {type(self).__name__} "
+                "with abstract attribute coordinates."
+            )
 
     @abstractmethod
     def _compute(self):
@@ -175,14 +195,14 @@ class IFORMContour(Contour):
 
 
     """
-  
+
     def __init__(self, model, alpha, n_points=180):
         self.model = model
         self.alpha = alpha
         self.n_points = n_points
         super().__init__()
 
-    def _compute(self, ):
+    def _compute(self,):
         """
         Calculates coordinates using IFORM.
 
@@ -222,13 +242,15 @@ class IFORMContour(Contour):
                 coordinates[:, i] = distributions[i].icdf(p[:, i])
             else:
                 cond_idx = conditional_on[i]
-                coordinates[:, i] = distributions[i].icdf(p[:, i], given=coordinates[:, cond_idx])
+                coordinates[:, i] = distributions[i].icdf(
+                    p[:, i], given=coordinates[:, cond_idx]
+                )
 
         self.sphere_points = sphere_points
         self.coordinates = coordinates
 
 
-class ISORMContour(Contour):   
+class ISORMContour(Contour):
     """
     Contour based on the inverse second-order reliability method.
        
@@ -260,14 +282,14 @@ class ISORMContour(Contour):
         pp. 34-51. DOI: 10.1016/j.marstruc.2018.03.007 .
        
     """
-    
+
     def __init__(self, model, alpha, n_points=180):
         self.model = model
         self.alpha = alpha
         self.n_points = n_points
         super().__init__()
 
-    def _compute(self, ):
+    def _compute(self,):
         """
         Calculates coordinates using ISORM.
 
@@ -296,8 +318,9 @@ class ISORMContour(Contour):
             sphere_points = beta * sphere.unit_sphere_points
 
         # Get probabilities for coordinates of shape.
-        norm_cdf_per_dimension = [sts.norm.cdf(sphere_points[:, dim])
-                                  for dim in range(n_dim)]
+        norm_cdf_per_dimension = [
+            sts.norm.cdf(sphere_points[:, dim]) for dim in range(n_dim)
+        ]
 
         # Inverse procedure. Get coordinates from probabilities.
         data = np.zeros((n_points, n_dim))
@@ -310,8 +333,9 @@ class ISORMContour(Contour):
             else:
                 conditioning_values = data[:, cond_idx]
                 for j in range(n_points):
-                    data[j, i] = dist.icdf(norm_cdf_per_dimension[i][j],
-                                           given=conditioning_values[j])
+                    data[j, i] = dist.icdf(
+                        norm_cdf_per_dimension[i][j], given=conditioning_values[j]
+                    )
 
         self.beta = beta
         self.sphere_points = sphere_points
@@ -366,7 +390,6 @@ class HighestDensityContour(Contour):
     """
 
     def __init__(self, model, alpha, limits=None, deltas=None):
-    
 
         self.model = model
         self.alpha = alpha
@@ -384,14 +407,18 @@ class HighestDensityContour(Contour):
             alpha = self.alpha
             marginal_icdf = self.model.marginal_icdf
             non_exceedance_p = 1 - 0.2 ** n_dim * alpha
-            limits = [(0, marginal_icdf(non_exceedance_p, dim, precision_factor=0.05))
-                      for dim in range(n_dim)]
+            limits = [
+                (0, marginal_icdf(non_exceedance_p, dim, precision_factor=0.05))
+                for dim in range(n_dim)
+            ]
             # TODO use distributions lower bound instead of zero
         else:
             # Check limits length.
             if len(limits) != n_dim:
-                raise ValueError("limits has to be of length equal to number of dimensions, "
-                                 f"but len(limits)={len(limits)}, n_dim={n_dim}.")
+                raise ValueError(
+                    "limits has to be of length equal to number of dimensions, "
+                    f"but len(limits)={len(limits)}, n_dim={n_dim}."
+                )
         self.limits = limits
 
         if deltas is None:
@@ -408,9 +435,11 @@ class HighestDensityContour(Contour):
             try:  # Check if deltas is an iterable
                 iter(deltas)
                 if len(deltas) != n_dim:
-                    raise ValueError("deltas has do be either scalar, "
-                                     "or list of length equal to number of dimensions, "
-                                     f"but was list of length {len(deltas)}")
+                    raise ValueError(
+                        "deltas has do be either scalar, "
+                        "or list of length equal to number of dimensions, "
+                        f"but was list of length {len(deltas)}"
+                    )
                 deltas = list(deltas)
             except TypeError:  # asserts that deltas is scalar
                 deltas = [deltas] * n_dim
@@ -422,7 +451,7 @@ class HighestDensityContour(Contour):
         Calculates coordinates using HDC.
 
         """
-        
+
         limits = self.limits
         deltas = self.deltas
         n_dim = self.model.n_dim
@@ -434,12 +463,16 @@ class HighestDensityContour(Contour):
             try:
                 iter(lim_tuple)
                 if len(lim_tuple) != 2:
-                    raise ValueError("tuples in limits have to be of length 2 ( = (min, max)), "
-                                     f"but tuple with index = {i}, has length = {len(lim_tuple)}.")
+                    raise ValueError(
+                        "tuples in limits have to be of length 2 ( = (min, max)), "
+                        f"but tuple with index = {i}, has length = {len(lim_tuple)}."
+                    )
 
             except TypeError:
-                raise ValueError("tuples in limits have to be of length 2 ( = (min, max)), "
-                                 f"but tuple with index = {i}, has length = 1.")
+                raise ValueError(
+                    "tuples in limits have to be of length 2 ( = (min, max)), "
+                    f"but tuple with index = {i}, has length = 1."
+                )
 
             min_ = min(lim_tuple)
             max_ = max(lim_tuple)
@@ -450,8 +483,10 @@ class HighestDensityContour(Contour):
         f = self.cell_averaged_joint_pdf(cell_center_coordinates)  # TODO
 
         if np.isnan(f).any():
-            raise ValueError("Encountered nan in cell averaged probabilty joint pdf. "
-                             "Possibly invalid distribution parameters?")
+            raise ValueError(
+                "Encountered nan in cell averaged probabilty joint pdf. "
+                "Possibly invalid distribution parameters?"
+            )
 
         # Calculate probability per cell.
         cell_prob = f
@@ -466,10 +501,13 @@ class HighestDensityContour(Contour):
         except RuntimeWarning:
             HDR = np.ones_like(cell_prob)
             prob_m = 0
-            warnings.warn("A probability of 1-alpha could not be reached. "
-                          "Consider enlarging the area defined by limits or "
-                          "setting n_years to a smaller value.",
-                          RuntimeWarning, stacklevel=4)
+            warnings.warn(
+                "A probability of 1-alpha could not be reached. "
+                "Consider enlarging the area defined by limits or "
+                "setting n_years to a smaller value.",
+                RuntimeWarning,
+                stacklevel=4,
+            )
 
         # Calculate fm from probability per cell.
         fm = prob_m
@@ -506,8 +544,10 @@ class HighestDensityContour(Contour):
         if is_single_contour:
             if n_dim == 2:
                 self.coordinates = np.array(
-                    sort_points_to_form_continuous_line(*coordinates,
-                                                        search_for_optimal_start=True)).T
+                    sort_points_to_form_continuous_line(
+                        *coordinates, search_for_optimal_start=True
+                    )
+                ).T
             else:
                 self.coordinates = np.array(coordinates).T
         else:
@@ -515,7 +555,7 @@ class HighestDensityContour(Contour):
             # TODO raise warning
 
     @staticmethod
-    def cumsum_biggest_until(array, limit):        
+    def cumsum_biggest_until(array, limit):
         """
         Find biggest elements to sum to reach limit.
 
@@ -557,7 +597,9 @@ class HighestDensityContour(Contour):
         cum_sum = np.cumsum(sort_vals)
 
         if cum_sum[-1] < limit:
-            warnings.warn("The limit could not be reached.", RuntimeWarning, stacklevel=1)
+            warnings.warn(
+                "The limit could not be reached.", RuntimeWarning, stacklevel=1
+            )
 
         summed_flat_inds = sort_inds[cum_sum <= limit]
 
@@ -569,7 +611,7 @@ class HighestDensityContour(Contour):
 
         return summed_fields, last_summed
 
-    def cell_averaged_joint_pdf(self, coords):  
+    def cell_averaged_joint_pdf(self, coords):
         """
         Calculates the cell averaged joint probabilty density function.
 
@@ -590,7 +632,7 @@ class HighestDensityContour(Contour):
            
 
         """
-        
+
         n_dim = len(coords)
         fbar = np.ones(((1,) * n_dim), dtype=np.float64)
         for dist_idx in range(n_dim):
@@ -598,7 +640,7 @@ class HighestDensityContour(Contour):
 
         return fbar
 
-    def cell_averaged_pdf(self, dist_idx, coords): 
+    def cell_averaged_pdf(self, dist_idx, coords):
         """
         Calculates the cell averaged probabilty density function of a single 
         distribution.
@@ -627,7 +669,7 @@ class HighestDensityContour(Contour):
 
 
         """
-        
+
         n_dim = len(coords)
         dist = self.model.distributions[dist_idx]
         cond_idx = self.model.conditional_on[dist_idx]
@@ -641,7 +683,7 @@ class HighestDensityContour(Contour):
             # Calculate averaged pdf.
             lower = cdf(coords[dist_idx] - 0.5 * dx)
             upper = cdf(coords[dist_idx] + 0.5 * dx)
-            fbar = (upper - lower)
+            fbar = upper - lower
 
             fbar_out_shape[dist_idx] = len(coords[dist_idx])
 
@@ -652,13 +694,14 @@ class HighestDensityContour(Contour):
             for i, cond_value in enumerate(cond_values):
                 lower = cdf(coords[dist_idx] - 0.5 * dx, given=cond_value)
                 upper = cdf(coords[dist_idx] + 0.5 * dx, given=cond_value)
-                fbar[i, :] = (upper - lower)
+                fbar[i, :] = upper - lower
 
             fbar_out_shape[dist_idx] = len(coords[dist_idx])
             fbar_out_shape[cond_idx] = len(coords[cond_idx])
 
         fbar_out = fbar.reshape(fbar_out_shape)
         return fbar_out / dx
+
 
 class DirectSamplingContour(Contour):
     """
@@ -711,8 +754,10 @@ class DirectSamplingContour(Contour):
         alpha = self.alpha
 
         if self.model.n_dim != 2:
-            raise NotImplementedError("DirectSamplingContour is currently only "
-                                      "implemented for two dimensions.")
+            raise NotImplementedError(
+                "DirectSamplingContour is currently only "
+                "implemented for two dimensions."
+            )
 
         if sample is None:
             sample = self.model.draw_sample(n)
@@ -728,8 +773,9 @@ class DirectSamplingContour(Contour):
         # along the x-axis. Angles will increase counterclockwise in a xy-plot.
         # Not enirely sure why the + 2*rad_step is required, but tests show it.
         rad_step = deg_step * np.pi / 180
-        angles = np.arange(0.5 * np.pi + 2 * rad_step, -1.5 * np.pi + rad_step,
-                           -1 * rad_step)
+        angles = np.arange(
+            0.5 * np.pi + 2 * rad_step, -1.5 * np.pi + rad_step, -1 * rad_step
+        )
 
         length_t = len(angles)
         r = np.zeros(length_t)
@@ -745,12 +791,15 @@ class DirectSamplingContour(Contour):
         a = np.array(np.concatenate((angles, [angles[0]]), axis=0))
         r = np.array(np.concatenate((r, [r[0]]), axis=0))
 
-        denominator = np.sin(a[2:]) * np.cos(a[1:len(a) - 1]) - \
-                      np.sin(a[1:len(a) - 1]) * np.cos(a[2:])
+        denominator = np.sin(a[2:]) * np.cos(a[1 : len(a) - 1]) - np.sin(
+            a[1 : len(a) - 1]
+        ) * np.cos(a[2:])
 
-        x_cont = (np.sin(a[2:]) * r[1:len(r) - 1]
-                  - np.sin(a[1:len(a) - 1]) * r[2:]) / denominator
-        y_cont = (-np.cos(a[2:]) * r[1:len(r) - 1]
-                  + np.cos(a[1:len(a) - 1]) * r[2:]) / denominator
+        x_cont = (
+            np.sin(a[2:]) * r[1 : len(r) - 1] - np.sin(a[1 : len(a) - 1]) * r[2:]
+        ) / denominator
+        y_cont = (
+            -np.cos(a[2:]) * r[1 : len(r) - 1] + np.cos(a[1 : len(a) - 1]) * r[2:]
+        ) / denominator
 
         self.coordinates = np.array([x_cont, y_cont]).T

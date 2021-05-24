@@ -7,6 +7,9 @@ virocon
 
 .. image:: https://coveralls.io/repos/github/virocon-organization/viroconcom/badge.svg?branch=master
     :target: https://coveralls.io/github/virocon-organization/viroconcom?branch=master
+    
+.. image:: https://img.shields.io/badge/code%20style-black-000000.svg
+    :target: https://github.com/psf/black
 
 virocon is a software to compute environmental contours. `User Guide`_
 

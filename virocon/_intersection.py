@@ -37,8 +37,8 @@ import numpy as np
 
 
 def _rect_inter_inner(x1, x2):
-    n1 = x1.shape[0]-1
-    n2 = x2.shape[0]-1
+    n1 = x1.shape[0] - 1
+    n2 = x2.shape[0] - 1
     X1 = np.c_[x1[:-1], x1[1:]]
     X2 = np.c_[x2[:-1], x2[1:]]
     S1 = np.tile(X1.min(axis=1), (n2, 1)).T
@@ -116,8 +116,7 @@ def intersection(x1, y1, x2, y2):
         except:
             T[:, i] = np.Inf
 
-    in_range = (T[0, :] >= 0) & (T[1, :] >= 0) & (
-        T[0, :] <= 1) & (T[1, :] <= 1)
+    in_range = (T[0, :] >= 0) & (T[1, :] >= 0) & (T[0, :] <= 1) & (T[1, :] <= 1)
 
     xy0 = T[2:, in_range]
     xy0 = xy0.T

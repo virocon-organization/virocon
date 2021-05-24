@@ -26,7 +26,7 @@ def test_exponentiated_weibull_distribution_cdf():
 
     # CDF(negative value) should be 0
     p = dist.cdf(-1)
-    assert p == 0 
+    assert p == 0
 
 
 def test_exponentiated_weibull_distribution_icdf():
@@ -42,7 +42,7 @@ def test_exponentiated_weibull_distribution_icdf():
     x = dist.icdf(0.5)
     assert x > 0.5
     assert x < 1
-    
+
     # ICDF(0.9) should be roughly 1.8, see Figure 12
     # in https://arxiv.org/pdf/1911.12835.pdf .
     x = dist.icdf(0.9)
@@ -52,8 +52,8 @@ def test_exponentiated_weibull_distribution_icdf():
     # ICDF(value greater than 1) should be nan.
     x = dist.icdf(5)
     assert np.isnan(x)
-        
-        
+
+
 def test_exponentiated_weibull_distribution_pdf():
     """
     Tests the PDF of the exponentiated Weibull distribution.
@@ -77,7 +77,8 @@ def test_exponentiated_weibull_distribution_pdf():
     # PDF(value less than 0) should be 0.
     x = dist.pdf(-1)
     assert x == 0
-        
+
+
 def test_fitting_exponentiated_weibull():
     """
     Tests estimating the parameters of the  exponentiated Weibull distribution.
@@ -90,15 +91,15 @@ def test_fitting_exponentiated_weibull():
     hs = sts.weibull_min.rvs(1.5, loc=0, scale=3, size=1000, random_state=42)
 
     dist.fit(hs, method="wlsq", weights="quadratic")
-    
+
     # shape parameter/ beta should be about 1.5.
     assert dist.parameters["beta"] > 1
     assert dist.parameters["beta"] < 2
-    
+
     # scale parameter / alpha should be about 3.
     assert dist.parameters["alpha"] > 2
     assert dist.parameters["alpha"] < 4
-    
+
     # shape2 parameter / delta should be about 1.
     assert dist.parameters["delta"] > 0.5
     assert dist.parameters["delta"] < 2
@@ -106,42 +107,40 @@ def test_fitting_exponentiated_weibull():
     dist = ExponentiatedWeibullDistribution(f_delta=1)
 
     dist.fit(hs, method="wlsq", weights="quadratic")
-    
+
     # shape parameter/ beta should be about 1.5.
     assert dist.parameters["beta"] > 1
     assert dist.parameters["beta"] < 2
-    
+
     # scale parameter / alpha should be about 3.
     assert dist.parameters["alpha"] > 2
     assert dist.parameters["alpha"] < 4
-    
+
     # shape2 parameter / delta should be 1.
     assert dist.parameters["delta"] == 1
-    
+
     # Check whether the fitted distribution has a working CDF and PDF.
     assert dist.cdf(2) > 0
     assert dist.pdf(2) > 0
-    
-    
+
+
 def test_fit_exponentiated_weibull_with_zero():
     """
     Tests fitting the exponentiated Weibull distribution if the dataset
     contains 0s.
     """
- 
+
     dist = ExponentiatedWeibullDistribution()
- 
+
     # Draw 1000 samples from a Weibull distribution with shape=1.5 and scale=3,
     # which represents significant wave height.
     hs = sts.weibull_min.rvs(1.5, loc=0, scale=3, size=1000, random_state=42)
- 
+
     # Add zero-elements to the dataset.
     hs = np.append(hs, [0, 0, 1.3])
- 
+
     dist.fit(hs, method="wlsq", weights="quadratic")
-    
+
     assert dist.parameters["beta"] == pytest.approx(1.5, abs=0.5)
     assert dist.parameters["alpha"] == pytest.approx(3, abs=1)
     assert dist.parameters["delta"] == pytest.approx(1, abs=0.5)
-
-    

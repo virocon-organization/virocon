@@ -19,14 +19,12 @@ rand_x = ref_x[shuffle_idx]
 rand_y = ref_y[shuffle_idx]
 plt.plot(rand_x, rand_y)
 
-my_x, my_y = sort_points_to_form_continuous_line(rand_x, rand_y, search_for_optimal_start=True)
+my_x, my_y = sort_points_to_form_continuous_line(
+    rand_x, rand_y, search_for_optimal_start=True
+)
 
 plt.plot(my_x, my_y)
 plt.show()
 
 np.testing.assert_array_equal(my_x, ref_x)
 np.testing.assert_array_equal(my_y, ref_y)
-
-
-
-
