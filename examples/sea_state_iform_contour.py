@@ -35,20 +35,28 @@ DNV GL. (2017). Recommended practice DNVGL-RP-C205:
 Environmental conditions and environmental loads.
 """
 
+# Load sea state measurements. This dataset has been used
+# in a benchmarking exercise, see https://github.com/ec-benchmark-organizers/ec-benchmark
+# The dataset was derived from NDBC buoy 44007, https://www.ndbc.noaa.gov/station_page.php?station=44007
 data = read_ec_benchmark_dataset("datasets/ec-benchmark_dataset_A.txt")
 
+# Define the structure of the joint model that we will  use to describe
+# estimate joint distribution of the environmental data. To define a joint 
+# model, we need to define the univariate parametric distributions and the 
+# dependence structure. The dependence structure is defined using parametric
+# functions.
 
 # A 3-parameter power function (a dependence function).
 def _power3(x, a, b, c):
     return a + b * x ** c
 
-
 # A 3-parameter exponential function (a dependence function).
 def _exp3(x, a, b, c):
     return a + b * np.exp(c * x)
 
-
+# Lower and upper interval boundaries for the three parameter values.
 bounds = [(0, None), (0, None), (None, None)]
+
 power3 = DependenceFunction(_power3, bounds)
 exp3 = DependenceFunction(_exp3, bounds)
 
@@ -62,19 +70,20 @@ dist_description_1 = {
     "parameters": {"mu": power3, "sigma": exp3},
 }
 model = GlobalHierarchicalModel([dist_description_0, dist_description_1])
+
+# Fit the model to the data (estimate the model's parameter values).
 model.fit(data)
 
+# Create plots to inspect the model's goodness-of-fit.
 axs = plot_marginal_quantiles(model, data)
 axs = plot_dependence_functions(model)
 ax = plot_2D_isodensity(model, data)
 
+# Compute an IFORM contour with a return period of 20 years.
 alpha = calculate_alpha(1, 20)
 contour = IFORMContour(model, alpha)
 
-coordinates = contour.coordinates
-np.testing.assert_allclose(max(coordinates[:, 0]), 5.0, atol=0.5)
-np.testing.assert_allclose(max(coordinates[:, 1]), 16.1, atol=0.5)
-
+# Plot the contour on top of a scatter diagram of the metocean data.
 ax = plot_2D_contour(contour, sample=data)
 
 plt.show()
