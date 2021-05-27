@@ -70,7 +70,7 @@ dist_description_1 = {
 }
 model = GlobalHierarchicalModel([dist_description_0, dist_description_1])
 
-# Define a dictionary that describes the model
+# Define a dictionary that describes the model.
 semantics = {
     "names": ["Significant wave height", "Zero-crossing period"],
     "symbols": ["H_s", "T_z"],
