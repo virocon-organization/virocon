@@ -87,7 +87,7 @@ Documentation
 
 **Paper.** Our `SoftwareX paper`_ "ViroCon: A software to compute multivariate
 extremes using the environmental contour method." provides a concise
-description of the software.
+description of virocon version 1.
 
 Contributing
 ------------
