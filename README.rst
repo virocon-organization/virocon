@@ -61,6 +61,20 @@ by typing
 .. code:: console
 
    pip install https://github.com/virocon-organization/virocon/archive/master.zip
+   
+   
+virocon is also available as a `conda`_ package. We recommend to first create a new environment.
+
+.. code:: console
+
+   conda create --name virocon python=3.9
+
+And then activate that new environment and install virocon.
+
+.. code:: console
+
+   conda activate virocon
+   conda install -c virocon-organization virocon
 
 
 Usage
@@ -117,3 +131,4 @@ read the file `LICENSE`_.
 .. _here: https://virocon-organization.github.io/viroconcom/
 .. _LICENSE: https://github.com/virocon-organization/viroconcom/blob/master/LICENSE
 .. _SoftwareX paper: https://github.com/ahaselsteiner/publications/blob/master/2018-10-25_SoftwareX_ViroCon_revised.pdf
+.. _conda: https://docs.conda.io/en/latest/
