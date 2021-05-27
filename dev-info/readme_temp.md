@@ -16,6 +16,6 @@ PyPI:
 Anaconda (commands in parantheses are only needed once before the first upload):
  * (conda install conda-build)
  * (conda install anaconda-client)
- * conda build (--python 3.9) conda-recipe
+ * conda build --python 3.9 conda-recipe
  * anaconda login
  * anaconda upload -u virocon-organization <path of file mentioned in build>
