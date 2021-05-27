@@ -71,19 +71,26 @@ dist_description_1 = {
 }
 model = GlobalHierarchicalModel([dist_description_0, dist_description_1])
 
+# Define a dictionary that describes the model
+semantics = {
+    "names": ["Significant wave height", "Zero-up-crossing period"],
+    "symbols": ["H_s", "T_z"],
+    "units": ["m", "s"],
+}
+
 # Fit the model to the data (estimate the model's parameter values).
 model.fit(data)
 
 # Create plots to inspect the model's goodness-of-fit.
-axs = plot_marginal_quantiles(model, data)
-axs = plot_dependence_functions(model)
-ax = plot_2D_isodensity(model, data)
+axs = plot_marginal_quantiles(model, data, semantics)
+axs = plot_dependence_functions(model, semantics)
+ax = plot_2D_isodensity(model, data, semantics, swap_axis=True)
 
 # Compute an IFORM contour with a return period of 20 years.
 alpha = calculate_alpha(1, 20)
 contour = IFORMContour(model, alpha)
 
 # Plot the contour on top of a scatter diagram of the metocean data.
-ax = plot_2D_contour(contour, sample=data)
+ax = plot_2D_contour(contour, sample=data, semantics=semantics, swap_axis=True)
 
 plt.show()
