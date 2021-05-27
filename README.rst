@@ -128,7 +128,7 @@ read the file `LICENSE`_.
 .. _www.python.org: https://www.python.org
 .. _examples: https://github.com/virocon-organization/viroconcom/tree/master/examples
 .. _sea_state_iform_contour.py: https://github.com/virocon-organization/viroconcom/blob/master/examples/sea_state_iform_contour.py
-.. _here: https://virocon-organization.github.io/viroconcom/
-.. _LICENSE: https://github.com/virocon-organization/viroconcom/blob/master/LICENSE
+.. _here: https://virocon-organization.github.io/virocon/
+.. _LICENSE: https://github.com/virocon-organization/virocon/blob/master/LICENSE
 .. _SoftwareX paper: https://github.com/ahaselsteiner/publications/blob/master/2018-10-25_SoftwareX_ViroCon_revised.pdf
 .. _conda: https://docs.conda.io/en/latest/
