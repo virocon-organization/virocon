@@ -5,8 +5,8 @@ virocon
     :target: https://travis-ci.com/virocon-organization/virocon
     :alt: Build status
     
-.. image:: https://coveralls.io/repos/github/virocon-organization/viroconcom/badge.svg?branch=master
-    :target: https://coveralls.io/github/virocon-organization/viroconcom?branch=master
+.. image:: https://coveralls.io/repos/github/virocon-organization/virocon/badge.svg?branch=master
+    :target: https://coveralls.io/github/virocon-organization/virocon?branch=master
     
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
     :target: https://github.com/psf/black
@@ -126,8 +126,8 @@ read the file `LICENSE`_.
 .. _User Guide: https://virocon-organization.github.io/virocon/user_guide.html
 .. _shell: https://en.wikipedia.org/wiki/Command-line_interface#Modern_usage_as_an_operating_system_shell
 .. _www.python.org: https://www.python.org
-.. _examples: https://github.com/virocon-organization/viroconcom/tree/master/examples
-.. _sea_state_iform_contour.py: https://github.com/virocon-organization/viroconcom/blob/master/examples/sea_state_iform_contour.py
+.. _examples: https://github.com/virocon-organization/virocon/tree/master/examples
+.. _sea_state_iform_contour.py: https://github.com/virocon-organization/virocon/blob/master/examples/sea_state_iform_contour.py
 .. _here: https://virocon-organization.github.io/virocon/
 .. _LICENSE: https://github.com/virocon-organization/virocon/blob/master/LICENSE
 .. _SoftwareX paper: https://github.com/ahaselsteiner/publications/blob/master/2018-10-25_SoftwareX_ViroCon_revised.pdf
