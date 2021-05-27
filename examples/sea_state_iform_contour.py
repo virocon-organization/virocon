@@ -12,7 +12,6 @@ from virocon import (
     calculate_alpha,
     plot_marginal_quantiles,
     plot_dependence_functions,
-    plot_2D_isodensity,
     plot_2D_contour,
 )
 
@@ -73,7 +72,7 @@ model = GlobalHierarchicalModel([dist_description_0, dist_description_1])
 
 # Define a dictionary that describes the model
 semantics = {
-    "names": ["Significant wave height", "Zero-up-crossing period"],
+    "names": ["Significant wave height", "Zero-crossing period"],
     "symbols": ["H_s", "T_z"],
     "units": ["m", "s"],
 }
@@ -81,10 +80,14 @@ semantics = {
 # Fit the model to the data (estimate the model's parameter values).
 model.fit(data)
 
+# Print the estimated parameter values
+print(model)
+
 # Create plots to inspect the model's goodness-of-fit.
-axs = plot_marginal_quantiles(model, data, semantics)
-axs = plot_dependence_functions(model, semantics)
-ax = plot_2D_isodensity(model, data, semantics, swap_axis=True)
+fig1, axs = plt.subplots(1, 2, figsize=[10, 4.8])
+plot_marginal_quantiles(model, data, semantics, axes=axs)
+fig2, axs = plt.subplots(1, 2, figsize=[10, 4.8])
+plot_dependence_functions(model, semantics, axes=axs)
 
 # Compute an IFORM contour with a return period of 20 years.
 alpha = calculate_alpha(1, 20)
