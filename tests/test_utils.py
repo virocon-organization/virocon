@@ -36,8 +36,8 @@ def test_sort_points_to_form_continuous_line():
         rand_x, rand_y, search_for_optimal_start=True
     )
 
-    # clockwise or anti-clockwise order is not deterministic,
-    # but both are okay
+    # Clockwise or anti-clockwise order is not deterministic,
+    # but both are okay.
     try:
         np.testing.assert_array_equal(my_x, ref_x)
         np.testing.assert_array_equal(my_y, ref_y)
