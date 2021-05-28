@@ -103,6 +103,9 @@ Documentation
 extremes using the environmental contour method." provides a concise
 description of virocon (version 1).
 
+**Conference presentation.** In a `WESC 2021 presentation`_, we showed how virocon 
+can be used to support the design process of offshore wind turbines. 
+
 Contributing
 ------------
 
@@ -132,3 +135,4 @@ read the file `LICENSE`_.
 .. _LICENSE: https://github.com/virocon-organization/virocon/blob/master/LICENSE
 .. _SoftwareX paper: https://github.com/ahaselsteiner/publications/blob/master/2018-10-25_SoftwareX_ViroCon_revised.pdf
 .. _conda: https://docs.conda.io/en/latest/
+.. _WESC 2021 presentation: http://doi.org/10.13140/RG.2.2.35455.53925
