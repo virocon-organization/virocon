@@ -37,8 +37,8 @@ def get_DNVGL_Hs_Tz():
     
     References
     ----------
-    .. [1] DNVGL standard DNVGL-RP-C205. Environmental conditions and
-        environmental loads Edition August 2017.
+    .. [1] DNV GL (2017). Recommended practice DNVGL-RP-C205: Environmental 
+        conditions and environmental loads.
         
     """
     # TODO docstrings with links to literature
@@ -99,8 +99,8 @@ def get_DNVGL_Hs_U():
         
     References
     ----------
-    .. [1] DNVGL standard DNVGL-RP-C205. Environmental conditions and
-        environmental loads Edition August 2017.
+    .. [1] DNV GL (2017). Recommended practice DNVGL-RP-C205: Environmental 
+        conditions and environmental loads.
     """
 
     def _power3(x, a, b, c):
@@ -157,7 +157,7 @@ def get_OMAE2020_Hs_Tz():
     References
     ----------
     .. [1] Haselsteiner, A.F.; Sander, A.; Ohlendorf, J.H.; Thoben, K.D. (2020)
-        Global hierarchical models for wind and wave contours: physical
+        Global hierarchical models for wind and wave contours: Physical
         interpretations of the dependence functions. OMAE 2020, Fort Lauderdale,
         USA. Proceedings of the 39th International Conference on Ocean, 
         Offshore and Arctic Engineering.
@@ -221,7 +221,7 @@ def get_OMAE2020_V_Hs():
     References
     ----------
     .. [1] Haselsteiner, A.F.; Sander, A.; Ohlendorf, J.H.; Thoben, K.D. (2020)
-        Global hierarchical models for wind and wave contours: physical
+        Global hierarchical models for wind and wave contours: Physical
         interpretations of the dependence functions. OMAE 2020, Fort Lauderdale,
         USA. Proceedings of the 39th International Conference on Ocean, 
         Offshore and Arctic Engineering.
