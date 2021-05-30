@@ -37,7 +37,7 @@ model = GlobalHierarchicalModel(dist_descriptions)
 # Fit the model to the data (estimate the model's parameter values).
 model.fit(data, fit_descriptions)
 
-# Compute four tpye of contours with a return period of 50 years.
+# Compute four type of contours with a return period of 50 years.
 state_duration = 1  # hours
 return_period = 50  # years
 alpha = state_duration / (return_period * 365.25 * 24)
