@@ -1,20 +1,3 @@
-import numpy as np
-import matplotlib.pyplot as plt
-
-from virocon import (
-    read_ec_benchmark_dataset,
-    GlobalHierarchicalModel,
-    WeibullDistribution,
-    LogNormalDistribution,
-    DependenceFunction,
-    WidthOfIntervalSlicer,
-    IFORMContour,
-    calculate_alpha,
-    plot_marginal_quantiles,
-    plot_dependence_functions,
-    plot_2D_contour,
-)
-
 """
 Use a sea state dataset with the variables Hs and Tz,
 fit the join distribution recommended in DNVGL-RP-C203 to 
@@ -34,24 +17,41 @@ DNV GL. (2017). Recommended practice DNVGL-RP-C205:
 Environmental conditions and environmental loads.
 """
 
+import numpy as np
+import matplotlib.pyplot as plt
+
+from virocon import (
+    read_ec_benchmark_dataset,
+    GlobalHierarchicalModel,
+    WeibullDistribution,
+    LogNormalDistribution,
+    DependenceFunction,
+    WidthOfIntervalSlicer,
+    IFORMContour,
+    plot_marginal_quantiles,
+    plot_dependence_functions,
+    plot_2D_contour,
+)
+
 # Load sea state measurements. This dataset has been used
 # in a benchmarking exercise, see https://github.com/ec-benchmark-organizers/ec-benchmark
 # The dataset was derived from NDBC buoy 44007, https://www.ndbc.noaa.gov/station_page.php?station=44007
 data = read_ec_benchmark_dataset("datasets/ec-benchmark_dataset_A.txt")
 
-# Define the structure of the joint model that we will  use to describe
-# estimate joint distribution of the environmental data. To define a joint 
-# model, we need to define the univariate parametric distributions and the 
-# dependence structure. The dependence structure is defined using parametric
-# functions.
+# Define the structure of the joint model that we will use to describe
+# the the environmental data. To define a joint model, we define the
+# univariate parametric distributions and the dependence structure.
+# The dependence structure is defined using parametric functions.
 
 # A 3-parameter power function (a dependence function).
 def _power3(x, a, b, c):
     return a + b * x ** c
 
+
 # A 3-parameter exponential function (a dependence function).
 def _exp3(x, a, b, c):
     return a + b * np.exp(c * x)
+
 
 # Lower and upper interval boundaries for the three parameter values.
 bounds = [(0, None), (0, None), (None, None)]
@@ -90,7 +90,9 @@ fig2, axs = plt.subplots(1, 2, figsize=[10, 4.8])
 plot_dependence_functions(model, semantics, axes=axs)
 
 # Compute an IFORM contour with a return period of 20 years.
-alpha = calculate_alpha(1, 20)
+state_duration = 1  # hours
+return_period = 20  # years
+alpha = state_duration / (return_period * 365.25 * 24)
 contour = IFORMContour(model, alpha)
 
 # Plot the contour on top of a scatter diagram of the metocean data.
