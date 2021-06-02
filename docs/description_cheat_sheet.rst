@@ -48,7 +48,9 @@ For a conditional distribution:
 fit_descriptions
 ~~~~~~~~~~~~~~~~
 
-fit_descriptions define how to fit a model.
+
+fit_descriptions define which methods are used to estimate the parameter values
+of a joint model, i.e. which fitting methods are used.
 A list of fit_descriptions can be passed to the
 :func:`virocon.jointmodels.GlobalHierarchicalModel.fit` method,
 one for each dimension.
@@ -72,7 +74,8 @@ semantics
 ~~~~~~~~~
 
 The semantics dict describes the semantics of the model.
-It's content is not interpreted, but rather passed to e.g. plotting functions.
+It's content is not interpreted, but rather passed to e.g. plotting functions,
+where it is used to set label texts.
 Each key contains a list.
 Each list contains one entry for each dimension of the model.
 
