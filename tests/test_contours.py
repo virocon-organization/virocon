@@ -142,7 +142,7 @@ def test_DirectSamplingContour(seastate_model):
     # Because a random sample is drawn (and fixing the random seed with
     # .np.random.RandomState) does not work, results will be different each
     # time the test is run. Sometimes the test might fail.
-    my_ds_contour = DirectSamplingContour(seastate_model, alpha, n=500000, deg_step=6)
+    my_ds_contour = DirectSamplingContour(seastate_model, alpha, deg_step=6)
 
     my_coordinates = my_ds_contour.coordinates
 
