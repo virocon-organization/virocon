@@ -14,3 +14,4 @@ User Guide
     workflow
     jointdistribution_and_contours
     fitting
+    description_cheat_sheet
