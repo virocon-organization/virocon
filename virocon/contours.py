@@ -717,7 +717,7 @@ class DirectSamplingContour(Contour):
         falls outside the environmental contour.
     n : int, optional
         Number of data points that shall be Monte Carlo simulated. Defaults
-        to 'auto', which calculates n based on alpha: n = int(100 / alpha).
+        to None, which calculates n based on alpha: n = int(100 / alpha).
     deg_step : float, optional
         Directional step in degrees. Defaults to 5.
     sample : 2-dimensional ndarray, optional
@@ -740,10 +740,10 @@ class DirectSamplingContour(Contour):
 
     """
 
-    def __init__(self, model, alpha, n='auto', deg_step=5, sample=None):
+    def __init__(self, model, alpha, n=None, deg_step=5, sample=None):
         self.model = model
         self.alpha = alpha
-        if n == 'auto':
+        if n is None:
             n = int(100 / alpha)
         self.n = n
         self.deg_step = deg_step
