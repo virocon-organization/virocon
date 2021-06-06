@@ -44,11 +44,11 @@ def get_DNVGL_Hs_Tz():
     # TODO docstrings with links to literature
     # DNVGL 3.6.3
     def _power3(x, a, b, c):
-        """a + b * h_s^c"""
+        """$a + b * h_s^{c}$"""
         return a + b * x ** c
 
     def _exp3(x, a, b, c):
-        """a + b * exp(c * h_s)"""
+        """$a + b * \exp(c * h_s)$"""
         return a + b * np.exp(c * x)
 
     bounds = [(0, None), (0, None), (None, None)]
@@ -106,6 +106,7 @@ def get_DNVGL_Hs_U():
     """
 
     def _power3(x, a, b, c):
+        """$a + b * h_s^{c}$"""
         return a + b * x ** c
 
     bounds = [(0, None), (0, None), (None, None)]
@@ -166,9 +167,11 @@ def get_OMAE2020_Hs_Tz():
     """
 
     def _asymdecrease3(x, a, b, c):
+        """$a + b / (1 + c * h_s)$"""
         return a + b / (1 + c * x)
 
     def _lnsquare2(x, a, b, c):
+        """$\ln(a + b \sqrt{h_s / 9.81})$"""
         return np.log(a + b * np.sqrt(np.divide(x, 9.81)))
 
     bounds = [(0, None), (0, None), (None, None)]
