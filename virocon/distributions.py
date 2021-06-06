@@ -72,6 +72,7 @@ class ConditionalDistribution:
         self.param_names = distribution.parameters.keys()
         self.conditional_parameters = {}
         self.fixed_parameters = {}
+        self.conditioning_values = None
         # TODO check that dependency functions are not duplicates
 
         # Check if the parameters dict contains keys/parameters that
