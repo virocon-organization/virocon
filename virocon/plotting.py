@@ -159,9 +159,9 @@ def plot_dependence_functions(model, semantics=None, par_rename={}, axes=None):
         string. If e.g. the model has a distribution with a conditional
         parameter named 'mu' one could change that in the plot to '$mu$' with
         {'mu': '$mu$'}.
-    axes: int, optional
-        Indicates the number of subplots. If not further specified, axes are
-        dependend on the number of dimensions of the model. Defaults to None.
+    axes: list of matplotlib axes objects, optional
+        If not further specified, the number of axes are dependend on the number
+        of dimensions of the model. Defaults to None.
 
     Returns
     -------
