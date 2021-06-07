@@ -43,7 +43,9 @@ data = read_ec_benchmark_dataset("datasets/ec-benchmark_dataset_A.txt")
 # univariate parametric distributions and the dependence structure.
 # The dependence structure is defined using parametric functions.
 
-# A 3-parameter power function (a dependence function).
+# A 3-parameter power function (a dependence function). If a docstring 
+# is specified, it will be used in the legend when plot_dependence_functions() 
+# is called.
 def _power3(x, a, b, c):
     """$a + b * h_s^{c}$"""
     return a + b * x ** c
