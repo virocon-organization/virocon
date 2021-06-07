@@ -10,6 +10,7 @@ from virocon import (
     WeibullDistribution,
     GlobalHierarchicalModel,
     get_DNVGL_Hs_Tz,
+    get_OMAE2020_V_Hs,
     plot_marginal_quantiles,
     plot_dependence_functions,
     plot_2D_isodensity,
@@ -50,33 +51,27 @@ def seastate_model():
 @pytest.fixture(scope="module")
 def fitted_model():
     """
-    Here we fit the joint distribution model described by Vanem and Bitner-Gregersen (2012)
+    Here we fit the joint distribution model described by Haselsteiner et al. (2020)
     to a dataset. We will use this model for various plot tests.
     """
-    dist_descriptions, fit_descriptions, semantics = get_DNVGL_Hs_Tz()
+    dist_descriptions, fit_descriptions, semantics = get_OMAE2020_V_Hs()
     model = GlobalHierarchicalModel(dist_descriptions)
-    data = read_ec_benchmark_dataset("datasets/ec-benchmark_dataset_A_1year.txt")
+    data = read_ec_benchmark_dataset("datasets/ec-benchmark_dataset_D_1year.txt")
     model.fit(data, fit_descriptions)
     
     return model
 
 
 @pytest.fixture(scope="module")
-def semantics():
+def semantics_fitted_model():
     """
-    Semantics dictionary for the seastate_model and the fitted_model.
+    Semantics dictionary for the fitted_model.
     """
-    dist_descriptions, fit_descriptions, semantics = get_DNVGL_Hs_Tz()
+    dist_descriptions, fit_descriptions, semantics = get_OMAE2020_V_Hs()
 
     return semantics
 
 
-def test_plot_dependence_function(seastate_model, fitted_model, semantics):
-    # This model was not fitted to data.
+def test_plot_dependence_function(seastate_model, fitted_model, semantics_fitted_model):
     plot_dependence_functions(seastate_model)
-
-    # This model was fitted
-    plot_dependence_functions(fitted_model, semantics)
-
-    plt.show()
-
+    plot_dependence_functions(fitted_model, semantics_fitted_model)

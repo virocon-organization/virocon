@@ -233,9 +233,11 @@ def get_OMAE2020_V_Hs():
     """
 
     def _logistics4(x, a=1, b=1, c=-1, d=1):
+        """$a + b / (1 + \exp[c * (v -d)])$"""
         return a + b / (1 + np.exp(c * (x - d)))
 
     def _alpha3(x, a, b, c, d_of_x):
+        """$(a + b * v^{c}) / 2.0445^{1 / F()}$"""
         return (a + b * x ** c) / 2.0445 ** (1 / d_of_x(x))
 
     logistics_bounds = [(0, None), (0, None), (None, 0), (0, None)]
