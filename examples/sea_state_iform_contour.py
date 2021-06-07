@@ -45,11 +45,13 @@ data = read_ec_benchmark_dataset("datasets/ec-benchmark_dataset_A.txt")
 
 # A 3-parameter power function (a dependence function).
 def _power3(x, a, b, c):
+    """$a + b * h_s^{c}$"""
     return a + b * x ** c
 
 
 # A 3-parameter exponential function (a dependence function).
 def _exp3(x, a, b, c):
+    """$a + b * \exp(c * h_s)$"""
     return a + b * np.exp(c * x)
 
 
