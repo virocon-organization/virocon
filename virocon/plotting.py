@@ -228,8 +228,8 @@ def plot_dependence_functions(model, semantics=None, par_rename={}, axes=None):
                         splitted_symbol[0].lower() + "_" + "_".join(splitted_symbol[1:])
                     )
 
-                # Replace x  if it is not part of \exp which is checked by checking whether
-                # x is followed by e.
+                # Replace 'x' if it is not part of '\exp' which is checked by checking whether
+                # 'x' follows '\e'.
                 dep_func_label = re.sub(
                     r"(?<!\\e)x", "{" + var_symbol + "}", dep_func_label
                 )
