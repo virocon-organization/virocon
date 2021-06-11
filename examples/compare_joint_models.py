@@ -1,5 +1,5 @@
 """
-Fit two different  join distribution models to a wind-wave 
+Fit two different joint distribution models to a wind-wave 
 dataset and compare their goodness of fits.
 """
 import numpy as np
