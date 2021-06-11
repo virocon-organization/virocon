@@ -80,5 +80,6 @@ def test_plot_dependence_function(seastate_model, fitted_model, semantics_fitted
         "units": ["m", "s"],
     }
     plot_dependence_functions(seastate_model, semantics)
-    plot_dependence_functions(fitted_model, semantics_fitted_model)
+    plot_dependence_functions(fitted_model, semantics_fitted_model, 
+        par_rename={"alpha" : r"$\alpha$", "beta" : r"$\beta$"})
     #plt.show()
