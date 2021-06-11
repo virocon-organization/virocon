@@ -1,7 +1,9 @@
+import re
+from functools import partial
+
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy.stats as sts
-from functools import partial
 
 from matplotlib.colors import LinearSegmentedColormap
 
@@ -228,8 +230,9 @@ def plot_dependence_functions(model, semantics=None, par_rename={}, axes=None):
 
                 # Replace x  if it is not part of \exp which is checked by checking whether
                 # x is followed by e.
-                import re
-                dep_func_label = re.sub(r"(?<!\\e)x", "{" + var_symbol + "}", dep_func_label)
+                dep_func_label = re.sub(
+                    r"(?<!\\e)x", "{" + var_symbol + "}", dep_func_label
+                )
 
                 # Replace parameter values (a, b, ..) with estimated values.
                 for par_name_local, par_value_local in dep_func.parameters.items():
