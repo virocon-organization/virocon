@@ -16,8 +16,6 @@ model = GlobalHierarchicalModel(dist_descriptions)
 # Estimate the model's parameter values (fitting).
 model.fit(data)
 
-
-
 # Compute an IFORM contour with a return period of 50 years.
 tr = 50 # Return period in years.
 ts = 1 # Sea state duration in hours.
@@ -26,7 +24,5 @@ contour = IFORMContour(model, alpha)
 
 # Plot the contour.
 import matplotlib.pyplot as plt
-ax = plot_2D_contour(contour, data, semantics=semantics, swap_axis=True)
-ax.spines['top'].set_visible(False)
-ax.spines['right'].set_visible(False)
+plot_2D_contour(contour, data, semantics=semantics, swap_axis=True)
 plt.show()
