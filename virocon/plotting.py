@@ -163,7 +163,7 @@ def plot_dependence_functions(model, semantics=None, par_rename={}, axes=None):
         parameter named 'mu' one could change that in the plot to '$mu$' with
         {'mu': '$mu$'}.
     axes: list of matplotlib axes objects, optional
-        If not further specified, the number of axes are dependend on the number
+        If not further specified, the number of axes are dependent on the number
         of dimensions of the model. Defaults to None.
 
     Returns
