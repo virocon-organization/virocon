@@ -14,7 +14,7 @@ virocon
 
 virocon is a software to compute environmental contours.
 
-A longer description is available at: https://github.com/virocon-organization/viroconcom
+A longer description is available at: https://github.com/virocon-organization/virocon
 """
 
 
