@@ -127,7 +127,7 @@ def get_DNVGL_Hs_U():
     fit_descriptions = None
 
     semantics = {
-        "names": ["Significant wave height", "Mean wind speed"],
+        "names": ["Significant wave height", "Wind speed"],
         "symbols": ["H_s", "U"],
         "units": ["m", "m s$^{-1}$"],
     }
@@ -262,7 +262,7 @@ def get_OMAE2020_V_Hs():
     fit_descriptions = [fit_description_v, fit_description_hs]
 
     semantics = {
-        "names": ["Mean wind speed", "Significant wave height"],
+        "names": ["Wind speed", "Significant wave height"],
         "symbols": ["V", "H_s"],
         "units": ["m s$^{-1}$", "m",],
     }
