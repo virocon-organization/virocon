@@ -15,67 +15,65 @@ __all__ = ["DependenceFunction"]
 class DependenceFunction:
     """
     Function to describe the dependencies between the variables.
-    
+
     The dependence function is a function for the parameters of the dependent
     variable.
-    
+
     Parameters
     ----------
     func : callable
         Dependence functions for the parameter.
-        Maps a conditioning value x and an arbitrary number of parameters to 
-        the value of a distributions parameter y. 
-        func(x, *args) -> y     
+        Maps a conditioning value x and an arbitrary number of parameters to
+        the value of a distributions parameter y.
+        func(x, *args) -> y
     bounds : list
         Boundaries for parameters of func.
         Fixed scalar boundaries for func's parameters.
-        E.g. 0 <= z <= 0 . 
+        E.g. 0 <= z <= 0 .
     constraints : dict
-        More complex contraints modeled as unequality constraints with 
-        functions of the parameters of func z. 
+        More complex contraints modeled as unequality constraints with
+        functions of the parameters of func z.
         I.e. c_j(z) >= 0 .
         For further explanation see:
         https://docs.scipy.org/doc/scipy-1.6.2/reference/tutorial/optimize.html#sequential-least-squares-programming-slsqp-algorithm-method-slsqp
     weights : callable, optional
         If given, weighted least squares fitting instead of least squares is
         used. Defaults to None.
-        Given the data as observation tuples (x_i, y_i) maps from the vector 
-        x and y to the vector of weights. 
+        Given the data as observation tuples (x_i, y_i) maps from the vector
+        x and y to the vector of weights.
         E.g. lambda x, y : y to linearly weight the observations with y_i.
     latex : string, optional
         If given, this string will be used in plots to label the dependence
-        function. It is interpreted as latex and shoul be specified using the 
+        function. It is interpreted as latex and shoul be specified using the
         same symbols that are used in the function definition.
         Example latex = $a + b * x^{c}$
-    
-   
-    Examples 
+
+
+    Examples
     --------
     The dependence function is a function for the parameters of the dependent
-    variable. E.g.the zero-upcrossing period is dependent on the 
+    variable. E.g.the zero-upcrossing period is dependent on the
     significant wave height (Hs|Tp). Assuming, the zero-upcrossing period is
     lognormally distributed, the parameters mu and sigma are described as
     functions of the significant wave height (equations given by
-    Haselsteiner et. al(2021) [1]_ ). 
-    
+    Haselsteiner et. al(2020) [1]_ ).
+
     :math:`\\mu_{tz}(h_s) =  ln \\left(c_1 + c_2 \\sqrt{ \\frac{h_s)}{ g}} \\right)`
-    
-    :math:`\\sigma_{tz}(h_s) = c_3 + \\frac{c_4)}{1+ c_5h_s}` 
-    
+
+    :math:`\\sigma_{tz}(h_s) = c_3 + \\frac{c_4)}{1+ c_5h_s}`
+
     References
     ----------
-    .. [1] Andreas F. Haselsteiner, Ryan G. Coe, Lance Manuel, Wei Chai, 
-        Bernt Leira, Guilherme Clarindo, C. Guedes Soares, Ásta Hannesdóttir,
-        Nikolay Dimitrov, Aljoscha Sander, Jan-Hendrik Ohlendorf, 
-        Klaus-Dieter Thoben, Guillaume de Hauteclocque, Ed Mackay, Philip Jonathan,
-        Chi Qiao, Andrew Myers, Anna Rode, Arndt Hildebrandt, Boso Schmidt, 
-        Erik Vanem, Arne Bang Huseby(2021)    
-        A benchmarking exercise for environmental contours.
-    
+    .. [1] Haselsteiner, A. F., Sander, A., Ohlendorf, J.-H., & Thoben, K.-D. (2020).
+    Global hierarchical models for wind and wave contours: Physical interpretations
+    of the dependence functions. Proc. 39th International Conference on Ocean,
+    Offshore and Arctic Engineering (OMAE 2020). https://doi.org/10.1115/OMAE2020-18668
     """
 
     # TODO implement check of bounds and constraints
-    def __init__(self, func, bounds=None, constraints=None, weights=None, latex=None, **kwargs):
+    def __init__(
+        self, func, bounds=None, constraints=None, weights=None, latex=None, **kwargs
+    ):
         # TODO add fitting method
         self.func = func
         self.bounds = bounds
@@ -137,15 +135,15 @@ class DependenceFunction:
     def fit(self, x, y):
         """
         Determine the parameters of the dependence function.
-        
+
         Parameters
         ----------
-        
+
         x : array-like
             Input data (data consists of n observations (x_i, y_i)).
         y :array-like
             Target data (data consists of n observations (x_i, y_i)).
-            
+
         Raises
         ------
         RuntimeError
@@ -208,7 +206,7 @@ class DependenceFunction:
         Register a dependent DependenceFunction.
         The callback method of all registered dependents is called once this
         DependenceFunction was fitted.
-        
+
         Parameters
         ----------
         dependent : DependenceFunction
@@ -220,7 +218,7 @@ class DependenceFunction:
     def callback(self, caller):
         """
         Call to signal, that caller was fitted.
-        
+
         Parameters
         ----------
         caller : DependeneFunction
