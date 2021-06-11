@@ -74,5 +74,11 @@ def semantics_fitted_model():
 
 def test_plot_dependence_function(seastate_model, fitted_model, semantics_fitted_model):
     plot_dependence_functions(seastate_model)
+    semantics = {
+        "names": ["Significant wave height", "Zero-up-crossing wave period"],
+        "symbols": ["H_s", "T_z"],
+        "units": ["m", "s"],
+    }
+    plot_dependence_functions(seastate_model, semantics)
     plot_dependence_functions(fitted_model, semantics_fitted_model)
     #plt.show()
