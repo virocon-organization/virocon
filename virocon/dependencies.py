@@ -42,6 +42,12 @@ class DependenceFunction:
         Given the data as observation tuples (x_i, y_i) maps from the vector 
         x and y to the vector of weights. 
         E.g. lambda x, y : y to linearly weight the observations with y_i.
+    latex : string, optional
+        If given, this string will be used in plots to label the dependence
+        function. It is interpreted as latex and shoul be specified using the 
+        same symbols that are used in the function definition.
+        Example latex = $a + b * h_s^{c}$
+    
    
     Examples 
     --------
@@ -69,12 +75,13 @@ class DependenceFunction:
     """
 
     # TODO implement check of bounds and constraints
-    def __init__(self, func, bounds=None, constraints=None, weights=None, **kwargs):
+    def __init__(self, func, bounds=None, constraints=None, weights=None, latex=None, **kwargs):
         # TODO add fitting method
         self.func = func
         self.bounds = bounds
         self.constraints = constraints
         self.weights = weights
+        self.latex = latex
 
         # Read default values from function or set default as 1 if not specified.
         sig = signature(func)
