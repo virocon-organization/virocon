@@ -46,7 +46,7 @@ class DependenceFunction:
         If given, this string will be used in plots to label the dependence
         function. It is interpreted as latex and shoul be specified using the
         same symbols that are used in the function definition.
-        Example latex = $a + b * x^{c}$
+        Example: latex="$a + b * x^{c}$"
 
 
     Examples
