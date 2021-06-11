@@ -85,13 +85,13 @@ virocon is designed as an importable package.
 The folder `examples`_ contains python files that show how one can
 import and use virocon.
 
-As an example, to run the file `sea_state_iform_contour.py`_, use
+As an example, to run the file `hstz_contour_simple.py`_, use
 your shell to navigate to the folder that contains the file. Make sure
 that you have installed matplotlib and run the Python file by typing
 
 .. code:: console
 
-   python sea_state_iform_contour.py
+   python hstz_contour_simple.py
 
 Documentation
 -------------
@@ -130,7 +130,7 @@ read the file `LICENSE`_.
 .. _shell: https://en.wikipedia.org/wiki/Command-line_interface#Modern_usage_as_an_operating_system_shell
 .. _www.python.org: https://www.python.org
 .. _examples: https://github.com/virocon-organization/virocon/tree/master/examples
-.. _sea_state_iform_contour.py: https://github.com/virocon-organization/virocon/blob/master/examples/sea_state_iform_contour.py
+.. _hstz_contour_simple.py: https://github.com/virocon-organization/virocon/blob/master/examples/hstz_contour_simple.py
 .. _here: https://virocon-organization.github.io/virocon/
 .. _LICENSE: https://github.com/virocon-organization/virocon/blob/master/LICENSE
 .. _SoftwareX paper: https://github.com/ahaselsteiner/publications/blob/master/2018-10-25_SoftwareX_ViroCon_revised.pdf
