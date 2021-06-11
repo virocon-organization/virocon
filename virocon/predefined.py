@@ -171,7 +171,7 @@ def get_OMAE2020_Hs_Tz():
 
     bounds = [(0, None), (0, None), (None, None)]
 
-    sigma_dep = DependenceFunction(_asymdecrease3, bounds=bounds, latex="a + b / (1 + c * x)")
+    sigma_dep = DependenceFunction(_asymdecrease3, bounds=bounds, latex="$a + b / (1 + c * x)$")
     mu_dep = DependenceFunction(_lnsquare2, bounds=bounds, latex="$\ln(a + b \sqrt{x / 9.81})$")
 
     dist_description_hs = {

@@ -216,15 +216,33 @@ def plot_dependence_functions(model, semantics=None, par_rename={}, axes=None):
                 )
             if dep_func.latex is not None:
                 dep_func_label = dep_func.latex
+
+                # Replace 'x' with variable symbol (e.g. 'h_s')
+                splitted_symbol = x_symbol.split("_")
+                if len(splitted_symbol) == 1:  # If there was no underscore.
+                    var_symbol = splitted_symbol[0].lower()
+                else:  # If there was one or many underscores.
+                    var_symbol = (
+                        splitted_symbol[0].lower() + "_" + "_".join(splitted_symbol[1:])
+                    )
+
+                # Replace x  if it is not part of \exp which is checked by checking whether
+                # x is followed by e.
+                import re
+                dep_func_label = re.sub(r"(?<!e)x", "{" + var_symbol + "}", dep_func_label)
+
+                # Replace parameter values (a, b, ..) with estimated values.
                 for par_name_local, par_value_local in dep_func.parameters.items():
                     dep_func_label = dep_func_label.replace(
                         par_name_local, "{:.2f}".format(par_value_local)
                     )
-            else: 
+            else:
                 if isinstance(dep_func.func, partial) == False:
                     dep_func_label = "Dependence function: " + dep_func.func.__name__
-                else: 
-                    dep_func_label = "Dependence function: " + dep_func.func.func.__name__
+                else:
+                    dep_func_label = (
+                        "Dependence function: " + dep_func.func.func.__name__
+                    )
             ax.plot(x, dep_func(x), c="#004488", label=dep_func_label)
             ax.set_xlabel(x_label)
             if par_name in par_rename:
