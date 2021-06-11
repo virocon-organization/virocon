@@ -234,7 +234,7 @@ def plot_dependence_functions(model, semantics=None, par_rename={}, axes=None):
                     r"(?<!\\e)x", "{" + var_symbol + "}", dep_func_label
                 )
 
-                # Replace parameter values (a, b, ..) with estimated values.
+                # Replace symbols of parameters (a, b, ..) with estimated values.
                 for par_name_local, par_value_local in dep_func.parameters.items():
                     dep_func_label = dep_func_label.replace(
                         par_name_local, "{:.2f}".format(par_value_local)
