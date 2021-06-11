@@ -1,5 +1,5 @@
 """
-Brief example to compute a sea state contour.
+Brief example that computes a sea state contour.
 """
 from virocon import (read_ec_benchmark_dataset, get_OMAE2020_Hs_Tz, 
     GlobalHierarchicalModel, IFORMContour, plot_2D_contour)
