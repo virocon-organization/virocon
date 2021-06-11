@@ -1,10 +1,13 @@
 """
-Use a sea state dataset with the variables Hs and Tz,
-fit the join distribution recommended in DNVGL-RP-C203 to 
-it and compute an IFORM contour. This example reproduces
-the results published in Haseltseiner et al. (2019).
+A comprehensive example that shows the whole workflow of
+1) Loading data
+2) Defining the model structure for a joint distribution
+3) Estimating the parameter values of the model ("Fitting")
+4) Computing an environmental contour
 
-Such a work flow is for example typical in ship design.
+This example reproduces the results published in Haseltseiner 
+et al. (2019). The Hs-Tz join distribution model recommended 
+in DNVGL-RP-C203 (2017) is used.
 
 Haselsteiner, A. F., Coe, R. G., Manuel, L., Nguyen, P. T. T., 
 Martin, N., & Eckert-Gallup, A. (2019). A benchmarking exercise 
