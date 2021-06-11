@@ -43,12 +43,12 @@ data = read_ec_benchmark_dataset("datasets/ec-benchmark_dataset_A.txt")
 # univariate parametric distributions and the dependence structure.
 # The dependence structure is defined using parametric functions.
 
-# A 3-parameter power function (a dependence function).
+# A 3-parameter power function, which will be used as a dependence function.
 def _power3(x, a, b, c):
     return a + b * x ** c
 
 
-# A 3-parameter exponential function (a dependence function).
+# A 3-parameter exponential function, which will be used a dependence function.
 def _exp3(x, a, b, c):
     return a + b * np.exp(c * x)
 
@@ -56,8 +56,8 @@ def _exp3(x, a, b, c):
 # Lower and upper interval boundaries for the three parameter values.
 bounds = [(0, None), (0, None), (None, None)]
 
-power3 = DependenceFunction(_power3, bounds)
-exp3 = DependenceFunction(_exp3, bounds)
+power3 = DependenceFunction(_power3, bounds, latex="$a + b * x^{c}$")
+exp3 = DependenceFunction(_exp3, bounds, latex="$a + b * \exp(c * x)$")
 
 dist_description_0 = {
     "distribution": WeibullDistribution(),
