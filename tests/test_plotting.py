@@ -32,7 +32,7 @@ def seastate_model():
         return a + b * np.exp(c * x)
 
     bounds = [(0, None), (0, None), (None, None)]
-    power3 = DependenceFunction(_power3, bounds)
+    power3 = DependenceFunction(_power3, bounds, latex="$a + b * x^{c}$")
     exp3 = DependenceFunction(_exp3, bounds)
 
     dist_description_0 = {
@@ -75,3 +75,5 @@ def semantics_fitted_model():
 def test_plot_dependence_function(seastate_model, fitted_model, semantics_fitted_model):
     plot_dependence_functions(seastate_model)
     plot_dependence_functions(fitted_model, semantics_fitted_model)
+
+    plt.show()

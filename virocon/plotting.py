@@ -214,24 +214,17 @@ def plot_dependence_functions(model, semantics=None, par_rename={}, axes=None):
                     marker="x",
                     label="estimates from intervals",
                 )
-            if dep_func.func.__doc__ and isinstance(dep_func.func, partial) == False:
-                dep_func_label = dep_func.func.__doc__
+            if dep_func.latex is not None:
+                dep_func_label = dep_func.latex
                 for par_name_local, par_value_local in dep_func.parameters.items():
                     dep_func_label = dep_func_label.replace(
                         par_name_local, "{:.2f}".format(par_value_local)
                     )
-            else:
-                if isinstance(dep_func.func, partial):  # E.g. the _alpha3 in predefined.py
-                    if dep_func.func.func.__doc__:
-                        dep_func_label = dep_func.func.func.__doc__
-                        for par_name_local, par_value_local in dep_func.parameters.items():
-                            dep_func_label = dep_func_label.replace(
-                                par_name_local, "{:.2f}".format(par_value_local)
-                            )
-                    else:
-                        dep_func_label = "Dependence function: " + dep_func.func.func.__name__
-                else:
+            else: 
+                if isinstance(dep_func.func, partial) == False:
                     dep_func_label = "Dependence function: " + dep_func.func.__name__
+                else: 
+                    dep_func_label = "Dependence function: " + dep_func.func.func.__name__
             ax.plot(x, dep_func(x), c="#004488", label=dep_func_label)
             ax.set_xlabel(x_label)
             if par_name in par_rename:
