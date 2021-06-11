@@ -240,7 +240,7 @@ def plot_dependence_functions(model, semantics=None, par_rename={}, axes=None):
                         par_name_local, "{" + "{:.2f}".format(par_value_local) + "}"
                     )
             else:
-                if isinstance(dep_func.func, partial) == False:
+                if not isinstance(dep_func.func, partial):
                     dep_func_label = "Dependence function: " + dep_func.func.__name__
                 else:
                     dep_func_label = (
