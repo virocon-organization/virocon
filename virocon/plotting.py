@@ -70,7 +70,7 @@ def get_default_semantics(n_dim):
 
     semantics = {
         "names": [f"Variable {dim+1}" for dim in range(n_dim)],
-        "symbols": [f"X{dim+1}" for dim in range(n_dim)],
+        "symbols": [f"X_{dim+1}" for dim in range(n_dim)],
         "units": ["arb. unit" for dim in range(n_dim)],
     }
     return semantics
