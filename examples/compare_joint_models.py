@@ -26,7 +26,7 @@ data = read_ec_benchmark_dataset("datasets/ec-benchmark_dataset_D.txt")
 
 # Define the structure of the first joint distribution model. This model
 # is recommended in the DNVGL's "Recommended practice DNVGL-RP-C205: Environmental
-# conditions and environmental loads." (2017).
+# conditions and environmental loads." (2017) in section 3.6.4.
 dist_descriptions1, fit_descriptions1, semantics1 = get_DNVGL_Hs_U()
 model1 = GlobalHierarchicalModel(dist_descriptions1)
 
