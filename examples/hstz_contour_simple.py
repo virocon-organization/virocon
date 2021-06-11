@@ -26,5 +26,7 @@ contour = IFORMContour(model, alpha)
 
 # Plot the contour.
 import matplotlib.pyplot as plt
-plot_2D_contour(contour, data, semantics=semantics, swap_axis=True)
+ax = plot_2D_contour(contour, data, semantics=semantics, swap_axis=True)
+ax.spines['top'].set_visible(False)
+ax.spines['right'].set_visible(False)
 plt.show()

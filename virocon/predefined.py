@@ -70,7 +70,7 @@ def get_DNVGL_Hs_Tz():
     fit_descriptions = None
 
     semantics = {
-        "names": ["Significant wave height", "Zero-crossing wave period"],
+        "names": ["Significant wave height", "Zero-up-crossing period"],
         "symbols": ["H_s", "T_z"],
         "units": ["m", "s"],
     }
@@ -191,7 +191,7 @@ def get_OMAE2020_Hs_Tz():
     fit_descriptions = [fit_description_hs, None]
 
     semantics = {
-        "names": ["Significant wave height", "Zero-crossing wave period"],
+        "names": ["Significant wave height", "Zero-up-crossing period"],
         "symbols": ["H_s", "T_z"],
         "units": ["m", "s"],
     }
