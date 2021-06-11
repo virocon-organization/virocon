@@ -56,7 +56,8 @@ setup(
     python_requires=">=3.7",
     packages=["virocon"],
     install_requires=[
-        "matplotlib>=2.2.0" "networkx",
+        "matplotlib>=2.2.0",
+        "networkx",
         "numpy",
         "pandas",
         "scikit-learn",
