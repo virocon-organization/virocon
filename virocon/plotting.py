@@ -3,6 +3,7 @@ from functools import partial
 
 import numpy as np
 import matplotlib.pyplot as plt
+from numpy.lib.shape_base import expand_dims
 import scipy.stats as sts
 
 from matplotlib.colors import LinearSegmentedColormap
@@ -303,10 +304,13 @@ def plot_2D_isodensity(model, sample, semantics=None, swap_axis=False, ax=None):
     sample = np.asarray(sample)
     ax.scatter(sample[:, x_idx], sample[:, y_idx], c="k", marker=".", alpha=0.3)
 
-    x_lower = min(sample[:, 0])
-    x_upper = max(sample[:, 0])
-    y_lower = min(sample[:, 1])
-    y_upper = max(sample[:, 1])
+    x_range = max(sample[:, 0]) -  min((sample[:, 0]))
+    expand_factor = 0.05
+    x_lower = min(sample[:, 0]) - expand_factor * x_range
+    x_upper = max(sample[:, 0]) + expand_factor * x_range
+    y_range = max(sample[:, 1]) -  min((sample[:, 1]))
+    y_lower = min(sample[:, 1]) - expand_factor * y_range
+    y_upper = max(sample[:, 1]) + expand_factor * y_range
     x, y = np.linspace(((x_lower, y_lower)), (x_upper, y_upper)).T
     X, Y = np.meshgrid(x, y)
     grid_flat = np.c_[X.ravel(), Y.ravel()]
@@ -318,11 +322,16 @@ def plot_2D_isodensity(model, sample, semantics=None, swap_axis=False, ax=None):
         X = Y
         Y = tmp
 
-    q = str(np.quantile(Z, q=0.4))
-    min_lvl = int(q.split("e")[1])
+    # Define the lowest isodensity level based on the density values in the evaluated grid.
+    q = np.quantile(f, q=0.5)
+    if q > 0:
+        min_lvl = int(str(q).split("e")[1])
+    else:
+        min_lvl = -5
     n_levels = np.abs(min_lvl)
     levels = np.logspace(-1, min_lvl, num=n_levels)[::-1]
     lvl_labels = [f"1E{int(i)}" for i in np.linspace(-1, min_lvl, num=n_levels)][::-1]
+
     cmap = _rainbow_PuRd()
     colors = cmap(np.linspace(0, 1, num=n_levels))
     CS = ax.contour(X, Y, Z, levels=levels, colors=colors)

@@ -82,3 +82,11 @@ def test_plot_dependence_function(seastate_model, fitted_model, semantics_fitted
     plot_dependence_functions(fitted_model, semantics_fitted_model, 
         par_rename={"alpha" : r"$\alpha$", "beta" : r"$\beta$"})
     #plt.show()
+
+def test_plot_2D_isodensity():
+    dist_descriptions, fit_descriptions, semantics = get_OMAE2020_V_Hs()
+    model = GlobalHierarchicalModel(dist_descriptions)
+    data = read_ec_benchmark_dataset("datasets/ec-benchmark_dataset_D_1year.txt")
+    model.fit(data, fit_descriptions)
+    plot_2D_isodensity(model, data)
+    #plt.show()
