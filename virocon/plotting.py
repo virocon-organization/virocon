@@ -3,7 +3,6 @@ from functools import partial
 
 import numpy as np
 import matplotlib.pyplot as plt
-from numpy.lib.shape_base import expand_dims
 import scipy.stats as sts
 
 from matplotlib.colors import LinearSegmentedColormap
