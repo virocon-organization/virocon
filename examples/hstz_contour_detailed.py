@@ -5,8 +5,8 @@ A comprehensive example that shows the whole workflow of
 3) Estimating the parameter values of the model ("Fitting")
 4) Computing an environmental contour
 
-This example reproduces the results published in Haseltseiner 
-et al. (2019). The Hs-Tz join distribution model recommended 
+This example reproduces the results published in Haselsteiner 
+et al. (2019). The Hs-Tz joint distribution model recommended 
 in DNVGL-RP-C203 (2017) is used.
 
 Haselsteiner, A. F., Coe, R. G., Manuel, L., Nguyen, P. T. T., 
