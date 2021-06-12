@@ -10,13 +10,13 @@ GitHub archive:
 * git push --tags origin master
 
 PyPI:
- * python setup.py bdist_wheel
- * twine upload dist/* -r pypitest 
- * twine upload dist/*
+* python setup.py bdist_wheel
+* twine upload dist/* -r pypitest 
+* twine upload dist/*
 
-Anaconda (commands in parantheses are only needed once before the first upload):
- * (conda install conda-build)
- * (conda install anaconda-client)
- * conda build --python 3.9 conda-recipe
- * anaconda login
- * anaconda upload -u virocon-organization <path of file mentioned in build>
+Anaconda (with a build environment):
+* conda env create -f dev-info/conda_build_env.yml
+* conda activate virocon-build
+* conda build --python 3.9 conda-recipe
+* anaconda login (if not already logged in)
+* anaconda upload -u virocon-organization <path of file mentioned in build>
