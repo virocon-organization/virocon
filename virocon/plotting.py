@@ -322,7 +322,7 @@ def plot_2D_isodensity(model, sample, semantics=None, swap_axis=False, ax=None):
         X = Y
         Y = tmp
 
-    # Define the lowest isodensity level based on the density values in the evaluated grid.
+    # Define the lowest isodensity level based on the density values on the evaluated grid.
     q = np.quantile(f, q=0.5)
     if q > 0:
         min_lvl = int(str(q).split("e")[1])
