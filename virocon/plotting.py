@@ -304,11 +304,11 @@ def plot_2D_isodensity(model, sample, semantics=None, swap_axis=False, ax=None):
     sample = np.asarray(sample)
     ax.scatter(sample[:, x_idx], sample[:, y_idx], c="k", marker=".", alpha=0.3)
 
-    x_range = max(sample[:, 0]) -  min((sample[:, 0]))
+    x_range = max(sample[:, 0]) - min((sample[:, 0]))
     expand_factor = 0.05
     x_lower = min(sample[:, 0]) - expand_factor * x_range
     x_upper = max(sample[:, 0]) + expand_factor * x_range
-    y_range = max(sample[:, 1]) -  min((sample[:, 1]))
+    y_range = max(sample[:, 1]) - min((sample[:, 1]))
     y_lower = min(sample[:, 1]) - expand_factor * y_range
     y_upper = max(sample[:, 1]) + expand_factor * y_range
     x, y = np.linspace(((x_lower, y_lower)), (x_upper, y_upper)).T

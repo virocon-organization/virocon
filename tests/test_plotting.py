@@ -14,16 +14,18 @@ from virocon import (
     plot_marginal_quantiles,
     plot_dependence_functions,
     plot_2D_isodensity,
-    plot_2D_contour
+    plot_2D_contour,
 )
+
 
 @pytest.fixture(scope="module")
 def seastate_model():
     """
     This joint distribution model described by Vanem and Bitner-Gregersen (2012)
-    is widely used in academia. Here, we use it for evaluation. 
+    is widely used in academia. Here, we use it for evaluation.
     DOI: 10.1016/j.apor.2012.05.006
     """
+
     def _power3(x, a=0.1000, b=1.489, c=0.1901):
         return a + b * x ** c
 
@@ -57,7 +59,7 @@ def fitted_model():
     model = GlobalHierarchicalModel(dist_descriptions)
     data = read_ec_benchmark_dataset("datasets/ec-benchmark_dataset_D_1year.txt")
     model.fit(data, fit_descriptions)
-    
+
     return model
 
 
@@ -79,9 +81,13 @@ def test_plot_dependence_function(seastate_model, fitted_model, semantics_fitted
         "units": ["m", "s"],
     }
     plot_dependence_functions(seastate_model, semantics)
-    plot_dependence_functions(fitted_model, semantics_fitted_model, 
-        par_rename={"alpha" : r"$\alpha$", "beta" : r"$\beta$"})
-    #plt.show()
+    plot_dependence_functions(
+        fitted_model,
+        semantics_fitted_model,
+        par_rename={"alpha": r"$\alpha$", "beta": r"$\beta$"},
+    )
+    # plt.show()
+
 
 def test_plot_2D_isodensity():
     dist_descriptions, fit_descriptions, semantics = get_OMAE2020_V_Hs()
@@ -89,4 +95,4 @@ def test_plot_2D_isodensity():
     data = read_ec_benchmark_dataset("datasets/ec-benchmark_dataset_D_1year.txt")
     model.fit(data, fit_descriptions)
     plot_2D_isodensity(model, data)
-    #plt.show()
+    # plt.show()
