@@ -4,9 +4,7 @@ Brief example that computes a sea state contour.
 from virocon import (read_ec_benchmark_dataset, get_OMAE2020_Hs_Tz, 
     GlobalHierarchicalModel, IFORMContour, plot_2D_contour)
 
-# Load sea state measurements. This dataset has been used
-# in a benchmarking exercise, see https://github.com/ec-benchmark-organizers/ec-benchmark
-# The dataset was derived from NDBC buoy 44007, https://www.ndbc.noaa.gov/station_page.php?station=44007
+# Load sea state measurements.
 data = read_ec_benchmark_dataset("datasets/ec-benchmark_dataset_A.txt")
 
 # Define the structure of the joint distribution model.
