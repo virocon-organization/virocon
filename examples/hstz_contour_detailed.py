@@ -59,7 +59,7 @@ def _exp3(x, a, b, c):
 # Lower and upper interval boundaries for the three parameter values.
 bounds = [(0, None), (0, None), (None, None)]
 
-power3 = DependenceFunction(_power3, bounds, latex="$a + b * x^{c}$")
+power3 = DependenceFunction(_power3, bounds, latex="$a + b * x^c$")
 exp3 = DependenceFunction(_exp3, bounds, latex="$a + b * \exp(c * x)$")
 
 dist_description_0 = {
