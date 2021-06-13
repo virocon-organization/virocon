@@ -45,7 +45,6 @@ isorm = ISORMContour(model, alpha)
 direct_samplig = DirectSamplingContour(model, alpha)
 highest_density = HighestDensityContour(model, alpha)
 
-
 # Plot the contours on top of the metocean data.
 fig, axs = plt.subplots(1, 4, figsize=[16, 3.5])
 plot_2D_contour(iform, sample=data, semantics=semantics, ax=axs[0])
