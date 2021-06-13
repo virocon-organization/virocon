@@ -24,18 +24,12 @@ dist_description_hs = {
 def _asymdecrease3(x, a, b, c):
     return a + b / (1 + c * x)
 
-
 def _lnsquare2(x, a, b, c):
     return np.log(a + b * np.sqrt(np.divide(x, 9.81)))
 
-
 bounds = [(0, None), (0, None), (None, None)]
-sigma_dep = DependenceFunction(
-    _asymdecrease3, bounds=bounds, latex="$a + b / (1 + c * x)$"
-)
-mu_dep = DependenceFunction(
-    _lnsquare2, bounds=bounds, latex="$\ln(a + b \sqrt{x / 9.81})$"
-)
+sigma_dep = DependenceFunction(_asymdecrease3, bounds=bounds)
+mu_dep = DependenceFunction(_lnsquare2, bounds=bounds)
 dist_description_tz = {
     "distribution": LogNormalDistribution(),
     "conditional_on": 0,
@@ -55,9 +49,6 @@ fit_descriptions = [fit_description_hs, None]
 
 # Fit the model to the data (estimate the model's parameter values).
 model.fit(data, fit_descriptions)
-
-# Print the estimated parameter values
-print(model)
 
 # Analyze the model's goodnes of fit based with an isodensity plot.
 semantics = {
