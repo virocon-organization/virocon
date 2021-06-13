@@ -20,13 +20,16 @@ dist_description_hs = {
     "intervals": WidthOfIntervalSlicer(width=0.5, min_n_points=50),
 }
 
-# Define the conditional distribution for Tz
+
 def _asymdecrease3(x, a, b, c):
     return a + b / (1 + c * x)
+
 
 def _lnsquare2(x, a, b, c):
     return np.log(a + b * np.sqrt(np.divide(x, 9.81)))
 
+
+# Define the conditional distribution for Tz.
 bounds = [(0, None), (0, None), (None, None)]
 sigma_dep = DependenceFunction(_asymdecrease3, bounds=bounds)
 mu_dep = DependenceFunction(_lnsquare2, bounds=bounds)
@@ -43,11 +46,9 @@ dist_description_tz = {
 dist_descriptions = [dist_description_hs, dist_description_tz]
 model = GlobalHierarchicalModel(dist_descriptions)
 
-# Define how the model shall be fitted to data
+# Define how the model shall be fitted to data and fit it.
 fit_description_hs = {"method": "wlsq", "weights": "quadratic"}
 fit_descriptions = [fit_description_hs, None]
-
-# Fit the model to the data (estimate the model's parameter values).
 model.fit(data, fit_descriptions)
 
 # Analyze the model's goodnes of fit based with an isodensity plot.

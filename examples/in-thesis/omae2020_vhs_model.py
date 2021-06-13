@@ -19,7 +19,6 @@ dist_description_v = {
     "intervals": WidthOfIntervalSlicer(2, min_n_points=50),
 }
 
-# Define the conditional distribution for Hs.
 def _logistics4(x, a=1, b=1, c=-1, d=1):
     return a + b / (1 + np.exp(c * (x - d)))
 
@@ -28,6 +27,7 @@ def _alpha3(x, a, b, c, d_of_x):
     return (a + b * x ** c) / 2.0445 ** (1 / d_of_x(x))
 
 
+# Define the conditional distribution for Hs.
 logistics_bounds = [(0, None), (0, None), (None, 0), (0, None)]
 alpha_bounds = [(0, None), (0, None), (None, None)]
 beta_dep = DependenceFunction(
