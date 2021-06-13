@@ -26,8 +26,7 @@ from virocon import (
     plot_2D_contour,
 )
 
-# Load dataset (this is dataset D from a benchmarking exercise on environmental
-# contours, see https://github.com/ec-benchmark-organizers/ec-benchmark
+# Load a wind speed - significant wave height dataset.
 data = read_ec_benchmark_dataset("datasets/ec-benchmark_dataset_D.txt")
 
 # Define the structure of the joint distribution model.

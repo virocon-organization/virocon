@@ -19,6 +19,7 @@ dist_description_v = {
     "intervals": WidthOfIntervalSlicer(2, min_n_points=50),
 }
 
+
 def _logistics4(x, a=1, b=1, c=-1, d=1):
     return a + b / (1 + np.exp(c * (x - d)))
 
@@ -34,14 +35,12 @@ beta_dep = DependenceFunction(
     _logistics4,
     logistics_bounds,
     weights=lambda x, y: y,
-    latex="$a + b / (1 + \exp[c * (x -d)])$",
 )
 alpha_dep = DependenceFunction(
     _alpha3,
     alpha_bounds,
     d_of_x=beta_dep,
     weights=lambda x, y: y,
-    latex="$(a + b * x^c) / 2.0445^{1 / F()}$",
 )
 dist_description_hs = {
     "distribution": ExponentiatedWeibullDistribution(f_delta=5),
@@ -56,15 +55,13 @@ dist_description_hs = {
 dist_descriptions = [dist_description_v, dist_description_hs]
 model = GlobalHierarchicalModel(dist_descriptions)
 
-# Define how the model shall be fitted to data
+# Define how the model shall be fitted to data and fit it.
 fit_description_v = {"method": "wlsq", "weights": "quadratic"}
 fit_description_hs = {"method": "wlsq", "weights": "quadratic"}
 fit_descriptions = [fit_description_v, fit_description_hs]
-
-# Fit the model to the data (estimate the model's parameter values).
 model.fit(data, fit_descriptions)
 
-# Print the estimated parameter values
+# Print the estimated parameter values.
 print(model)
 
 # Analyze the model's goodnes of fit based with an isodensity plot.

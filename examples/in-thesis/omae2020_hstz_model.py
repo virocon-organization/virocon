@@ -51,6 +51,10 @@ fit_description_hs = {"method": "wlsq", "weights": "quadratic"}
 fit_descriptions = [fit_description_hs, None]
 model.fit(data, fit_descriptions)
 
+
+# Print the estimated parameter values.
+print(model)
+
 # Analyze the model's goodnes of fit based with an isodensity plot.
 semantics = {
     "names": ["Significant wave height", "Zero-up-crossing period"],
