@@ -1,4 +1,3 @@
-
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -8,7 +7,7 @@ from virocon import (
     ExponentiatedWeibullDistribution,
     DependenceFunction,
     WidthOfIntervalSlicer,
-    plot_2D_isodensity
+    plot_2D_isodensity,
 )
 
 # Load wind-wave measurements from the coastDat-2 hindcast.
@@ -23,20 +22,34 @@ dist_description_v = {
 # Define the conditional distribution for Hs.
 def _logistics4(x, a=1, b=1, c=-1, d=1):
     return a + b / (1 + np.exp(c * (x - d)))
+
+
 def _alpha3(x, a, b, c, d_of_x):
     return (a + b * x ** c) / 2.0445 ** (1 / d_of_x(x))
+
+
 logistics_bounds = [(0, None), (0, None), (None, 0), (0, None)]
 alpha_bounds = [(0, None), (0, None), (None, None)]
-beta_dep = DependenceFunction(_logistics4, logistics_bounds, weights=lambda x, y: y, 
-    latex="$a + b / (1 + \exp[c * (x -d)])$")
+beta_dep = DependenceFunction(
+    _logistics4,
+    logistics_bounds,
+    weights=lambda x, y: y,
+    latex="$a + b / (1 + \exp[c * (x -d)])$",
+)
 alpha_dep = DependenceFunction(
-    _alpha3, alpha_bounds, d_of_x=beta_dep, weights=lambda x, y: y,
-    latex="$(a + b * x^c) / 2.0445^{1 / F()}$"
+    _alpha3,
+    alpha_bounds,
+    d_of_x=beta_dep,
+    weights=lambda x, y: y,
+    latex="$(a + b * x^c) / 2.0445^{1 / F()}$",
 )
 dist_description_hs = {
     "distribution": ExponentiatedWeibullDistribution(f_delta=5),
     "conditional_on": 0,
-    "parameters": {"alpha": alpha_dep, "beta": beta_dep,},
+    "parameters": {
+        "alpha": alpha_dep,
+        "beta": beta_dep,
+    },
 }
 
 # Create the joint model structure.
@@ -58,17 +71,10 @@ print(model)
 semantics = {
     "names": ["Wind speed", "Significant wave height"],
     "symbols": ["V", "H_s"],
-    "units": ["m s$^{-1}$", "m",],
+    "units": [
+        "m s$^{-1}$",
+        "m",
+    ],
 }
 plot_2D_isodensity(model, data, semantics)
 plt.show()
-
-
-
-
-
-
-
-
-
-
