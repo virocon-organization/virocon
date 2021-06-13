@@ -9,7 +9,6 @@ from virocon import (
     LogNormalDistribution,
     DependenceFunction,
     WidthOfIntervalSlicer,
-    IFORMContour,
     plot_2D_isodensity
 )
 
