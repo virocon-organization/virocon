@@ -104,7 +104,7 @@ extremes using the environmental contour method." provides a concise
 description of virocon (version 1).
 
 **Conference presentation.** In a `WESC 2021 presentation`_, we showed how virocon 
-can be used to support the design process of offshore wind turbines. 
+can be used to support the design process of offshore wind turbines (virocon version 2). 
 
 Contributing
 ------------
