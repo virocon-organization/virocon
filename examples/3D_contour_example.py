@@ -27,9 +27,9 @@ from virocon import (
 
 # Load sea state measurements. 
 
-data = pd.read_csv("Desktop/NREL_data.csv", sep=";", skipinitialspace=True)
+data = pd.read_csv("datasets/NREL_data.csv", sep=";", skipinitialspace=True)
 data.index = pd.to_datetime(data.pop(data.columns[0]), format="%Y-%m-%d-%H")
-#data = read_ec_benchmark_dataset("datasets/ec-benchmark_dataset_A.txt")
+
 
 # Define the structure of the joint model that we will use to describe
 # the the environmental data. To define a joint model, we define the
@@ -101,9 +101,9 @@ model.fit(data)
 print(model)
 
 # Create plots to inspect the model's goodness-of-fit.
-fig1, axs = plt.subplots(1, 2, figsize=[10, 4.8])
+fig1, axs = plt.subplots(1, 3, figsize=[10, 7.2])
 plot_marginal_quantiles(model, data, semantics, axes=axs)
-fig2, axs = plt.subplots(1, 2, figsize=[10, 4.8])
+fig2, axs = plt.subplots(1, 3, figsize=[10, 7.2])
 plot_dependence_functions(model, semantics, axes=axs)
 
 # Compute an IFORM contour with a return period of 20 years.
