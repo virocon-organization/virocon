@@ -65,19 +65,19 @@ alpha3 = DependenceFunction(_alpha3, bounds, d_of_x=logistics4,
                                weights=lambda x, y: y,
                                latex="$(a + b * x^c) / 2.0445^{1 / F()}$")
 
-# wind speed
+# Wind speed.
 dist_description_0 = {
     "distribution": ExponentiatedWeibullDistribution(),
     "intervals": WidthOfIntervalSlicer(2, min_n_points=50),
 }
-# wave height
+# Wave height.
 dist_description_1 = {
     "distribution": ExponentiatedWeibullDistribution(f_delta=5),
     "intervals": WidthOfIntervalSlicer(0.5),
     "conditional_on": 0,
     "parameters": {"alpha": alpha3, "beta": logistics4,},
 }
-# peak period
+# Zero-up-crossing period.
 dist_description_2 = {
     "distribution": LogNormalDistribution(),
     "conditional_on": 1,
@@ -89,7 +89,7 @@ model = GlobalHierarchicalModel([dist_description_0, dist_description_1, dist_de
 
 # Define a dictionary that describes the model.
 semantics = {
-    "names": ["Wind speed", "Significant wave height", "Zero-crossing period"],
+    "names": ["Wind speed", "Significant wave height", "Zero-up-crossing period"],
     "symbols": ["V", "H_s", "T_z"],
     "units": ["m/s", "m", "s"],
 }
@@ -101,9 +101,9 @@ model.fit(data)
 print(model)
 
 # Create plots to inspect the model's goodness-of-fit.
-fig1, axs = plt.subplots(1, 3, figsize=[10, 7.2])
+fig1, axs = plt.subplots(1, 3, figsize=[18, 7.2])
 plot_marginal_quantiles(model, data, semantics, axes=axs)
-fig2, axs = plt.subplots(1, 3, figsize=[10, 7.2])
+fig2, axs = plt.subplots(1, 4, figsize=[22, 7.2])
 plot_dependence_functions(model, semantics, axes=axs)
 
 # Compute an IFORM contour with a return period of 20 years.
