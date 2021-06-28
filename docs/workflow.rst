@@ -6,8 +6,8 @@ Figure 1 shows a flowchart that captures the overall functionality of virocon. A
 environment can be created by fitting a model structure to measured data. Then, this statistical model can be used to
 construct an environmental contour.
 
-.. figure:: virocon-flowchart.png
-    :scale: 50 %
+.. figure:: virocon_flowchart.png
+    :scale: 30 %
     :alt: flowchart for virocon
 
 
@@ -19,5 +19,5 @@ virocon version 2.0.0
 Figure 2 shows viroconcom's class diagram.
 
 .. figure:: class_diagramm_VC2.png
-    :scale: 25 %
+    :scale: 50 %
     :alt: class diagram for virocon

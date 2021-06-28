@@ -13,6 +13,6 @@ User Guide
     install
     example
     workflow
-    jointdistribution_and_contours
-    fitting
+    detailed_examples
+    joint_models_estimating_parameters
     description_cheat_sheet
