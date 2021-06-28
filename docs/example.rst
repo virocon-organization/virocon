@@ -1,6 +1,6 @@
-**************************
-Example: Sea state contour
-**************************
+**************************************
+Quick start example: Sea state contour
+**************************************
 
 Let’s start this user guide with a simple example, which can be copied easily line by line or downloaded from the
 examples section of the repository. Based on a dataset, the long-term joint distribution of sea states is estimated,
