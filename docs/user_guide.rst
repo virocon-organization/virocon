@@ -3,8 +3,9 @@ User Guide
 ##########
 
 .. warning::
-    virocon's documentation is not updated yet for version 2.
-    We are working on it. In the meantime if you have any questions feel free to open an issue.
+    We are currently working on virocon's documentation for version 2.
+    Only a part of the functionality is described properly until now.
+    In the meantime if you have any questions feel free to open an issue.
 
 .. toctree::
     :maxdepth: 2
