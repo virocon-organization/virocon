@@ -52,7 +52,7 @@ downloaded from the examples_ section of the repository.
 **Environmental data**
 
 This dataset has been used in a benchmarking exercise, see https://github.com/ec-benchmark-organizers/ec-benchmark .
-The dataset was derived from NDBC buoy 44007 https://www.ndbc.noaa.gov/station_page.php?station=44007 .
+The dataset was derived from NDBC buoy 44007, see https://www.ndbc.noaa.gov/station_page.php?station=44007 .
 ::
     data = read_ec_benchmark_dataset("datasets/ec-benchmark_dataset_A.txt")
 
