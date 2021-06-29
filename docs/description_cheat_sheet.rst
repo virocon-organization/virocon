@@ -1,5 +1,5 @@
 ***********************
-Description Cheat Sheet
+Cheat Sheet
 ***********************
 
 dist_descriptions
