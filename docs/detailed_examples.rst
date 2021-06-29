@@ -23,8 +23,8 @@ If the joint distribution is known, the procedure of calculating an environmenta
 5.	Define the contour’s return period and environmental state duration.
 6.	Choose a type of contour: IFormContour, ISormContour, DirectSamplingContour or HighestDensityContour.
 
-50 year Hs-Tz OMAE 2020 model
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+50 year environmental contour with the Hs-Tz DNVGL model
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Here, we use a sea state dataset with the variables Hs and Tz, fit the join distribution recommended in
 DNVGL-RP-C203 [1]_ to it and compute an IFORM contour. This example reproduces the results published in
@@ -136,8 +136,8 @@ Plot the contour on top of a scatter diagram of the metocean data.
 .. [2] •	Haselsteiner et. Al. (2019): Haselsteiner, A.F.; Coe, R.; Manuel, L.; Nguyen, P.T.T.; Martin, N.; Eckert-Gallup, A. A benchmarking exercise on estimating extreme environmental conditions: methodology and baseline results. Proceedings of the 38th International Conference on Ocean, Offshore and Arctic Engineering OMAE2019, June 09-14, 2019, Glasgow, Scotland.
 
 
-50 year V-Hs-Tz contour
-~~~~~~~~~~~~~~~~~~~~~~~
+50 year V-Hs-Tz environmental contour
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. warning::
     Stay tuned! We are currently working on this chapter.

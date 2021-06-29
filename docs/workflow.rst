@@ -16,7 +16,7 @@ handles fitting a model structure to a dataset, the class DependenceFunction, wh
 environmental variables and the class Contour, which handles contour construction. This class diagram was created for
 virocon version 2.0.0
 
-Figure 2 shows viroconcom's class diagram.
+Figure 2 shows virocon's class diagram.
 
 .. figure:: class_diagramm_VC2.png
     :scale: 50 %

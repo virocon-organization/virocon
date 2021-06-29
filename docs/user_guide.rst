@@ -15,4 +15,5 @@ User Guide
     workflow
     detailed_examples
     joint_models_estimating_parameters
+    constructing_contours
     description_cheat_sheet
