@@ -36,7 +36,7 @@ model = GlobalHierarchicalModel(dist_descriptions)
 # Fit the model to the data (estimate the model's parameter values).
 model.fit(data, fit_descriptions)
 
-# Compute four type of contours with a return period of 50 years.
+# Compute four types of contours with a return period of 50 years.
 state_duration = 1  # hours
 return_period = 50  # years
 alpha = state_duration / (return_period * 365.25 * 24)
@@ -46,14 +46,16 @@ direct_sampling = DirectSamplingContour(model, alpha)
 highest_density = HighestDensityContour(model, alpha)
 
 # Plot the contours on top of the metocean data.
-fig, axs = plt.subplots(1, 4, figsize=[16, 3.5])
+fig, axs = plt.subplots(1, 4, figsize=[16, 3.5], sharex=True, sharey=True)
 plot_2D_contour(iform, sample=data, semantics=semantics, ax=axs[0])
 plot_2D_contour(isorm, sample=data, semantics=semantics, ax=axs[1])
 plot_2D_contour(direct_sampling, sample=data, semantics=semantics, ax=axs[2])
 plot_2D_contour(highest_density, sample=data, semantics=semantics, ax=axs[3])
 titles = ['IFORM', 'ISORM', 'Direct sampling', 'Highest density']
-for ax, title in zip(axs, titles):
+for i, (ax, title) in enumerate(zip(axs, titles)):
     ax.set_title(title)
+    if i > 0:
+        ax.set_ylabel('')
 
 plt.tight_layout()
 plt.show()
