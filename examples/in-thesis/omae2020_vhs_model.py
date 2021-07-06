@@ -74,4 +74,5 @@ semantics = {
     ],
 }
 plot_2D_isodensity(model, data, semantics)
+#plt.savefig("virocon_omae2020_vhs.pdf", dpi=300)
 plt.show()

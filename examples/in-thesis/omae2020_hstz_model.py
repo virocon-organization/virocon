@@ -62,4 +62,5 @@ semantics = {
     "units": ["m", "s"],
 }
 plot_2D_isodensity(model, data, semantics, swap_axis=True)
+#plt.savefig("virocon_omae2020_hstz.pdf", dpi=300)
 plt.show()
