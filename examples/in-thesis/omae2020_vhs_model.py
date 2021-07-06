@@ -64,7 +64,7 @@ model.fit(data, fit_descriptions)
 # Print the estimated parameter values.
 print(model)
 
-# Analyze the model's goodnes of fit based with an isodensity plot.
+# Analyze the model's goodness of fit with an isodensity plot.
 semantics = {
     "names": ["Wind speed", "Significant wave height"],
     "symbols": ["V", "H_s"],
