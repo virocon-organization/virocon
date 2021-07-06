@@ -42,14 +42,14 @@ return_period = 50  # years
 alpha = state_duration / (return_period * 365.25 * 24)
 iform = IFORMContour(model, alpha)
 isorm = ISORMContour(model, alpha)
-direct_samplig = DirectSamplingContour(model, alpha)
+direct_sampling = DirectSamplingContour(model, alpha)
 highest_density = HighestDensityContour(model, alpha)
 
 # Plot the contours on top of the metocean data.
 fig, axs = plt.subplots(1, 4, figsize=[16, 3.5])
 plot_2D_contour(iform, sample=data, semantics=semantics, ax=axs[0])
 plot_2D_contour(isorm, sample=data, semantics=semantics, ax=axs[1])
-plot_2D_contour(direct_samplig, sample=data, semantics=semantics, ax=axs[2])
+plot_2D_contour(direct_sampling, sample=data, semantics=semantics, ax=axs[2])
 plot_2D_contour(highest_density, sample=data, semantics=semantics, ax=axs[3])
 titles = ['IFORM', 'ISORM', 'Direct sampling', 'Highest density']
 for ax, title in zip(axs, titles):
