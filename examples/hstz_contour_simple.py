@@ -1,6 +1,7 @@
 """
 Brief example that computes a sea state contour.
 """
+import matplotlib.pyplot as plt
 from virocon import (read_ec_benchmark_dataset, get_OMAE2020_Hs_Tz, 
     GlobalHierarchicalModel, IFORMContour, plot_2D_contour)
 
@@ -21,6 +22,5 @@ alpha = 1 / (tr * 365.25 * 24 / ts)
 contour = IFORMContour(model, alpha)
 
 # Plot the contour.
-import matplotlib.pyplot as plt
 plot_2D_contour(contour, data, semantics=semantics, swap_axis=True)
 plt.show()
