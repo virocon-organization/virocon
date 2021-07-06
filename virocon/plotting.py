@@ -301,7 +301,14 @@ def plot_2D_isodensity(model, sample, semantics=None, swap_axis=False, ax=None):
         _, ax = plt.subplots()
 
     sample = np.asarray(sample)
-    ax.scatter(sample[:, x_idx], sample[:, y_idx], c="k", marker=".", alpha=0.3)
+    ax.scatter(
+        sample[:, x_idx],
+        sample[:, y_idx],
+        c="k",
+        marker=".",
+        alpha=0.3,
+        rasterized=True,
+    )
 
     x_range = max(sample[:, 0]) - min((sample[:, 0]))
     expand_factor = 0.05
@@ -431,7 +438,14 @@ def plot_2D_contour(
 
     if sample is not None:
         sample = np.asarray(sample)
-        ax.scatter(sample[:, x_idx], sample[:, y_idx], c="k", marker=".", alpha=0.3)
+        ax.scatter(
+            sample[:, x_idx],
+            sample[:, y_idx],
+            c="k",
+            marker=".",
+            alpha=0.3,
+            rasterized=True,
+        )
 
     coords = contour.coordinates
     x = coords[:, x_idx].tolist()
