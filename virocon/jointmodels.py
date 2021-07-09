@@ -345,12 +345,16 @@ class GlobalHierarchicalModel(MultivariateModel):
             
         """
 
+        # Ensure that x is a 2D numpy array.
+        x = np.array(x)
+        if x.ndim == 1:
+            x = np.array([x])
+
         x = np.asarray_chkfinite(x)
         fs = np.empty_like(x)
 
         fs[:, 0] = self.distributions[0].pdf(x[:, 0])
 
-        # TODO check that x has the correct size
         for i in range(1, self.n_dim):
             if self.conditional_on[i] is None:
                 fs[:, i] = self.distributions[i].pdf(x[:, i])
@@ -372,6 +376,11 @@ class GlobalHierarchicalModel(MultivariateModel):
             cdf should be evaluated.
         
         """
+
+        # Ensure that x is a 2D numpy array.
+        x = np.array(x)
+        if x.ndim == 1:
+            x = np.array([x])
 
         x = np.asarray_chkfinite(x)
 
