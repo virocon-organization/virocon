@@ -55,6 +55,7 @@ def test_joint_pdf(seastate_model):
 
 
 def test_joint_cdf(seastate_model):
+    # cdf() takes is slow to evaluate (one call ~ 5 s)
     x = [2.5, 6]  # (hs, tz) in (m, s).
     F = seastate_model.cdf(x)
     xs = [[2.5, 2], [2.5, 6], [2.5, 10]]
