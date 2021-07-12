@@ -1,3 +1,5 @@
+.. _quick-start-guide:
+
 **************************************
 Quick start example: Sea state contour
 **************************************
@@ -15,58 +17,56 @@ start example:
 5.	Choose a type of contour: IFormContour, ISormContour, DirectSamplingContour or HighestDensityContour.
 
 
-Import the required virocon packages.
-::
+Import the required virocon packages and packages that are needed additionally.
+
+.. code-block:: python
 
     from virocon import (GlobalHierarchicalModel, get_OMAE2020_Hs_Tz,
                          calculate_alpha, IFORMContour, plot_2D_contour)
-
-Import packages that are needed additionally.
-::
-
     from matplotlib import pyplot as plt
 
 Load the sea state data set. Here, we use a dataset used in a benchmark study which was published at the OMAE 2019
 conference by Haselsteiner et. Al. (2019) [2]_.
-::
+
+.. code-block:: python
 
     data = read_ec_benchmark_dataset("datasets/ec-benchmark_dataset_A.txt")
 
 Use a predefined model to describe the dependence structure and define the structure of the joint distribution model.
 virocon provides 4 simple predefined models, which can be directly executed. Here, we use the Hs-Tz joint distribution
 OMAE2020 model by Haselsteiner et al. (2020) [1]_.
-::
+
+.. code-block:: python
 
     dist_descriptions, fit_descriptions, semantics = get_OMAE2020_Hs_Tz()
 
 Estimate the values of the model’s parameter. This step is also well known as “fitting”.
-::
+
+.. code-block:: python
 
     model = GlobalHierarchicalModel(dist_descriptions)
     model.fit(data)
 
 Compute the contour: Define the contour’s return period and environmental state duration. Choose a type of contour:
 IFormContour, ISormContour, DirectSamplingContour or HighestDensityContour. Plot the contour.
-::
+
+.. code-block:: python
+
     tr = 50 # Return period in years.
     ts = 1 # Sea state duration in hours.
     alpha = 1 / (tr * 365.25 * 24 / ts)
     contour = IFORMContour(model, alpha)
 
-Plot the contour:
-::
-
     plot_2D_contour(contour, data, semantics=semantics, swap_axis=True)
     plt.show()
 
 
-The code, which is available as a Python file here_, will create this plot:
+The code, which is available as a Python file here_, will create this plot
+(environmental contour with a return period of 50 years):
 
 .. figure:: sea_state_contour.png
     :scale: 100 %
     :alt: sea state contour
-
-    Environmental contour with a return period of 50 years.
 
 .. _examples: https://github.com/virocon-organization/virocon/tree/master/examples
 .. _here: https://github.com/virocon-organization/virocon/blob/master/examples/hstz_contour_simple.py
