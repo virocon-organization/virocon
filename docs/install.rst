@@ -13,7 +13,7 @@ in your `shell`_.
 
 (Older version might work, but are not actively tested)
 
-Consider using the python version management `pyenv`_.
+If you do not (want to) use conda, consider using a python version management like pyenv_ .
 
 
 Install
@@ -29,7 +29,7 @@ by typing
 
 .. code:: console
 
-   pip install pip install https://github.com/virocon-organization/virocon/archive/master.zip
+   pip install https://github.com/virocon-organization/virocon/archive/master.zip
 
 virocon is also available as a conda_ package. We recommend to first create a new environment.
 

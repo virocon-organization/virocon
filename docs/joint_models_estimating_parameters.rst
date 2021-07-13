@@ -1,6 +1,6 @@
-*****************************************************
-Defining joint models and estimating their parameters
-*****************************************************
+************************************************************
+Defining custom joint models and estimating their parameters
+************************************************************
 
 .. warning::
     Stay tuned! We are currently working on this chapter.

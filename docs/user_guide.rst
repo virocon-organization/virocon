@@ -13,6 +13,7 @@ User Guide
     install
     example
     workflow
+    definitions
     detailed_examples
     joint_models_estimating_parameters
     constructing_contours
