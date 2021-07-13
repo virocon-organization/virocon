@@ -16,8 +16,8 @@ If the joint distribution is known, the procedure of calculating an environmenta
 1.	Load the environmental data that should be described by the joint model.
 2.	Define the structure of the joint model that we will use to describe the environmental data. To define a joint model, we define the univariate parametric distributions and the dependence structure. The dependence structure is defined using parametric functions.
 3.	Estimate the parameter values of the joint model (fitting).
-4.	Define the contour’s return period and environmental state duration.
-5.	Choose a type of contour: IFormContour, ISormContour, DirectSamplingContour or HighestDensityContour.
+4.	Define the contour’s return period and environmental state duration (for more detailed explanation see :ref:`definitions`).
+5.	Choose a type of contour: IFormContour, ISormContour, DirectSamplingContour or HighestDensityContour (for more detailed explanation see :ref:`definitions`).
 
 
 50 year environmental contour with the Hs-Tz DNVGL model

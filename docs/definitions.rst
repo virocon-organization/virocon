@@ -1,3 +1,5 @@
+.. _definitions:
+
 *****************************************
 Environmental contour: useful definitions
 *****************************************
