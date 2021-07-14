@@ -372,7 +372,6 @@ def plot_2D_isodensity(model, sample, semantics=None, swap_axis=False, limits=No
         lvl_labels,
         loc="upper left",
         ncol=1,
-        prop={"size": 8},
         frameon=False,
         title="Probabilty density",
     )
