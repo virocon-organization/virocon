@@ -264,7 +264,7 @@ def plot_dependence_functions(model, semantics=None, par_rename={}, axes=None):
     return axes
 
 
-def plot_2D_isodensity(model, sample, semantics=None, swap_axis=False, ax=None):
+def plot_2D_isodensity(model, sample, semantics=None, swap_axis=False, limits=None, levels=None, ax=None):
     """
     Plot isodensity contours and a data sample for a 2D model.
 
@@ -280,6 +280,14 @@ def plot_2D_isodensity(model, sample, semantics=None, swap_axis=False, ax=None):
     swap_axis : boolean, optional
         If True the second dimension of the model is plotted on the x-axis and
         the first on the y-axis. Otherwise vice-versa. Defaults to False.
+    limits = list of tuples, optional
+        Specifies in which rectangular region the density is calculated and 
+        plotted. If None (default) limits will be set automatically.
+        Example: [(0, 20), (0, 12)]
+    levels = list of floats, optional
+        The probability density levels that are plotted. If None (default)
+        levels are set automatically.
+        Example: [0.001, 0.01, 0.1]
     ax : matplotlib Axes, optional
         Matplotlib axes object to use for plotting. If None (default) a new
         figure will be created.
@@ -316,13 +324,20 @@ def plot_2D_isodensity(model, sample, semantics=None, swap_axis=False, ax=None):
         rasterized=True,
     )
 
-    x_range = max(sample[:, 0]) - min((sample[:, 0]))
-    expand_factor = 0.05
-    x_lower = min(sample[:, 0]) - expand_factor * x_range
-    x_upper = max(sample[:, 0]) + expand_factor * x_range
-    y_range = max(sample[:, 1]) - min((sample[:, 1]))
-    y_lower = min(sample[:, 1]) - expand_factor * y_range
-    y_upper = max(sample[:, 1]) + expand_factor * y_range
+    if limits is not None:
+        x_lower = limits[0][0]
+        x_upper = limits[0][1]
+        y_lower = limits[1][0]
+        y_upper = limits[1][1]
+    else:
+        x_range = max(sample[:, 0]) - min((sample[:, 0]))
+        expand_factor = 0.05
+        x_lower = min(sample[:, 0]) - expand_factor * x_range
+        x_upper = max(sample[:, 0]) + expand_factor * x_range
+        y_range = max(sample[:, 1]) - min((sample[:, 1]))
+        y_lower = min(sample[:, 1]) - expand_factor * y_range
+        y_upper = max(sample[:, 1]) + expand_factor * y_range
+
     x, y = np.linspace(((x_lower, y_lower)), (x_upper, y_upper)).T
     X, Y = np.meshgrid(x, y)
     grid_flat = np.c_[X.ravel(), Y.ravel()]
@@ -334,15 +349,20 @@ def plot_2D_isodensity(model, sample, semantics=None, swap_axis=False, ax=None):
         X = Y
         Y = tmp
 
-    # Define the lowest isodensity level based on the density values on the evaluated grid.
-    q = np.quantile(f, q=0.5)
-    if q > 0:
-        min_lvl = int(str(q).split("e")[1])
+    if levels is not None:
+        lvl_labels = ["{:.1E}".format(x) for x in levels]
+        n_levels = len(levels)
     else:
-        min_lvl = -5
-    n_levels = np.abs(min_lvl)
-    levels = np.logspace(-1, min_lvl, num=n_levels)[::-1]
-    lvl_labels = [f"1E{int(i)}" for i in np.linspace(-1, min_lvl, num=n_levels)][::-1]
+        # Define the lowest isodensity level based on the density values on the evaluated grid.
+        q = np.quantile(f, q=0.5)
+        if q > 0:
+            min_lvl = int(str(q).split("e")[1])
+        else:
+            min_lvl = -5
+        n_levels = np.abs(min_lvl)
+        levels = np.logspace(-1, min_lvl, num=n_levels)[::-1]
+        lvl_labels = [f"1E{int(i)}" for i in np.linspace(-1, min_lvl, num=n_levels)][::-1]
+
 
     cmap = _rainbow_PuRd()
     colors = cmap(np.linspace(0, 1, num=n_levels))

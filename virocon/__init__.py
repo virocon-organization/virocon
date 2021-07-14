@@ -1,4 +1,4 @@
-__version__ = "2.0.5"
+__version__ = "2.0.6"
 from virocon.contours import *
 from virocon.dependencies import *
 from virocon.distributions import *
