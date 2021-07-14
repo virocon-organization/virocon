@@ -20,3 +20,6 @@ Anaconda (with a build environment):
 * conda build --python 3.9 conda-recipe
 * anaconda login (if not already logged in)
 * anaconda upload -u virocon-organization <path of file mentioned in build>
+
+ ## Generating HTML documentation on the local machine
+  
