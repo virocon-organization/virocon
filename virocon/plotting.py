@@ -138,6 +138,12 @@ def plot_marginal_quantiles(model, sample, semantics=None, axes=None):
         ax.get_lines()[0].set_markeredgecolor("k")
         ax.get_lines()[0].set_marker("x")
         ax.get_lines()[0].set_markersize(3)
+
+        # Because a sample usually holds much more than 1000 observations, the 
+        # output shall be rasterized to reduce file size if the figure is saved
+        # in a vector file format (svg, pdf).
+        ax.get_lines()[0].set_rasterized(True) 
+
         ax.get_lines()[1].set_color("#004488")
         name_and_unit = f"{semantics['names'][dim].lower()} ({semantics['units'][dim]})"
         ax.set_xlabel(f"Theoretical quantiles of {name_and_unit}")
