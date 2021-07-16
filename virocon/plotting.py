@@ -95,8 +95,12 @@ def plot_marginal_quantiles(model, sample, semantics=None, axes=None):
     semantics: dict, optional
         The description of the model. If None (the default) generic semantics
         will be used.
-        E.g.:
-          :math:`modeldesc = {"names" : ["Name of variables"], "symbols" : ["Description of symbols"], "units" : ["Units of variables"]}`
+        The structure is as follows::
+          modeldesc = {
+              "names" : [<Names of variables>], 
+              "symbols" : [<Description of symbols>], 
+              "units" : [<Units of variables>]
+              }
     axes: list, optional
         The matplotlib axes objects to plot into. One for each dimension. If
         None (the default) a new figure will be created for each dimension.
@@ -104,6 +108,13 @@ def plot_marginal_quantiles(model, sample, semantics=None, axes=None):
     Returns
     -------
     The used matplotlib axes object.
+    
+    Notes
+    -----
+    When saving the resulting axes in a vector image format (pdf, svg) the 
+    `sample` will still be rasterized to reduce the file size. 
+    To prevent that, iterate over the axes and use 
+    ``ax.get_lines()[0].set_rasterized(False)``.
 
     """
 
