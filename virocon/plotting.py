@@ -150,10 +150,10 @@ def plot_marginal_quantiles(model, sample, semantics=None, axes=None):
         ax.get_lines()[0].set_marker("x")
         ax.get_lines()[0].set_markersize(3)
 
-        # Because a sample usually holds much more than 1000 observations, the 
+        # Because a sample usually holds much more than 1000 observations, the
         # output shall be rasterized to reduce file size if the figure is saved
         # in a vector file format (svg, pdf).
-        ax.get_lines()[0].set_rasterized(True) 
+        ax.get_lines()[0].set_rasterized(True)
 
         ax.get_lines()[1].set_color("#004488")
         name_and_unit = f"{semantics['names'][dim].lower()} ({semantics['units'][dim]})"
@@ -275,7 +275,9 @@ def plot_dependence_functions(model, semantics=None, par_rename={}, axes=None):
     return axes
 
 
-def plot_2D_isodensity(model, sample, semantics=None, swap_axis=False, limits=None, levels=None, ax=None):
+def plot_2D_isodensity(
+    model, sample, semantics=None, swap_axis=False, limits=None, levels=None, ax=None
+):
     """
     Plot isodensity contours and a data sample for a 2D model.
 
@@ -372,8 +374,9 @@ def plot_2D_isodensity(model, sample, semantics=None, swap_axis=False, limits=No
             min_lvl = -5
         n_levels = np.abs(min_lvl)
         levels = np.logspace(-1, min_lvl, num=n_levels)[::-1]
-        lvl_labels = [f"1E{int(i)}" for i in np.linspace(-1, min_lvl, num=n_levels)][::-1]
-
+        lvl_labels = [f"1E{int(i)}" for i in np.linspace(-1, min_lvl, num=n_levels)][
+            ::-1
+        ]
 
     cmap = _rainbow_PuRd()
     colors = cmap(np.linspace(0, 1, num=n_levels))
