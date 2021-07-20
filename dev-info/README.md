@@ -31,10 +31,12 @@ First approach (Linux/ MacOS/ Windows):
 * cd docs
 * make clean
 * make html
+ 
 -> Then open index.html located in docs/_build/html .
 
 Second approach (Windows powershell): 
 * cd docs
 * .\make .bat clean
 * .\make .bat html
+ 
 -> Then open index.html located in docs/_build/html .
