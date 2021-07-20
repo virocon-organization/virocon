@@ -22,4 +22,19 @@ Anaconda (with a build environment):
 * anaconda upload -u virocon-organization <path of file mentioned in build>
 
  ## Generating HTML documentation on the local machine
-  
+ 
+ Two ways to produce the documentation of virocon on a local machine (make sure sphinx is installed):
+* conda install sphinx or 
+* pip install sphinx
+
+First approach (Linux/ MacOS/ Windows):
+* cd docs
+* make clean
+* make html
+-> Then open index.html located in docs/_build/html .
+
+Second approach (Windows powershell): 
+* cd docs
+* .\make .bat clean
+* .\make .bat html
+-> Then open index.html located in docs/_build/html .
