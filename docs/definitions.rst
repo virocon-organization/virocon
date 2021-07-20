@@ -37,5 +37,5 @@ The figure below visualizes different types of environmental contours [2]_.
 
 
 
-.. [1] •	NORSOK standard N-003, Edition 2, September 2007. Actions and action effects.
-.. [2] •	Mackay, E., & Haselsteiner, A. F. (2021). Marginal and total exceedance probabilities of environmental contours. Marine Structures, 75. https://doi.org/10.1016/j.marstruc.2020.102863
+.. [1] NORSOK standard N-003, Edition 2, September 2007, Actions and action effects.
+.. [2] Mackay, E., & Haselsteiner, A. F. (2021): Marginal and total exceedance probabilities of environmental contours. Marine Structures, 75. https://doi.org/10.1016/j.marstruc.2020.102863

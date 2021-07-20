@@ -14,7 +14,7 @@ The second option is defining a custom statistical model.
 If the joint distribution is known, the procedure of calculating an environmental contour with virocon can be summarized as:
 
 1.	Load the environmental data that should be described by the joint model.
-2.	Define the structure of the joint model that we will use to describe the environmental data. To define a joint model, we define the univariate parametric distributions and the dependence structure. The dependence structure is defined using parametric functions.
+2.	Define the structure of the joint model that we will use to describe the environmental data. To define a joint model, we define the univariate parametric distributions and the dependence structure. The dependence structure is defined using parametric dependence functions.
 3.	Estimate the parameter values of the joint model (fitting).
 4.	Define the contour’s return period and environmental state duration (for more detailed explanation see :ref:`definitions`).
 5.	Choose a type of contour: IFormContour, ISormContour, DirectSamplingContour or HighestDensityContour (for more detailed explanation see :ref:`definitions`).
@@ -176,9 +176,9 @@ metocean data.
 
 .. _examples: https://github.com/virocon-organization/virocon/tree/master/examples
 .. _data: https://github.com/virocon-organization/virocon/tree/master/datasets
-.. [1] •	DNV GL. (2017). Recommended practice DNVGL-RP-C205: Environmental conditions and environmental loads.
-.. [2] •	Haselsteiner et. Al. (2019): Haselsteiner, A.F.; Coe, R.; Manuel, L.; Nguyen, P.T.T.; Martin, N.; Eckert-Gallup, A. A benchmarking exercise on estimating extreme environmental conditions: methodology and baseline results. Proceedings of the 38th International Conference on Ocean, Offshore and Arctic Engineering OMAE2019, June 09-14, 2019, Glasgow, Scotland.
-.. [3] •	Haselsteiner, A.F.; Sander, A.; Ohlendorf, J.H.; Thoben, K.D. (2020); Global hierarchical models for wind and wave contours: physical interpretations of the dependence functions. OMAE 2020, Fort Lauderdale, USA. Proceedings of the 39th International Conference on Ocean, Offshore and Arctic Engineering.
+.. [1] DNV GL (2017). Recommended practice DNVGL-RP-C205: Environmental conditions and environmental loads.
+.. [2] Haselsteiner, A.F.; Coe, R.; Manuel, L.; Nguyen, P.T.T.; Martin, N.; Eckert-Gallup A. (2019): A benchmarking exercise on estimating extreme environmental conditions: methodology and baseline results. Proceedings of the 38th International Conference on Ocean, Offshore and Arctic Engineering OMAE2019, June 09-14, 2019, Glasgow, Scotland.
+.. [3] Haselsteiner, A.F.; Sander, A.; Ohlendorf, J.H.; Thoben, K.D. (2020): Global hierarchical models for wind and wave contours: physical interpretations of the dependence functions. OMAE 2020, Fort Lauderdale, USA. Proceedings of the 39th International Conference on Ocean, Offshore and Arctic Engineering.
 
 50 year V-Hs-Tz environmental contour
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
