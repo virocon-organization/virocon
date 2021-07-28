@@ -6,7 +6,6 @@ User Guide
     We are currently working on virocon's documentation for version 2.
     Only a part of the functionality is described properly until now.
     In the meantime if you have any questions feel free to open an issue.
-    The user guide of vircons's version 1 can be downloaded here_:
 
 .. toctree::
     :maxdepth: 2
@@ -19,5 +18,10 @@ User Guide
     joint_models_estimating_parameters
     constructing_contours
     description_cheat_sheet
+
+.. note::
+    This user guide describes the newest version of virocon. Version 2.0 of virocon was a major
+    update such that code from versions 1.X does not work with virocon 2.X. The old user guide for
+    version 1 can be downloaded here_.
 
 .. _here: https://github.com/virocon-organization/virocon/blob/master/docs/User_Guide_VC1.pdf
