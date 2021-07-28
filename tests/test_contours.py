@@ -1,17 +1,20 @@
 import pytest
 import numpy as np
+import matplotlib.pyplot as plt
 
 from virocon import (
     IFORMContour,
     ISORMContour,
     HighestDensityContour,
     DirectSamplingContour,
+    AndContour,
     calculate_alpha,
     DependenceFunction,
     ExponentiatedWeibullDistribution,
     LogNormalDistribution,
     WeibullDistribution,
     GlobalHierarchicalModel,
+    plot_2D_contour
 )
 
 
@@ -163,3 +166,12 @@ def test_HighestDensityContour(seastate_model):
     my_coordinates = my_contour.coordinates
     np.testing.assert_allclose(max(my_coordinates[:, 0]), 16.79, atol=0.05)
     np.testing.assert_allclose(max(my_coordinates[:, 1]), 14.64, atol=0.05)
+
+
+def test_AndContour(seastate_model):
+    alpha = 0.01
+    n = 103450
+    sample = seastate_model.draw_sample(n)
+    contour = AndContour(seastate_model, alpha, deg_step=1, sample=sample, allowed_error=0.001)
+    plot_2D_contour(contour, sample=sample, swap_axis=True)
+    plt.show()

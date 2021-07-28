@@ -18,6 +18,7 @@ __all__ = [
     "ISORMContour",
     "HighestDensityContour",
     "DirectSamplingContour",
+    "AndContour"
 ]
 
 
@@ -806,3 +807,117 @@ class DirectSamplingContour(Contour):
         ) / denominator
 
         self.coordinates = np.array([x_cont, y_cont]).T
+
+
+class AndContour(Contour):
+    """
+    A contour that connects points of constant AND exceedance. Such 
+    contours are described, for example, in Mazas (2019).
+    This implementation uses Monte Carlo simulationimplementation and 
+    only works for 2D models.
+
+    Parameters
+    ----------
+    model : MultivariateModel
+        The model to be used to calculate the contour.
+    alpha : float
+        The exceedance probability. The probability that an observation 
+        falls outside the environmental contour.
+    n : int, optional
+        Number of data points that shall be Monte Carlo simulated. Defaults
+        to None, which calculates n based on alpha: n = int(100 / alpha).
+    deg_step : float, optional
+        Directional step in degrees. Defaults to 5.
+    sample : 2-dimensional ndarray, optional
+        Monte Carlo simulated environmental states. Array is of shape (n, d)
+        with d being the number of variables and n being the number of
+        observations.
+    allowed_error : float, optional
+        Required precision for the alpha value. For example 0.1 means that
+        the algorithm searches along the path until the probability of exceedance
+        at the current point p_e satisfies |p_e - alpha| / alpha < 0.1.
+        Defaults to 0.1.
+    
+    Attributes
+    ----------
+    coordinates : ndarray
+        Coordinates of the calculated contour.
+        Shape: (number of points, number of dimensions).          
+    
+    References
+    ----------
+    .. [1] Mazas, F. (2019). Extreme events: a framework for assessing natural
+           hazards. Natural Hazards. https://doi.org/10.1007/s11069-019-03581-9
+
+    """
+
+    def __init__(self, model, alpha, n=None, deg_step=3, sample=None, allowed_error=0.01):
+        self.model = model
+        self.alpha = alpha
+        if n is None:
+            n = int(100 / alpha)
+        self.n = n
+        self.deg_step = deg_step
+        self.sample = sample
+        self.allowed_error = allowed_error
+        super().__init__()
+
+    def _compute(self):
+        model = self.model
+        alpha = self.alpha
+        n = self.n
+        deg_step = self.deg_step
+        sample = self.sample
+        allowed_error = self.allowed_error
+
+        if self.model.n_dim != 2:
+            raise NotImplementedError(
+                "DirectSamplingContour is currently only "
+                "implemented for two dimensions."
+            )
+
+        if sample is None:
+            sample = self.model.draw_sample(n)
+            self.sample = sample
+        x, y = sample.T
+
+        max_iterations = 100
+        
+        x_marginal = model.marginal_icdf(1 - alpha, 0)
+        y_marginal = model.marginal_icdf(1 - alpha, 1)
+        thetas = np.arange(0, 90, deg_step)
+        coords_x = np.empty(thetas.size + 1)
+        coords_y = np.empty(thetas.size + 1)
+
+        for i, theta in enumerate(thetas):
+            unity_vector = np.empty((2, 1))
+            unity_vector[0] = np.cos(theta / 180 * np.pi)
+            unity_vector[1] = np.sin(theta / 180 * np.pi)
+            max_distance = np.sqrt(x_marginal ** 2 +  y_marginal ** 2)
+            rel_dist = 0.2
+            rel_step_size = 0.1
+            current_pe = 0
+            nr_iterations = 0
+            while np.abs((current_pe - alpha)) / alpha > allowed_error:
+                abs_dist = rel_dist * max_distance
+                current_vector = unity_vector * abs_dist
+                both_greater = np.logical_and(x > current_vector[0], y > current_vector[1])
+                current_pe = both_greater.sum() / both_greater.size
+                if current_pe > alpha:
+                    rel_dist = rel_dist + rel_step_size
+                else:
+                    rel_step_size = 0.5 * rel_step_size
+                    rel_dist = rel_dist - rel_step_size
+                nr_iterations = nr_iterations + 1
+                if nr_iterations == max_iterations:
+                    warnings.warn(
+                        "Could not achieve the required precision. Stopping " 
+                        "because the maximum number of iterations is reached.",
+                        RuntimeWarning,
+                    )
+                    break
+            coords_x[i] = current_vector[0]
+            coords_y[i] = current_vector[1]
+        coords_x[-1] = 0
+        coords_y[-1] = 0
+        self.coordinates = np.array([coords_x, coords_y]).T
