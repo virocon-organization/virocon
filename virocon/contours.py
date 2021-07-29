@@ -1019,7 +1019,7 @@ class OrContour(Contour):
 
         x_marginal = model.marginal_icdf(1 - alpha, 0)
         y_marginal = model.marginal_icdf(1 - alpha, 1)
-        max_factor = 1.3
+        max_factor = 1.1
         x_max_consider = max_factor * max(x)
         y_max_consider = max_factor * max(y)
 
