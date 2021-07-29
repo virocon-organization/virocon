@@ -46,7 +46,7 @@ def calculate_alpha(state_duration, return_period):
 
         :math:`\\alpha= \\frac{T_s}{T_r * 365.25 * 24}`
 
-        :math:`F(x_1) =  P(X_1 \geq x_1)= \int_{- \infty}^{x_1} f(x) dx = 1- \\alpha`
+        :math:`F(x_1) =  P(X_1 \\geq x_1)= \\int_{- \\infty}^{x_1} f(x) dx = 1- \\alpha`
 
     Returns
     -------
