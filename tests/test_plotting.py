@@ -98,4 +98,4 @@ def test_plot_2D_isodensity():
     limits = [(0, 40), (0, 15)]
     levels = [0.00001, 0.0001, 0.001]
     plot_2D_isodensity(model, data, limits=limits, levels=levels)
-    plt.show()
+    #plt.show()

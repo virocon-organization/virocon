@@ -183,10 +183,10 @@ def test_AndContour(seastate_model):
     contour = AndContour(seastate_model, alpha, deg_step=1, sample=sample)
     coords = contour.coordinates
 
-    # Significant wave height of angle 0 deg.
+    # Significant wave height at an angle of 0 deg.
     np.testing.assert_allclose(coords[0,0], 9, atol=0.5)
 
-    # Zero-up-crossing period of angle 90 deg.
+    # Zero-up-crossing period at an angle of 90 deg.
     np.testing.assert_allclose(coords[-2,1], 11, atol=0.5)
 
 
@@ -203,8 +203,8 @@ def test_OrContour(seastate_model):
     contour = OrContour(seastate_model, alpha, deg_step=1, sample=sample)
     coords = contour.coordinates
 
-    # Significant wave height of angle 0 deg.
+    # Significant wave height at the lowest angle (close to 0 deg).
     np.testing.assert_allclose(coords[0,1], 11, atol=0.5)
 
-    # Zero-up-crossing period of angle 90 deg.
+    # Zero-up-crossing period at the highest angle (close to 90 deg).
     np.testing.assert_allclose(coords[-4,0], 8.5, atol=0.5)    
