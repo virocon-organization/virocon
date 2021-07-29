@@ -9,6 +9,7 @@ from virocon import (
     HighestDensityContour,
     DirectSamplingContour,
     AndContour,
+    OrContour,
     calculate_alpha,
     DependenceFunction,
     ExponentiatedWeibullDistribution,
@@ -187,3 +188,23 @@ def test_AndContour(seastate_model):
 
     # Zero-up-crossing period of angle 90 deg.
     np.testing.assert_allclose(coords[-2,1], 11, atol=0.5)
+
+
+def test_OrContour(seastate_model):
+    alpha = 0.01
+
+    with pytest.warns(UserWarning):
+        n = 80 # Not sufficient datapoints to find precise alpha-regions.
+        sample = seastate_model.draw_sample(n)
+        contour = OrContour(seastate_model, alpha, deg_step=1, sample=sample, allowed_error=0.01)
+
+    n = 10000
+    sample = seastate_model.draw_sample(n)
+    contour = OrContour(seastate_model, alpha, deg_step=1, sample=sample)
+    coords = contour.coordinates
+
+    # Significant wave height of angle 0 deg.
+    np.testing.assert_allclose(coords[0,1], 11, atol=0.5)
+
+    # Zero-up-crossing period of angle 90 deg.
+    np.testing.assert_allclose(coords[-4,0], 8.5, atol=0.5)    

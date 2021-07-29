@@ -18,7 +18,8 @@ __all__ = [
     "ISORMContour",
     "HighestDensityContour",
     "DirectSamplingContour",
-    "AndContour"
+    "AndContour",
+    "OrContour"
 ]
 
 
@@ -812,7 +813,7 @@ class DirectSamplingContour(Contour):
 class AndContour(Contour):
     """
     A contour that connects points of constant AND exceedance. Such 
-    contours are described, for example, in Mazas (2019).
+    contours are described, for example, in Mazas (2019) [1]_.
     This implementation uses Monte Carlo simulationimplementation and 
     only works for 2D models.
 
@@ -921,3 +922,133 @@ class AndContour(Contour):
         coords_x[-1] = 0
         coords_y[-1] = 0
         self.coordinates = np.array([coords_x, coords_y]).T
+
+
+class OrContour(Contour):
+    """
+    A contour that connects points of constant OR exceedance. Such 
+    type of multivariate exceedance is described, for example, in Serinaldi (2015) [1]_.
+    This implementation uses Monte Carlo simulationimplementation and 
+    only works for 2D models.
+
+    Parameters
+    ----------
+    model : MultivariateModel
+        The model to be used to calculate the contour.
+    alpha : float
+        The exceedance probability. The probability that an observation 
+        falls outside the environmental contour.
+    n : int, optional
+        Number of data points that shall be Monte Carlo simulated. Defaults
+        to None, which calculates n based on alpha: n = int(100 / alpha).
+    deg_step : float, optional
+        Directional step in degrees. Defaults to 5.
+    sample : 2-dimensional ndarray, optional
+        Monte Carlo simulated environmental states. Array is of shape (n, d)
+        with d being the number of variables and n being the number of
+        observations.
+    allowed_error : float, optional
+        Required precision for the alpha value. For example 0.1 means that
+        the algorithm searches along the path until the probability of exceedance
+        at the current point p_e satisfies |p_e - alpha| / alpha < 0.1.
+        Defaults to 0.1.
+    
+    Attributes
+    ----------
+    coordinates : ndarray
+        Coordinates of the calculated contour.
+        Shape: (number of points, number of dimensions).          
+    
+    References
+    ----------
+    .. [1] Serinaldi, F. (2015). Dismissing return periods! Stochastic Environmental 
+           Research and Risk Assessment, 29(4), 1179–1189. https://doi.org/10.1007/s00477-014-0916-1
+    """
+
+    def __init__(self, model, alpha, n=None, deg_step=3, sample=None, allowed_error=0.01):
+        self.model = model
+        self.alpha = alpha
+        if n is None:
+            n = int(100 / alpha)
+        self.n = n
+        self.deg_step = deg_step
+        self.sample = sample
+        self.allowed_error = allowed_error
+        super().__init__()
+
+    def _compute(self):
+        model = self.model
+        alpha = self.alpha
+        n = self.n
+        deg_step = self.deg_step
+        sample = self.sample
+        allowed_error = self.allowed_error
+
+        if self.model.n_dim != 2:
+            raise NotImplementedError(
+                "DirectSamplingContour is currently only "
+                "implemented for two dimensions."
+            )
+
+        if sample is None:
+            sample = self.model.draw_sample(n)
+            self.sample = sample
+        x, y = sample.T
+
+        max_iterations = 100
+        start_theta = 10
+        end_theta = 80
+        
+        x_marginal = model.marginal_icdf(1 - alpha, 0)
+        y_marginal = model.marginal_icdf(1 - alpha, 1)
+        max_factor = 1.3
+        x_max_consider = max_factor * max(x)
+        y_max_consider = max_factor * max(y)
+
+        thetas = np.arange(start_theta, end_theta, deg_step)
+
+        coords_x = []
+        coords_y = []
+
+        for theta in thetas:
+            unity_vector = np.empty((2, 1))
+            unity_vector[0] = np.cos(theta / 180 * np.pi)
+            unity_vector[1] = np.sin(theta / 180 * np.pi)
+            max_distance = np.sqrt(x_marginal ** 2 +  y_marginal ** 2)
+            rel_dist = 0.2
+            rel_step_size = 0.1
+            current_pe = 0
+            nr_iterations = 0
+            while np.abs((current_pe - alpha)) / alpha > allowed_error:
+                abs_dist = rel_dist * max_distance
+                current_vector = unity_vector * abs_dist
+                or_exceeded = np.logical_or(x > current_vector[0], y > current_vector[1])
+                current_pe = or_exceeded.sum() / or_exceeded.size
+                if current_pe > alpha:
+                    rel_dist = rel_dist + rel_step_size
+                else:
+                    rel_step_size = 0.5 * rel_step_size
+                    rel_dist = rel_dist - rel_step_size
+                nr_iterations = nr_iterations + 1
+                if nr_iterations == max_iterations:
+                    warnings.warn(
+                        "Could not achieve the required precision. Stopping " 
+                        "because the maximum number of iterations is reached.",
+                        UserWarning,
+                    )
+                    break
+            if (current_vector[0] < x_max_consider) and (current_vector[1] < y_max_consider):
+                coords_x.append(current_vector[0])
+                coords_y.append(current_vector[1])
+        coords_x.append(0)
+        coords_y.append(coords_y[-1])
+        coords_x.append(0)
+        coords_y.append(0)
+        coords_x.append(coords_x[0])
+        coords_y.append(0)
+
+        coords_x = np.array(coords_x, dtype=object)
+        coords_y = np.array(coords_y, dtype=object)
+
+        self.coordinates = np.array([coords_x, coords_y]).T
+
