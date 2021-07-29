@@ -895,6 +895,8 @@ class AndContour(Contour):
         coords_x = np.empty(thetas.size + 1)
         coords_y = np.empty(thetas.size + 1)
 
+        # The algorithm works by moving along a line of angle theta relative
+        # to the x-axis until the AND exceedance is alpha.
         for i, theta in enumerate(thetas):
             unity_vector = np.empty((2, 1))
             unity_vector[0] = np.cos(theta / 180 * np.pi)
@@ -1026,6 +1028,8 @@ class OrContour(Contour):
         coords_x = []
         coords_y = []
 
+        # The algorithm works by moving along a line of angle theta relative
+        # to the x-axis until the OR exceedance is alpha.
         for theta in thetas:
             unity_vector = np.empty((2, 1))
             unity_vector[0] = np.cos(theta / 180 * np.pi)
