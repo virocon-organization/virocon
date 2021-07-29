@@ -960,6 +960,12 @@ class OrContour(Contour):
         the algorithm searches along the path until the probability of exceedance
         at the current point p_e satisfies |p_e - alpha| / alpha < 0.1.
         Defaults to 0.1.
+    lowest_theta : float, optional
+        Lowest angle considered in the calculation of the contour. Given in deg.
+        Defaults to 10.
+    highest_theta : float, otptional
+        Highest angle considered in the calculation of the contour. Given in deg.
+        Defaults to 80.
 
     Attributes
     ----------
@@ -974,7 +980,7 @@ class OrContour(Contour):
     """
 
     def __init__(
-        self, model, alpha, n=None, deg_step=3, sample=None, allowed_error=0.01
+        self, model, alpha, n=None, deg_step=3, sample=None, allowed_error=0.01, lowest_theta=10, highest_theta=80
     ):
         self.model = model
         self.alpha = alpha
@@ -984,6 +990,8 @@ class OrContour(Contour):
         self.deg_step = deg_step
         self.sample = sample
         self.allowed_error = allowed_error
+        self.lowest_theta = lowest_theta
+        self.highest_theta = highest_theta
         super().__init__()
 
     def _compute(self):
@@ -993,6 +1001,8 @@ class OrContour(Contour):
         deg_step = self.deg_step
         sample = self.sample
         allowed_error = self.allowed_error
+        lowest_theta = self.lowest_theta
+        highest_theta = self.highest_theta
 
         if self.model.n_dim != 2:
             raise NotImplementedError(
@@ -1006,8 +1016,6 @@ class OrContour(Contour):
         x, y = sample.T
 
         max_iterations = 100
-        start_theta = 10
-        end_theta = 80
 
         x_marginal = model.marginal_icdf(1 - alpha, 0)
         y_marginal = model.marginal_icdf(1 - alpha, 1)
@@ -1015,7 +1023,7 @@ class OrContour(Contour):
         x_max_consider = max_factor * max(x)
         y_max_consider = max_factor * max(y)
 
-        thetas = np.arange(start_theta, end_theta, deg_step)
+        thetas = np.arange(lowest_theta, highest_theta, deg_step)
 
         coords_x = []
         coords_y = []
