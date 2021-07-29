@@ -818,8 +818,7 @@ class AndContour(Contour):
     """
     A contour that connects points of constant AND exceedance. Such
     contours are described, for example, in Mazas (2019) [1]_.
-    This implementation uses Monte Carlo simulationimplementation and
-    only works for 2D models.
+    This implementation uses Monte Carlo simulation and only works for 2D models.
 
     Parameters
     ----------
@@ -936,8 +935,7 @@ class OrContour(Contour):
     """
     A contour that connects points of constant OR exceedance. Such
     type of multivariate exceedance is described, for example, in Serinaldi (2015) [1]_.
-    This implementation uses Monte Carlo simulationimplementation and
-    only works for 2D models.
+    This implementation uses Monte Carlo simulation and only works for 2D models.
 
     Parameters
     ----------
