@@ -1,6 +1,7 @@
 import pytest
 import numpy as np
 import matplotlib.pyplot as plt
+import warnings
 
 from virocon import (
     IFORMContour,
@@ -170,8 +171,19 @@ def test_HighestDensityContour(seastate_model):
 
 def test_AndContour(seastate_model):
     alpha = 0.01
-    n = 103450
+
+    with pytest.warns(UserWarning):
+        n = 80 # Not sufficient datapoints to find precise alpha-regions.
+        sample = seastate_model.draw_sample(n)
+        contour = AndContour(seastate_model, alpha, deg_step=1, sample=sample, allowed_error=0.01)
+
+    n = 10000
     sample = seastate_model.draw_sample(n)
-    contour = AndContour(seastate_model, alpha, deg_step=1, sample=sample, allowed_error=0.001)
-    plot_2D_contour(contour, sample=sample, swap_axis=True)
-    plt.show()
+    contour = AndContour(seastate_model, alpha, deg_step=1, sample=sample)
+    coords = contour.coordinates
+
+    # Significant wave height of angle 0 deg.
+    np.testing.assert_allclose(coords[0,0], 9, atol=0.5)
+
+    # Zero-up-crossing period of angle 90 deg.
+    np.testing.assert_allclose(coords[-2,1], 11, atol=0.5)

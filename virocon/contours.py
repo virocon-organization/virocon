@@ -913,7 +913,7 @@ class AndContour(Contour):
                     warnings.warn(
                         "Could not achieve the required precision. Stopping " 
                         "because the maximum number of iterations is reached.",
-                        RuntimeWarning,
+                        UserWarning,
                     )
                     break
             coords_x[i] = current_vector[0]

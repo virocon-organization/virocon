@@ -33,8 +33,8 @@ dist_description_1 = {
 model = GlobalHierarchicalModel([dist_description_0, dist_description_1])
 
 alpha = 0.01
-n = 103450
+n = 10000
 sample = model.draw_sample(n)
-contour = AndContour(model, alpha, deg_step=1, sample=sample, allowed_error=0.001)
+contour = AndContour(model, alpha, deg_step=1, sample=sample, allowed_error=0.01)
 plot_2D_contour(contour, sample=sample, swap_axis=True)
 plt.show()
