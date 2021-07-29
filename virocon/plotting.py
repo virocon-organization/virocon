@@ -477,7 +477,7 @@ def plot_2D_contour(
     x.append(x[0])
     y = coords[:, y_idx].tolist()
     y.append(y[0])
-    ax.plot(x, y, c="#BB5566")
+    ax.plot(np.asarray(x, dtype=object), np.asarray(y, dtype=object), c="#BB5566")
 
     x_name = semantics["names"][x_idx]
     x_symbol = semantics["symbols"][x_idx]
