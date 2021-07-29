@@ -19,44 +19,44 @@ __all__ = [
     "HighestDensityContour",
     "DirectSamplingContour",
     "AndContour",
-    "OrContour"
+    "OrContour",
 ]
 
 
 def calculate_alpha(state_duration, return_period):
     """
     Calculates the probability that an environmental contour is exceeded
-    (exceedance probability). 
-    
-    The exceedance probability, α, corresponds to a certain recurrence or 
-    return period, T, which describes the average time period between two 
-    consecutive environmental states that exceed the contour . Note that 
+    (exceedance probability).
+
+    The exceedance probability, α, corresponds to a certain recurrence or
+    return period, T, which describes the average time period between two
+    consecutive environmental states that exceed the contour . Note that
     exceedance can be defined in various ways for environmental contours
     (Mackay and Haselsteiner, 2021) [1]_
-    
+
     Parameters
-    ---------- 
+    ----------
     state_duration : float
         Time period for which an environmental state is measured,
         expressed in hours :math:`(T_s)`.
     return_period : float
-        Describes the average time period between two consecutive 
-        environmental states that exceed a contour. In the univariate case the 
+        Describes the average time period between two consecutive
+        environmental states that exceed a contour. In the univariate case the
         contour is a threshold, x1.
-    
-        :math:`\\alpha= \\frac{T_s}{T_r * 365.25 * 24}` 
-        
-        :math:`F(x_1) =  P(X_1 \geq x_1)= \int_{- \infty}^{x_1} f(x) dx = 1- \\alpha`  
-        
+
+        :math:`\\alpha= \\frac{T_s}{T_r * 365.25 * 24}`
+
+        :math:`F(x_1) =  P(X_1 \geq x_1)= \int_{- \infty}^{x_1} f(x) dx = 1- \\alpha`
+
     Returns
     -------
     alpha : float
         The probability that an environmental contour is exceeded.
-    
+
     References
     ----------
-    .. [1] Mackay, E., & Haselsteiner, A. F. (2021). 
-       Marginal and total exceedance probabilities of environmental contours. 
+    .. [1] Mackay, E., & Haselsteiner, A. F. (2021).
+       Marginal and total exceedance probabilities of environmental contours.
        Marine Structures, 75. https://doi.org/10.1016/j.marstruc.2020.102863
 
     """
@@ -67,9 +67,9 @@ def calculate_alpha(state_duration, return_period):
 
 def save_contour_coordinates(contour, file_path, semantics=None):
     """
-    Saves the coordinates of the calculated contour. 
+    Saves the coordinates of the calculated contour.
     Saves a .txt file to the given path.
-    
+
     Parameters
     ----------
     contour : Contour
@@ -78,11 +78,11 @@ def save_contour_coordinates(contour, file_path, semantics=None):
      Indicates the path, where the contour coordinates are saved.
     semantics : dictionary
      The description of the model. semantics has the keys 'names', 'symbols'
-     and 'units'. Each value is a list of strings. For each dimension of the 
-     model the strings describe the name, symbol or unit of that dimension, 
+     and 'units'. Each value is a list of strings. For each dimension of the
+     model the strings describe the name, symbol or unit of that dimension,
      respectively. This information is used as the header of the created file.
      Defaults to a dict with general descriptions.
-     
+
     """
 
     root, ext = os.path.splitext(file_path)
@@ -110,20 +110,20 @@ def save_contour_coordinates(contour, file_path, semantics=None):
 class Contour(ABC):
     """
       Abstract base class for contours.
-      
+
       A contour implements a method to define multivariate extremes based on a
-      joint probabilistic model of variables like significant wave height, 
+      joint probabilistic model of variables like significant wave height,
       wind speed or spectral peak period.
-      
-      Contour curves or surfaces for more than two environmental parameters 
-      give combination of environmental parameters which approximately 
-      describe the various actions corresponding to the given exceedance 
+
+      Contour curves or surfaces for more than two environmental parameters
+      give combination of environmental parameters which approximately
+      describe the various actions corresponding to the given exceedance
       probability [1]_.
-      
-      
+
+
     References
     ----------
-    .. [1] NORSOK standard N-003, Edition 2, September 2007. Actions and 
+    .. [1] NORSOK standard N-003, Edition 2, September 2007. Actions and
         action effects.
 
 
@@ -159,7 +159,7 @@ class Contour(ABC):
         """
         Compute the contours coordinates.
 
-        Is automatically called in the __init__. 
+        Is automatically called in the __init__.
         """
         pass
 
@@ -175,25 +175,25 @@ class IFORMContour(Contour):
     model :  MultivariateModel
         The model to be used to calculate the contour.
     alpha : float
-        The exceedance probability. The probability that an observation falls 
+        The exceedance probability. The probability that an observation falls
         outside the environmental contour.
     n_points : int, optional
         Number of points on the contour. Defaults to 180.
-        
+
     Attributes
     ----------
-    coordinates : 
+    coordinates :
         Coordinates of the calculated contour.
     beta :
-        Reliability index.  
-    sphere_points : 
-          Points of the sphere in U space [1]_ . 
-    
+        Reliability index.
+    sphere_points :
+          Points of the sphere in U space [1]_ .
+
     References
     ----------
     .. [1] Winterstein, S.R.; Ude, T.C.; Cornell, C.A.; Bjerager, P.; Haver, S. (1993)
         Environmental parameters  for extreme response: Inverse FORM with omission
-        factors. ICOSSAR 93, Innsbruck, Austria. 
+        factors. ICOSSAR 93, Innsbruck, Austria.
 
 
     """
@@ -204,7 +204,9 @@ class IFORMContour(Contour):
         self.n_points = n_points
         super().__init__()
 
-    def _compute(self,):
+    def _compute(
+        self,
+    ):
         """
         Calculates coordinates using IFORM.
 
@@ -255,34 +257,34 @@ class IFORMContour(Contour):
 class ISORMContour(Contour):
     """
     Contour based on the inverse second-order reliability method.
-       
+
     This method was proposed by Chai and Leira (2018) [1]_
-       
+
     Parameters
     ----------
     model : MultivariateModel
         The model to be used to calculate the contour.
     alpha : float
-        The exceedance probability. The probability that an observation falls 
+        The exceedance probability. The probability that an observation falls
         outside the environmental contour.
     n_points : int, optional
         Number of points on the contour. Defaults to 180.
-    
+
     Attributes
     ----------
-    coordinates : 
+    coordinates :
         Coordinates of the calculated contour.
     beta :
-        Reliability index.  
-    sphere_points : 
-          Points of the sphere in U space [1]_ . 
-    
+        Reliability index.
+    sphere_points :
+          Points of the sphere in U space [1]_ .
+
     References
     ----------
     .. [1] Chai, W.; Leira, B.J. (2018)
         Environmental contours based on inverse SORM. Marine Structures Volume 60,
         pp. 34-51. DOI: 10.1016/j.marstruc.2018.03.007 .
-       
+
     """
 
     def __init__(self, model, alpha, n_points=180):
@@ -291,7 +293,9 @@ class ISORMContour(Contour):
         self.n_points = n_points
         super().__init__()
 
-    def _compute(self,):
+    def _compute(
+        self,
+    ):
         """
         Calculates coordinates using ISORM.
 
@@ -355,40 +359,40 @@ class HighestDensityContour(Contour):
     model : MultivariateModel
         The model to be used to calculate the contour.
     alpha : float
-        The exceedance probability. The probability that an observation 
+        The exceedance probability. The probability that an observation
         falls outside the environmental contour.
     limits : list of tuples, optional
-       The limits of the grid to use for calculation. One 2-element tuple 
-       for each dimension of the model, containing the minimum and maximum 
-       for that dimension. (min, max). If not given, reasonable values are 
+       The limits of the grid to use for calculation. One 2-element tuple
+       for each dimension of the model, containing the minimum and maximum
+       for that dimension. (min, max). If not given, reasonable values are
        choosen using the models marginal_icdf as upper limit and 0 as lower
        limit.
     deltas : float or list of float, optional
-       The step size of the grid to use for calculation. If a single float 
-       is supplied it is used for all dimensions. If a list is supplied 
-       there has to be one entry for each dimension of the model. Defaults 
+       The step size of the grid to use for calculation. If a single float
+       is supplied it is used for all dimensions. If a list is supplied
+       there has to be one entry for each dimension of the model. Defaults
        to 0.25% of the range defined by limits.
-       
+
     Attributes
     ----------
     coordinates : ndarray
         Coordinates of the calculated contour.
-        Shape: (number of points, number of dimensions).  
+        Shape: (number of points, number of dimensions).
     cell_center_coordinates : list of array
         Points at which the grid is evaluated.
         A list with one entry for each dimension, each entry is an array with
         the cell centers for that dimension.
     fm : float
-        Minimum probability density of the enclosed region / constant 
-        probability density along the contour. 
-                
-    
+        Minimum probability density of the enclosed region / constant
+        probability density along the contour.
+
+
     References
     ----------
     .. [1] Haselsteiner, A.F.; Ohlendorf, J.H.; Wosniok, W.; Thoben, K.D. (2017)
         Deriving environmental contours from highest density regions,
         Coastal Engineering, Volume 123. DOI: 10.1016/j.coastaleng.2017.03.002.
-        
+
     """
 
     def __init__(self, model, alpha, limits=None, deltas=None):
@@ -586,7 +590,7 @@ class HighestDensityContour(Contour):
         Notes
         ------
         A ``RuntimeWarning`` is raised if the limit cannot be reached by summing all values.
-        
+
         """
 
         flat_array = np.ravel(array)
@@ -618,20 +622,20 @@ class HighestDensityContour(Contour):
         Calculates the cell averaged joint probabilty density function.
 
         Multiplies the cell averaged probability densities of all distributions.
-        
+
         Parameters
         ----------
         coords : list of array
             List with one coordinate array for each dimension.
-            
+
         Returns
         -------
         fbar : array
             Joint cell averaged probability density function evaluated at coords.
             Cell averaged probability density function evaluated at coords.
-            n dimensional array, where n is the number of dimensions of the 
+            n dimensional array, where n is the number of dimensions of the
             model used for calculation.
-           
+
 
         """
 
@@ -644,29 +648,29 @@ class HighestDensityContour(Contour):
 
     def cell_averaged_pdf(self, dist_idx, coords):
         """
-        Calculates the cell averaged probabilty density function of a single 
+        Calculates the cell averaged probabilty density function of a single
         distribution.
 
-        Calculates the pdf by approximating it with the finite differential 
-        quotient of the cumulative distributions function, evaluated at the 
+        Calculates the pdf by approximating it with the finite differential
+        quotient of the cumulative distributions function, evaluated at the
         grid cells borders.
         i.e. :math:`f(x) \\approx \\frac{F(x+ 0.5\\Delta x) - F(x- 0.5\\Delta x) }{\\Delta x}`
-        
+
         Parameters
         ----------
         dist_idx : int
             The index of the distribution to calcululate the pdf for.
-        
+
         coords : list of array
             List with one coordinate array for each dimension.
-           
+
         Returns
         -------
         fbar : array
             Cell averaged probability density function evaluated at coords.
-            n dimensional array, where n is the number of dimensions of the 
-            model used for calculation. All dimensions but, the dist_idx and 
-            the cond_idx dimensions are of length 1. The dist_idx and cond_idx 
+            n dimensional array, where n is the number of dimensions of the
+            model used for calculation. All dimensions but, the dist_idx and
+            the cond_idx dimensions are of length 1. The dist_idx and cond_idx
             dimensions are of length equal to the length of coords.
 
 
@@ -715,7 +719,7 @@ class DirectSamplingContour(Contour):
     model : MultivariateModel
         The model to be used to calculate the contour.
     alpha : float
-        The exceedance probability. The probability that an observation 
+        The exceedance probability. The probability that an observation
         falls outside the environmental contour.
     n : int, optional
         Number of data points that shall be Monte Carlo simulated. Defaults
@@ -726,13 +730,13 @@ class DirectSamplingContour(Contour):
         Monte Carlo simulated environmental states. Array is of shape (n, d)
         with d being the number of variables and n being the number of
         observations.
-    
+
     Attributes
     ----------
     coordinates : ndarray
         Coordinates of the calculated contour.
-        Shape: (number of points, number of dimensions).          
-    
+        Shape: (number of points, number of dimensions).
+
     References
     ----------
     .. [1] Huseby, A.B.; Vanem, E.; Natvig, B. (2013)
@@ -812,9 +816,9 @@ class DirectSamplingContour(Contour):
 
 class AndContour(Contour):
     """
-    A contour that connects points of constant AND exceedance. Such 
+    A contour that connects points of constant AND exceedance. Such
     contours are described, for example, in Mazas (2019) [1]_.
-    This implementation uses Monte Carlo simulationimplementation and 
+    This implementation uses Monte Carlo simulationimplementation and
     only works for 2D models.
 
     Parameters
@@ -822,7 +826,7 @@ class AndContour(Contour):
     model : MultivariateModel
         The model to be used to calculate the contour.
     alpha : float
-        The exceedance probability. The probability that an observation 
+        The exceedance probability. The probability that an observation
         falls outside the environmental contour.
     n : int, optional
         Number of data points that shall be Monte Carlo simulated. Defaults
@@ -838,13 +842,13 @@ class AndContour(Contour):
         the algorithm searches along the path until the probability of exceedance
         at the current point p_e satisfies |p_e - alpha| / alpha < 0.1.
         Defaults to 0.1.
-    
+
     Attributes
     ----------
     coordinates : ndarray
         Coordinates of the calculated contour.
-        Shape: (number of points, number of dimensions).          
-    
+        Shape: (number of points, number of dimensions).
+
     References
     ----------
     .. [1] Mazas, F. (2019). Extreme events: a framework for assessing natural
@@ -852,7 +856,9 @@ class AndContour(Contour):
 
     """
 
-    def __init__(self, model, alpha, n=None, deg_step=3, sample=None, allowed_error=0.01):
+    def __init__(
+        self, model, alpha, n=None, deg_step=3, sample=None, allowed_error=0.01
+    ):
         self.model = model
         self.alpha = alpha
         if n is None:
@@ -883,7 +889,7 @@ class AndContour(Contour):
         x, y = sample.T
 
         max_iterations = 100
-        
+
         x_marginal = model.marginal_icdf(1 - alpha, 0)
         y_marginal = model.marginal_icdf(1 - alpha, 1)
         thetas = np.arange(0, 90, deg_step)
@@ -894,7 +900,7 @@ class AndContour(Contour):
             unity_vector = np.empty((2, 1))
             unity_vector[0] = np.cos(theta / 180 * np.pi)
             unity_vector[1] = np.sin(theta / 180 * np.pi)
-            max_distance = np.sqrt(x_marginal ** 2 +  y_marginal ** 2)
+            max_distance = np.sqrt(x_marginal ** 2 + y_marginal ** 2)
             rel_dist = 0.2
             rel_step_size = 0.1
             current_pe = 0
@@ -902,7 +908,9 @@ class AndContour(Contour):
             while np.abs((current_pe - alpha)) / alpha > allowed_error:
                 abs_dist = rel_dist * max_distance
                 current_vector = unity_vector * abs_dist
-                both_greater = np.logical_and(x > current_vector[0], y > current_vector[1])
+                both_greater = np.logical_and(
+                    x > current_vector[0], y > current_vector[1]
+                )
                 current_pe = both_greater.sum() / both_greater.size
                 if current_pe > alpha:
                     rel_dist = rel_dist + rel_step_size
@@ -912,7 +920,7 @@ class AndContour(Contour):
                 nr_iterations = nr_iterations + 1
                 if nr_iterations == max_iterations:
                     warnings.warn(
-                        "Could not achieve the required precision. Stopping " 
+                        "Could not achieve the required precision. Stopping "
                         "because the maximum number of iterations is reached.",
                         UserWarning,
                     )
@@ -926,9 +934,9 @@ class AndContour(Contour):
 
 class OrContour(Contour):
     """
-    A contour that connects points of constant OR exceedance. Such 
+    A contour that connects points of constant OR exceedance. Such
     type of multivariate exceedance is described, for example, in Serinaldi (2015) [1]_.
-    This implementation uses Monte Carlo simulationimplementation and 
+    This implementation uses Monte Carlo simulationimplementation and
     only works for 2D models.
 
     Parameters
@@ -936,7 +944,7 @@ class OrContour(Contour):
     model : MultivariateModel
         The model to be used to calculate the contour.
     alpha : float
-        The exceedance probability. The probability that an observation 
+        The exceedance probability. The probability that an observation
         falls outside the environmental contour.
     n : int, optional
         Number of data points that shall be Monte Carlo simulated. Defaults
@@ -952,20 +960,22 @@ class OrContour(Contour):
         the algorithm searches along the path until the probability of exceedance
         at the current point p_e satisfies |p_e - alpha| / alpha < 0.1.
         Defaults to 0.1.
-    
+
     Attributes
     ----------
     coordinates : ndarray
         Coordinates of the calculated contour.
-        Shape: (number of points, number of dimensions).          
-    
+        Shape: (number of points, number of dimensions).
+
     References
     ----------
-    .. [1] Serinaldi, F. (2015). Dismissing return periods! Stochastic Environmental 
+    .. [1] Serinaldi, F. (2015). Dismissing return periods! Stochastic Environmental
            Research and Risk Assessment, 29(4), 1179–1189. https://doi.org/10.1007/s00477-014-0916-1
     """
 
-    def __init__(self, model, alpha, n=None, deg_step=3, sample=None, allowed_error=0.01):
+    def __init__(
+        self, model, alpha, n=None, deg_step=3, sample=None, allowed_error=0.01
+    ):
         self.model = model
         self.alpha = alpha
         if n is None:
@@ -998,7 +1008,7 @@ class OrContour(Contour):
         max_iterations = 100
         start_theta = 10
         end_theta = 80
-        
+
         x_marginal = model.marginal_icdf(1 - alpha, 0)
         y_marginal = model.marginal_icdf(1 - alpha, 1)
         max_factor = 1.3
@@ -1014,7 +1024,7 @@ class OrContour(Contour):
             unity_vector = np.empty((2, 1))
             unity_vector[0] = np.cos(theta / 180 * np.pi)
             unity_vector[1] = np.sin(theta / 180 * np.pi)
-            max_distance = np.sqrt(x_marginal ** 2 +  y_marginal ** 2)
+            max_distance = np.sqrt(x_marginal ** 2 + y_marginal ** 2)
             rel_dist = 0.2
             rel_step_size = 0.1
             current_pe = 0
@@ -1022,7 +1032,9 @@ class OrContour(Contour):
             while np.abs((current_pe - alpha)) / alpha > allowed_error:
                 abs_dist = rel_dist * max_distance
                 current_vector = unity_vector * abs_dist
-                or_exceeded = np.logical_or(x > current_vector[0], y > current_vector[1])
+                or_exceeded = np.logical_or(
+                    x > current_vector[0], y > current_vector[1]
+                )
                 current_pe = or_exceeded.sum() / or_exceeded.size
                 if current_pe > alpha:
                     rel_dist = rel_dist + rel_step_size
@@ -1032,12 +1044,14 @@ class OrContour(Contour):
                 nr_iterations = nr_iterations + 1
                 if nr_iterations == max_iterations:
                     warnings.warn(
-                        "Could not achieve the required precision. Stopping " 
+                        "Could not achieve the required precision. Stopping "
                         "because the maximum number of iterations is reached.",
                         UserWarning,
                     )
                     break
-            if (current_vector[0] < x_max_consider) and (current_vector[1] < y_max_consider):
+            if (current_vector[0] < x_max_consider) and (
+                current_vector[1] < y_max_consider
+            ):
                 coords_x.append(current_vector[0])
                 coords_y.append(current_vector[1])
         coords_x.append(0)
@@ -1051,4 +1065,3 @@ class OrContour(Contour):
         coords_y = np.array(coords_y, dtype=object)
 
         self.coordinates = np.array([coords_x, coords_y]).T
-
