@@ -878,7 +878,7 @@ class AndContour(Contour):
 
         if self.model.n_dim != 2:
             raise NotImplementedError(
-                "DirectSamplingContour is currently only "
+                "AndContour is currently only "
                 "implemented for two dimensions."
             )
 
@@ -1004,7 +1004,7 @@ class OrContour(Contour):
 
         if self.model.n_dim != 2:
             raise NotImplementedError(
-                "DirectSamplingContour is currently only "
+                "OrContour is currently only "
                 "implemented for two dimensions."
             )
 
