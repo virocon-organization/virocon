@@ -6,9 +6,10 @@ from virocon import (
     ISORMContour,
     HighestDensityContour,
     DirectSamplingContour,
+    AndContour,
+    OrContour,
     calculate_alpha,
     DependenceFunction,
-    ExponentiatedWeibullDistribution,
     LogNormalDistribution,
     WeibullDistribution,
     GlobalHierarchicalModel,
@@ -163,3 +164,43 @@ def test_HighestDensityContour(seastate_model):
     my_coordinates = my_contour.coordinates
     np.testing.assert_allclose(max(my_coordinates[:, 0]), 16.79, atol=0.05)
     np.testing.assert_allclose(max(my_coordinates[:, 1]), 14.64, atol=0.05)
+
+
+def test_AndContour(seastate_model):
+    alpha = 0.01
+
+    with pytest.warns(UserWarning):
+        n = 80 # Not sufficient datapoints to find precise alpha-regions.
+        sample = seastate_model.draw_sample(n)
+        contour = AndContour(seastate_model, alpha, deg_step=1, sample=sample, allowed_error=0.01)
+
+    n = 10000
+    sample = seastate_model.draw_sample(n)
+    contour = AndContour(seastate_model, alpha, deg_step=1, sample=sample)
+    coords = contour.coordinates
+
+    # Significant wave height at an angle of 0 deg.
+    np.testing.assert_allclose(coords[0,0], 9, atol=0.5)
+
+    # Zero-up-crossing period at an angle of 90 deg.
+    np.testing.assert_allclose(coords[-2,1], 11, atol=0.5)
+
+
+def test_OrContour(seastate_model):
+    alpha = 0.01
+
+    with pytest.warns(UserWarning):
+        n = 80 # Not sufficient datapoints to find precise alpha-regions.
+        sample = seastate_model.draw_sample(n)
+        contour = OrContour(seastate_model, alpha, deg_step=1, sample=sample, allowed_error=0.01)
+
+    n = 10000
+    sample = seastate_model.draw_sample(n)
+    contour = OrContour(seastate_model, alpha, deg_step=1, sample=sample)
+    coords = contour.coordinates
+
+    # Significant wave height at the lowest angle (close to 0 deg).
+    np.testing.assert_allclose(coords[0,1], 11, atol=0.5)
+
+    # Zero-up-crossing period at the highest angle (close to 90 deg).
+    np.testing.assert_allclose(coords[-4,0], 8.5, atol=0.5)    
