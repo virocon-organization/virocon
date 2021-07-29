@@ -1,7 +1,5 @@
 import pytest
 import numpy as np
-import matplotlib.pyplot as plt
-import warnings
 
 from virocon import (
     IFORMContour,
@@ -12,11 +10,9 @@ from virocon import (
     OrContour,
     calculate_alpha,
     DependenceFunction,
-    ExponentiatedWeibullDistribution,
     LogNormalDistribution,
     WeibullDistribution,
     GlobalHierarchicalModel,
-    plot_2D_contour
 )
 
 
