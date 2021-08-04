@@ -110,6 +110,7 @@ Lognormal distribution are described by a power function and an exponential func
         "distribution": LogNormalDistribution(),
         "conditional_on": 0,
         "parameters": {"mu": power3, "sigma": exp3}
+    }
 
 **Joint distribution model**
 
