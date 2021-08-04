@@ -21,8 +21,8 @@ Import the required virocon packages and packages that are needed additionally.
 
 .. code-block:: python
 
-    from virocon import (GlobalHierarchicalModel, get_OMAE2020_Hs_Tz,
-                         calculate_alpha, IFORMContour, plot_2D_contour)
+    from virocon import (GlobalHierarchicalModel, get_OMAE2020_Hs_Tz, calculate_alpha,
+                         IFORMContour, plot_2D_contour, read_ec_benchmark_dataset)
     from matplotlib import pyplot as plt
 
 Load the sea state data set. Here, we use a dataset used in a benchmark study which was published at the OMAE 2019
