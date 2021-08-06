@@ -878,8 +878,7 @@ class AndContour(Contour):
 
         if self.model.n_dim != 2:
             raise NotImplementedError(
-                "AndContour is currently only "
-                "implemented for two dimensions."
+                "AndContour is currently only implemented for two dimensions."
             )
 
         if sample is None:
@@ -980,7 +979,15 @@ class OrContour(Contour):
     """
 
     def __init__(
-        self, model, alpha, n=None, deg_step=3, sample=None, allowed_error=0.01, lowest_theta=10, highest_theta=80
+        self,
+        model,
+        alpha,
+        n=None,
+        deg_step=3,
+        sample=None,
+        allowed_error=0.01,
+        lowest_theta=10,
+        highest_theta=80,
     ):
         self.model = model
         self.alpha = alpha
@@ -1006,8 +1013,7 @@ class OrContour(Contour):
 
         if self.model.n_dim != 2:
             raise NotImplementedError(
-                "OrContour is currently only "
-                "implemented for two dimensions."
+                "OrContour is currently only implemented for two dimensions."
             )
 
         if sample is None:
