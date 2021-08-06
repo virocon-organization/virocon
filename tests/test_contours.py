@@ -166,14 +166,8 @@ def test_HighestDensityContour(seastate_model):
     np.testing.assert_allclose(max(my_coordinates[:, 1]), 14.64, atol=0.05)
 
 
-def test_AndContour(seastate_model):
+def test_AndContour_CorrectCoordinates(seastate_model):
     alpha = 0.01
-
-    with pytest.warns(UserWarning):
-        n = 80 # Not sufficient datapoints to find precise alpha-regions.
-        sample = seastate_model.draw_sample(n)
-        contour = AndContour(seastate_model, alpha, deg_step=1, sample=sample, allowed_error=0.01)
-
     n = 10000
     sample = seastate_model.draw_sample(n)
     contour = AndContour(seastate_model, alpha, deg_step=1, sample=sample)
@@ -184,6 +178,14 @@ def test_AndContour(seastate_model):
 
     # Zero-up-crossing period at an angle of 90 deg.
     np.testing.assert_allclose(coords[-2,1], 11, atol=0.5)
+
+
+def test_AndContour_TooSmallSample(seastate_model):
+    alpha = 0.01
+    with pytest.warns(UserWarning):
+        n = 80 # Not sufficient datapoints to find precise alpha-regions.
+        sample = seastate_model.draw_sample(n)
+        contour = AndContour(seastate_model, alpha, deg_step=1, sample=sample, allowed_error=0.01)
 
 
 def test_OrContour(seastate_model):
