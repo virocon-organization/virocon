@@ -904,7 +904,7 @@ class AndContour(Contour):
             max_distance = np.sqrt(x_marginal ** 2 + y_marginal ** 2)
             rel_dist = 0.2
             rel_step_size = 0.1
-            current_pe = 0
+            current_pe = 0  # pe = probability of exceedance.
             nr_iterations = 0
             while np.abs((current_pe - alpha)) / alpha > allowed_error:
                 abs_dist = rel_dist * max_distance
@@ -1045,7 +1045,7 @@ class OrContour(Contour):
             max_distance = np.sqrt(x_marginal ** 2 + y_marginal ** 2)
             rel_dist = 0.2
             rel_step_size = 0.1
-            current_pe = 0
+            current_pe = 0 # pe = probability of exceedance.
             nr_iterations = 0
             while np.abs((current_pe - alpha)) / alpha > allowed_error:
                 abs_dist = rel_dist * max_distance
