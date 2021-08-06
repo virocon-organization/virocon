@@ -1022,6 +1022,7 @@ class OrContour(Contour):
             self.sample = sample
         x, y = sample.T
 
+        # This value was set empirically, no systematic testing has been performed.
         max_iterations = 100
 
         x_marginal = model.marginal_icdf(1 - alpha, 0)
