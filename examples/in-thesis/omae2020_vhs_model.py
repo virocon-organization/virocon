@@ -1,3 +1,13 @@
+"""
+Example of how to use the wind-wave model that was proposed in Haselsteiner et al. (2020).
+
+Haselsteiner, A. F., Sander, A., Ohlendorf, J.-H., & Thoben, K.-D. (2020). 
+Global hierarchical models for wind and wave contours:
+Physical interpretations of the dependence functions.
+Proc. 39th International Conference on Ocean, Offshore and Arctic Engineering (OMAE 2020). 
+https://doi.org/10.1115/OMAE2020-18668
+"""
+
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -74,5 +84,5 @@ semantics = {
     ],
 }
 plot_2D_isodensity(model, data, semantics)
-#plt.savefig("virocon_omae2020_vhs.pdf", dpi=300, bbox_inches='tight', pad_inches=0)
+# plt.savefig("virocon_omae2020_vhs.pdf", dpi=300, bbox_inches='tight', pad_inches=0)
 plt.show()
