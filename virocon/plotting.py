@@ -491,7 +491,13 @@ def plot_2D_contour(
     x.append(x[0])
     y = coords[:, y_idx].tolist()
     y.append(y[0])
-    ax.plot(np.asarray(x, dtype=object), np.asarray(y, dtype=object), c="#BB5566")
+
+    # It was thought that this line caused a DepreciationWarning, but the change
+    # was reverted as we were not sure about the reason.
+    # https://github.com/virocon-organization/virocon/commit/45482e0b5ff2d21c594f0e292b3db9c971881b5c
+    # https://github.com/virocon-organization/virocon/pull/124#discussion_r684193507
+    ax.plot(x, y, c="#BB5566")    
+    #ax.plot(np.asarray(x, dtype=object), np.asarray(y, dtype=object), c="#BB5566")
 
     x_name = semantics["names"][x_idx]
     x_symbol = semantics["symbols"][x_idx]
