@@ -67,5 +67,5 @@ for ax2, t2 in zip(axs, titles):
             line.set_linewidth(2)
             line.set_color("k")
 
-plt.savefig("bivariate_exceedance.pdf", dpi=300, bbox_inches='tight', pad_inches=0)
+#plt.savefig("bivariate_exceedance.pdf", dpi=300, bbox_inches='tight', pad_inches=0)
 plt.show()
