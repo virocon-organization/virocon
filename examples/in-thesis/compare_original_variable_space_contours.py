@@ -1,3 +1,9 @@
+"""
+Compute four types of contour with the same dataset.
+Namely a direct sampling contour, a highest density contour, an AND contour
+and an OR contour. These contours are all defined in the original variable space.
+"""
+
 import matplotlib.pyplot as plt
 
 from virocon import (
