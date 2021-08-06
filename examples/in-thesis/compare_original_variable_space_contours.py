@@ -9,7 +9,7 @@ from virocon import (
     HighestDensityContour,
     GlobalHierarchicalModel,
     plot_2D_contour,
-    get_OMAE2020_V_Hs
+    get_OMAE2020_V_Hs,
 )
 
 # Fit a joint model based on a wind-wave dataset.
@@ -23,9 +23,13 @@ alpha = 0.1
 n = 10000
 sample = model.draw_sample(n)
 and_contour = AndContour(model, alpha, deg_step=1, sample=sample, allowed_error=0.0001)
-or_contour = OrContour(model, alpha, deg_step=1, sample=sample, allowed_error=0.0001, lowest_theta=2)
+or_contour = OrContour(
+    model, alpha, deg_step=1, sample=sample, allowed_error=0.0001, lowest_theta=2
+)
 direct_sampling = DirectSamplingContour(model, alpha, sample=sample, deg_step=10)
-highest_density = HighestDensityContour(model, alpha, limits=[(0, 20), (0, 20)], deltas=0.02)
+highest_density = HighestDensityContour(
+    model, alpha, limits=[(0, 20), (0, 20)], deltas=0.02
+)
 
 small_sample = model.draw_sample(200)
 
@@ -39,7 +43,9 @@ axs[0][0].scatter(
     alpha=0.3,
     rasterized=True,
 )
-axs[0][0].plot(and_contour.coordinates[0:-1,0], and_contour.coordinates[0:-1,1], c="#BB5566")
+axs[0][0].plot(
+    and_contour.coordinates[0:-1, 0], and_contour.coordinates[0:-1, 1], c="#BB5566"
+)
 axs[0][1].scatter(
     small_sample[:, 0],
     small_sample[:, 1],
@@ -48,18 +54,23 @@ axs[0][1].scatter(
     alpha=0.3,
     rasterized=True,
 )
-axs[0][1].plot(or_contour.coordinates[0:-3,0], or_contour.coordinates[0:-3,1], c="#BB5566")
+axs[0][1].plot(
+    or_contour.coordinates[0:-3, 0], or_contour.coordinates[0:-3, 1], c="#BB5566"
+)
 plot_2D_contour(direct_sampling, sample=small_sample, ax=axs[1][0])
 plot_2D_contour(highest_density, sample=small_sample, ax=axs[1][1])
-titles = [['AND exceedance', 'OR exceedance'],['Angular exceedance', 'Isodensity exceedance']]
+titles = [
+    ["AND exceedance", "OR exceedance"],
+    ["Angular exceedance", "Isodensity exceedance"],
+]
 for ax2, t2 in zip(axs, titles):
     for ax, t in zip(ax2, t2):
         ax.set_xlabel("")
         ax.set_ylabel("")
-        ax.set_xticks([]) 
-        ax.set_yticks([]) 
-        ax.spines['right'].set_visible(False)
-        ax.spines['top'].set_visible(False)  
+        ax.set_xticks([])
+        ax.set_yticks([])
+        ax.spines["right"].set_visible(False)
+        ax.spines["top"].set_visible(False)
         ax.set_title(t)
         ax.set_xlim([0, 25])
         ax.set_ylim([0, 7])
@@ -67,5 +78,5 @@ for ax2, t2 in zip(axs, titles):
             line.set_linewidth(2)
             line.set_color("k")
 
-#plt.savefig("bivariate_exceedance.pdf", dpi=300, bbox_inches='tight', pad_inches=0)
+# plt.savefig("bivariate_exceedance.pdf", dpi=300, bbox_inches='tight', pad_inches=0)
 plt.show()
