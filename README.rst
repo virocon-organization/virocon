@@ -31,6 +31,7 @@ The following methods are implemented in virocon:
   - inverse second-order reliability method (ISORM),
   - the direct sampling contour method or the
   - highest density contour method.
+  - Futher, "AND" and "OR" exceedance contours can be calculated.
 
 How to use virocon
 ------------------
