@@ -87,6 +87,7 @@ def test_plot_dependence_function(seastate_model, fitted_model, semantics_fitted
         par_rename={"alpha": r"$\alpha$", "beta": r"$\beta$"},
     )
     # plt.show()
+    plt.close('all')
 
 
 def test_plot_2D_isodensity():
@@ -99,3 +100,14 @@ def test_plot_2D_isodensity():
     levels = [0.00001, 0.0001, 0.001]
     plot_2D_isodensity(model, data, limits=limits, levels=levels)
     #plt.show()
+    plt.close('all')
+
+def test_plot_2D_contour():
+    dist_descriptions, fit_descriptions, semantics = get_OMAE2020_V_Hs()
+    model = GlobalHierarchicalModel(dist_descriptions)
+    data = read_ec_benchmark_dataset("datasets/ec-benchmark_dataset_D_1year.txt")
+    model.fit(data, fit_descriptions)
+    contour = IFORMContour(model, alpha=0.001)
+    plot_2D_contour(contour)
+    #plt.show()
+    plt.close('all')
