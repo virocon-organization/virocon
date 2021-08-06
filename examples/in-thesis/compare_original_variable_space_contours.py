@@ -1,5 +1,4 @@
 import matplotlib.pyplot as plt
-import numpy as np
 
 from virocon import (
     read_ec_benchmark_dataset,
