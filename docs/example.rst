@@ -65,7 +65,7 @@ The code, which is available as a Python file here_, will create this plot
 (environmental contour with a return period of 50 years):
 
 .. figure:: sea_state_contour.png
-    :scale: 100 %
+    :scale: 70 %
     :alt: sea state contour
 
 .. _examples: https://github.com/virocon-organization/virocon/tree/master/examples
