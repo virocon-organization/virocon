@@ -12,11 +12,13 @@ to the given exceedance probability [1]_.
 **Exceedance probability**
 
 Probability that an environmental contour is exceeded (exceedance probability). The exceedance probability, α,
-corresponds to a certain recurrence or return period, T, which describes the average time period between two consecutive
-environmental states that exceed the contour . Note that exceedance can be defined in various ways for environmental
-contours (Mackay and Haselsteiner, 2021) [2]_ .
+corresponds to a certain recurrence or return period, Tr, which describes the average time period between two
+consecutive environmental states that exceed the contour. Here, the return period Tr is given in years, while Ts, the
+state duration of independent events is given in hours. E.g. when considering 1-hour or 3-hour sea states as independent,
+the formula below is appropriate. Note that exceedance can be defined in various ways for environmental contours
+(Mackay and Haselsteiner, 2021) [2]_ .
 
-:math:`\\alpha= \frac{T_s}{T_r * 365.25 * 24}`
+:math:`\alpha= \frac{T_s}{T_r * 365.25 * 24}`
 
 **State duration Ts**
 
