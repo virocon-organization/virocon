@@ -8,8 +8,8 @@ examples. To create an environmental contour, first, we need to define a joint d
 specific contour method and initiate the calculation. virocon uses so-called global hierarchical models to define the
 joint distribution and offers four common methods how an environmental contour can be defined based on a given joint
 distribution. Generally, virocon provides two ways of creating a joint model and calculating a contour. The first option
-is using an already predefined model, which was explained before in the quick start section, see :ref:`quick-start-guide`.
-The second option is defining a custom statistical model.
+is using an already predefined model, which was explained before in the quick start section (see :ref:`quick-start-guide`).
+The second option is defining a custom statistical model which is described in the following.
 
 If the joint distribution is known, the procedure of calculating an environmental contour with virocon can be summarized as:
 
@@ -20,13 +20,13 @@ If the joint distribution is known, the procedure of calculating an environmenta
 5.	Choose a type of contour: IFormContour, ISormContour, DirectSamplingContour or HighestDensityContour (for more detailed explanation see :ref:`definitions`).
 
 
-50 year environmental contour with the Hs-Tz DNVGL model
+50 year environmental contour: Hs-Tz DNVGL model
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Here, we use a sea state dataset with the variables Hs and Tz, fit the joint distribution recommended in
-DNVGL-RP-C203 [1]_ to it and compute an IFORM contour. This example reproduces the results published in
-Haselsteiner et al. (2019) [2]_. Such a work flow is for example typical in ship design. The presented example can be
-downloaded from the examples_ section of the repository.
+Here, we use a sea state dataset with the variables Hs (significant wave height) and Tz (zero-up-crossing period), fit
+the joint distribution recommended in DNVGL-RP-C203 [1]_ to it and compute an IFORM contour. This example reproduces the
+results published in Haselsteiner et al. (2019) [2]_. Such a work flow is for example typical in ship design. The
+presented example can be downloaded from the examples_ section of the repository.
 
 **Imports**
 
@@ -50,9 +50,8 @@ downloaded from the examples_ section of the repository.
 
 **Environmental data**
 
-This dataset has been used in a benchmarking exercise, see https://github.com/ec-benchmark-organizers/ec-benchmark .
-The dataset was derived from NDBC buoy 44007, see https://www.ndbc.noaa.gov/station_page.php?station=44007 . The
-datasets are available here: data_.
+This dataset has been used in a benchmarking exercise, see benchmark_ .
+The dataset was derived from NDBC buoy 44007, see datasets_ . The datasets are available here: data_.
 
 .. code-block:: python
 
@@ -81,14 +80,14 @@ dictionaries that include the description of the distributions. The dictionary h
 whether the distribution is conditional or not: "distribution", "intervals", "conditional_on", "parameters". The key
 "intervals" is only used when describing unconditional distributions while the keys "conditional_on" and "parameters"
 are only used when describing conditional variables. The key "distributions" needs to be specified in both cases.
-With the key "distribution" an object of :class:`~virocon.distributions` is committed. Here, we indicate the statistical
+With "distribution" an object of :class:`~virocon.distributions` is committed. Here, we indicate the statistical
 distribution which describes the environmental variable best. In "intervals" we indicate, which method should be used to
 split the range of values of the first environmental variable into intervals. The conditional variable is then dependent
 on intervals of the first environmental variable. The key "conditional_on" indicates the dependencies between the
-variables of the model. One entry per distribution/dimension. It contains either None or int. If the first entry is
-None, the first distribution is unconditional. If the following entry is an int, the following distribution depends on
-the first dimension as already described above. In "parameters" we indicate the dependency functions that describe the
-dependency of the statistical parameters on the independent environmental variable.
+variables of the model. Only one entry per distribution/dimension is possible. It contains either None or int. If the
+first entry is None, the first distribution is unconditional. If the following entry is an int, the following
+distribution depends on the first dimension as already described above. In "parameters" we indicate the dependency
+functions that describe the dependency of the statistical parameters on the independent environmental variable.
 
 Here, dist_description_0 is the independent variable which is described by a Weibull distribution and split in equally
 sized intervals of width 0.5. dist_description_1 is described by a Lognormal distribution and is conditional on the
@@ -177,11 +176,14 @@ metocean data.
 
 .. _examples: https://github.com/virocon-organization/virocon/tree/master/examples
 .. _data: https://github.com/virocon-organization/virocon/tree/master/datasets
+.. _benchmark: https://github.com/ec-benchmark-organizers/ec-benchmark
+.. _datasets: https://www.ndbc.noaa.gov/station_page.php?station=44007
+
 .. [1] DNV GL (2017). Recommended practice DNVGL-RP-C205: Environmental conditions and environmental loads.
 .. [2] Haselsteiner, A.F.; Coe, R.; Manuel, L.; Nguyen, P.T.T.; Martin, N.; Eckert-Gallup A. (2019): A benchmarking exercise on estimating extreme environmental conditions: methodology and baseline results. Proceedings of the 38th International Conference on Ocean, Offshore and Arctic Engineering OMAE2019, June 09-14, 2019, Glasgow, Scotland.
 .. [3] Haselsteiner, A.F.; Sander, A.; Ohlendorf, J.H.; Thoben, K.D. (2020): Global hierarchical models for wind and wave contours: physical interpretations of the dependence functions. OMAE 2020, Fort Lauderdale, USA. Proceedings of the 39th International Conference on Ocean, Offshore and Arctic Engineering.
 
-50 year V-Hs-Tz environmental contour
+50 year environmental contour: V-Hs-Tz
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. warning::

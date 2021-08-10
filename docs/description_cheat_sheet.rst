@@ -28,13 +28,13 @@ For an independent distribution:
 
 .. code:: python
 
-    # GENERAL
+    # General
     dist_description = {
         "distribution": <distribution instance>,
         "intervals": <interval slicer instance>,
     }
 
-    # EXAMPLE
+    # Example
     dist_description_v = {
         "distribution": ExponentiatedWeibullDistribution(),
         "intervals": WidthOfIntervalSlicer(2, min_n_points=50),
@@ -44,7 +44,7 @@ For a conditional distribution:
 
 .. code:: python
 
-    # GENERAL
+    # General
     dist_description = {
         "distribution": <distribution instance>,
         "conditional_on": <index of distribution this dist depends on>,
@@ -52,7 +52,7 @@ For a conditional distribution:
                        and dependence function instances as values>,
     }
 
-    # EXAMPLE
+    # Example
     dist_description_hs = {
         "distribution": ExponentiatedWeibullDistribution(f_delta=5),
         "conditional_on": 0,
@@ -74,13 +74,13 @@ The supported method keywords depend on the distribution used.
 
 .. code:: python
 
-    # GENERAL
+    # General
     fit_description = {
         "method": <method keyword>,
         "weights": <define the weights, if "wlsq" is used>
     }
 
-    # EXAMPLE
+    # Example
     fit_description_hs = {"method": "wlsq", "weights": "quadratic"}
 
 
@@ -94,14 +94,14 @@ dimension of the model.
 
 .. code:: python
 
-    # GENERAL
+    # General
     semantics = {
         "names": <list of names of the modeled variables>,
         "symbols": <list of symbols used for the modeled variables>,
         "units": <list of unit strings of the modeled variables>,
     }
 
-    # EXAMPLE
+    # Example
     semantics = {
         "names": ["Mean wind speed", "Significant wave height"],
         "symbols": ["V", "H_s"],
