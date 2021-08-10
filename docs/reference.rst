@@ -4,9 +4,9 @@ Reference
 
 .. autosummary::
 
-    viroconcom
-    viroconcom.distributions
-    viroconcom.params
-    viroconcom.contours
-    viroconcom.fitting
-    viroconcom._n_sphere
+    virocon
+    virocon.distributions
+    virocon.params
+    virocon.contours
+    virocon.fitting
+    virocon._n_sphere
