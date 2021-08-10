@@ -199,7 +199,7 @@ def test_OrContour_correct_coordinates(seastate_model):
     np.testing.assert_allclose(coords[0,1], 11, atol=0.5)
 
     # Zero-up-crossing period at the highest angle (close to 90 deg).
-    np.testing.assert_allclose(coords[-4,0], 8.5, atol=0.5)    
+    np.testing.assert_allclose(coords[-4,0], 8.5, atol=0.7)    
 
 
 def test_OrContour_too_small_sample(seastate_model):
