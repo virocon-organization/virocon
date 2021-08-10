@@ -38,10 +38,10 @@ setup(
     version=get_version("virocon/__init__.py"),
     description="ViroCon is a software to compute environmental contours",
     long_description=long_description,
-    url="https://github.com/virocon-organization/viroconcom",
+    url="https://github.com/virocon-organization/virocon",
     # We use git tags for this download_url. This approach is based on:
     # https://peterdowns.com/posts/first-time-with-pypi.html
-    download_url="https://github.com/virocon-organization/viroconcom/archive/"
+    download_url="https://github.com/virocon-organization/virocon/archive/"
     + get_version("virocon/__init__.py")
     + ".tar.gz",
     author="virocon team",
@@ -68,7 +68,7 @@ setup(
         "test": ["pytest", "pytest-cov", "coverage", "coveralls"],
     },
     project_urls={  # Optional
-        "Documentation": "https://virocon-organization.github.io/viroconcom/",
-        "Source Code": "https://github.com/virocon-organization/viroconcom",
+        "Documentation": "https://virocon-organization.github.io/virocon/",
+        "Source Code": "https://github.com/virocon-organization/virocon",
     },
 )
