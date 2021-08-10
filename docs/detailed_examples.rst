@@ -9,7 +9,7 @@ specific contour method and initiate the calculation. virocon uses so-called glo
 joint distribution and offers four common methods how an environmental contour can be defined based on a given joint
 distribution. Generally, virocon provides two ways of creating a joint model and calculating a contour. The first option
 is using an already predefined model, which was explained before in the quick start section (see :ref:`quick-start-guide`).
-The second option is defining a custom statistical model which is described in the following.
+The second option is defining a custom statistical model, which is described in the following.
 
 If the joint distribution is known, the procedure of calculating an environmental contour with virocon can be summarized as:
 
@@ -50,8 +50,9 @@ presented example can be downloaded from the examples_ section of the repository
 
 **Environmental data**
 
-This dataset has been used in a benchmarking exercise, see benchmark_ .
-The dataset was derived from NDBC buoy 44007, see datasets_ . The datasets are available here: data_.
+This dataset has been used in a benchmarking exercise, see https://github.com/ec-benchmark-organizers/ec-benchmark .
+The dataset was derived from NDBC buoy 44007, see https://www.ndbc.noaa.gov/station_page.php?station=44007 .
+The datasets are available here: data_.
 
 .. code-block:: python
 
@@ -176,7 +177,6 @@ metocean data.
 
 .. _examples: https://github.com/virocon-organization/virocon/tree/master/examples
 .. _data: https://github.com/virocon-organization/virocon/tree/master/datasets
-.. _benchmark: https://github.com/ec-benchmark-organizers/ec-benchmark
 .. _datasets: https://www.ndbc.noaa.gov/station_page.php?station=44007
 
 .. [1] DNV GL (2017). Recommended practice DNVGL-RP-C205: Environmental conditions and environmental loads.
