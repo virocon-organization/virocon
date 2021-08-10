@@ -36,7 +36,6 @@ First approach (Linux/ MacOS/ Windows):
 
 Second approach (Windows powershell): 
 * cd docs
-* .\make .bat clean
-* .\make .bat html
+* sphinx-build -b html . _build/html
  
 -> Then open index.html located in docs/_build/html .
