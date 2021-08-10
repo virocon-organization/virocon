@@ -1,6 +1,6 @@
 # Datasets
 
-This folder contains some datasets to experiment with viroconcom.
+This folder contains some datasets to experiment with virocon.
 
 The following files contain sea state data downloaded from the National Data Buoy Center (NDBC) (https://www.ndbc.noaa.gov):
 
