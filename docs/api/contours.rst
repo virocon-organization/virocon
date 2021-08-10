@@ -1,9 +1,9 @@
 :orphan:
 
-viroconcom\.contours module
+virocon\.contours module
 ---------------------------
 
-.. automodule:: viroconcom.contours
+.. automodule:: virocon.contours
     :members:
     :undoc-members:
     :show-inheritance:

@@ -1,9 +1,9 @@
 :orphan:
 
-viroconcom\.distributions module
+virocon\.distributions module
 --------------------------------
 
-.. automodule:: viroconcom.distributions
+.. automodule:: virocon.distributions
     :members:
     :undoc-members:
     :show-inheritance:
