@@ -21,7 +21,7 @@ If the joint distribution is known, the procedure of calculating an environmenta
 
 
 50 year environmental contour: Hs-Tz DNVGL model
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Here, we use a sea state dataset with the variables Hs (significant wave height) and Tz (zero-up-crossing period), fit
 the joint distribution recommended in DNVGL-RP-C203 [1]_ to it and compute an IFORM contour. This example reproduces the
@@ -184,7 +184,7 @@ metocean data.
 .. [3] Haselsteiner, A.F.; Sander, A.; Ohlendorf, J.H.; Thoben, K.D. (2020): Global hierarchical models for wind and wave contours: physical interpretations of the dependence functions. OMAE 2020, Fort Lauderdale, USA. Proceedings of the 39th International Conference on Ocean, Offshore and Arctic Engineering.
 
 50 year environmental contour: V-Hs-Tz
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. warning::
     Stay tuned! We are currently working on this chapter.
