@@ -174,7 +174,7 @@ def test_AndContour_correct_coordinates(seastate_model):
     coords = contour.coordinates
 
     # Significant wave height at an angle of 0 deg.
-    np.testing.assert_allclose(coords[0,0], 9, atol=0.5)
+    np.testing.assert_allclose(coords[0,0], 9, atol=0.7)
 
     # Zero-up-crossing period at an angle of 90 deg.
     np.testing.assert_allclose(coords[-2,1], 11, atol=0.5)
