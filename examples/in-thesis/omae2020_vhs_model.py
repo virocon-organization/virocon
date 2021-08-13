@@ -20,7 +20,7 @@ from virocon import (
     plot_2D_isodensity,
 )
 
-# Load wind-wave measurements from the coastDat-2 hindcast.
+# Load wind speed - wave height measurements from the coastDat-2 hindcast.
 data = read_ec_benchmark_dataset("datasets/ec-benchmark_dataset_D.txt")
 
 # Define the marginal distribution for wind speed.
