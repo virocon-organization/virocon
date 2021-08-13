@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>virocon.distributions module &#8212; virocon  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pydoctheme.css" />
+    
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <script src="../_static/sidebar.js"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <link rel="shortcut icon" type="image/png" href="../_static/mini_logo.png" />
+    <meta name="viewport" content="width=device-width,initial-scale=0.8">
+    
+    
+
+  </head><body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="responsive-menu"><a href="#sidebar-anchor" title="Navigation">&#9776;</a></li>
+        <li><a href="../index.html">virocon  documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="module-virocon.distributions">
+<span id="virocon-distributions-module"></span><h1>virocon.distributions module<a class="headerlink" href="#module-virocon.distributions" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="virocon.distributions.ExponentiatedWeibullDistribution">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">virocon.distributions.</span></span><span class="sig-name descname"><span class="pre">ExponentiatedWeibullDistribution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f_alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f_beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f_delta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/virocon/distributions.html#ExponentiatedWeibullDistribution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#virocon.distributions.ExponentiatedWeibullDistribution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">virocon.distributions.Distribution</span></code></p>
+<p>An exponentiated Weibull distribution.</p>
+<p>The parametrization used is the same as described by
+Haselsteiner et al. (2019) <a href="#id9"><span class="problematic" id="id1">[1]_</span></a>.  The distributions cumulative distribution
+function is given by:</p>
+<p><span class="math notranslate nohighlight">\(F(x) = \left[ 1- \exp \left(-\left( \frac{x}{\alpha} \right)^{\beta} \right) \right] ^{\delta}\)</span></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>alpha</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – Scale parameter of the exponentiated weibull distribution. Defaults
+to 1.</p></li>
+<li><p><strong>beta</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – First shape parameter of the exponentiated weibull distribution.
+Defaults to 1.</p></li>
+<li><p><strong>delta</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – Second shape parameter of the exponentiated weibull distribution.
+Defaults to 1.</p></li>
+<li><p><strong>f_alpha</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – Fixed alpha parameter of the weibull distribution (e.g. given physical
+parameter). If this parameter is set, alpha is ignored. Defaults to
+None.</p></li>
+<li><p><strong>f_beta</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – Fixed beta parameter of the weibull distribution (e.g. given physical
+parameter). If this parameter is set, beta is ignored. Defaults to
+None.</p></li>
+<li><p><strong>f_delta</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – Fixed delta parameter of the weibull distribution (e.g. given physical
+parameter). If this parameter is set, delta is ignored. Defaults to
+None.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<dl class="footnote brackets">
+<dt class="label" id="id2"><span class="brackets">1</span></dt>
+<dd><p>Haselsteiner, A.F.; Thoben, K.D. (2019)
+Predicting wave heights for marine design by prioritizing extreme events in
+a global model, Renewable Energy, Volume 156, August 2020,
+Pages 1146-1157; <a class="reference external" href="https://doi.org/10.1016/j.renene.2020.04.112">https://doi.org/10.1016/j.renene.2020.04.112</a></p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="virocon.distributions.ExponentiatedWeibullDistribution.cdf">
+<span class="sig-name descname"><span class="pre">cdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/virocon/distributions.html#ExponentiatedWeibullDistribution.cdf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#virocon.distributions.ExponentiatedWeibullDistribution.cdf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cumulative distribution function.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="virocon.distributions.ExponentiatedWeibullDistribution.draw_sample">
+<span class="sig-name descname"><span class="pre">draw_sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/virocon/distributions.html#ExponentiatedWeibullDistribution.draw_sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#virocon.distributions.ExponentiatedWeibullDistribution.draw_sample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draw a random sample of length n.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="virocon.distributions.ExponentiatedWeibullDistribution.icdf">
+<span class="sig-name descname"><span class="pre">icdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prob</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/virocon/distributions.html#ExponentiatedWeibullDistribution.icdf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#virocon.distributions.ExponentiatedWeibullDistribution.icdf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inverse cumulative distribution function.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="virocon.distributions.ExponentiatedWeibullDistribution.parameters">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">parameters</span></span><a class="headerlink" href="#virocon.distributions.ExponentiatedWeibullDistribution.parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parameters of the probability distribution.</p>
+<p>Dict of the form: {“&lt;parameter_name&gt;” : &lt;parameter_value&gt;, …}</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="virocon.distributions.ExponentiatedWeibullDistribution.pdf">
+<span class="sig-name descname"><span class="pre">pdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/virocon/distributions.html#ExponentiatedWeibullDistribution.pdf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#virocon.distributions.ExponentiatedWeibullDistribution.pdf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Probability density function.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="virocon.distributions.LogNormalDistribution">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">virocon.distributions.</span></span><span class="sig-name descname"><span class="pre">LogNormalDistribution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f_mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f_sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/virocon/distributions.html#LogNormalDistribution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#virocon.distributions.LogNormalDistribution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">virocon.distributions.Distribution</span></code></p>
+<p>A Lognormal Distribution.</p>
+<p>The distributions probability density function is given by <a href="#id10"><span class="problematic" id="id3">[1]_</span></a>:</p>
+<p><span class="math notranslate nohighlight">\(f(x) = \frac{1}{x\widetilde{\sigma} \sqrt{2\pi}}\exp \left[ \frac{-(\ln x - \widetilde{\mu})^2}{2\widetilde{\sigma}^2}\right]\)</span></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mu</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – Mean parameter of the corresponding normal distribution.
+Defaults to 0.</p></li>
+<li><p><strong>sigma</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – Standard deviation of the corresponding normal distribution.
+Defaults to 1.</p></li>
+<li><p><strong>f_mu</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – Fixed parameter mu of the lognormal distribution (e.g. given physical
+parameter). If this parameter is set, mu is ignored. Defaults to
+None.</p></li>
+<li><p><strong>f_sigma</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – Fixed parameter sigma of the lognormal distribution (e.g. given
+physical parameter). If this parameter is set, sigma is ignored.
+Defaults to None</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<dl class="footnote brackets">
+<dt class="label" id="id4"><span class="brackets">1</span></dt>
+<dd><p>Forbes, C.; Evans, M.; Hastings, N; Peacock, B. (2011)
+Statistical Distributions, 4th Edition, Published by
+John Wiley &amp; Sons, Inc., Hoboken, New Jersey.,
+Pages 131-132</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="virocon.distributions.LogNormalDistribution.cdf">
+<span class="sig-name descname"><span class="pre">cdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/virocon/distributions.html#LogNormalDistribution.cdf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#virocon.distributions.LogNormalDistribution.cdf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cumulative distribution function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>array_like</em><em>,</em>) – Points at which the cdf is evaluated.
+Shape: 1-dimensional.</p></li>
+<li><p><strong>mu</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – The variance parameter. Defaults to self.mu .</p></li>
+<li><p><strong>sigma</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – The shape parameter. Defaults to self.sigma .</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="virocon.distributions.LogNormalDistribution.draw_sample">
+<span class="sig-name descname"><span class="pre">draw_sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/virocon/distributions.html#LogNormalDistribution.draw_sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#virocon.distributions.LogNormalDistribution.draw_sample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draw a random sample of length n.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="virocon.distributions.LogNormalDistribution.icdf">
+<span class="sig-name descname"><span class="pre">icdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prob</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/virocon/distributions.html#LogNormalDistribution.icdf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#virocon.distributions.LogNormalDistribution.icdf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inverse cumulative distribution function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>prob</strong> (<em>Probabilities for which the i_cdf is evaluated.</em>) – Shape: 1-dimensional</p></li>
+<li><p><strong>mu</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – The variance parameter. Defaults to self.mu .</p></li>
+<li><p><strong>sigma</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – The shape parameter. Defaults to self.sigma .</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="virocon.distributions.LogNormalDistribution.parameters">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">parameters</span></span><a class="headerlink" href="#virocon.distributions.LogNormalDistribution.parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parameters of the probability distribution.</p>
+<p>Dict of the form: {“&lt;parameter_name&gt;” : &lt;parameter_value&gt;, …}</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="virocon.distributions.LogNormalDistribution.pdf">
+<span class="sig-name descname"><span class="pre">pdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/virocon/distributions.html#LogNormalDistribution.pdf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#virocon.distributions.LogNormalDistribution.pdf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Probability density function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>array_like</em><em>,</em>) – Points at which the pdf is evaluated.
+Shape: 1-dimensional.</p></li>
+<li><p><strong>mu</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – The variance parameter. Defaults to self.mu .</p></li>
+<li><p><strong>sigma</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – The shape parameter. Defaults to self.sigma .</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="virocon.distributions.NormalDistribution">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">virocon.distributions.</span></span><span class="sig-name descname"><span class="pre">NormalDistribution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f_mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f_sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/virocon/distributions.html#NormalDistribution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#virocon.distributions.NormalDistribution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">virocon.distributions.Distribution</span></code></p>
+<p>A Normal (Gaussian) Distribution.</p>
+<p>The distributions probability density function is given by <a href="#id11"><span class="problematic" id="id5">[1]_</span></a>:</p>
+<p><span class="math notranslate nohighlight">\(f(x) = \frac{1}{{\sigma} \sqrt{2\pi}} \exp \left( - \frac{( x - \mu)^2}{2\sigma^2}\right)\)</span></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mu</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – Location parameter, the mean.
+Defaults to 0.</p></li>
+<li><p><strong>sigma</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – Scale parameter, the standard deviation.
+Defaults to 1.</p></li>
+<li><p><strong>f_mu</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – Fixed parameter mu of the normal distribution (e.g. given physical
+parameter). If this parameter is set, mu is ignored. Defaults to
+None.</p></li>
+<li><p><strong>f_sigma</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – Fixed parameter sigma of the normal distribution (e.g. given
+physical parameter). If this parameter is set, sigma is ignored.
+Defaults to None</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<dl class="footnote brackets">
+<dt class="label" id="id6"><span class="brackets">1</span></dt>
+<dd><p>Forbes, C.; Evans, M.; Hastings, N; Peacock, B. (2011)
+Statistical Distributions, 4th Edition, Published by
+John Wiley &amp; Sons, Inc., Hoboken, New Jersey.,
+Page 143</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="virocon.distributions.NormalDistribution.cdf">
+<span class="sig-name descname"><span class="pre">cdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/virocon/distributions.html#NormalDistribution.cdf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#virocon.distributions.NormalDistribution.cdf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cumulative distribution function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>array_like</em><em>,</em>) – Points at which the cdf is evaluated.
+Shape: 1-dimensional.</p></li>
+<li><p><strong>mu</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – The location parameter. Defaults to self.mu .</p></li>
+<li><p><strong>sigma</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – The scale parameter. Defaults to self.sigma .</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="virocon.distributions.NormalDistribution.draw_sample">
+<span class="sig-name descname"><span class="pre">draw_sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/virocon/distributions.html#NormalDistribution.draw_sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#virocon.distributions.NormalDistribution.draw_sample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draw a random sample of length n.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="virocon.distributions.NormalDistribution.icdf">
+<span class="sig-name descname"><span class="pre">icdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prob</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/virocon/distributions.html#NormalDistribution.icdf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#virocon.distributions.NormalDistribution.icdf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inverse cumulative distribution function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>prob</strong> (<em>Probabilities for which the i_cdf is evaluated.</em>) – Shape: 1-dimensional</p></li>
+<li><p><strong>mu</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – The location parameter. Defaults to self.mu .</p></li>
+<li><p><strong>sigma</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – The scale parameter. Defaults to self.sigma .</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="virocon.distributions.NormalDistribution.parameters">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">parameters</span></span><a class="headerlink" href="#virocon.distributions.NormalDistribution.parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parameters of the probability distribution.</p>
+<p>Dict of the form: {“&lt;parameter_name&gt;” : &lt;parameter_value&gt;, …}</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="virocon.distributions.NormalDistribution.pdf">
+<span class="sig-name descname"><span class="pre">pdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/virocon/distributions.html#NormalDistribution.pdf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#virocon.distributions.NormalDistribution.pdf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Probability density function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>array_like</em><em>,</em>) – Points at which the pdf is evaluated.
+Shape: 1-dimensional.</p></li>
+<li><p><strong>mu</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – The location parameter. Defaults to self.mu .</p></li>
+<li><p><strong>sigma</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – The scale parameter. Defaults to self.sigma .</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="virocon.distributions.WeibullDistribution">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">virocon.distributions.</span></span><span class="sig-name descname"><span class="pre">WeibullDistribution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f_alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f_beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f_gamma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/virocon/distributions.html#WeibullDistribution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#virocon.distributions.WeibullDistribution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">virocon.distributions.Distribution</span></code></p>
+<p>A weibull distribution.</p>
+<p>The distributions probability density function is given by <a href="#id12"><span class="problematic" id="id7">[1]_</span></a> :</p>
+<p><span class="math notranslate nohighlight">\(f(x) = \frac{\beta}{\alpha} \left (\frac{x-\gamma}{\alpha} \right)^{\beta -1} \exp \left[-\left( \frac{x-\gamma}{\alpha} \right)^{\beta} \right]\)</span></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>alpha</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – Scale parameter of the weibull distribution. Defaults to 1.</p></li>
+<li><p><strong>beta</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – Shape parameter of the weibull distribution. Defaults to 1.</p></li>
+<li><p><strong>gamma</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – Location parameter of the weibull distribution (3-parameter weibull
+distribution). Defaults to 0.</p></li>
+<li><p><strong>f_alpha</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – Fixed scale parameter of the weibull distribution (e.g. given physical
+parameter). If this parameter is set, lambda is ignored. Defaults to
+None.</p></li>
+<li><p><strong>f_beta</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – Fixed shape parameter of the weibull distribution (e.g. given physical
+parameter). If this parameter is set, k is ignored. Defaults to
+None.</p></li>
+<li><p><strong>f_gamma</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – Fixed location parameter of the weibull distribution (e.g. given physical
+parameter). If this parameter is set, theta is ignored. Defaults to
+None.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<dl class="footnote brackets">
+<dt class="label" id="id8"><span class="brackets">1</span></dt>
+<dd><p>Haselsteiner, A.F.; Ohlendorf, J.H.; Wosniok, W.; Thoben, K.D.(2017)
+Deriving environmental contours from highest density regions.
+Coastal Engineering 123 (2017) 42–51.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="virocon.distributions.WeibullDistribution.cdf">
+<span class="sig-name descname"><span class="pre">cdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/virocon/distributions.html#WeibullDistribution.cdf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#virocon.distributions.WeibullDistribution.cdf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cumulative distribution function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>array_like</em><em>,</em>) – Points at which the cdf is evaluated.
+Shape: 1-dimensional.</p></li>
+<li><p><strong>alpha</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – The scale parameter. Defaults to self.alpha.</p></li>
+<li><p><strong>beta</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – The shape parameter. Defaults to self.beta.</p></li>
+<li><p><strong>gamma</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – The location parameter . Defaults to self.gamma.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="virocon.distributions.WeibullDistribution.draw_sample">
+<span class="sig-name descname"><span class="pre">draw_sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/virocon/distributions.html#WeibullDistribution.draw_sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#virocon.distributions.WeibullDistribution.draw_sample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draw a random sample of length n.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="virocon.distributions.WeibullDistribution.icdf">
+<span class="sig-name descname"><span class="pre">icdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prob</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/virocon/distributions.html#WeibullDistribution.icdf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#virocon.distributions.WeibullDistribution.icdf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inverse cumulative distribution function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>prob</strong> (<em>array_like</em>) – Probabilities for which the i_cdf is evaluated.
+Shape: 1-dimensional</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>alpha<span class="classifier">float, optional</span></dt><dd><p>The scale parameter. Defaults to self.aplha .</p>
+</dd>
+<dt>beta<span class="classifier">float, optional</span></dt><dd><p>The shape parameter. Defaults to self.beta.</p>
+</dd>
+<dt>gamma: float, optional</dt><dd><p>The location parameter . Defaults to self.gamma.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="virocon.distributions.WeibullDistribution.parameters">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">parameters</span></span><a class="headerlink" href="#virocon.distributions.WeibullDistribution.parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parameters of the probability distribution.</p>
+<p>Dict of the form: {“&lt;parameter_name&gt;” : &lt;parameter_value&gt;, …}</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="virocon.distributions.WeibullDistribution.pdf">
+<span class="sig-name descname"><span class="pre">pdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/virocon/distributions.html#WeibullDistribution.pdf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#virocon.distributions.WeibullDistribution.pdf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Probability density function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>array_like</em><em>,</em>) – Points at which the pdf is evaluated.
+Shape: 1-dimensional.</p></li>
+<li><p><strong>alpha</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – The scale parameter. Defaults to self.alpha.</p></li>
+<li><p><strong>beta</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – The shape parameter. Defaults to self.beta.</p></li>
+<li><p><strong>gamma</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – The location parameter . Defaults to self.gamma.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+    <a id="sidebar-anchor"></a>
+    
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/api/distributions.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+      </ul>
+    </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, virocon.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.0.2.
+    </div>
+  </body>
+</html>

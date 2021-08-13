@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Overall work flow and software architecture &#8212; virocon  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/pydoctheme.css" />
+    
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    
+    <script src="_static/sidebar.js"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Environmental contour: useful definitions" href="definitions.html" />
+    <link rel="prev" title="Quick start example: Sea state contour" href="example.html" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <link rel="shortcut icon" type="image/png" href="_static/mini_logo.png" />
+    <meta name="viewport" content="width=device-width,initial-scale=0.8">
+    
+    
+
+  </head><body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="responsive-menu"><a href="#sidebar-anchor" title="Navigation">&#9776;</a></li>
+        <li><a href="index.html">virocon  documentation</a> &#187;</li>
+          <li><a href="user_guide.html" accesskey="U">User Guide</a> &#187;</li> 
+      </ul>
+    </div>
+    
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="overall-work-flow-and-software-architecture">
+<h1>Overall work flow and software architecture<a class="headerlink" href="#overall-work-flow-and-software-architecture" title="Permalink to this headline">¶</a></h1>
+<p>Figure 1 shows a flowchart that captures the overall functionality of virocon. A statistical model of the (offshore)
+environment can be created by fitting a model structure to measurement data. Then, this statistical model can be used to
+construct an environmental contour.</p>
+<figure class="align-default">
+<a class="reference internal image-reference" href="_images/virocon_flowchart.png"><img alt="flowchart for virocon" src="_images/virocon_flowchart.png" style="width: 739.1999999999999px; height: 283.2px;" /></a>
+</figure>
+<p>The class diagram is showing among others the class MultivariateModel, which
+handles fitting a model structure to a dataset, the class DependenceFunction, which handles the dependencies between the
+environmental variables and the class Contour, which handles contour construction. This class diagram was created for
+virocon version 2.0.0</p>
+<p>Figure 2 shows virocon’s class diagram.</p>
+<figure class="align-default">
+<a class="reference internal image-reference" href="_images/class_diagramm_VC2.png"><img alt="class diagram for virocon" src="_images/class_diagramm_VC2.png" style="width: 875.5px; height: 305.5px;" /></a>
+</figure>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+    <a id="sidebar-anchor"></a>
+    
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="example.html"
+                        title="previous chapter">Quick start example: Sea state contour</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="definitions.html"
+                        title="next chapter">Environmental contour: useful definitions</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/workflow.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="definitions.html" title="Environmental contour: useful definitions"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="example.html" title="Quick start example: Sea state contour"
+             accesskey="P">previous</a> |</li>
+      </ul>
+    </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, virocon.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.0.2.
+    </div>
+  </body>
+</html>

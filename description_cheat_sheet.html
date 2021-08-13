@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Cheat sheet for the “description” data structures &#8212; virocon  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/pydoctheme.css" />
+    
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    
+    <script src="_static/sidebar.js"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Reference" href="reference.html" />
+    <link rel="prev" title="Constructing different types of contours" href="constructing_contours.html" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <link rel="shortcut icon" type="image/png" href="_static/mini_logo.png" />
+    <meta name="viewport" content="width=device-width,initial-scale=0.8">
+    
+    
+
+  </head><body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="responsive-menu"><a href="#sidebar-anchor" title="Navigation">&#9776;</a></li>
+        <li><a href="index.html">virocon  documentation</a> &#187;</li>
+          <li><a href="user_guide.html" accesskey="U">User Guide</a> &#187;</li> 
+      </ul>
+    </div>
+    
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="cheat-sheet-for-the-description-data-structures">
+<h1>Cheat sheet for the “description” data structures<a class="headerlink" href="#cheat-sheet-for-the-description-data-structures" title="Permalink to this headline">¶</a></h1>
+<section id="dist-descriptions">
+<h2>dist_descriptions<a class="headerlink" href="#dist-descriptions" title="Permalink to this headline">¶</a></h2>
+<p>dist_descriptions are used to create joint models.</p>
+<p>The dist_descriptions are dictionaries that include the description of the distributions. The dictionary has the
+following keys depending on whether the distribution is conditional or not: “distribution”, “intervals”,
+“conditional_on”, “parameters”. The key “intervals” is only used when describing unconditional distributions while the
+keys “conditional_on” and “parameters” are only used when describing conditional variables. The key “distributions”
+needs to be specified in both cases. With the key “distribution” an object of <a class="reference internal" href="api/distributions.html#module-virocon.distributions" title="virocon.distributions"><code class="xref py py-class docutils literal notranslate"><span class="pre">distributions</span></code></a> is
+committed. Here, we indicate the statistical distribution which describes the environmental variable best. In
+“intervals” we indicate, which method should be used to split the range of values of the first environmental variable
+into intervals. The conditional variable is then dependent on intervals of the first environmental variable. The key
+“conditional_on” indicates the dependencies between the variables of the model. One entry per distribution/dimension.
+It contains either None or int. If the first entry is None, the first distribution is unconditional. If the following
+entry is an int, the following distribution depends on the first dimension as already described above. In “parameters”
+we indicate the dependency functions that describe the dependency of the statistical parameters on the independent
+environmental variable.</p>
+<p>A list of dist_descriptions is passed to
+<code class="xref py py-class docutils literal notranslate"><span class="pre">GlobalHierarchicalModel</span></code>, one for each dimension.</p>
+<p>For an independent distribution:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># General</span>
+<span class="n">dist_description</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;distribution&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">distribution</span> <span class="n">instance</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="s2">&quot;intervals&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">interval</span> <span class="n">slicer</span> <span class="n">instance</span><span class="o">&gt;</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="c1"># Example</span>
+<span class="n">dist_description_v</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;distribution&quot;</span><span class="p">:</span> <span class="n">ExponentiatedWeibullDistribution</span><span class="p">(),</span>
+    <span class="s2">&quot;intervals&quot;</span><span class="p">:</span> <span class="n">WidthOfIntervalSlicer</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">min_n_points</span><span class="o">=</span><span class="mi">50</span><span class="p">),</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>For a conditional distribution:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># General</span>
+<span class="n">dist_description</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;distribution&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">distribution</span> <span class="n">instance</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="s2">&quot;conditional_on&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">index</span> <span class="n">of</span> <span class="n">distribution</span> <span class="n">this</span> <span class="n">dist</span> <span class="n">depends</span> <span class="n">on</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="s2">&quot;parameters&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="nb">dict</span> <span class="k">with</span> <span class="n">parameter</span> <span class="n">names</span> <span class="k">as</span> <span class="n">keys</span>
+                   <span class="ow">and</span> <span class="n">dependence</span> <span class="n">function</span> <span class="n">instances</span> <span class="k">as</span> <span class="n">values</span><span class="o">&gt;</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="c1"># Example</span>
+<span class="n">dist_description_hs</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;distribution&quot;</span><span class="p">:</span> <span class="n">ExponentiatedWeibullDistribution</span><span class="p">(</span><span class="n">f_delta</span><span class="o">=</span><span class="mi">5</span><span class="p">),</span>
+    <span class="s2">&quot;conditional_on&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;parameters&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;alpha&quot;</span><span class="p">:</span> <span class="n">alpha_dep</span><span class="p">,</span> <span class="s2">&quot;beta&quot;</span><span class="p">:</span> <span class="n">beta_dep</span><span class="p">,},</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="fit-descriptions">
+<h2>fit_descriptions<a class="headerlink" href="#fit-descriptions" title="Permalink to this headline">¶</a></h2>
+<p>fit_descriptions define which methods are used to estimate the parameter values
+of a joint model, i.e. which fitting methods are used.
+A list of fit_descriptions can be passed to the
+<code class="xref py py-func docutils literal notranslate"><span class="pre">virocon.jointmodels.GlobalHierarchicalModel.fit()</span></code> method,
+one for each dimension.
+The list can also contain <code class="code docutils literal notranslate"><span class="pre">None</span></code>, in which case the defaults are used.
+The supported method keywords depend on the distribution used.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># General</span>
+<span class="n">fit_description</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;method&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">method</span> <span class="n">keyword</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="s2">&quot;weights&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">define</span> <span class="n">the</span> <span class="n">weights</span><span class="p">,</span> <span class="k">if</span> <span class="s2">&quot;wlsq&quot;</span> <span class="ow">is</span> <span class="n">used</span><span class="o">&gt;</span>
+<span class="p">}</span>
+
+<span class="c1"># Example</span>
+<span class="n">fit_description_hs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;method&quot;</span><span class="p">:</span> <span class="s2">&quot;wlsq&quot;</span><span class="p">,</span> <span class="s2">&quot;weights&quot;</span><span class="p">:</span> <span class="s2">&quot;quadratic&quot;</span><span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="semantics">
+<h2>semantics<a class="headerlink" href="#semantics" title="Permalink to this headline">¶</a></h2>
+<p>The semantics dict describes the semantics of the model. It’s content is not interpreted, but rather passed to e.g.
+plotting functions, where it is used to set label texts. Each key contains a list. Each list contains one entry for each
+dimension of the model.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># General</span>
+<span class="n">semantics</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;names&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="nb">list</span> <span class="n">of</span> <span class="n">names</span> <span class="n">of</span> <span class="n">the</span> <span class="n">modeled</span> <span class="n">variables</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="s2">&quot;symbols&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="nb">list</span> <span class="n">of</span> <span class="n">symbols</span> <span class="n">used</span> <span class="k">for</span> <span class="n">the</span> <span class="n">modeled</span> <span class="n">variables</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="nb">list</span> <span class="n">of</span> <span class="n">unit</span> <span class="n">strings</span> <span class="n">of</span> <span class="n">the</span> <span class="n">modeled</span> <span class="n">variables</span><span class="o">&gt;</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="c1"># Example</span>
+<span class="n">semantics</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;names&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Mean wind speed&quot;</span><span class="p">,</span> <span class="s2">&quot;Significant wave height&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;symbols&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;V&quot;</span><span class="p">,</span> <span class="s2">&quot;H_s&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;m s$^{-1}$&quot;</span><span class="p">,</span> <span class="s2">&quot;m&quot;</span><span class="p">,],</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+    <a id="sidebar-anchor"></a>
+    
+
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Cheat sheet for the “description” data structures</a><ul>
+<li><a class="reference internal" href="#dist-descriptions">dist_descriptions</a></li>
+<li><a class="reference internal" href="#fit-descriptions">fit_descriptions</a></li>
+<li><a class="reference internal" href="#semantics">semantics</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="constructing_contours.html"
+                        title="previous chapter">Constructing different types of contours</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="reference.html"
+                        title="next chapter">Reference</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/description_cheat_sheet.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="reference.html" title="Reference"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="constructing_contours.html" title="Constructing different types of contours"
+             accesskey="P">previous</a> |</li>
+      </ul>
+    </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, virocon.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.0.2.
+    </div>
+  </body>
+</html>

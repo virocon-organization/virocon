@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Detailed examples &#8212; virocon  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/pydoctheme.css" />
+    
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    
+    <script src="_static/sidebar.js"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Defining custom joint models and estimating their parameters" href="joint_models_estimating_parameters.html" />
+    <link rel="prev" title="Environmental contour: useful definitions" href="definitions.html" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <link rel="shortcut icon" type="image/png" href="_static/mini_logo.png" />
+    <meta name="viewport" content="width=device-width,initial-scale=0.8">
+    
+    
+
+  </head><body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="responsive-menu"><a href="#sidebar-anchor" title="Navigation">&#9776;</a></li>
+        <li><a href="index.html">virocon  documentation</a> &#187;</li>
+          <li><a href="user_guide.html" accesskey="U">User Guide</a> &#187;</li> 
+      </ul>
+    </div>
+    
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="detailed-examples">
+<h1>Detailed examples<a class="headerlink" href="#detailed-examples" title="Permalink to this headline">¶</a></h1>
+<p>This chapter will explain how the structure of the joint distribution model is created in virocon. The process of
+estimating the parameter values of a joint distribution, the “fitting” is explained in more detail by means of two
+examples. To create an environmental contour, first, we need to define a joint distribution. Then, we can choose a
+specific contour method and initiate the calculation. virocon uses so-called global hierarchical models to define the
+joint distribution and offers four common methods how an environmental contour can be defined based on a given joint
+distribution. Generally, virocon provides two ways of creating a joint model and calculating a contour. The first option
+is using an already predefined model, which was explained before in the quick start section (see <a class="reference internal" href="example.html#quick-start-guide"><span class="std std-ref">Quick start example: Sea state contour</span></a>).
+The second option is defining a custom statistical model, which is described in the following.</p>
+<p>If the joint distribution is known, the procedure of calculating an environmental contour with virocon can be summarized as:</p>
+<ol class="arabic simple">
+<li><p>Load the environmental data that should be described by the joint model.</p></li>
+<li><p>Define the structure of the joint model that we will use to describe the environmental data. To define a joint model, we define the univariate parametric distributions and the dependence structure. The dependence structure is defined using parametric dependence functions.</p></li>
+<li><p>Estimate the parameter values of the joint model (fitting).</p></li>
+<li><p>Define the contour’s return period and environmental state duration (for more detailed explanation see <a class="reference internal" href="definitions.html#definitions"><span class="std std-ref">Environmental contour: useful definitions</span></a>).</p></li>
+<li><p>Choose a type of contour: IFormContour, ISormContour, DirectSamplingContour or HighestDensityContour (for more detailed explanation see <a class="reference internal" href="definitions.html#definitions"><span class="std std-ref">Environmental contour: useful definitions</span></a>).</p></li>
+</ol>
+<section id="year-environmental-contour-hs-tz-dnvgl-model">
+<h2>50 year environmental contour: Hs-Tz DNVGL model<a class="headerlink" href="#year-environmental-contour-hs-tz-dnvgl-model" title="Permalink to this headline">¶</a></h2>
+<p>Here, we use a sea state dataset with the variables Hs (significant wave height) and Tz (zero-up-crossing period), fit
+the joint distribution recommended in DNVGL-RP-C203 <a class="footnote-reference brackets" href="#id4" id="id1">1</a> to it and compute an IFORM contour. This example reproduces the
+results published in Haselsteiner et al. (2019) <a class="footnote-reference brackets" href="#id5" id="id2">2</a>. Such a work flow is for example typical in ship design. The
+presented example can be downloaded from the <a class="reference external" href="https://github.com/virocon-organization/virocon/tree/master/examples">examples</a> section of the repository.</p>
+<p><strong>Imports</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="kn">from</span> <span class="nn">virocon</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="n">read_ec_benchmark_dataset</span><span class="p">,</span>
+<span class="n">GlobalHierarchicalModel</span><span class="p">,</span>
+<span class="n">WeibullDistribution</span><span class="p">,</span>
+<span class="n">LogNormalDistribution</span><span class="p">,</span>
+<span class="n">DependenceFunction</span><span class="p">,</span>
+<span class="n">WidthOfIntervalSlicer</span><span class="p">,</span>
+<span class="n">IFORMContour</span><span class="p">,</span>
+<span class="n">plot_marginal_quantiles</span><span class="p">,</span>
+<span class="n">plot_dependence_functions</span><span class="p">,</span>
+<span class="n">plot_2D_contour</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Environmental data</strong></p>
+<p>This dataset has been used in a benchmarking exercise, see <a class="reference external" href="https://github.com/ec-benchmark-organizers/ec-benchmark">https://github.com/ec-benchmark-organizers/ec-benchmark</a> .
+The dataset was derived from NDBC buoy 44007, see <a class="reference external" href="https://www.ndbc.noaa.gov/station_page.php?station=44007">https://www.ndbc.noaa.gov/station_page.php?station=44007</a> .
+The datasets are available here: <a class="reference external" href="https://github.com/virocon-organization/virocon/tree/master/datasets">data</a>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">read_ec_benchmark_dataset</span><span class="p">(</span><span class="s2">&quot;datasets/ec-benchmark_dataset_A.txt&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Dependence structure</strong></p>
+<p>Define the structure of the joint model that we will use to describe the environmental data. To define a joint model, we
+define the univariate parametric distributions and the dependence structure. The dependence structure is defined using
+parametric functions. In this case, we used a 3-parameter power function and a 3-parameter exponential function as
+dependence functions. A dependence function must always contain a simple python function. Additionally we can constrain
+the functions parameters by supplying boundaries.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">_power3</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span> <span class="o">*</span> <span class="n">x</span> <span class="o">**</span> <span class="n">c</span>
+
+<span class="k">def</span> <span class="nf">_exp3</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">c</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Parametric distributions</strong></p>
+<p>First, lower and upper interval boundaries for the three parameter values needs to be set. The dist_descriptions are
+dictionaries that include the description of the distributions. The dictionary has the following keys depending on
+whether the distribution is conditional or not: “distribution”, “intervals”, “conditional_on”, “parameters”. The key
+“intervals” is only used when describing unconditional distributions while the keys “conditional_on” and “parameters”
+are only used when describing conditional variables. The key “distributions” needs to be specified in both cases.
+With “distribution” an object of <a class="reference internal" href="api/distributions.html#module-virocon.distributions" title="virocon.distributions"><code class="xref py py-class docutils literal notranslate"><span class="pre">distributions</span></code></a> is committed. Here, we indicate the statistical
+distribution which describes the environmental variable best. In “intervals” we indicate, which method should be used to
+split the range of values of the first environmental variable into intervals. The conditional variable is then dependent
+on intervals of the first environmental variable. The key “conditional_on” indicates the dependencies between the
+variables of the model. Only one entry per distribution/dimension is possible. It contains either None or int. If the
+first entry is None, the first distribution is unconditional. If the following entry is an int, the following
+distribution depends on the first dimension as already described above. In “parameters” we indicate the dependency
+functions that describe the dependency of the statistical parameters on the independent environmental variable.</p>
+<p>Here, dist_description_0 is the independent variable which is described by a Weibull distribution and split in equally
+sized intervals of width 0.5. dist_description_1 is described by a Lognormal distribution and is conditional on the
+first distribution (indicated by “conditional_on”: 0). The dependency of the individual parameters, mu and sigma of the
+Lognormal distribution are described by a power function and an exponential function.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">bounds</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)]</span>
+
+<span class="n">power3</span> <span class="o">=</span> <span class="n">DependenceFunction</span><span class="p">(</span><span class="n">_power3</span><span class="p">,</span> <span class="n">bounds</span><span class="p">)</span>
+<span class="n">exp3</span> <span class="o">=</span> <span class="n">DependenceFunction</span><span class="p">(</span><span class="n">_exp3</span><span class="p">,</span> <span class="n">bounds</span><span class="p">)</span>
+
+<span class="n">dist_description_0</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;distribution&quot;</span><span class="p">:</span> <span class="n">WeibullDistribution</span><span class="p">(),</span>
+    <span class="s2">&quot;intervals&quot;</span><span class="p">:</span> <span class="n">WidthOfIntervalSlicer</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="mf">0.5</span><span class="p">),</span>
+<span class="p">}</span>
+<span class="n">dist_description_1</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;distribution&quot;</span><span class="p">:</span> <span class="n">LogNormalDistribution</span><span class="p">(),</span>
+    <span class="s2">&quot;conditional_on&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;parameters&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;mu&quot;</span><span class="p">:</span> <span class="n">power3</span><span class="p">,</span> <span class="s2">&quot;sigma&quot;</span><span class="p">:</span> <span class="n">exp3</span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>Joint distribution model</strong></p>
+<p>In the following, the joint model is created from the dist description described above. Here, we are using global
+hierarchical models which are probabilistic models that covers the complete range of an environmental variable
+(’global’), following a particular hierarchical dependence structure. The factorization describes a hierarchy where a
+random variable with index i can only depend upon random variables with indices less than i <a class="footnote-reference brackets" href="#id6" id="id3">3</a> .</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">GlobalHierarchicalModel</span><span class="p">([</span><span class="n">dist_description_0</span><span class="p">,</span> <span class="n">dist_description_1</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>We define a semantics dictionary, that describes the model. This description can be used while plotting the contour.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">semantics</span> <span class="o">=</span> <span class="p">{</span>
+<span class="s2">&quot;names&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Significant wave height&quot;</span><span class="p">,</span> <span class="s2">&quot;Zero-crossing period&quot;</span><span class="p">],</span>
+<span class="s2">&quot;symbols&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;H_s&quot;</span><span class="p">,</span> <span class="s2">&quot;T_z&quot;</span><span class="p">],</span>
+<span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;m&quot;</span><span class="p">,</span> <span class="s2">&quot;s&quot;</span><span class="p">],</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Fit the model to the data (estimate the model’s parameter values) and print the estimated parameter values. Afterwards,
+we create plots to inspect the model’s goodness-of-fit.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+
+<span class="n">fig1</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mf">4.8</span><span class="p">])</span>
+<span class="n">plot_marginal_quantiles</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">semantics</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="n">axs</span><span class="p">)</span>
+<span class="n">fig2</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mf">4.8</span><span class="p">])</span>
+<span class="n">plot_dependence_functions</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">semantics</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="n">axs</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The following plots are created:</p>
+<figure class="align-default">
+<a class="reference internal image-reference" href="_images/Q-Q_Plot_Hs_Tz.png"><img alt="Q-Q plot of significant wave height and zero-crossing period." src="_images/Q-Q_Plot_Hs_Tz.png" style="width: 602.0px; height: 306.0px;" /></a>
+</figure>
+<figure class="align-default">
+<a class="reference internal image-reference" href="_images/Dependency_fitting_HsTz.png"><img alt="Dependency functions of significant wave height and zero-crossing period." src="_images/Dependency_fitting_HsTz.png" style="width: 609.0px; height: 310.0px;" /></a>
+</figure>
+<p><strong>Environmental contour</strong></p>
+<p>Compute an IFORM contour with a return period of 20 years and plot the contour on top of a scatter diagram of the
+metocean data.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">state_duration</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># hours</span>
+<span class="n">return_period</span> <span class="o">=</span> <span class="mi">20</span>  <span class="c1"># years</span>
+<span class="n">alpha</span> <span class="o">=</span> <span class="n">state_duration</span> <span class="o">/</span> <span class="p">(</span><span class="n">return_period</span> <span class="o">*</span> <span class="mf">365.25</span> <span class="o">*</span> <span class="mi">24</span><span class="p">)</span>
+<span class="n">contour</span> <span class="o">=</span> <span class="n">IFORMContour</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">alpha</span><span class="p">)</span>
+
+<span class="n">ax</span> <span class="o">=</span> <span class="n">plot_2D_contour</span><span class="p">(</span><span class="n">contour</span><span class="p">,</span> <span class="n">sample</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">semantics</span><span class="o">=</span><span class="n">semantics</span><span class="p">,</span> <span class="n">swap_axis</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<figure class="align-default">
+<a class="reference internal image-reference" href="_images/Environmental_Contour_HsTz.png"><img alt="Sea state contour." src="_images/Environmental_Contour_HsTz.png" style="width: 380.0px; height: 266.0px;" /></a>
+</figure>
+<dl class="footnote brackets">
+<dt class="label" id="id4"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
+<dd><p>DNV GL (2017). Recommended practice DNVGL-RP-C205: Environmental conditions and environmental loads.</p>
+</dd>
+<dt class="label" id="id5"><span class="brackets"><a class="fn-backref" href="#id2">2</a></span></dt>
+<dd><p>Haselsteiner, A.F.; Coe, R.; Manuel, L.; Nguyen, P.T.T.; Martin, N.; Eckert-Gallup A. (2019): A benchmarking exercise on estimating extreme environmental conditions: methodology and baseline results. Proceedings of the 38th International Conference on Ocean, Offshore and Arctic Engineering OMAE2019, June 09-14, 2019, Glasgow, Scotland.</p>
+</dd>
+<dt class="label" id="id6"><span class="brackets"><a class="fn-backref" href="#id3">3</a></span></dt>
+<dd><p>Haselsteiner, A.F.; Sander, A.; Ohlendorf, J.H.; Thoben, K.D. (2020): Global hierarchical models for wind and wave contours: physical interpretations of the dependence functions. OMAE 2020, Fort Lauderdale, USA. Proceedings of the 39th International Conference on Ocean, Offshore and Arctic Engineering.</p>
+</dd>
+</dl>
+</section>
+<section id="year-environmental-contour-v-hs-tz">
+<h2>50 year environmental contour: V-Hs-Tz<a class="headerlink" href="#year-environmental-contour-v-hs-tz" title="Permalink to this headline">¶</a></h2>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Stay tuned! We are currently working on this chapter.
+In the meantime if you have any questions feel free to open an issue.</p>
+</div>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+    <a id="sidebar-anchor"></a>
+    
+
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Detailed examples</a><ul>
+<li><a class="reference internal" href="#year-environmental-contour-hs-tz-dnvgl-model">50 year environmental contour: Hs-Tz DNVGL model</a></li>
+<li><a class="reference internal" href="#year-environmental-contour-v-hs-tz">50 year environmental contour: V-Hs-Tz</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="definitions.html"
+                        title="previous chapter">Environmental contour: useful definitions</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="joint_models_estimating_parameters.html"
+                        title="next chapter">Defining custom joint models and estimating their parameters</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/detailed_examples.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="joint_models_estimating_parameters.html" title="Defining custom joint models and estimating their parameters"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="definitions.html" title="Environmental contour: useful definitions"
+             accesskey="P">previous</a> |</li>
+      </ul>
+    </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, virocon.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.0.2.
+    </div>
+  </body>
+</html>

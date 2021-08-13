@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>virocon.contours module &#8212; virocon  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pydoctheme.css" />
+    
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <script src="../_static/sidebar.js"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <link rel="shortcut icon" type="image/png" href="../_static/mini_logo.png" />
+    <meta name="viewport" content="width=device-width,initial-scale=0.8">
+    
+    
+
+  </head><body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="responsive-menu"><a href="#sidebar-anchor" title="Navigation">&#9776;</a></li>
+        <li><a href="../index.html">virocon  documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="module-virocon.contours">
+<span id="virocon-contours-module"></span><h1>virocon.contours module<a class="headerlink" href="#module-virocon.contours" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="virocon.contours.AndContour">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">virocon.contours.</span></span><span class="sig-name descname"><span class="pre">AndContour</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deg_step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allowed_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/virocon/contours.html#AndContour"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#virocon.contours.AndContour" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">virocon.contours.Contour</span></code></p>
+<p>A contour that connects points of constant AND exceedance. Such
+contours are described, for example, in Mazas (2019) <a href="#id21"><span class="problematic" id="id1">[1]_</span></a>.
+This implementation uses Monte Carlo simulation and only works for 2D models.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>MultivariateModel</em>) – The model to be used to calculate the contour.</p></li>
+<li><p><strong>alpha</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – The exceedance probability. The probability that an observation
+falls outside the environmental contour.</p></li>
+<li><p><strong>n</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Number of data points that shall be Monte Carlo simulated. Defaults
+to None, which calculates n based on alpha: n = int(100 / alpha).</p></li>
+<li><p><strong>deg_step</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – Directional step in degrees. Defaults to 5.</p></li>
+<li><p><strong>sample</strong> (<em>2-dimensional ndarray</em><em>, </em><em>optional</em>) – Monte Carlo simulated environmental states. Array is of shape (n, d)
+with d being the number of variables and n being the number of
+observations.</p></li>
+<li><p><strong>allowed_error</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – Required precision for the alpha value. For example 0.1 means that
+the algorithm searches along the path until the probability of exceedance
+at the current point p_e satisfies <a href="#id17"><span class="problematic" id="id18">|p_e - alpha|</span></a> / alpha &lt; 0.1.
+Defaults to 0.01.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="virocon.contours.AndContour.coordinates">
+<span class="sig-name descname"><span class="pre">coordinates</span></span><a class="headerlink" href="#virocon.contours.AndContour.coordinates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Coordinates of the calculated contour.
+Shape: (number of points, number of dimensions).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">References</p>
+<dl class="footnote brackets">
+<dt class="label" id="id2"><span class="brackets">1</span></dt>
+<dd><p>Mazas, F. (2019). Extreme events: a framework for assessing natural
+hazards. Natural Hazards. <a class="reference external" href="https://doi.org/10.1007/s11069-019-03581-9">https://doi.org/10.1007/s11069-019-03581-9</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="virocon.contours.DirectSamplingContour">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">virocon.contours.</span></span><span class="sig-name descname"><span class="pre">DirectSamplingContour</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deg_step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/virocon/contours.html#DirectSamplingContour"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#virocon.contours.DirectSamplingContour" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">virocon.contours.Contour</span></code></p>
+<p>Direct sampling contour as introduced by Huseby et al. (2013) <a href="#id22"><span class="problematic" id="id3">[1]_</span></a>
+The provided direct sampling contour method only works for 2D models.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>MultivariateModel</em>) – The model to be used to calculate the contour.</p></li>
+<li><p><strong>alpha</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – The exceedance probability. The probability that an observation
+falls outside the environmental contour.</p></li>
+<li><p><strong>n</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Number of data points that shall be Monte Carlo simulated. Defaults
+to None, which calculates n based on alpha: n = int(100 / alpha).</p></li>
+<li><p><strong>deg_step</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – Directional step in degrees. Defaults to 5.</p></li>
+<li><p><strong>sample</strong> (<em>2-dimensional ndarray</em><em>, </em><em>optional</em>) – Monte Carlo simulated environmental states. Array is of shape (n, d)
+with d being the number of variables and n being the number of
+observations.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="virocon.contours.DirectSamplingContour.coordinates">
+<span class="sig-name descname"><span class="pre">coordinates</span></span><a class="headerlink" href="#virocon.contours.DirectSamplingContour.coordinates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Coordinates of the calculated contour.
+Shape: (number of points, number of dimensions).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">References</p>
+<dl class="footnote brackets">
+<dt class="label" id="id4"><span class="brackets">1</span></dt>
+<dd><p>Huseby, A.B.; Vanem, E.; Natvig, B. (2013)
+A new approach to environmental contours for ocean engineering applications
+based on direct Monte Carlo simulations,
+Ocean Engineering, Volume 60. DOI: doi.org/10.1016/j.oceaneng.2012.12.034</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="virocon.contours.HighestDensityContour">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">virocon.contours.</span></span><span class="sig-name descname"><span class="pre">HighestDensityContour</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deltas</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/virocon/contours.html#HighestDensityContour"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#virocon.contours.HighestDensityContour" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">virocon.contours.Contour</span></code></p>
+<p>Contour based on the highest density method.</p>
+<p>This method was proposed by Haselsteiner et. al (2017) <a href="#id23"><span class="problematic" id="id5">[1]_</span></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>MultivariateModel</em>) – The model to be used to calculate the contour.</p></li>
+<li><p><strong>alpha</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – The exceedance probability. The probability that an observation
+falls outside the environmental contour.</p></li>
+<li><p><strong>limits</strong> (<em>list of tuples</em><em>, </em><em>optional</em>) – The limits of the grid to use for calculation. One 2-element tuple
+for each dimension of the model, containing the minimum and maximum
+for that dimension. (min, max). If not given, reasonable values are
+choosen using the models marginal_icdf as upper limit and 0 as lower
+limit.</p></li>
+<li><p><strong>deltas</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em> or </em><em>list of float</em><em>, </em><em>optional</em>) – The step size of the grid to use for calculation. If a single float
+is supplied it is used for all dimensions. If a list is supplied
+there has to be one entry for each dimension of the model. Defaults
+to 0.25% of the range defined by limits.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="virocon.contours.HighestDensityContour.coordinates">
+<span class="sig-name descname"><span class="pre">coordinates</span></span><a class="headerlink" href="#virocon.contours.HighestDensityContour.coordinates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Coordinates of the calculated contour.
+Shape: (number of points, number of dimensions).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="virocon.contours.HighestDensityContour.cell_center_coordinates">
+<span class="sig-name descname"><span class="pre">cell_center_coordinates</span></span><a class="headerlink" href="#virocon.contours.HighestDensityContour.cell_center_coordinates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Points at which the grid is evaluated.
+A list with one entry for each dimension, each entry is an array with
+the cell centers for that dimension.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>list of array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="virocon.contours.HighestDensityContour.fm">
+<span class="sig-name descname"><span class="pre">fm</span></span><a class="headerlink" href="#virocon.contours.HighestDensityContour.fm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Minimum probability density of the enclosed region / constant
+probability density along the contour.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.6/library/functions.html#float" title="(in Python v3.6)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">References</p>
+<dl class="footnote brackets">
+<dt class="label" id="id6"><span class="brackets">1</span></dt>
+<dd><p>Haselsteiner, A.F.; Ohlendorf, J.H.; Wosniok, W.; Thoben, K.D. (2017)
+Deriving environmental contours from highest density regions,
+Coastal Engineering, Volume 123. DOI: 10.1016/j.coastaleng.2017.03.002.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="virocon.contours.HighestDensityContour.cell_averaged_joint_pdf">
+<span class="sig-name descname"><span class="pre">cell_averaged_joint_pdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coords</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/virocon/contours.html#HighestDensityContour.cell_averaged_joint_pdf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#virocon.contours.HighestDensityContour.cell_averaged_joint_pdf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the cell averaged joint probabilty density function.</p>
+<p>Multiplies the cell averaged probability densities of all distributions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>coords</strong> (<em>list of array</em>) – List with one coordinate array for each dimension.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>fbar</strong> – Joint cell averaged probability density function evaluated at coords.
+Cell averaged probability density function evaluated at coords.
+n dimensional array, where n is the number of dimensions of the
+model used for calculation.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="virocon.contours.HighestDensityContour.cell_averaged_pdf">
+<span class="sig-name descname"><span class="pre">cell_averaged_pdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dist_idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coords</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/virocon/contours.html#HighestDensityContour.cell_averaged_pdf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#virocon.contours.HighestDensityContour.cell_averaged_pdf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the cell averaged probabilty density function of a single
+distribution.</p>
+<p>Calculates the pdf by approximating it with the finite differential
+quotient of the cumulative distributions function, evaluated at the
+grid cells borders.
+i.e. <span class="math notranslate nohighlight">\(f(x) \approx \frac{F(x+ 0.5\Delta x) - F(x- 0.5\Delta x) }{\Delta x}\)</span></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dist_idx</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – The index of the distribution to calcululate the pdf for.</p></li>
+<li><p><strong>coords</strong> (<em>list of array</em>) – List with one coordinate array for each dimension.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>fbar</strong> – Cell averaged probability density function evaluated at coords.
+n dimensional array, where n is the number of dimensions of the
+model used for calculation. All dimensions but, the dist_idx and
+the cond_idx dimensions are of length 1. The dist_idx and cond_idx
+dimensions are of length equal to the length of coords.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="virocon.contours.HighestDensityContour.cumsum_biggest_until">
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">cumsum_biggest_until</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/virocon/contours.html#HighestDensityContour.cumsum_biggest_until"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#virocon.contours.HighestDensityContour.cumsum_biggest_until" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find biggest elements to sum to reach limit.</p>
+<p>Sorts array, and calculates the cumulative sum.
+Returns a boolean array with the same shape as array indicating the
+fields summed to reach limit, as well as the last value added.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>array</strong> (<em>ndarray</em>) – Array of arbitrary shape with all values &gt;= 0.</p></li>
+<li><p><strong>limit</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – Value to sum up to.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>summed_fields</strong> (<em>ndarray, dtype=Bool</em>) – Boolean array of shape like array with True if element was used in summation.</p></li>
+<li><p><strong>last_summed</strong> (<em>float</em>) – Element that was added last to the sum.</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.6/library/exceptions.html#ValueError" title="(in Python v3.6)"><strong>ValueError</strong></a> – If <cite>array</cite> contains nan.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>A <code class="docutils literal notranslate"><span class="pre">RuntimeWarning</span></code> is raised if the limit cannot be reached by summing all values.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="virocon.contours.IFORMContour">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">virocon.contours.</span></span><span class="sig-name descname"><span class="pre">IFORMContour</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_points</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">180</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/virocon/contours.html#IFORMContour"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#virocon.contours.IFORMContour" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">virocon.contours.Contour</span></code></p>
+<p>Contour based on the inverse first-order reliability method.</p>
+<p>This method was proposed by Winterstein et. al (1993) <a href="#id24"><span class="problematic" id="id7">[1]_</span></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>MultivariateModel</em>) – The model to be used to calculate the contour.</p></li>
+<li><p><strong>alpha</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – The exceedance probability. The probability that an observation falls
+outside the environmental contour.</p></li>
+<li><p><strong>n_points</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Number of points on the contour. Defaults to 180.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="virocon.contours.IFORMContour.coordinates">
+<span class="sig-name descname"><span class="pre">coordinates</span></span><a class="headerlink" href="#virocon.contours.IFORMContour.coordinates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Coordinates of the calculated contour.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="virocon.contours.IFORMContour.beta">
+<span class="sig-name descname"><span class="pre">beta</span></span><a class="headerlink" href="#virocon.contours.IFORMContour.beta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reliability index.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="virocon.contours.IFORMContour.sphere_points">
+<span class="sig-name descname"><span class="pre">sphere_points</span></span><a class="headerlink" href="#virocon.contours.IFORMContour.sphere_points" title="Permalink to this definition">¶</a></dt>
+<dd><p>Points of the sphere in U space <a href="#id25"><span class="problematic" id="id8">[1]_</span></a> .</p>
+</dd></dl>
+
+<p class="rubric">References</p>
+<dl class="footnote brackets">
+<dt class="label" id="id9"><span class="brackets">1</span></dt>
+<dd><p>Winterstein, S.R.; Ude, T.C.; Cornell, C.A.; Bjerager, P.; Haver, S. (1993)
+Environmental parameters  for extreme response: Inverse FORM with omission
+factors. ICOSSAR 93, Innsbruck, Austria.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="virocon.contours.ISORMContour">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">virocon.contours.</span></span><span class="sig-name descname"><span class="pre">ISORMContour</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_points</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">180</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/virocon/contours.html#ISORMContour"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#virocon.contours.ISORMContour" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">virocon.contours.Contour</span></code></p>
+<p>Contour based on the inverse second-order reliability method.</p>
+<p>This method was proposed by Chai and Leira (2018) <a href="#id26"><span class="problematic" id="id10">[1]_</span></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>MultivariateModel</em>) – The model to be used to calculate the contour.</p></li>
+<li><p><strong>alpha</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – The exceedance probability. The probability that an observation falls
+outside the environmental contour.</p></li>
+<li><p><strong>n_points</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Number of points on the contour. Defaults to 180.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="virocon.contours.ISORMContour.coordinates">
+<span class="sig-name descname"><span class="pre">coordinates</span></span><a class="headerlink" href="#virocon.contours.ISORMContour.coordinates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Coordinates of the calculated contour.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="virocon.contours.ISORMContour.beta">
+<span class="sig-name descname"><span class="pre">beta</span></span><a class="headerlink" href="#virocon.contours.ISORMContour.beta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reliability index.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="virocon.contours.ISORMContour.sphere_points">
+<span class="sig-name descname"><span class="pre">sphere_points</span></span><a class="headerlink" href="#virocon.contours.ISORMContour.sphere_points" title="Permalink to this definition">¶</a></dt>
+<dd><p>Points of the sphere in U space <a href="#id27"><span class="problematic" id="id11">[1]_</span></a> .</p>
+</dd></dl>
+
+<p class="rubric">References</p>
+<dl class="footnote brackets">
+<dt class="label" id="id12"><span class="brackets">1</span></dt>
+<dd><p>Chai, W.; Leira, B.J. (2018)
+Environmental contours based on inverse SORM. Marine Structures Volume 60,
+pp. 34-51. DOI: 10.1016/j.marstruc.2018.03.007 .</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="virocon.contours.OrContour">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">virocon.contours.</span></span><span class="sig-name descname"><span class="pre">OrContour</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deg_step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allowed_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lowest_theta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">highest_theta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">80</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/virocon/contours.html#OrContour"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#virocon.contours.OrContour" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">virocon.contours.Contour</span></code></p>
+<p>A contour that connects points of constant OR exceedance. Such
+type of multivariate exceedance is described, for example, in Serinaldi (2015) <a href="#id28"><span class="problematic" id="id13">[1]_</span></a>.
+This implementation uses Monte Carlo simulation and only works for 2D models.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>MultivariateModel</em>) – The model to be used to calculate the contour.</p></li>
+<li><p><strong>alpha</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – The exceedance probability. The probability that an observation
+falls outside the environmental contour.</p></li>
+<li><p><strong>n</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Number of data points that shall be Monte Carlo simulated. Defaults
+to None, which calculates n based on alpha: n = int(100 / alpha).</p></li>
+<li><p><strong>deg_step</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – Directional step in degrees. Defaults to 5.</p></li>
+<li><p><strong>sample</strong> (<em>2-dimensional ndarray</em><em>, </em><em>optional</em>) – Monte Carlo simulated environmental states. Array is of shape (n, d)
+with d being the number of variables and n being the number of
+observations.</p></li>
+<li><p><strong>allowed_error</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – Required precision for the alpha value. For example 0.1 means that
+the algorithm searches along the path until the probability of exceedance
+at the current point p_e satisfies <a href="#id19"><span class="problematic" id="id20">|p_e - alpha|</span></a> / alpha &lt; 0.1.
+Defaults to 0.01.</p></li>
+<li><p><strong>lowest_theta</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – Lowest angle considered in the calculation of the contour. Given in deg.
+Defaults to 10.</p></li>
+<li><p><strong>highest_theta</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>otptional</em>) – Highest angle considered in the calculation of the contour. Given in deg.
+Defaults to 80.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="virocon.contours.OrContour.coordinates">
+<span class="sig-name descname"><span class="pre">coordinates</span></span><a class="headerlink" href="#virocon.contours.OrContour.coordinates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Coordinates of the calculated contour.
+Shape: (number of points, number of dimensions).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">References</p>
+<dl class="footnote brackets">
+<dt class="label" id="id14"><span class="brackets">1</span></dt>
+<dd><p>Serinaldi, F. (2015). Dismissing return periods! Stochastic Environmental
+Research and Risk Assessment, 29(4), 1179–1189. <a class="reference external" href="https://doi.org/10.1007/s00477-014-0916-1">https://doi.org/10.1007/s00477-014-0916-1</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="virocon.contours.calculate_alpha">
+<span class="sig-prename descclassname"><span class="pre">virocon.contours.</span></span><span class="sig-name descname"><span class="pre">calculate_alpha</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state_duration</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_period</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/virocon/contours.html#calculate_alpha"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#virocon.contours.calculate_alpha" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the probability that an environmental contour is exceeded
+(exceedance probability).</p>
+<p>The exceedance probability, α, corresponds to a certain recurrence or
+return period, T, which describes the average time period between two
+consecutive environmental states that exceed the contour . Note that
+exceedance can be defined in various ways for environmental contours
+(Mackay and Haselsteiner, 2021) <a href="#id29"><span class="problematic" id="id15">[1]_</span></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state_duration</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – Time period for which an environmental state is measured,
+expressed in hours <span class="math notranslate nohighlight">\((T_s)\)</span>.</p></li>
+<li><p><strong>return_period</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – <p>Describes the average time period between two consecutive
+environmental states that exceed a contour. In the univariate case the
+contour is a threshold, x1.</p>
+<p><span class="math notranslate nohighlight">\(\alpha= \frac{T_s}{T_r * 365.25 * 24}\)</span></p>
+<p><span class="math notranslate nohighlight">\(F(x_1) =  P(X_1 \geq x_1)= \int_{- \infty}^{x_1} f(x) dx = 1- \alpha\)</span></p>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>alpha</strong> – The probability that an environmental contour is exceeded.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.6/library/functions.html#float" title="(in Python v3.6)">float</a></p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<dl class="footnote brackets">
+<dt class="label" id="id16"><span class="brackets">1</span></dt>
+<dd><p>Mackay, E., &amp; Haselsteiner, A. F. (2021).
+Marginal and total exceedance probabilities of environmental contours.
+Marine Structures, 75. <a class="reference external" href="https://doi.org/10.1016/j.marstruc.2020.102863">https://doi.org/10.1016/j.marstruc.2020.102863</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="virocon.contours.save_contour_coordinates">
+<span class="sig-prename descclassname"><span class="pre">virocon.contours.</span></span><span class="sig-name descname"><span class="pre">save_contour_coordinates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contour</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">semantics</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/virocon/contours.html#save_contour_coordinates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#virocon.contours.save_contour_coordinates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves the coordinates of the calculated contour.
+Saves a .txt file to the given path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>contour</strong> (<em>Contour</em>) – The contour with the coordinates to save.</p></li>
+<li><p><strong>file_path</strong> (<em>string</em>) – Indicates the path, where the contour coordinates are saved.</p></li>
+<li><p><strong>semantics</strong> (<em>dictionary</em>) – The description of the model. semantics has the keys ‘names’, ‘symbols’
+and ‘units’. Each value is a list of strings. For each dimension of the
+model the strings describe the name, symbol or unit of that dimension,
+respectively. This information is used as the header of the created file.
+Defaults to a dict with general descriptions.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+    <a id="sidebar-anchor"></a>
+    
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/api/contours.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+      </ul>
+    </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, virocon.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.0.2.
+    </div>
+  </body>
+</html>
