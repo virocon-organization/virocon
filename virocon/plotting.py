@@ -94,7 +94,7 @@ def plot_marginal_quantiles(model, sample, semantics=None, axes=None):
         Shape: (sample_size, n_dim)
     semantics: dict, optional
         The description of the model. If None (the default) generic semantics
-        will be used. The structure is as follows::
+        will be used. The structure is as follows:
           modeldesc = {
               "names" : [<Names of variables>], 
               "symbols" : [<Description of symbols>], 
