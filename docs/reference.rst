@@ -8,5 +8,5 @@ Reference
     virocon.distributions
     virocon.params
     virocon.contours
-    virocon.fitting
+    virocon._fitting
     virocon._nsphere
