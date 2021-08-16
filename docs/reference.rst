@@ -9,4 +9,4 @@ Reference
     virocon.params
     virocon.contours
     virocon.fitting
-    virocon._n_sphere
+    virocon._nsphere
