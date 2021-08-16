@@ -593,7 +593,7 @@ class LogNormalDistribution(Distribution):
     """
     A Lognormal Distribution. 
     
-    The distributions probability density function is given by [1]_: 
+    The distributions probability density function is given by [2]_: 
     
     :math:`f(x) = \\frac{1}{x\\widetilde{\\sigma} \\sqrt{2\\pi}}\\exp \\left[ \\frac{-(\\ln x - \\widetilde{\\mu})^2}{2\\widetilde{\\sigma}^2}\\right]`
      
@@ -617,7 +617,7 @@ class LogNormalDistribution(Distribution):
     
     References
     ----------
-    .. [1] Forbes, C.; Evans, M.; Hastings, N; Peacock, B. (2011)
+    .. [2] Forbes, C.; Evans, M.; Hastings, N; Peacock, B. (2011)
         Statistical Distributions, 4th Edition, Published by 
         John Wiley & Sons, Inc., Hoboken, New Jersey., 
         Pages 131-132
@@ -737,7 +737,7 @@ class NormalDistribution(Distribution):
     """
     A Normal (Gaussian) Distribution. 
     
-    The distributions probability density function is given by [1]_: 
+    The distributions probability density function is given by [3]_: 
     
     :math:`f(x) = \\frac{1}{{\\sigma} \\sqrt{2\\pi}} \\exp \\left( - \\frac{( x - \\mu)^2}{2\\sigma^2}\\right)`
      
@@ -761,7 +761,7 @@ class NormalDistribution(Distribution):
     
     References
     ----------
-    .. [1] Forbes, C.; Evans, M.; Hastings, N; Peacock, B. (2011)
+    .. [3] Forbes, C.; Evans, M.; Hastings, N; Peacock, B. (2011)
         Statistical Distributions, 4th Edition, Published by 
         John Wiley & Sons, Inc., Hoboken, New Jersey., 
         Page 143
@@ -975,7 +975,7 @@ class ExponentiatedWeibullDistribution(Distribution):
     An exponentiated Weibull distribution. 
     
     The parametrization used is the same as described by 
-    Haselsteiner et al. (2019) [1]_.  The distributions cumulative distribution 
+    Haselsteiner et al. (2019) [4]_.  The distributions cumulative distribution 
     function is given by:
     
     :math:`F(x) = \\left[ 1- \\exp \\left(-\\left( \\frac{x}{\\alpha} \\right)^{\\beta} \\right) \\right] ^{\\delta}`
@@ -1006,7 +1006,7 @@ class ExponentiatedWeibullDistribution(Distribution):
 
     References
     ----------
-    .. [1] Haselsteiner, A.F.; Thoben, K.D. (2019)
+    .. [4] Haselsteiner, A.F.; Thoben, K.D. (2019)
         Predicting wave heights for marine design by prioritizing extreme events in
         a global model, Renewable Energy, Volume 156, August 2020, 
         Pages 1146-1157; https://doi.org/10.1016/j.renene.2020.04.112
