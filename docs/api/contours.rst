@@ -1,7 +1,7 @@
 :orphan:
 
 virocon\.contours module
----------------------------
+------------------------
 
 .. automodule:: virocon.contours
     :members:

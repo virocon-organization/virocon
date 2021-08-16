@@ -1,7 +1,7 @@
 :orphan:
 
 virocon\._intersection module
----------------------------
+-----------------------------
 
 .. automodule:: virocon._intersection
     :members:
