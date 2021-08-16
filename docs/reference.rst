@@ -5,8 +5,8 @@ Reference
 .. autosummary::
 
     virocon
-    virocon.distributions
-    virocon.params
-    virocon.contours
+    virocon._intersection
     virocon._fitting
     virocon._nsphere
+    virocon.contours
+    virocon.distributions
