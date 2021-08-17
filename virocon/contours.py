@@ -41,12 +41,7 @@ def calculate_alpha(state_duration, return_period):
         expressed in hours :math:`(T_s)`.
     return_period : float
         Describes the average time period between two consecutive
-        environmental states that exceed a contour. In the univariate case the
-        contour is a threshold, x1.
-
-        :math:`\\alpha= \\frac{T_s}{T_r * 365.25 * 24}`
-
-        :math:`F(x_1) =  P(X_1 \\geq x_1)= \\int_{- \\infty}^{x_1} f(x) dx = 1- \\alpha`
+        environmental states that exceed a contour.
 
     Returns
     -------

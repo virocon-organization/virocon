@@ -529,7 +529,7 @@ class WeibullDistribution(Distribution):
         
         Parameters
         ----------
-         prob : array_like
+        prob : array_like
             Probabilities for which the i_cdf is evaluated.
             Shape: 1-dimensional
         alpha : float, optional
