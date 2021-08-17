@@ -83,7 +83,7 @@ def get_DNVGL_Hs_U():
     Get DNVGL significant wave height and wind speed model.
     
     Get the descriptions necessary to create the significant wave height 
-    and wind speed model as defined in DNVGL [1]_ in section 3.6.4.
+    and wind speed model as defined in DNVGL [2]_ in section 3.6.4.
     
     Returns
     -------
@@ -99,7 +99,7 @@ def get_DNVGL_Hs_U():
         
     References
     ----------
-    .. [1] DNV GL (2017). Recommended practice DNVGL-RP-C205: Environmental 
+    .. [2] DNV GL (2017). Recommended practice DNVGL-RP-C205: Environmental 
         conditions and environmental loads.
     """
 
@@ -140,7 +140,7 @@ def get_OMAE2020_Hs_Tz():
     Get OMAE2020 significant wave height and wave period model.
     
     Get the descriptions necessary to create the significant wave height 
-    and wave period model as described by Haselsteiner et al. [1]_. 
+    and wave period model as described by Haselsteiner et al. [3]_. 
     
     Returns
     -------
@@ -156,7 +156,7 @@ def get_OMAE2020_Hs_Tz():
         
     References
     ----------
-    .. [1] Haselsteiner, A.F.; Sander, A.; Ohlendorf, J.H.; Thoben, K.D. (2020)
+    .. [3] Haselsteiner, A.F.; Sander, A.; Ohlendorf, J.H.; Thoben, K.D. (2020)
         Global hierarchical models for wind and wave contours: Physical
         interpretations of the dependence functions. OMAE 2020, Fort Lauderdale,
         USA. Proceedings of the 39th International Conference on Ocean, 
@@ -204,7 +204,7 @@ def get_OMAE2020_V_Hs():
     Get OMAE2020 wind speed and significant wave height model.
     
     Get the descriptions necessary to create the wind speed and 
-    significant wave height model as described by Haselsteiner et al. [1]_. 
+    significant wave height model as described by Haselsteiner et al. [4]_. 
     
     Returns
     -------
@@ -220,7 +220,7 @@ def get_OMAE2020_V_Hs():
         
     References
     ----------
-    .. [1] Haselsteiner, A.F.; Sander, A.; Ohlendorf, J.H.; Thoben, K.D. (2020)
+    .. [4] Haselsteiner, A.F.; Sander, A.; Ohlendorf, J.H.; Thoben, K.D. (2020)
         Global hierarchical models for wind and wave contours: Physical
         interpretations of the dependence functions. OMAE 2020, Fort Lauderdale,
         USA. Proceedings of the 39th International Conference on Ocean, 

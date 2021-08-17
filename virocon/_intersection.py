@@ -15,7 +15,7 @@ furnished to do so, subject to the following conditions:
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
@@ -64,7 +64,7 @@ def _rectangle_intersection_(x1, y1, x2, y2):
 def intersection(x1, y1, x2, y2):
     """
     INTERSECTIONS Intersections of curves.
-    Computes the (x,y) locations where two curves intersect.  The curves
+    Computes the (x,y) locations where two curves intersect. The curves
     can be broken with NaNs or have vertical segments.
 
     usage:
@@ -73,8 +73,8 @@ def intersection(x1, y1, x2, y2):
     Example:
     a, b = 1, 2
     phi = np.linspace(3, 10, 100)
-    x1 = a*phi - b*np.sin(phi)
-    y1 = a - b*np.cos(phi)
+    x1 = a \* phi - b \* np.sin(phi)
+    y1 = a - b \* np.cos(phi)
 
     x2=phi
     y2=np.sin(phi)+2
@@ -82,7 +82,7 @@ def intersection(x1, y1, x2, y2):
 
     plt.plot(x1,y1,c='r')
     plt.plot(x2,y2,c='g')
-    plt.plot(x,y,'*k')
+    plt.plot(x,y,'.k')
     plt.show()
 
     """

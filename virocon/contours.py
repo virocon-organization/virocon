@@ -41,12 +41,7 @@ def calculate_alpha(state_duration, return_period):
         expressed in hours :math:`(T_s)`.
     return_period : float
         Describes the average time period between two consecutive
-        environmental states that exceed a contour. In the univariate case the
-        contour is a threshold, x1.
-
-        :math:`\\alpha= \\frac{T_s}{T_r * 365.25 * 24}`
-
-        :math:`F(x_1) =  P(X_1 \\geq x_1)= \\int_{- \\infty}^{x_1} f(x) dx = 1- \\alpha`
+        environmental states that exceed a contour.
 
     Returns
     -------
@@ -118,12 +113,12 @@ class Contour(ABC):
       Contour curves or surfaces for more than two environmental parameters
       give combination of environmental parameters which approximately
       describe the various actions corresponding to the given exceedance
-      probability [1]_.
+      probability [2]_.
 
 
     References
     ----------
-    .. [1] NORSOK standard N-003, Edition 2, September 2007. Actions and
+    .. [2] NORSOK standard N-003, Edition 2, September 2007. Actions and
         action effects.
 
 
@@ -168,7 +163,7 @@ class IFORMContour(Contour):
     """
     Contour based on the inverse first-order reliability method.
 
-    This method was proposed by Winterstein et. al (1993) [1]_
+    This method was proposed by Winterstein et. al (1993) [3]_
 
     Parameters
     ----------
@@ -187,11 +182,11 @@ class IFORMContour(Contour):
     beta :
         Reliability index.
     sphere_points :
-          Points of the sphere in U space [1]_ .
+          Points of the sphere in U space [3]_ .
 
     References
     ----------
-    .. [1] Winterstein, S.R.; Ude, T.C.; Cornell, C.A.; Bjerager, P.; Haver, S. (1993)
+    .. [3] Winterstein, S.R.; Ude, T.C.; Cornell, C.A.; Bjerager, P.; Haver, S. (1993)
         Environmental parameters  for extreme response: Inverse FORM with omission
         factors. ICOSSAR 93, Innsbruck, Austria.
 
@@ -258,7 +253,7 @@ class ISORMContour(Contour):
     """
     Contour based on the inverse second-order reliability method.
 
-    This method was proposed by Chai and Leira (2018) [1]_
+    This method was proposed by Chai and Leira (2018) [4]_
 
     Parameters
     ----------
@@ -277,11 +272,11 @@ class ISORMContour(Contour):
     beta :
         Reliability index.
     sphere_points :
-          Points of the sphere in U space [1]_ .
+          Points of the sphere in U space [4]_ .
 
     References
     ----------
-    .. [1] Chai, W.; Leira, B.J. (2018)
+    .. [4] Chai, W.; Leira, B.J. (2018)
         Environmental contours based on inverse SORM. Marine Structures Volume 60,
         pp. 34-51. DOI: 10.1016/j.marstruc.2018.03.007 .
 
@@ -352,7 +347,7 @@ class HighestDensityContour(Contour):
     """
     Contour based on the highest density method.
 
-    This method was proposed by Haselsteiner et. al (2017) [1]_
+    This method was proposed by Haselsteiner et. al (2017) [5]_
 
     Parameters
     ----------
@@ -389,7 +384,7 @@ class HighestDensityContour(Contour):
 
     References
     ----------
-    .. [1] Haselsteiner, A.F.; Ohlendorf, J.H.; Wosniok, W.; Thoben, K.D. (2017)
+    .. [5] Haselsteiner, A.F.; Ohlendorf, J.H.; Wosniok, W.; Thoben, K.D. (2017)
         Deriving environmental contours from highest density regions,
         Coastal Engineering, Volume 123. DOI: 10.1016/j.coastaleng.2017.03.002.
 
@@ -711,7 +706,7 @@ class HighestDensityContour(Contour):
 
 class DirectSamplingContour(Contour):
     """
-    Direct sampling contour as introduced by Huseby et al. (2013) [1]_
+    Direct sampling contour as introduced by Huseby et al. (2013) [6]_
     The provided direct sampling contour method only works for 2D models.
 
     Parameters
@@ -739,7 +734,7 @@ class DirectSamplingContour(Contour):
 
     References
     ----------
-    .. [1] Huseby, A.B.; Vanem, E.; Natvig, B. (2013)
+    .. [6] Huseby, A.B.; Vanem, E.; Natvig, B. (2013)
         A new approach to environmental contours for ocean engineering applications
         based on direct Monte Carlo simulations,
         Ocean Engineering, Volume 60. DOI: doi.org/10.1016/j.oceaneng.2012.12.034
@@ -817,7 +812,7 @@ class DirectSamplingContour(Contour):
 class AndContour(Contour):
     """
     A contour that connects points of constant AND exceedance. Such
-    contours are described, for example, in Mazas (2019) [1]_.
+    contours are described, for example, in Mazas (2019) [7]_.
     This implementation uses Monte Carlo simulation and only works for 2D models.
 
     Parameters
@@ -839,7 +834,7 @@ class AndContour(Contour):
     allowed_error : float, optional
         Required precision for the alpha value. For example 0.1 means that
         the algorithm searches along the path until the probability of exceedance
-        at the current point p_e satisfies |p_e - alpha| / alpha < 0.1.
+        at the current point p_e satisfies \| p_e - alpha \| / alpha < 0.1.
         Defaults to 0.01.
 
     Attributes
@@ -850,7 +845,7 @@ class AndContour(Contour):
 
     References
     ----------
-    .. [1] Mazas, F. (2019). Extreme events: a framework for assessing natural
+    .. [7] Mazas, F. (2019). Extreme events: a framework for assessing natural
            hazards. Natural Hazards. https://doi.org/10.1007/s11069-019-03581-9
 
     """
@@ -936,7 +931,7 @@ class AndContour(Contour):
 class OrContour(Contour):
     """
     A contour that connects points of constant OR exceedance. Such
-    type of multivariate exceedance is described, for example, in Serinaldi (2015) [1]_.
+    type of multivariate exceedance is described, for example, in Serinaldi (2015) [8]_.
     This implementation uses Monte Carlo simulation and only works for 2D models.
 
     Parameters
@@ -958,7 +953,7 @@ class OrContour(Contour):
     allowed_error : float, optional
         Required precision for the alpha value. For example 0.1 means that
         the algorithm searches along the path until the probability of exceedance
-        at the current point p_e satisfies |p_e - alpha| / alpha < 0.1.
+        at the current point p_e satisfies \| p_e - alpha \| / alpha < 0.1.
         Defaults to 0.01.
     lowest_theta : float, optional
         Lowest angle considered in the calculation of the contour. Given in deg.
@@ -975,7 +970,7 @@ class OrContour(Contour):
 
     References
     ----------
-    .. [1] Serinaldi, F. (2015). Dismissing return periods! Stochastic Environmental
+    .. [8] Serinaldi, F. (2015). Dismissing return periods! Stochastic Environmental
            Research and Risk Assessment, 29(4), 1179–1189. https://doi.org/10.1007/s00477-014-0916-1
     """
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Sample (almost) equally distributed points on an n-spheres surface.
+Sample almost equally distributed points from an n-dimensional hypersphere.
 """
 
 import itertools

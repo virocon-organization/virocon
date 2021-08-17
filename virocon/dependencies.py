@@ -25,7 +25,7 @@ class DependenceFunction:
         Dependence functions for the parameter.
         Maps a conditioning value x and an arbitrary number of parameters to
         the value of a distributions parameter y.
-        func(x, *args) -> y
+        func(x, \* args) -> y
     bounds : list
         Boundaries for parameters of func.
         Fixed scalar boundaries for func's parameters.
@@ -46,13 +46,13 @@ class DependenceFunction:
         If given, this string will be used in plots to label the dependence
         function. It is interpreted as latex and shoul be specified using the
         same symbols that are used in the function definition.
-        Example: latex="$a + b * x^{c}$"
+        Example: latex="$a + b \* x^{c}$"
 
 
     Examples
     --------
     The dependence function is a function for the parameters of the dependent
-    variable. E.g.the zero-upcrossing period is dependent on the
+    variable. E.g.the zero-up-crossing period is dependent on the
     significant wave height (Hs|Tp). Assuming, the zero-upcrossing period is
     lognormally distributed, the parameters mu and sigma are described as
     functions of the significant wave height (equations given by
@@ -65,9 +65,9 @@ class DependenceFunction:
     References
     ----------
     .. [1] Haselsteiner, A. F., Sander, A., Ohlendorf, J.-H., & Thoben, K.-D. (2020).
-    Global hierarchical models for wind and wave contours: Physical interpretations
-    of the dependence functions. Proc. 39th International Conference on Ocean,
-    Offshore and Arctic Engineering (OMAE 2020). https://doi.org/10.1115/OMAE2020-18668
+           Global hierarchical models for wind and wave contours: Physical interpretations
+           of the dependence functions. Proc. 39th International Conference on Ocean,
+           Offshore and Arctic Engineering (OMAE 2020). https://doi.org/10.1115/OMAE2020-18668
     """
 
     # TODO implement check of bounds and constraints

@@ -1,9 +1,9 @@
 :orphan:
 
-virocon\.contours module
+virocon\.plotting module
 ------------------------
 
-.. automodule:: virocon.contours
+.. automodule:: virocon.plotting
     :members:
     :undoc-members:
     :show-inheritance:

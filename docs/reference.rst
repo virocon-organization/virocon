@@ -5,8 +5,14 @@ Reference
 .. autosummary::
 
     virocon
-    virocon.distributions
-    virocon.params
+    virocon._intersection
+    virocon._fitting
+    virocon._nsphere
     virocon.contours
-    virocon.fitting
-    virocon._n_sphere
+    virocon.dependencies
+    virocon.distributions
+    virocon.intervals
+    virocon.jointmodels
+    virocon.plotting
+    virocon.predefined
+    virocon.utils
