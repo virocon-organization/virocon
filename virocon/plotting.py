@@ -95,11 +95,10 @@ def plot_marginal_quantiles(model, sample, semantics=None, axes=None):
     semantics: dict, optional
         The description of the model. If None (the default) generic semantics
         will be used. The structure is as follows:
-          modeldesc = {
-              "names" : [<Names of variables>], 
-              "symbols" : [<Description of symbols>], 
-              "units" : [<Units of variables>]
-               }
+        modeldesc = {
+        "names" : [<Names of variables>], 
+        "symbols" : [<Description of symbols>], 
+        "units" : [<Units of variables>] }
     axes: list, optional
         The matplotlib axes objects to plot into. One for each dimension. If
         None (the default) a new figure will be created for each dimension.
