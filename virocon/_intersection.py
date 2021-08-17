@@ -63,7 +63,7 @@ def _rectangle_intersection_(x1, y1, x2, y2):
 
 def intersection(x1, y1, x2, y2):
     """
-    INTERSECTIONS Intersections of curves.
+    Intersections of curves.
     Computes the (x,y) locations where two curves intersect.  The curves
     can be broken with NaNs or have vertical segments.
 
