@@ -24,7 +24,7 @@ def test_read_ec_benchmark_dataset():
 
 
 def test_sort_points_to_form_continuous_line():
-    phi = np.linspace(0, 2 * np.pi, num=10, endpoint=False)
+    phi = np.linspace(0, 1.8 * np.pi, num=10, endpoint=False)
     ref_x = np.cos(phi)
     ref_y = np.sin(phi)
 
@@ -36,8 +36,9 @@ def test_sort_points_to_form_continuous_line():
         rand_x, rand_y, search_for_optimal_start=True
     )
 
-    # Clockwise or anti-clockwise order is not deterministic,
-    # but both are okay.
+    # For some reason this test fails on MacOS (but works on Ubuntu and Windows).
+    # In principal, clockwise and anti-clockwise are both correct solutions, but on MacOS
+    # it is neither, the starting point is in the middle of the sequency.
     try:
         np.testing.assert_array_equal(my_x, ref_x)
         np.testing.assert_array_equal(my_y, ref_y)

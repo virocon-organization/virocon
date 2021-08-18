@@ -1,3 +1,7 @@
+"""
+Classes for environmental contours (e.g. IFORMContour and HighestDensityContour)
+"""
+
 import os
 import warnings
 
