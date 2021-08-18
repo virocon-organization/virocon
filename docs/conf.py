@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# ViroCon doc documentation build configuration file, created by
+# virocon doc documentation build configuration file, created by
 # sphinx-quickstart on Tue Aug 22 11:54:21 2017.
 #
 # This file is execfile()d with the current directory set to its
@@ -205,7 +205,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, "viroconcom.tex", "viroconcom Documentation", "viroconcom", "manual"),
+    (master_doc, "virocon.tex", "virocon documentation", "virocon", "manual"),
 ]
 
 
@@ -213,7 +213,7 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [(master_doc, "viroconcom", "viroconcom Documentation", [author], 1)]
+man_pages = [(master_doc, "virocon", "virocon documentation", [author], 1)]
 
 
 # -- Options for Texinfo output -------------------------------------------
@@ -224,10 +224,10 @@ man_pages = [(master_doc, "viroconcom", "viroconcom Documentation", [author], 1)
 texinfo_documents = [
     (
         master_doc,
-        "viroconcom",
-        "viroconcom Documentation",
+        "virocon",
+        "virocon documentation",
         author,
-        "viroconcom",
+        "virocon",
         "One line description of project.",
         "Miscellaneous",
     ),
