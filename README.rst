@@ -129,7 +129,7 @@ License
 This software is licensed under the MIT license. For more information,
 read the file `LICENSE`_.
 
-.. _User Guide: https://virocon-organization.github.io/virocon/user_guide.html
+.. _User Guide: https://virocon.readthedocs.io/en/latest/user_guide.html
 .. _shell: https://en.wikipedia.org/wiki/Command-line_interface#Modern_usage_as_an_operating_system_shell
 .. _www.python.org: https://www.python.org
 .. _examples: https://github.com/virocon-organization/virocon/tree/master/examples
