@@ -7,4 +7,3 @@ Welcome to virocon's documentation
 
    user_guide
    reference
-   contributionguide
