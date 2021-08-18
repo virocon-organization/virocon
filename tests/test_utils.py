@@ -37,8 +37,11 @@ def test_sort_points_to_form_continuous_line():
     )
 
     # For some reason this test fails on MacOS (but works on Ubuntu and Windows).
-    # In principal, clockwise and anti-clockwise are both correct, but on MacOS
-    # it is not in reversed direction either, the starting point is in the middle
-    # of the sequence.
-    np.testing.assert_array_equal(my_x, ref_x)
-    np.testing.assert_array_equal(my_y, ref_y)
+    # In principal, clockwise and anti-clockwise are both correct solutions, but on MacOS
+    # it is neither, the starting point is in the middle of the sequency.
+    try:
+        np.testing.assert_array_equal(my_x, ref_x)
+        np.testing.assert_array_equal(my_y, ref_y)
+    except AssertionError:
+        np.testing.assert_array_equal(my_x[::-1], ref_x)
+        np.testing.assert_array_equal(my_y[::-1], ref_y)
