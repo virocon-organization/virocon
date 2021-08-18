@@ -11,7 +11,7 @@ to the given exceedance probability [1]_.
 
 **Exceedance probability**
 
-Probability that an environmental contour is exceeded (exceedance probability). The exceedance probability, α,
+Probability that an environmental contour is exceeded (exceedance probability). The exceedance probability :math:`\alpha`
 corresponds to a certain recurrence or return period, Tr, which describes the average time period between two
 consecutive environmental states that exceed the contour. In the following formula, the return period Tr is given in years, while Ts, the
 state duration of independent events is given in hours.
