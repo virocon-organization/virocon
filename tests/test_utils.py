@@ -24,7 +24,7 @@ def test_read_ec_benchmark_dataset():
 
 
 def test_sort_points_to_form_continuous_line():
-    phi = np.linspace(0, 2 * np.pi, num=10, endpoint=False)
+    phi = np.linspace(0, 1.8 * np.pi, num=10, endpoint=False)
     ref_x = np.cos(phi)
     ref_y = np.sin(phi)
 
