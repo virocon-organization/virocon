@@ -1,5 +1,5 @@
 """
-Classes for environmental contours (e.g. IFORMContour and HighestDensityContour)
+Classes for environmental contours
 """
 
 import os
