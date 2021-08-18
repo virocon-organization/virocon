@@ -5,8 +5,6 @@ Dependence structures for joint distribution models.
 from inspect import signature
 from functools import partial
 
-import numpy as np
-
 from virocon._fitting import fit_function, fit_constrained_function
 
 __all__ = ["DependenceFunction"]
