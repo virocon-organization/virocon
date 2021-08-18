@@ -2,10 +2,7 @@
 Dependence structures for joint distribution models.
 """
 
-import re
-
-from inspect import signature, getsourcelines
-
+from inspect import signature
 from functools import partial
 
 import numpy as np
