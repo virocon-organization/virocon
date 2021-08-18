@@ -1,15 +1,17 @@
 virocon
 =======
 
-.. image:: https://travis-ci.com/virocon-organization/virocon.svg?branch=master
-    :target: https://travis-ci.com/virocon-organization/virocon
-    :alt: Build status
-    
-.. image:: https://coveralls.io/repos/github/virocon-organization/virocon/badge.svg?branch=master
-    :target: https://coveralls.io/github/virocon-organization/virocon?branch=master
+.. image:: https://github.com/virocon-organization/virocon/actions/workflows/continuous_integration.yml/badge.svg
+   :target: https://github.com/virocon-organization/virocon/actions/workflows/continuous_integration.yml
+   :alt: GitHub Actions - CI
+   
+.. image:: https://img.shields.io/codecov/c/gh/virocon-organization/virocon
+    :target: https://img.shields.io/codecov/c/gh/virocon-organization/virocon
+    :alt: Codecov
     
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
     :target: https://github.com/psf/black
+    :alt: Black
 
 virocon is a Python package to compute environmental contours. `User Guide`_
 
