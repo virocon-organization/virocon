@@ -1,7 +1,7 @@
 .. _definitions:
 
 *****************************************
-Environmental contour: useful definitions
+Environmental contour: Useful definitions
 *****************************************
 
 A contour implements a method to define multivariate extremes based on a joint probabilistic model of variables like
