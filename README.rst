@@ -6,7 +6,7 @@ virocon
    :alt: GitHub Actions - CI
    
 .. image:: https://img.shields.io/codecov/c/gh/virocon-organization/virocon
-    :target: https://img.shields.io/codecov/c/gh/virocon-organization/virocon
+    :target: https://app.codecov.io/gh/virocon-organization/virocon
     :alt: Codecov
     
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
