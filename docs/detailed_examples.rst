@@ -116,7 +116,7 @@ Lognormal distribution are described by a power function and an exponential func
 
 In the following, the joint model is created from the dist description described above. Here, we are using global
 hierarchical models which are probabilistic models that covers the complete range of an environmental variable
-(’global’), following a particular hierarchical dependence structure. The factorization describes a hierarchy where a
+("global"), following a particular hierarchical dependence structure. The factorization describes a hierarchy where a
 random variable with index i can only depend upon random variables with indices less than i [3]_ .
 
 .. code-block:: python

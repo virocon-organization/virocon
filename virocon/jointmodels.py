@@ -76,7 +76,7 @@ class GlobalHierarchicalModel(MultivariateModel):
     Hierarchical probabilistic model.
     
     Probabilistic model that covers the complete range of an environmental 
-    variable (’global’), following a particular hierarchical dependence 
+    variable ("global"), following a particular hierarchical dependence 
     structure. The factorization describes a hierarchy where a random 
     variable with index i can only depend upon random variables with 
     indices less than i [1]_ .
