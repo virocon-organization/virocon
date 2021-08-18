@@ -139,10 +139,10 @@ def test_DirectSamplingContour(seastate_model):
 
     alpha = calculate_alpha(6, 1)
 
-    prng = np.random.RandomState(42)  # Fix the random seed for consistency.
-    # Because a random sample is drawn (and fixing the random seed with
-    # .np.random.RandomState) does not work, results will be different each
-    # time the test is run. Sometimes the test might fail.
+    # Fix the random seed for consistency. We do not want tests to randomly fail.
+    # This method may come with some problems, bot for now we keep it, see
+    # https://towardsdatascience.com/stop-using-numpy-random-seed-581a9972805f
+    np.random.seed(seed=42)
     my_ds_contour = DirectSamplingContour(seastate_model, alpha, deg_step=6)
 
     my_coordinates = my_ds_contour.coordinates
