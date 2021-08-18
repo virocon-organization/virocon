@@ -9,6 +9,10 @@ virocon
     :target: https://app.codecov.io/gh/virocon-organization/virocon
     :alt: Codecov
     
+.. image:: https://readthedocs.org/projects/virocon/badge/?version=latest
+   :target: https://virocon.readthedocs.io/en/latest/?badge=latest
+   :alt: Documentation Status
+    
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
     :target: https://github.com/psf/black
     :alt: Black
