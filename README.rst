@@ -138,7 +138,7 @@ read the file `LICENSE`_.
 .. _www.python.org: https://www.python.org
 .. _examples: https://github.com/virocon-organization/virocon/tree/master/examples
 .. _hstz_contour_simple.py: https://github.com/virocon-organization/virocon/blob/master/examples/hstz_contour_simple.py
-.. _here: https://virocon-organization.github.io/virocon/
+.. _here: https://virocon.readthedocs.io/en/latest/index.html
 .. _LICENSE: https://github.com/virocon-organization/virocon/blob/master/LICENSE
 .. _SoftwareX paper: https://github.com/ahaselsteiner/publications/blob/master/2018-10-25_SoftwareX_ViroCon_revised.pdf
 .. _conda: https://docs.conda.io/en/latest/
