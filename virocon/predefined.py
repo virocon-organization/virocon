@@ -1,3 +1,7 @@
+"""
+Common joint model structure are predefined in this module.
+"""
+
 import numpy as np
 
 from virocon import (

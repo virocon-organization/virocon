@@ -1,3 +1,7 @@
+"""
+Dependence structures for joint distribution models.
+"""
+
 import re
 
 from inspect import signature, getsourcelines

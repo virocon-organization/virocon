@@ -1,3 +1,7 @@
+"""
+Various functions that do not fully fit in an existing module.
+"""
+
 import networkx as nx
 import pandas as pd
 import numpy as np

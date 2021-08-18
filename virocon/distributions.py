@@ -1,3 +1,7 @@
+"""
+Distributions for single variables.
+"""
+
 import math
 import copy
 

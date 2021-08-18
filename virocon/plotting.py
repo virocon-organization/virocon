@@ -1,3 +1,8 @@
+"""
+Functions to plot distributions and contours.
+"""
+
+
 import re
 from functools import partial
 

@@ -1,3 +1,7 @@
+"""
+Models for the joint probability distribution.
+"""
+
 from abc import ABC, abstractmethod
 
 import numpy as np

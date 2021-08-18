@@ -1,3 +1,7 @@
+"""
+Model fitting (parameter estimation)
+"""
+
 import numpy as np
 
 from scipy.optimize import minimize, basinhopping, curve_fit

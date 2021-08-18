@@ -1,3 +1,7 @@
+"""
+Interval definitions for the subsequent model fitting.
+"""
+
 import numpy as np
 
 from abc import ABC, abstractmethod
