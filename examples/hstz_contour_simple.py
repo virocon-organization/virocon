@@ -13,7 +13,7 @@ dist_descriptions, fit_descriptions, semantics = get_OMAE2020_Hs_Tz()
 model = GlobalHierarchicalModel(dist_descriptions)
 
 # Estimate the model's parameter values (fitting).
-model.fit(data)
+model.fit(data, fit_descriptions=fit_descriptions)
 
 # Compute an IFORM contour with a return period of 50 years.
 tr = 50 # Return period in years.
