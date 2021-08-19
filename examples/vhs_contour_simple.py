@@ -1,5 +1,5 @@
 """
-Brief example that computes a wind-wave contour.
+Brief example that computes a wind speed - wave height contour.
 """
 import matplotlib.pyplot as plt
 from virocon import (read_ec_benchmark_dataset, get_OMAE2020_V_Hs, 

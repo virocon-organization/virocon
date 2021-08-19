@@ -1,5 +1,5 @@
 """
-Example of how to use the wind-wave model that was proposed in Haselsteiner et al. (2020).
+Example of how to use the wind speed - wave height model that was proposed in Haselsteiner et al. (2020).
 
 Haselsteiner, A. F., Sander, A., Ohlendorf, J.-H., & Thoben, K.-D. (2020). 
 Global hierarchical models for wind and wave contours:

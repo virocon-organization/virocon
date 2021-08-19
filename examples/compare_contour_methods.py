@@ -1,9 +1,9 @@
 """
-Use a wind-wave dataset, fit the join distribution proposed
-by Haselsteiner et al. (2020) and compare four different 
+Use a wind speed - wave height dataset, fit the join distribution
+proposed by Haselsteiner et al. (2020) and compare four different 
 contour construction methods. 
 
-A 50-year wind-wave contour is for example used in 
+A 50-year wind speed - wave height contour is for example used in 
 offshore wind turbine design
 
 Haselsteiner, A. F., Sander, A., Ohlendorf, J.-H., & Thoben, 

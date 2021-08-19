@@ -17,7 +17,7 @@ from virocon import (
     get_OMAE2020_V_Hs,
 )
 
-# Fit a joint model based on a wind-wave dataset.
+# Fit a joint model based on a wind speed - wave height dataset.
 data = read_ec_benchmark_dataset("datasets/ec-benchmark_dataset_D.txt")
 dist_descriptions, fit_descriptions, semantics = get_OMAE2020_V_Hs()
 model = GlobalHierarchicalModel(dist_descriptions)

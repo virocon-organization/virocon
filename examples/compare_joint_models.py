@@ -1,12 +1,11 @@
 """
-Fit two different joint distribution models to a wind-wave 
-dataset and compare their goodness of fits.
+Fit two different joint distribution models to a wind speed - 
+wave height dataset and compare their goodness of fits.
 """
 import numpy as np
 
 from virocon.plotting import (
     plot_2D_isodensity,
-    plot_dependence_functions,
     plot_marginal_quantiles,
 )
 import matplotlib.pyplot as plt
