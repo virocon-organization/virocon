@@ -1,5 +1,5 @@
 """
-Classes for environmental contours
+Classes for environmental contours.
 """
 
 import os

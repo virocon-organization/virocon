@@ -1,5 +1,5 @@
 """
-Various functions that do not fully fit in an existing module.
+Various functions that do not fit in an existing module.
 """
 
 import networkx as nx

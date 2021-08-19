@@ -1,5 +1,5 @@
 """
-Model fitting (parameter estimation)
+Model fitting (parameter estimation).
 """
 
 import numpy as np

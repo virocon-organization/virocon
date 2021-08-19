@@ -1,5 +1,5 @@
 """
-Taken from https://github.com/sukhbinder/intersection
+Taken from https://github.com/sukhbinder/intersection .
 
 MIT License
 
