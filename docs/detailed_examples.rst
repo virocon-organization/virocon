@@ -185,7 +185,187 @@ metocean data.
 
 50 year environmental contour: V-Hs-Tz
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Here, we use an environmental dataset with the variables V (wind speed) Hs (significant wave height) and Tz
+(zero-up-crossing period), fit a joint distribution to it and compute a 3D HDC contour. The presented example can be
+downloaded from the examples_ section of the repository. The dataset are available here: data_. Since the basic
+principles of calculating an environmental contour are described above for the 2-dimensional case, some explanations are
+shorter.
 
-.. warning::
-    Stay tuned! We are currently working on this chapter.
-    In the meantime if you have any questions feel free to open an issue.
+**Imports**
+
+.. code-block:: python
+
+    import numpy as np
+    import matplotlib.pyplot as plt
+    from skimage.measure import marching_cubes
+    import pandas as pd
+
+    from virocon import (
+    read_ec_benchmark_dataset,
+    GlobalHierarchicalModel,
+    LogNormalDistribution,
+    ExponentiatedWeibullDistribution,
+    DependenceFunction,
+    WidthOfIntervalSlicer,
+    HighestDensityContour,
+    plot_marginal_quantiles,
+    plot_dependence_functions,
+    )
+
+**Environmental data**
+
+To compute the 3D HDC contour, we use a dataset from NREL. The original dataset is shortened to one year to save
+computational costs.
+
+.. code-block:: python
+
+    data = pd.read_csv("datasets/NREL_data_oneyear.csv", sep=";", skipinitialspace=True)
+    data.index = pd.to_datetime(data.pop(data.columns[0]), format="%Y-%m-%d-%H")
+
+**Dependence structure**
+
+Define the structure of the joint model that we will use to describe the environmental data. To define a joint model, we
+again define the univariate parametric distributions and the dependence structure. As mentioned above, the dependence
+structure is defined using parametric functions. In this case, we used 4 different dependence functions.
+
+.. code-block:: python
+
+    def _power3(x, a, b, c):
+        return a + b * x ** c
+
+    def _exp3(x, a, b, c):
+        return a + b * np.exp(c * x)
+
+    def _alpha3(x, a, b, c, d_of_x):
+        return (a + b * x ** c) / 2.0445 ** (1 / d_of_x(x))
+
+    def _logistics4(x, a=1, b=1, c=-1, d=1):
+        return a + b / (1 + np.exp(c * (x - d)))
+
+**Parametric distributions**
+
+As in the 2-dimensional case, lower and upper interval boundaries for the three parameter values needs to be set. Here,
+dist_description_0 is the independent variable (wind speed) which is described by an exponentiated Weibull distribution
+and split in equally sized intervals of width 2. dist_description_1 (significant wave height) is also described by an
+exponentiated Weibull distribution and is conditional on the wind speed (indicated by "conditional_on": 1).
+dist_description_2 (zero-up-crossing period) is described by a Lognormal distribution and is conditional on the
+significant wave height (indicated by "conditional_on": 1).
+
+.. code-block:: python
+
+    bounds = [(0, None), (0, None), (None, None)]
+    logistics_bounds = [(0, None), (0, None), (None, 0), (0, None)]
+
+    power3 = DependenceFunction(_power3, bounds, latex="$a + b * x^c$")
+    exp3 = DependenceFunction(_exp3, bounds, latex="$a + b * \exp(c * x)$")
+    logistics4 = DependenceFunction(_logistics4, logistics_bounds,
+                                    weights=lambda x, y: y,
+                                    latex="$a + b / (1 + \exp[c * (x -d)])$")
+    alpha3 = DependenceFunction(_alpha3, bounds, d_of_x=logistics4,
+                                   weights=lambda x, y: y,
+                                   latex="$(a + b * x^c) / 2.0445^{1 / F()}$")
+
+    dist_description_0 = {
+        "distribution": ExponentiatedWeibullDistribution(),
+        "intervals": WidthOfIntervalSlicer(2, min_n_points=50),
+    }
+
+    dist_description_1 = {
+        "distribution": ExponentiatedWeibullDistribution(f_delta=5),
+        "intervals": WidthOfIntervalSlicer(0.5),
+        "conditional_on": 0,
+        "parameters": {"alpha": alpha3, "beta": logistics4,},
+    }
+
+    dist_description_2 = {
+        "distribution": LogNormalDistribution(),
+        "conditional_on": 1,
+        "parameters": {"mu": power3, "sigma": exp3},
+    }
+
+**Joint distribution model**
+
+Again, a global hierarchical model is created from the dist description described above. Afterwards, we create plots to
+inspect the model's goodness-of-fit.
+
+.. code-block:: python
+
+    model = GlobalHierarchicalModel([dist_description_0, dist_description_1, dist_description_2])
+
+    semantics = {
+        "names": ["Wind speed", "Significant wave height", "Zero-up-crossing period"],
+        "symbols": ["V", "H_s", "T_z"],
+        "units": ["m/s", "m", "s"],
+    }
+
+    model.fit(data)
+    print(model)
+
+    fig1, axs = plt.subplots(1, 3, figsize=[18, 7.2])
+    plot_marginal_quantiles(model, data, semantics, axes=axs)
+    fig2, axs = plt.subplots(1, 4, figsize=[22, 7.2])
+    plot_dependence_functions(model, semantics, axes=axs)
+
+The following plots are created:
+
+.. figure:: QQPlot_VHsTz.png
+    :scale: 100 %
+    :alt: Q-Q plot of wind speed, significant wave height and zero-crossing period.
+
+.. figure:: Dependency_fitting_VHsTz.png
+    :scale: 100 %
+    :alt: Dependency functions of significant wave height and zero-crossing period.
+
+**3D Contour**
+
+Note, that virocon does not provide an own method to plot 3D environmental contours. Therefore we linked relevant
+documentation for additional information. First, we need to set up a multi-dimensional mesh-grid for the 3D surface. For
+more detailed explanation on how to use meshgrids, see meshgrid_.
+
+.. code-block:: python
+
+    v_step = 2.0
+    h_step = 0.4
+    t_step = 0.4
+    v1d = np.arange(0, 50, v_step)
+    vgrid, h, t = np.mgrid[0:50:v_step, 0:22:h_step, 0:22:t_step]
+    f = np.empty_like(vgrid)
+
+    for i in range(vgrid.shape[0]):
+        for j in range(vgrid.shape[1]):
+            for k in range(vgrid.shape[2]):
+                f[i,j,k] = model.pdf([vgrid[i,j,k], h[i,j,k], t[i,j,k]])
+    print('Done with calculating f')
+
+Second, we compute a HDC contour with a return period of 20 years and plot the contour as a 3D surface. For additional
+information on how to create a 3-dimensional surface, see marchingcubes_
+
+ .. code-block:: python
+    state_duration = 1  # hours
+    return_period = 20  # years
+    alpha = state_duration / (return_period * 365.25 * 24)
+    HDC = HighestDensityContour(model, alpha, limits=[(0, 50), (0, 25), (0, 25)])
+    print('20-yr HDC has a density value of ' + str(HDC.fm))
+    iso_val = HDC.fm
+    verts, faces, _, _ = marching_cubes(f, iso_val,
+    spacing=(v_step, h_step, t_step))
+
+Finally, we can plot the 3D environmental contour:
+
+.. code-block:: python
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    ax.plot_trisurf(verts[:, 0], verts[:,1], faces, verts[:, 2], lw=1)
+    ax.set_xlabel('Wind speed (m/s)')
+    ax.set_ylabel('Significant wave height (m)')
+    ax.set_zlabel('Zero-up-crossing period (s)')
+
+The following plots are created:
+
+.. figure:: 3D_Contour.png
+    :scale: 100 %
+    :alt: 3-dimensional environmental contour of V-Hs-Tz.
+
+
+.. _meshgrid: https://numpy.org/doc/stable/reference/generated/numpy.mgrid.html
+.. _marchingcubes: https://scikit-image.org/docs/dev/auto_examples/edges/plot_marching_cubes.html

@@ -130,7 +130,7 @@ state_duration = 1  # hours
 return_period = 20  # years
 alpha = state_duration / (return_period * 365.25 * 24)
 HDC = HighestDensityContour(model, alpha, limits=[(0, 50), (0, 25), (0, 25)])
-print('50-yr HDC has a density value of ' + str(HDC.fm))
+print('20-yr HDC has a density value of ' + str(HDC.fm))
 iso_val = HDC.fm
 verts, faces, _, _ = marching_cubes(f, iso_val, 
     spacing=(v_step, h_step, t_step))
