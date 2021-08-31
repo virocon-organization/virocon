@@ -114,15 +114,16 @@ plot_dependence_functions(model, semantics, axes=axs)
 v_step = 2.0
 h_step = 0.4
 t_step = 0.4
-v1d = np.arange(0, 50, v_step)
 vgrid, h, t = np.mgrid[0:50:v_step, 0:22:h_step, 0:22:t_step]
 f = np.empty_like(vgrid)
+
 
 for i in range(vgrid.shape[0]):
     for j in range(vgrid.shape[1]):
         for k in range(vgrid.shape[2]):
             f[i,j,k] = model.pdf([vgrid[i,j,k], h[i,j,k], t[i,j,k]])
 print('Done with calculating f')
+
 
 # Calculate 3D Contour.
 
