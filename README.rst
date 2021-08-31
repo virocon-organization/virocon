@@ -17,7 +17,7 @@ virocon
     :target: https://github.com/psf/black
     :alt: Black
 
-virocon is a Python package to compute environmental contours. `User Guide`_
+virocon is a Python package to compute environmental contours (`user guide`_).
 
 About
 -----
@@ -102,7 +102,7 @@ that you have installed matplotlib and run the Python file by typing
 
 Documentation
 -------------
-**Learn.** Our `User Guide`_ covers installation, requirements and overall work flow.
+**Learn.** Our `user guide`_ covers installation, requirements and overall work flow.
 
 **Code.** The code’s documentation can be found `here`_.
 
@@ -133,7 +133,7 @@ License
 This software is licensed under the MIT license. For more information,
 read the file `LICENSE`_.
 
-.. _User Guide: https://virocon.readthedocs.io/en/latest/user_guide.html
+.. _user guide: https://virocon.readthedocs.io/en/latest/user_guide.html
 .. _shell: https://en.wikipedia.org/wiki/Command-line_interface#Modern_usage_as_an_operating_system_shell
 .. _www.python.org: https://www.python.org
 .. _examples: https://github.com/virocon-organization/virocon/tree/master/examples
