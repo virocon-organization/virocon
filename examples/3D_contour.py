@@ -125,6 +125,9 @@ for i in range(vgrid.shape[0]):
 print('Done with calculating f')
 
 
+#f = model.pdf(vgrid, h, t)
+
+
 # Calculate 3D Contour.
 
 state_duration = 1  # hours
@@ -140,7 +143,7 @@ verts, faces, _, _ = marching_cubes(f, iso_val,
 
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
-ax.plot_trisurf(verts[:, 0], verts[:,1], faces, verts[:, 2], lw=1)
+ax.plot_trisurf(verts[:, 0], verts[:,1], faces, verts[:, 2])
 ax.set_xlabel('Wind speed (m/s)')
 ax.set_ylabel('Significant wave height (m)')
 ax.set_zlabel('Zero-up-crossing period (s)')
