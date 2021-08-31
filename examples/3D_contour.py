@@ -122,10 +122,7 @@ for i in range(vgrid.shape[0]):
     for j in range(vgrid.shape[1]):
         for k in range(vgrid.shape[2]):
             f[i,j,k] = model.pdf([vgrid[i,j,k], h[i,j,k], t[i,j,k]])
-print('Done with calculating f')
-
-
-#f = model.pdf(vgrid, h, t)
+print('Done with calculating pdf')
 
 
 # Calculate 3D Contour.
