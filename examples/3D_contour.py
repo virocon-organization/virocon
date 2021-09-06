@@ -25,7 +25,7 @@ from virocon import (
 )
 
 
-# Load sea state measurements. 
+# Load sea state measurements.
 data = pd.read_csv("datasets/NREL_data_oneyear.csv", sep=";", skipinitialspace=True)
 data.index = pd.to_datetime(data.pop(data.columns[0]), format="%Y-%m-%d-%H")
 
@@ -39,13 +39,16 @@ data.index = pd.to_datetime(data.pop(data.columns[0]), format="%Y-%m-%d-%H")
 def _power3(x, a, b, c):
     return a + b * x ** c
 
+
 # A 3-parameter exponential function, which will be used as a dependence function.
 def _exp3(x, a, b, c):
     return a + b * np.exp(c * x)
 
-# A 3- parameter alpha function, which will be used as a dependence function. 
+
+# A 3- parameter alpha function, which will be used as a dependence function.
 def _alpha3(x, a, b, c, d_of_x):
     return (a + b * x ** c) / 2.0445 ** (1 / d_of_x(x))
+
 
 # A 4- parameter logistic function, which will be used as a dependence function.
 def _logistics4(x, a=1, b=1, c=-1, d=1):
@@ -58,12 +61,19 @@ logistics_bounds = [(0, None), (0, None), (None, 0), (0, None)]
 
 power3 = DependenceFunction(_power3, bounds, latex="$a + b * x^c$")
 exp3 = DependenceFunction(_exp3, bounds, latex="$a + b * \exp(c * x)$")
-logistics4 = DependenceFunction(_logistics4, logistics_bounds, 
-                                weights=lambda x, y: y, 
-                                latex="$a + b / (1 + \exp[c * (x -d)])$")
-alpha3 = DependenceFunction(_alpha3, bounds, d_of_x=logistics4, 
-                               weights=lambda x, y: y,
-                               latex="$(a + b * x^c) / 2.0445^{1 / F()}$")
+logistics4 = DependenceFunction(
+    _logistics4,
+    logistics_bounds,
+    weights=lambda x, y: y,
+    latex="$a + b / (1 + \exp[c * (x -d)])$",
+)
+alpha3 = DependenceFunction(
+    _alpha3,
+    bounds,
+    d_of_x=logistics4,
+    weights=lambda x, y: y,
+    latex="$(a + b * x^c) / 2.0445^{1 / F()}$",
+)
 
 # Define the structure of the joint distribution.
 
@@ -87,7 +97,9 @@ dist_description_2 = {
 }
 
 
-model = GlobalHierarchicalModel([dist_description_0, dist_description_1, dist_description_2])
+model = GlobalHierarchicalModel(
+    [dist_description_0, dist_description_1, dist_description_2]
+)
 
 # Define a dictionary that describes the model.
 semantics = {
@@ -119,8 +131,8 @@ f = np.empty_like(vgrid)
 for i in range(vgrid.shape[0]):
     for j in range(vgrid.shape[1]):
         for k in range(vgrid.shape[2]):
-            f[i,j,k] = model.pdf([vgrid[i,j,k], h[i,j,k], t[i,j,k]])
-print('Done with calculating pdf')
+            f[i, j, k] = model.pdf([vgrid[i, j, k], h[i, j, k], t[i, j, k]])
+print("Done with calculating pdf")
 
 
 # Calculate 3D Contour.
@@ -128,15 +140,14 @@ state_duration = 1  # hours
 return_period = 20  # years
 alpha = state_duration / (return_period * 365.25 * 24)
 HDC = HighestDensityContour(model, alpha, limits=[(0, 50), (0, 25), (0, 25)])
-print('20-yr HDC has a density value of ' + str(HDC.fm))
+print("20-yr HDC has a density value of " + str(HDC.fm))
 iso_val = HDC.fm
-verts, faces, _, _ = marching_cubes(f, iso_val, 
-    spacing=(v_step, h_step, t_step))
+verts, faces, _, _ = marching_cubes(f, iso_val, spacing=(v_step, h_step, t_step))
 
-# Plot 3D Contour. 
+# Plot 3D Contour.
 fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
-ax.plot_trisurf(verts[:, 0], verts[:,1], faces, verts[:, 2])
-ax.set_xlabel('Wind speed (m/s)')
-ax.set_ylabel('Significant wave height (m)')
-ax.set_zlabel('Zero-up-crossing period (s)')
+ax = fig.add_subplot(111, projection="3d")
+ax.plot_trisurf(verts[:, 0], verts[:, 1], faces, verts[:, 2])
+ax.set_xlabel("Wind speed (m/s)")
+ax.set_ylabel("Significant wave height (m)")
+ax.set_zlabel("Zero-up-crossing period (s)")
