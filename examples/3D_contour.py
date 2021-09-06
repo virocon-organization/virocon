@@ -26,7 +26,7 @@ from virocon import (
 
 
 # Load sea state measurements.
-data = pd.read_csv("datasets/NREL_data_oneyear.csv", sep=";", skipinitialspace=True)
+data = pd.read_csv("datasets/coastDat2_oneyear.csv", sep=";", skipinitialspace=True)
 data.index = pd.to_datetime(data.pop(data.columns[0]), format="%Y-%m-%d-%H")
 
 
