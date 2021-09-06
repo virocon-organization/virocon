@@ -6,7 +6,7 @@ This chapter will explain how the structure of the joint distribution model is c
 estimating the parameter values of a joint distribution, the “fitting” is explained in more detail by means of two
 examples. To create an environmental contour, first, we need to define a joint distribution. Then, we can choose a
 specific contour method and initiate the calculation. virocon uses so-called global hierarchical models to define the
-joint distribution and offers four common methods how an environmental contour can be defined based on a given joint
+joint distribution and offers common methods how an environmental contour can be defined based on a given joint
 distribution. Generally, virocon provides two ways of creating a joint model and calculating a contour. The first option
 is using an already predefined model, which was explained before in the quick start section (see :ref:`quick-start-guide`).
 The second option is defining a custom statistical model, which is described in the following.
@@ -187,7 +187,7 @@ metocean data.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Here, we use an environmental dataset with the variables V (wind speed) Hs (significant wave height) and Tz
 (zero-up-crossing period), fit a joint distribution to it and compute a 3D HDC contour. The presented example can be
-downloaded from the examples_ section of the repository. The dataset are available here: data_. Since the basic
+downloaded from the examples_ section of the repository. The dataset is available here: data_. Since the basic
 principles of calculating an environmental contour are described above for the 2-dimensional case, some explanations are
 shorter.
 
@@ -214,8 +214,8 @@ shorter.
 
 **Environmental data**
 
-To compute the 3D HDC contour, we use a dataset from NREL. The original dataset is shortened to one year to save
-computational costs.
+To compute the 3D HDC contour, we use a dataset from coastDat2 [1]_ . The original dataset is shortened to one year to
+reduce computational costs.
 
 .. code-block:: python
 
@@ -224,9 +224,9 @@ computational costs.
 
 **Dependence structure**
 
-Define the structure of the joint model that we will use to describe the environmental data. To define a joint model, we
-again define the univariate parametric distributions and the dependence structure. As mentioned above, the dependence
-structure is defined using parametric functions. In this case, we used 4 different dependence functions.
+Here, we define the structure of the joint model that will be used to describe the environmental data. To describe such
+a model, we again define the univariate parametric distributions and the dependence structure. As mentioned above, the
+dependence structure is defined using parametric functions. In this case, we use 4 different dependence functions.
 
 .. code-block:: python
 
@@ -246,10 +246,11 @@ structure is defined using parametric functions. In this case, we used 4 differe
 
 As in the 2-dimensional case, lower and upper interval boundaries for the three parameter values needs to be set. Here,
 dist_description_0 is the independent variable (wind speed) which is described by an exponentiated Weibull distribution
-and split in equally sized intervals of width 2. dist_description_1 (significant wave height) is also described by an
-exponentiated Weibull distribution and is conditional on the wind speed (indicated by "conditional_on": 1).
-dist_description_2 (zero-up-crossing period) is described by a Lognormal distribution and is conditional on the
-significant wave height (indicated by "conditional_on": 1).
+and split in equally sized intervals of width 2 m/s^2 . dist_description_1 (significant wave height) is also described
+by an exponentiated Weibull distribution and is conditional on the wind speed (indicated by "conditional_on": 0). The
+significant wave height is split in equally sized intervals of width 0.5 m. dist_description_2 (zero-up-crossing period)
+is described by a Lognormal distribution and is conditional on the significant wave height
+(indicated by "conditional_on": 1).
 
 .. code-block:: python
 
@@ -318,7 +319,7 @@ The following plots are created:
 
 **3D Contour**
 
-Note, that virocon does not provide an own method to plot 3D environmental contours. Therefore we linked relevant
+Note, that virocon does not provide own methods to plot 3D environmental contours. Therefore we linked relevant
 documentation for additional information. First, we need to set up a multi-dimensional mesh-grid for the 3D surface. For
 more detailed explanation on how to use meshgrids, see meshgrid_.
 
@@ -341,6 +342,7 @@ Second, we compute a HDC contour with a return period of 20 years and plot the c
 information on how to create a 3-dimensional surface, see marchingcubes_
 
  .. code-block:: python
+
     state_duration = 1  # hours
     return_period = 20  # years
     alpha = state_duration / (return_period * 365.25 * 24)
@@ -353,6 +355,7 @@ information on how to create a 3-dimensional surface, see marchingcubes_
 Finally, we can plot the 3D environmental contour:
 
 .. code-block:: python
+
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
     ax.plot_trisurf(verts[:, 0], verts[:,1], faces, verts[:, 2], lw=1)
@@ -369,3 +372,5 @@ The following plots are created:
 
 .. _meshgrid: https://numpy.org/doc/stable/reference/generated/numpy.mgrid.html
 .. _marchingcubes: https://scikit-image.org/docs/dev/auto_examples/edges/plot_marching_cubes.html
+
+.. [1] Groll, N. and Weisse, R.: A multi-decadal wind-wave hindcast for the North Sea 1949–2014: coastDat2, Earth Syst. Sci. Data, 9, 955–968, https://doi.org/10.5194/essd-9-955-2017, 2017.
