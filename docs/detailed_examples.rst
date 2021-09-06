@@ -214,7 +214,7 @@ shorter.
 
 **Environmental data**
 
-To compute the 3D HDC contour, we use a dataset from coastDat2 [1]_ . The original dataset is shortened to one year to
+To compute the 3D HDC contour, we use a dataset from coastDat2 [4]_ . The original dataset is shortened to one year to
 reduce computational costs.
 
 .. code-block:: python
@@ -373,4 +373,4 @@ The following plots are created:
 .. _meshgrid: https://numpy.org/doc/stable/reference/generated/numpy.mgrid.html
 .. _marchingcubes: https://scikit-image.org/docs/dev/auto_examples/edges/plot_marching_cubes.html
 
-.. [1] Groll, N. and Weisse, R.: A multi-decadal wind-wave hindcast for the North Sea 1949–2014: coastDat2, Earth Syst. Sci. Data, 9, 955–968, https://doi.org/10.5194/essd-9-955-2017, 2017.
+.. [4] Groll, N. and Weisse, R.: A multi-decadal wind-wave hindcast for the North Sea 1949–2014: coastDat2, Earth Syst. Sci. Data, 9, 955–968, https://doi.org/10.5194/essd-9-955-2017, 2017.
