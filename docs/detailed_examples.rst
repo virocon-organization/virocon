@@ -197,19 +197,17 @@ shorter.
 
     import numpy as np
     import matplotlib.pyplot as plt
-    from skimage.measure import marching_cubes
     import pandas as pd
 
     from virocon import (
-    read_ec_benchmark_dataset,
-    GlobalHierarchicalModel,
-    LogNormalDistribution,
-    ExponentiatedWeibullDistribution,
-    DependenceFunction,
-    WidthOfIntervalSlicer,
-    HighestDensityContour,
-    plot_marginal_quantiles,
-    plot_dependence_functions,
+        GlobalHierarchicalModel,
+        LogNormalDistribution,
+        ExponentiatedWeibullDistribution,
+        DependenceFunction,
+        WidthOfIntervalSlicer,
+        HighestDensityContour,
+        plot_marginal_quantiles,
+        plot_dependence_functions,
     )
 
 **Environmental data**
@@ -219,7 +217,7 @@ reduce computational costs.
 
 .. code-block:: python
 
-    data = pd.read_csv("datasets/NREL_data_oneyear.csv", sep=";", skipinitialspace=True)
+    data = pd.read_csv("datasets/coastDat2_oneyear.csv", sep=";", skipinitialspace=True)
     data.index = pd.to_datetime(data.pop(data.columns[0]), format="%Y-%m-%d-%H")
 
 **Dependence structure**
@@ -319,27 +317,9 @@ The following plots are created:
 
 **3D Contour**
 
-Note, that virocon does not provide own methods to plot 3D environmental contours. Therefore we linked relevant
-documentation for additional information. First, we need to set up a multi-dimensional mesh-grid for the 3D surface. For
-more detailed explanation on how to use meshgrids, see meshgrid_.
-
-.. code-block:: python
-
-    v_step = 2.0
-    h_step = 0.4
-    t_step = 0.4
-    v1d = np.arange(0, 50, v_step)
-    vgrid, h, t = np.mgrid[0:50:v_step, 0:22:h_step, 0:22:t_step]
-    f = np.empty_like(vgrid)
-
-    for i in range(vgrid.shape[0]):
-        for j in range(vgrid.shape[1]):
-            for k in range(vgrid.shape[2]):
-                f[i,j,k] = model.pdf([vgrid[i,j,k], h[i,j,k], t[i,j,k]])
-    print('Done with calculating f')
-
-Second, we compute a HDC contour with a return period of 20 years and plot the contour as a 3D surface. For additional
-information on how to create a 3-dimensional surface, see marchingcubes_
+Note, that virocon does not provide own methods to plot 3D environmental contours. Therefore we are constructing the
+contour manually: First, we determine the return period and the state duration and set up a HDC contour with a return
+period of 20 years.
 
  .. code-block:: python
 
@@ -347,30 +327,37 @@ information on how to create a 3-dimensional surface, see marchingcubes_
     return_period = 20  # years
     alpha = state_duration / (return_period * 365.25 * 24)
     HDC = HighestDensityContour(model, alpha, limits=[(0, 50), (0, 25), (0, 25)])
-    print('20-yr HDC has a density value of ' + str(HDC.fm))
-    iso_val = HDC.fm
-    verts, faces, _, _ = marching_cubes(f, iso_val,
-    spacing=(v_step, h_step, t_step))
 
-Finally, we can plot the 3D environmental contour:
+Then, we randomly select only 5% of the contour's points to increase the performance.
+
+.. code-block:: python
+
+    rng = np.random.default_rng(42)
+    n_contour_points = len(HDC.coordinates)
+    random_points = rng.choice(
+        n_contour_points, int(0.05 * n_contour_points), replace=False
+    )
+
+    Xs = HDC.coordinates[random_points, 0]
+    Ys = HDC.coordinates[random_points, 1]
+    Zs = HDC.coordinates[random_points, 2]
+
+Finally, we plot the 3D environmental contour:
 
 .. code-block:: python
 
     fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')
-    ax.plot_trisurf(verts[:, 0], verts[:,1], faces, verts[:, 2], lw=1)
-    ax.set_xlabel('Wind speed (m/s)')
-    ax.set_ylabel('Significant wave height (m)')
-    ax.set_zlabel('Zero-up-crossing period (s)')
+    ax = fig.add_subplot(111, projection="3d")
+    ax.scatter(Xs, Ys, Zs, c="#004488")
+    ax.set_xlabel("Wind speed (m/s)")
+    ax.set_ylabel("Significant wave height (m)")
+    ax.set_zlabel("Zero-up-crossing period (s)")
 
-The following plots are created:
+The following plot is created:
 
 .. figure:: 3D_Contour.png
     :scale: 100 %
     :alt: 3-dimensional environmental contour of V-Hs-Tz.
 
-
-.. _meshgrid: https://numpy.org/doc/stable/reference/generated/numpy.mgrid.html
-.. _marchingcubes: https://scikit-image.org/docs/dev/auto_examples/edges/plot_marching_cubes.html
 
 .. [4] Groll, N. and Weisse, R.: A multi-decadal wind-wave hindcast for the North Sea 1949–2014: coastDat2, Earth Syst. Sci. Data, 9, 955–968, https://doi.org/10.5194/essd-9-955-2017, 2017.
