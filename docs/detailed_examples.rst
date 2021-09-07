@@ -6,7 +6,7 @@ This chapter will explain how the structure of the joint distribution model is c
 estimating the parameter values of a joint distribution, the “fitting” is explained in more detail by means of two
 examples. To create an environmental contour, first, we need to define a joint distribution. Then, we can choose a
 specific contour method and initiate the calculation. virocon uses so-called global hierarchical models to define the
-joint distribution and offers four common methods how an environmental contour can be defined based on a given joint
+joint distribution and offers common methods how an environmental contour can be defined based on a given joint
 distribution. Generally, virocon provides two ways of creating a joint model and calculating a contour. The first option
 is using an already predefined model, which was explained before in the quick start section (see :ref:`quick-start-guide`).
 The second option is defining a custom statistical model, which is described in the following.
@@ -185,7 +185,179 @@ metocean data.
 
 50 year environmental contour: V-Hs-Tz
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Here, we use an environmental dataset with the variables V (wind speed) Hs (significant wave height) and Tz
+(zero-up-crossing period), fit a joint distribution to it and compute a 3D HDC contour. The presented example can be
+downloaded from the examples_ section of the repository. The dataset is available here: data_. Since the basic
+principles of calculating an environmental contour are described above for the 2-dimensional case, some explanations are
+shorter.
 
-.. warning::
-    Stay tuned! We are currently working on this chapter.
-    In the meantime if you have any questions feel free to open an issue.
+**Imports**
+
+.. code-block:: python
+
+    import numpy as np
+    import matplotlib.pyplot as plt
+    import pandas as pd
+
+    from virocon import (
+        GlobalHierarchicalModel,
+        LogNormalDistribution,
+        ExponentiatedWeibullDistribution,
+        DependenceFunction,
+        WidthOfIntervalSlicer,
+        HighestDensityContour,
+        plot_marginal_quantiles,
+        plot_dependence_functions,
+    )
+
+**Environmental data**
+
+To compute the 3D HDC contour, we use a dataset from coastDat2 [4]_ . The original dataset is shortened to one year to
+reduce computational costs.
+
+.. code-block:: python
+
+    data = pd.read_csv("datasets/coastDat2_oneyear.csv", sep=";", skipinitialspace=True)
+    data.index = pd.to_datetime(data.pop(data.columns[0]), format="%Y-%m-%d-%H")
+
+**Dependence structure**
+
+Here, we define the structure of the joint model that will be used to describe the environmental data. To describe such
+a model, we again define the univariate parametric distributions and the dependence structure. As mentioned above, the
+dependence structure is defined using parametric functions. In this case, we use 4 different dependence functions.
+
+.. code-block:: python
+
+    def _power3(x, a, b, c):
+        return a + b * x ** c
+
+    def _exp3(x, a, b, c):
+        return a + b * np.exp(c * x)
+
+    def _alpha3(x, a, b, c, d_of_x):
+        return (a + b * x ** c) / 2.0445 ** (1 / d_of_x(x))
+
+    def _logistics4(x, a=1, b=1, c=-1, d=1):
+        return a + b / (1 + np.exp(c * (x - d)))
+
+**Parametric distributions**
+
+As in the 2-dimensional case, lower and upper interval boundaries for the three parameter values needs to be set. Here,
+dist_description_0 is the independent variable (wind speed) which is described by an exponentiated Weibull distribution
+and split in equally sized intervals of width 2 m/s^2 . dist_description_1 (significant wave height) is also described
+by an exponentiated Weibull distribution and is conditional on the wind speed (indicated by "conditional_on": 0). The
+significant wave height is split in equally sized intervals of width 0.5 m. dist_description_2 (zero-up-crossing period)
+is described by a Lognormal distribution and is conditional on the significant wave height
+(indicated by "conditional_on": 1).
+
+.. code-block:: python
+
+    bounds = [(0, None), (0, None), (None, None)]
+    logistics_bounds = [(0, None), (0, None), (None, 0), (0, None)]
+
+    power3 = DependenceFunction(_power3, bounds, latex="$a + b * x^c$")
+    exp3 = DependenceFunction(_exp3, bounds, latex="$a + b * \exp(c * x)$")
+    logistics4 = DependenceFunction(_logistics4, logistics_bounds,
+                                    weights=lambda x, y: y,
+                                    latex="$a + b / (1 + \exp[c * (x -d)])$")
+    alpha3 = DependenceFunction(_alpha3, bounds, d_of_x=logistics4,
+                                   weights=lambda x, y: y,
+                                   latex="$(a + b * x^c) / 2.0445^{1 / F()}$")
+
+    dist_description_0 = {
+        "distribution": ExponentiatedWeibullDistribution(),
+        "intervals": WidthOfIntervalSlicer(2, min_n_points=50),
+    }
+
+    dist_description_1 = {
+        "distribution": ExponentiatedWeibullDistribution(f_delta=5),
+        "intervals": WidthOfIntervalSlicer(0.5),
+        "conditional_on": 0,
+        "parameters": {"alpha": alpha3, "beta": logistics4,},
+    }
+
+    dist_description_2 = {
+        "distribution": LogNormalDistribution(),
+        "conditional_on": 1,
+        "parameters": {"mu": power3, "sigma": exp3},
+    }
+
+**Joint distribution model**
+
+Again, a global hierarchical model is created from the dist description described above. Afterwards, we create plots to
+inspect the model's goodness-of-fit.
+
+.. code-block:: python
+
+    model = GlobalHierarchicalModel([dist_description_0, dist_description_1, dist_description_2])
+
+    semantics = {
+        "names": ["Wind speed", "Significant wave height", "Zero-up-crossing period"],
+        "symbols": ["V", "H_s", "T_z"],
+        "units": ["m/s", "m", "s"],
+    }
+
+    model.fit(data)
+    print(model)
+
+    fig1, axs = plt.subplots(1, 3, figsize=[18, 7.2])
+    plot_marginal_quantiles(model, data, semantics, axes=axs)
+    fig2, axs = plt.subplots(1, 4, figsize=[22, 7.2])
+    plot_dependence_functions(model, semantics, axes=axs)
+
+The following plots are created:
+
+.. figure:: QQPlot_VHsTz.png
+    :scale: 100 %
+    :alt: Q-Q plot of wind speed, significant wave height and zero-crossing period.
+
+.. figure:: Dependency_fitting_VHsTz.png
+    :scale: 100 %
+    :alt: Dependency functions of significant wave height and zero-crossing period.
+
+**3D Contour**
+
+Note, that virocon does not provide own methods to plot 3D environmental contours. Therefore we are constructing the
+contour manually: First, we determine the return period and the state duration and set up a HDC contour with a return
+period of 20 years.
+
+ .. code-block:: python
+
+    state_duration = 1  # hours
+    return_period = 20  # years
+    alpha = state_duration / (return_period * 365.25 * 24)
+    HDC = HighestDensityContour(model, alpha, limits=[(0, 50), (0, 25), (0, 25)])
+
+Then, we randomly select only 5% of the contour's points to increase the performance.
+
+.. code-block:: python
+
+    rng = np.random.default_rng(42)
+    n_contour_points = len(HDC.coordinates)
+    random_points = rng.choice(
+        n_contour_points, int(0.05 * n_contour_points), replace=False
+    )
+
+    Xs = HDC.coordinates[random_points, 0]
+    Ys = HDC.coordinates[random_points, 1]
+    Zs = HDC.coordinates[random_points, 2]
+
+Finally, we plot the 3D environmental contour:
+
+.. code-block:: python
+
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection="3d")
+    ax.scatter(Xs, Ys, Zs, c="#004488")
+    ax.set_xlabel("Wind speed (m/s)")
+    ax.set_ylabel("Significant wave height (m)")
+    ax.set_zlabel("Zero-up-crossing period (s)")
+
+The following plot is created:
+
+.. figure:: 3D_Contour.png
+    :scale: 100 %
+    :alt: 3-dimensional environmental contour of V-Hs-Tz.
+
+
+.. [4] Groll, N. and Weisse, R.: A multi-decadal wind-wave hindcast for the North Sea 1949–2014: coastDat2, Earth Syst. Sci. Data, 9, 955–968, https://doi.org/10.5194/essd-9-955-2017, 2017.
