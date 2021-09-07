@@ -9,11 +9,9 @@ A comprehensive example that shows the whole workflow of
 
 import numpy as np
 import matplotlib.pyplot as plt
-from skimage.measure import marching_cubes
 import pandas as pd
 
 from virocon import (
-    read_ec_benchmark_dataset,
     GlobalHierarchicalModel,
     LogNormalDistribution,
     ExponentiatedWeibullDistribution,
@@ -120,34 +118,26 @@ plot_marginal_quantiles(model, data, semantics, axes=axs)
 fig2, axs = plt.subplots(1, 4, figsize=[22, 7.2])
 plot_dependence_functions(model, semantics, axes=axs)
 
-
-# Set up the three-dimensional mesh-grid for the 3D surface.
-v_step = 2.0
-h_step = 0.4
-t_step = 0.4
-vgrid, h, t = np.mgrid[0:50:v_step, 0:22:h_step, 0:22:t_step]
-f = np.empty_like(vgrid)
-
-for i in range(vgrid.shape[0]):
-    for j in range(vgrid.shape[1]):
-        for k in range(vgrid.shape[2]):
-            f[i, j, k] = model.pdf([vgrid[i, j, k], h[i, j, k], t[i, j, k]])
-print("Done with calculating pdf")
-
-
 # Calculate 3D Contour.
 state_duration = 1  # hours
 return_period = 20  # years
 alpha = state_duration / (return_period * 365.25 * 24)
 HDC = HighestDensityContour(model, alpha, limits=[(0, 50), (0, 25), (0, 25)])
-print("20-yr HDC has a density value of " + str(HDC.fm))
-iso_val = HDC.fm
-verts, faces, _, _ = marching_cubes(f, iso_val, spacing=(v_step, h_step, t_step))
 
-# Plot 3D Contour.
+# randomly select only 5% of the contour's points to increase performance
+rng = np.random.default_rng(42)
+n_contour_points = len(HDC.coordinates)
+random_points = rng.choice(
+    n_contour_points, int(0.05 * n_contour_points), replace=False
+)
+
+Xs = HDC.coordinates[random_points, 0]
+Ys = HDC.coordinates[random_points, 1]
+Zs = HDC.coordinates[random_points, 2]
+
 fig = plt.figure()
 ax = fig.add_subplot(111, projection="3d")
-ax.plot_trisurf(verts[:, 0], verts[:, 1], faces, verts[:, 2])
+ax.scatter(Xs, Ys, Zs, c="#004488")
 ax.set_xlabel("Wind speed (m/s)")
 ax.set_ylabel("Significant wave height (m)")
 ax.set_zlabel("Zero-up-crossing period (s)")
