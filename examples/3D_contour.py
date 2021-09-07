@@ -113,9 +113,9 @@ model.fit(data)
 print(model)
 
 # Create plots to inspect the model's goodness-of-fit.
-fig1, axs = plt.subplots(1, 3, figsize=[18, 7.2])
+fig1, axs = plt.subplots(1, 3, figsize=[17, 7], dpi= 150)
 plot_marginal_quantiles(model, data, semantics, axes=axs)
-fig2, axs = plt.subplots(1, 4, figsize=[22, 7.2])
+fig2, axs = plt.subplots(1, 4, figsize=[17, 7], dpi= 150)
 plot_dependence_functions(model, semantics, axes=axs)
 
 # Calculate 3D Contour.
