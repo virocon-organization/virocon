@@ -308,11 +308,11 @@ inspect the model's goodness-of-fit.
 The following plots are created:
 
 .. figure:: QQPlot_VHsTz.png
-    :scale: 100 %
+    :scale: 15 %
     :alt: Q-Q plot of wind speed, significant wave height and zero-crossing period.
 
 .. figure:: Dependency_fitting_VHsTz.png
-    :scale: 100 %
+    :scale: 15 %
     :alt: Dependency functions of significant wave height and zero-crossing period.
 
 **3D Contour**
@@ -356,7 +356,7 @@ Finally, we plot the 3D environmental contour:
 The following plot is created:
 
 .. figure:: 3D_Contour.png
-    :scale: 100 %
+    :scale: 20 %
     :alt: 3-dimensional environmental contour of V-Hs-Tz.
 
 

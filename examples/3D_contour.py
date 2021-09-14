@@ -113,9 +113,9 @@ model.fit(data)
 print(model)
 
 # Create plots to inspect the model's goodness-of-fit.
-fig1, axs = plt.subplots(1, 3, figsize=[18, 7.2])
+fig1, axs = plt.subplots(1, 3, figsize=[20, 7], dpi=300)
 plot_marginal_quantiles(model, data, semantics, axes=axs)
-fig2, axs = plt.subplots(1, 4, figsize=[22, 7.2])
+fig2, axs = plt.subplots(1, 4, figsize=[20, 7], dpi=300)
 plot_dependence_functions(model, semantics, axes=axs)
 
 # Calculate 3D Contour.
@@ -135,7 +135,7 @@ Xs = HDC.coordinates[random_points, 0]
 Ys = HDC.coordinates[random_points, 1]
 Zs = HDC.coordinates[random_points, 2]
 
-fig = plt.figure()
+fig = plt.figure(dpi=300, figsize=[15, 7])
 ax = fig.add_subplot(111, projection="3d")
 ax.scatter(Xs, Ys, Zs, c="#004488")
 ax.set_xlabel("Wind speed (m/s)")
