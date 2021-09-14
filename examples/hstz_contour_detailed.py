@@ -87,9 +87,9 @@ model.fit(data)
 print(model)
 
 # Create plots to inspect the model's goodness-of-fit.
-fig1, axs = plt.subplots(1, 2, figsize=[10, 4.8], dpi= 150)
+fig1, axs = plt.subplots(1, 2, figsize=[10, 4.8], dpi=150)
 plot_marginal_quantiles(model, data, semantics, axes=axs)
-fig2, axs = plt.subplots(1, 2, figsize=[10, 4.8], dpi= 150)
+fig2, axs = plt.subplots(1, 2, figsize=[10, 4.8], dpi=150)
 plot_dependence_functions(model, semantics, axes=axs)
 
 # Compute an IFORM contour with a return period of 20 years.
