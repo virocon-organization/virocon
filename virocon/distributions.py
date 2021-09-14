@@ -1184,3 +1184,175 @@ class ExponentiatedWeibullDistribution(Distribution):
         wlsq_error = np.sum(w * (x - x_hat) ** 2)
 
         return wlsq_error
+
+
+class GammaDistribution(Distribution):
+    """
+    A generalized Gamma distribution. 
+   
+    The distributions probability density function is given by [1]_ :
+    
+    :math:`f(x) = \\frac{ \\left c  \\right }{\\Gamma \\left \alpha \\right}`
+    
+    Parameters
+    ----------
+    alpha : float
+        Shape parameter of the generalized Gamma distribution. Defaults to 1.
+    beta : float
+        Second shape parameter of the generalized Gamma distribution. Defaults
+        to 1.
+    delta : float
+        Additional scale parameter of the generalized Gamma distribution 
+        (3-parameter generalized Gamma distribution). Defaults to 1.
+    f_alpha : float
+        Fixed shape parameter of the generalized Gamma distribution (e.g. 
+        given physical parameter). If this parameter is set, alpha is ignored. 
+        Defaults to None.
+    f_beta : float
+       Fixed second shape parameter of the generalized Gamma distribution (e.g.
+       given  physical parameter). If this parameter is set, beta is ignored. 
+       Defaults to None. 
+    f_delta : float
+        Fixed location parameter of the generalized Gamma distribution (e.g. 
+        given physical parameter). If this parameter is set, deta is ignored. 
+        Defaults to None.
+
+    References
+    ----------
+    .. [1] Ochi, M. K., 1992. “New approach for estimating the severest sea 
+    state”. In 23rd International Conference on Coastal Engineering, American 
+    Society of Civil Engineers, pp. 512–525.
+        
+    """
+    
+# This method is called when an object of the class GammaDistribution is 
+# created. When a new gamma distribution object is created, we want to make 
+# sure that the attributes of the distribution are passed. Therefore, we build 
+# a custom initial state, where all parameters of the distribution are 
+# initialized with a default value.
+
+    def __init__(
+        self, alpha=1, beta=1, delta=1, f_alpha=None, f_beta=None, f_delta=None
+    ):
+
+        # TODO set parameters to fixed values if provided
+        self.alpha = alpha  # shape
+        self.beta = beta  # shape
+        self.delta = delta  # scale
+        self.f_alpha = f_alpha
+        self.f_beta = f_beta
+        self.f_delta = f_delta
+
+# When fitting a distribution function, we want to be able to display the
+# parameters. Hence, we need a function to call for the parameters after 
+# the distribution has been fitted. This is fulfilled by the function
+# parameters. The property decorator is helpful in defining the properties of
+# the class. It is used to return the attributes of the distribution function.
+
+    @property
+    def parameters(self):
+        return {"alpha": self.alpha, "beta": self.beta, "delta": self.delta}
+    
+# Given the case, that we do not know the values of the distrubution's
+# parameters, we want to initialize the parameters with default values. In 
+# this function, when no value is indicated, we set the parameter to the 
+# value defined in the _init. 
+
+    def _get_scipy_parameters(self, alpha, beta, delta):
+        if alpha is None:
+            alpha = self.alpha
+        if beta is None:
+            beta = self.beta
+        if delta is None:
+            delta = self.delta
+        return beta, delta, alpha  # shape1, shape2, scale
+    
+# The key functions used to describe statistical distributions are the CDF, 
+# ICDF and PDF. Therefore, these functions should be implemented
+
+
+    def cdf(self, x, alpha=None, beta=None, delta=None):
+        """
+        Cumulative distribution function.
+        
+        Parameters
+        ----------
+        x : array_like, 
+            Points at which the cdf is evaluated.
+            Shape: 1-dimensional.
+        alpha : float, optional
+            The shape parameter. Defaults to self.alpha.
+        beta : float, optional
+            The second shape parameter. Defaults to self.beta.
+        delta: float, optional
+            The additional scale parameter . Defaults to self.delta.
+        
+        """
+
+        scipy_par = self._get_scipy_parameters(alpha, beta, delta)
+        return sts.genextreme.cdf(x, *scipy_par)
+
+    def icdf(self, prob, alpha=None, beta=None, delta=None):
+        """
+        Inverse cumulative distribution function.
+        
+        Parameters
+        ----------
+        prob : array_like
+            Probabilities for which the i_cdf is evaluated.
+            Shape: 1-dimensional
+        alpha : float, optional
+            The shape parameter. Defaults to self.alpha.
+        beta : float, optional
+            The second shape parameter. Defaults to self.beta.
+        delta: float, optional
+            The additional scale parameter . Defaults to self.delta.
+        
+        """
+
+        scipy_par = self._get_scipy_parameters(alpha, beta, delta)
+        return sts.genextreme.ppf(prob, *scipy_par)
+
+    def pdf(self, x, alpha=None, beta=None, delta=None):
+        """
+        Probability density function.
+        
+        Parameters
+        ----------
+        x : array_like, 
+            Points at which the pdf is evaluated.
+            Shape: 1-dimensional.
+        alpha_ : float, optional
+            The shape parameter. Defaults to self.alpha.
+        beta : float, optional
+            The second shape parameter. Defaults to self.beta.
+        delta: float, optional
+            The additional scale parameter . Defaults to self.delta.
+        
+        """
+
+        scipy_par = self._get_scipy_parameters(alpha, beta, delta)
+        return sts.genextreme.pdf(x, *scipy_par)
+
+    def draw_sample(self, n, alpha=None, beta=None, delta=None):
+        scipy_par = self._get_scipy_parameters(alpha, beta, delta)
+        rvs_size = self._get_rvs_size(n, scipy_par)
+        return sts.genextreme.rvs(*scipy_par, size=rvs_size)
+
+    def _fit_mle(self, sample):
+        p0 = {"alpha": self.alpha, "beta": self.beta, "delta": self.delta}
+
+        fparams = {}
+        if self.f_beta is not None:
+            fparams["f0"] = self.f_beta
+        if self.f_delta is not None:
+            fparams["floc"] = self.f_delta
+        if self.f_alpha is not None:
+            fparams["fscale"] = self.f_alpha
+
+        self.beta, self.delta, self.alpha = sts.genextreme.fit(
+            sample, p0["beta"], loc=p0["delta"], scale=p0["alpha"], **fparams
+        )
+
+    def _fit_lsq(self, data, weights):
+        raise NotImplementedError()
