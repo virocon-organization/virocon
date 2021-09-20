@@ -14,7 +14,7 @@ hs = data["Significant wave height (m)"].to_numpy()
 
 # Fit the exponentiated Weibull distribution to the measurements.
 dist = ExponentiatedWeibullDistribution()
-params = dist.fit(hs)
+dist.fit(hs)
 
 # Print the distribution object, which outputs the estimated parameters.
 print(dist)
