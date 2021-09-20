@@ -46,7 +46,7 @@ direct_sampling = DirectSamplingContour(model, alpha)
 highest_density = HighestDensityContour(model, alpha)
 
 # Plot the contours on top of the metocean data.
-fig, axs = plt.subplots(1, 4, figsize=[16, 3.5], sharex=True, sharey=True)
+fig, axs = plt.subplots(4, 1, figsize=[4, 12], sharex=True, sharey=True)
 plot_2D_contour(iform, sample=data, semantics=semantics, ax=axs[0])
 plot_2D_contour(isorm, sample=data, semantics=semantics, ax=axs[1])
 plot_2D_contour(direct_sampling, sample=data, semantics=semantics, ax=axs[2])
@@ -54,8 +54,8 @@ plot_2D_contour(highest_density, sample=data, semantics=semantics, ax=axs[3])
 titles = ["IFORM", "ISORM", "Direct sampling", "Highest density"]
 for i, (ax, title) in enumerate(zip(axs, titles)):
     ax.set_title(title)
-    if i > 0:
-        ax.set_ylabel("")
+    if i < 3:
+        ax.set_xlabel("")
 
 plt.tight_layout()
 plt.show()
