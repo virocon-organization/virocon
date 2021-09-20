@@ -51,11 +51,11 @@ plot_2D_contour(iform, sample=data, semantics=semantics, ax=axs[0])
 plot_2D_contour(isorm, sample=data, semantics=semantics, ax=axs[1])
 plot_2D_contour(direct_sampling, sample=data, semantics=semantics, ax=axs[2])
 plot_2D_contour(highest_density, sample=data, semantics=semantics, ax=axs[3])
-titles = ['IFORM', 'ISORM', 'Direct sampling', 'Highest density']
+titles = ["IFORM", "ISORM", "Direct sampling", "Highest density"]
 for i, (ax, title) in enumerate(zip(axs, titles)):
     ax.set_title(title)
     if i > 0:
-        ax.set_ylabel('')
+        ax.set_ylabel("")
 
 plt.tight_layout()
 plt.show()
