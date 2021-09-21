@@ -202,8 +202,8 @@ except RuntimeError:
 
 # reference="left", right_open,
 ref_references = [1, 2, 3, 4, 5]
-ref_intervals = [[1.2], [1.5, 2.4], [2.5, 2.6, 3.1], [3.5, 3.6, 4.0], [5.0]]
-ref_boundaries = [[0.5, 1.5], [1.5, 2.5], [2.5, 3.5], [3.5, 4.5], [4.5, 5.5]]
+ref_intervals = [[1.2, 1.5], [2.4, 2.5, 2.6], [3.1, 3.5, 3.6], [4.0], [5.0]]
+ref_boundaries = [[1.0, 2.0], [2.0, 3.0], [3.0, 4.0], [4.0, 5.0], [5.0, 6.0]]
 width_slicer = WidthOfIntervalSlicer(width=1, reference="left", min_n_points=1)
 my_slices, my_references, my_boundaries = width_slicer.slice_(test_data)
 my_intervals = [test_data[slice_] for slice_ in my_slices]
@@ -217,8 +217,8 @@ for i in range(len(my_boundaries)):
 
 # reference="left", left_open
 ref_references = [1, 2, 3, 4, 5]
-ref_intervals = [[1.2, 1.5], [2.4, 2.5], [2.6, 3.1, 3.5], [3.6, 4.0], [5.0]]
-ref_boundaries = [[0.5, 1.5], [1.5, 2.5], [2.5, 3.5], [3.5, 4.5], [4.5, 5.5]]
+ref_intervals = [[1.2, 1.5], [2.4, 2.5, 2.6], [3.1, 3.5, 3.6, 4.0],[5.0]]
+ref_boundaries = [[1.0, 2.0], [2.0, 3.0], [3.0, 4.0], [4.0, 5.0], [5.0, 6.0]]
 width_slicer = WidthOfIntervalSlicer(
     width=1, reference="left", right_open=False, min_n_points=1
 )
@@ -235,7 +235,7 @@ for i in range(len(my_boundaries)):
 # reference="center", right_open
 ref_references = [1.5, 2.5, 3.5, 4.5, 5.5]
 ref_intervals = [[1.2, 1.5], [2.4, 2.5, 2.6], [3.1, 3.5, 3.6], [4.0], [5.0]]
-ref_boundaries = [[1, 2], [2, 3], [3, 4], [4, 5], [5, 6]]
+ref_boundaries = [[1.0, 2.0], [2.0, 3.0], [3.0, 4.0], [4.0, 5.0], [5.0, 6.0]]
 width_slicer = WidthOfIntervalSlicer(width=1, min_n_points=1)
 my_slices, my_references, my_boundaries = width_slicer.slice_(test_data)
 my_intervals = [test_data[slice_] for slice_ in my_slices]
