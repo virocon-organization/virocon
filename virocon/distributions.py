@@ -1290,7 +1290,7 @@ class GammaDistribution(Distribution):
         """
 
         scipy_par = self._get_scipy_parameters(alpha, beta, delta)
-        return sts.genextreme.cdf(x, *scipy_par)
+        return sts.gamma.cdf(x, *scipy_par)
 
     def icdf(self, prob, alpha=None, beta=None, delta=None):
         """
@@ -1311,7 +1311,7 @@ class GammaDistribution(Distribution):
         """
 
         scipy_par = self._get_scipy_parameters(alpha, beta, delta)
-        return sts.genextreme.ppf(prob, *scipy_par)
+        return sts.gamma.ppf(prob, *scipy_par)
 
     def pdf(self, x, alpha=None, beta=None, delta=None):
         """
@@ -1332,12 +1332,12 @@ class GammaDistribution(Distribution):
         """
 
         scipy_par = self._get_scipy_parameters(alpha, beta, delta)
-        return sts.genextreme.pdf(x, *scipy_par)
+        return sts.gamma.pdf(x, *scipy_par)
 
     def draw_sample(self, n, alpha=None, beta=None, delta=None):
         scipy_par = self._get_scipy_parameters(alpha, beta, delta)
         rvs_size = self._get_rvs_size(n, scipy_par)
-        return sts.genextreme.rvs(*scipy_par, size=rvs_size)
+        return sts.gamma.rvs(*scipy_par, size=rvs_size)
 
     def _fit_mle(self, sample):
         p0 = {"alpha": self.alpha, "beta": self.beta, "delta": self.delta}
@@ -1350,7 +1350,7 @@ class GammaDistribution(Distribution):
         if self.f_alpha is not None:
             fparams["fscale"] = self.f_alpha
 
-        self.beta, self.delta, self.alpha = sts.genextreme.fit(
+        self.beta, self.delta, self.alpha = sts.gamma.fit(
             sample, p0["beta"], loc=p0["delta"], scale=p0["alpha"], **fparams
         )
 
