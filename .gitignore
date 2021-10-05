@@ -16,3 +16,4 @@ htmlcov/
 dist/*
 virocon.egg-info/*
 .vscode
+.spyproject
