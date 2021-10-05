@@ -66,7 +66,7 @@ def test_data():
 )
 def woi_params_and_ref(request):
     """
-    Functions that applies the WidthOfIntervalSlicer to the prepared test case.
+    Fixture that applies the WidthOfIntervalSlicer to the prepared test case.
 
     Parameters
     ----------
@@ -157,7 +157,7 @@ def woi_params_and_ref(request):
 )
 def noi_params_and_ref(request):
     """
-    Functions that applies the NumberhOfIntervalsSlicer to the prepared test case.
+    Fixture that applies the NumberhOfIntervalsSlicer to the prepared test case.
 
     Parameters
     ----------
@@ -219,7 +219,7 @@ def noi_params_and_ref(request):
 )
 def ppi_params_and_ref(request):
     """
-    Functions that applies the PointsPerIntervalSlicer to the prepared test case.
+    Fixture that applies the PointsPerIntervalSlicer to the prepared test case.
 
     Parameters
     ----------
