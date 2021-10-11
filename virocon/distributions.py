@@ -1192,7 +1192,7 @@ class GammaDistribution(Distribution):
    
     The distributions probability density function is given by [1]_ :
     
-    :math:`f(x) = \\frac{ \\left c  \\right }{\\Gamma \\left \alpha \\right}`
+    :math:`f(x, \\alpha, \\beta) = \\frac{|\\beta|x^{\\beta\\alpha-1} exp(-x^{\\beta}) }{\\Gamma(\\alpha)}`
     
     Parameters
     ----------
@@ -1201,7 +1201,10 @@ class GammaDistribution(Distribution):
     beta : float
         Second shape parameter of the generalized Gamma distribution. Defaults
         to 1.
-    delta : float
+    loc : float
+        Additional location parameter of the generalized Gamma distribution 
+        (3-parameter generalized Gamma distribution). Defaults to 0.
+    scale : float
         Additional scale parameter of the generalized Gamma distribution 
         (3-parameter generalized Gamma distribution). Defaults to 1.
     f_alpha : float
@@ -1212,66 +1215,51 @@ class GammaDistribution(Distribution):
        Fixed second shape parameter of the generalized Gamma distribution (e.g.
        given  physical parameter). If this parameter is set, beta is ignored. 
        Defaults to None. 
-    f_delta : float
+    f_loc : float
         Fixed location parameter of the generalized Gamma distribution (e.g. 
         given physical parameter). If this parameter is set, deta is ignored. 
         Defaults to None.
 
     References
     ----------
-    .. [1] Ochi, M. K., 1992. “New approach for estimating the severest sea 
-    state”. In 23rd International Conference on Coastal Engineering, American 
-    Society of Civil Engineers, pp. 512–525.
+    .. [1] E.W. Stacy, “A Generalization of the Gamma Distribution”, Annals of 
+        Mathematical Statistics, Vol 33(3), pp. 1187–1192.
         
     """
-    
-# This method is called when an object of the class GammaDistribution is 
-# created. When a new gamma distribution object is created, we want to make 
-# sure that the attributes of the distribution are passed. Therefore, we build 
-# a custom initial state, where all parameters of the distribution are 
-# initialized with a default value.
 
     def __init__(
-        self, alpha=1, beta=1, delta=1, f_alpha=None, f_beta=None, f_delta=None
+        self, alpha=1, beta=1, loc=0, scale=1, f_alpha=None, f_beta=None, f_delta=None, f_scale=None
     ):
 
         # TODO set parameters to fixed values if provided
         self.alpha = alpha  # shape
         self.beta = beta  # shape
-        self.delta = delta  # scale
+        self.loc = loc  # location
+        self.scale = scale  # location
         self.f_alpha = f_alpha
         self.f_beta = f_beta
         self.f_delta = f_delta
 
-# When fitting a distribution function, we want to be able to display the
-# parameters. Hence, we need a function to call for the parameters after 
-# the distribution has been fitted. This is fulfilled by the function
-# parameters. The property decorator is helpful in defining the properties of
-# the class. It is used to return the attributes of the distribution function.
 
     @property
     def parameters(self):
-        return {"alpha": self.alpha, "beta": self.beta, "delta": self.delta}
+        return {"alpha": self.alpha, "beta": self.beta, "loc": self.loc, "scale":self.scale}
     
-# Given the case, that we do not know the values of the distrubution's
-# parameters, we want to initialize the parameters with default values. In 
-# this function, when no value is indicated, we set the parameter to the 
-# value defined in the _init. 
 
-    def _get_scipy_parameters(self, alpha, beta, delta):
+    def _get_scipy_parameters(self, alpha, beta, loc, scale):
         if alpha is None:
             alpha = self.alpha
         if beta is None:
             beta = self.beta
-        if delta is None:
-            delta = self.delta
-        return beta, delta, alpha  # shape1, shape2, scale
+        if loc is None:
+            loc = self.loc
+        if scale is None:
+            scale = self.scale
+        return beta, loc, alpha, scale  # shape2, location, shape1, scale
     
-# The key functions used to describe statistical distributions are the CDF, 
-# ICDF and PDF. Therefore, these functions should be implemented
 
 
-    def cdf(self, x, alpha=None, beta=None, delta=None):
+    def cdf(self, x, alpha=None, beta=None, loc=None, scale=None):
         """
         Cumulative distribution function.
         
@@ -1284,15 +1272,17 @@ class GammaDistribution(Distribution):
             The shape parameter. Defaults to self.alpha.
         beta : float, optional
             The second shape parameter. Defaults to self.beta.
-        delta: float, optional
-            The additional scale parameter . Defaults to self.delta.
+        loc: float, optional
+            The additional location parameter . Defaults to self.loc.
+        scale: float, optional
+            The additional scale parameter . Defaults to self.scale.
         
         """
 
-        scipy_par = self._get_scipy_parameters(alpha, beta, delta)
-        return sts.gamma.cdf(x, *scipy_par)
+        scipy_par = self._get_scipy_parameters(alpha, beta, loc, scale)
+        return sts.gengamma.cdf(x, *scipy_par)
 
-    def icdf(self, prob, alpha=None, beta=None, delta=None):
+    def icdf(self, prob, alpha=None, beta=None, loc=None, scale=None):
         """
         Inverse cumulative distribution function.
         
@@ -1305,15 +1295,17 @@ class GammaDistribution(Distribution):
             The shape parameter. Defaults to self.alpha.
         beta : float, optional
             The second shape parameter. Defaults to self.beta.
-        delta: float, optional
-            The additional scale parameter . Defaults to self.delta.
+        loc: float, optional
+            The additional location parameter . Defaults to self.loc.
+        scale: float, optional
+            The additional scale parameter . Defaults to self.scale.
         
         """
 
-        scipy_par = self._get_scipy_parameters(alpha, beta, delta)
-        return sts.gamma.ppf(prob, *scipy_par)
+        scipy_par = self._get_scipy_parameters(alpha, beta, loc, scale)
+        return sts.gengamma.ppf(prob, *scipy_par)
 
-    def pdf(self, x, alpha=None, beta=None, delta=None):
+    def pdf(self, x, alpha=None, beta=None, loc=None, scale=None):
         """
         Probability density function.
         
@@ -1326,32 +1318,36 @@ class GammaDistribution(Distribution):
             The shape parameter. Defaults to self.alpha.
         beta : float, optional
             The second shape parameter. Defaults to self.beta.
-        delta: float, optional
-            The additional scale parameter . Defaults to self.delta.
+        loc: float, optional
+            The additional location parameter . Defaults to self.loc.
+        scale: float, optional
+            The additional scale parameter . Defaults to self.scale.
         
         """
 
-        scipy_par = self._get_scipy_parameters(alpha, beta, delta)
-        return sts.gamma.pdf(x, *scipy_par)
+        scipy_par = self._get_scipy_parameters(alpha, beta, loc, scale)
+        return sts.gengamma.pdf(x, *scipy_par)
 
-    def draw_sample(self, n, alpha=None, beta=None, delta=None):
-        scipy_par = self._get_scipy_parameters(alpha, beta, delta)
+    def draw_sample(self, n, alpha=None, beta=None, loc=None, scale=None):
+        scipy_par = self._get_scipy_parameters(alpha, beta, loc, scale)
         rvs_size = self._get_rvs_size(n, scipy_par)
-        return sts.gamma.rvs(*scipy_par, size=rvs_size)
+        return sts.gengamma.rvs(*scipy_par, size=rvs_size)
 
     def _fit_mle(self, sample):
-        p0 = {"alpha": self.alpha, "beta": self.beta, "delta": self.delta}
+        p0 = {"alpha": self.alpha, "beta": self.beta, "loc": self.loc, "scale":self.scale}
 
         fparams = {}
         if self.f_beta is not None:
-            fparams["f0"] = self.f_beta
-        if self.f_delta is not None:
-            fparams["floc"] = self.f_delta
+            fparams["fshape2"] = self.f_beta
+        if self.f_loc is not None:
+            fparams["floc"] = self.f_loc
+        if self.f_scale is not None:
+            fparams["fscale"] = self.f_scale
         if self.f_alpha is not None:
-            fparams["fscale"] = self.f_alpha
+            fparams["fshape1"] = self.f_alpha
 
-        self.beta, self.delta, self.alpha = sts.gamma.fit(
-            sample, p0["beta"], loc=p0["delta"], scale=p0["alpha"], **fparams
+        self.beta, self.loc, self.alpha = sts.gengamma.fit(
+            sample, p0["alpha"], p0["beta"], loc=p0["loc"], scale=p0["scale"], **fparams
         )
 
     def _fit_lsq(self, data, weights):
