@@ -16,6 +16,7 @@ __all__ = [
     "LogNormalDistribution",
     "NormalDistribution",
     "ExponentiatedWeibullDistribution",
+    "GeneralizedGammaDistribution"
 ]
 
 # The distributions parameters need to have an order, this order is defined by
@@ -1186,7 +1187,7 @@ class ExponentiatedWeibullDistribution(Distribution):
         return wlsq_error
 
 
-class GammaDistribution(Distribution):
+class GeneralizedGammaDistribution(Distribution):
     """
     A generalized Gamma distribution. 
    
