@@ -1228,7 +1228,7 @@ class GammaDistribution(Distribution):
     """
 
     def __init__(
-        self, alpha=1, beta=1, loc=0, scale=1, f_alpha=None, f_beta=None, f_delta=None, f_scale=None
+        self, alpha=1, beta=1, loc=0, scale=1, f_alpha=None, f_beta=None, f_loc=None, f_scale=None
     ):
 
         # TODO set parameters to fixed values if provided
@@ -1238,7 +1238,8 @@ class GammaDistribution(Distribution):
         self.scale = scale  # location
         self.f_alpha = f_alpha
         self.f_beta = f_beta
-        self.f_delta = f_delta
+        self.f_loc = f_loc
+        self.f_scale= f_scale
 
 
     @property
@@ -1255,7 +1256,7 @@ class GammaDistribution(Distribution):
             loc = self.loc
         if scale is None:
             scale = self.scale
-        return beta, loc, alpha, scale  # shape2, location, shape1, scale
+        return alpha, beta, loc, scale  # shape1, shape2, location, scale
     
 
 
@@ -1337,15 +1338,15 @@ class GammaDistribution(Distribution):
         p0 = {"alpha": self.alpha, "beta": self.beta, "loc": self.loc, "scale":self.scale}
 
         fparams = {}
+        if self.f_alpha is not None:
+            fparams["fshape1"] = self.f_alpha
         if self.f_beta is not None:
             fparams["fshape2"] = self.f_beta
         if self.f_loc is not None:
             fparams["floc"] = self.f_loc
         if self.f_scale is not None:
             fparams["fscale"] = self.f_scale
-        if self.f_alpha is not None:
-            fparams["fshape1"] = self.f_alpha
-
+     
         self.beta, self.loc, self.alpha = sts.gengamma.fit(
             sample, p0["alpha"], p0["beta"], loc=p0["loc"], scale=p0["scale"], **fparams
         )
