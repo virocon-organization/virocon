@@ -1191,77 +1191,88 @@ class GeneralizedGammaDistribution(Distribution):
     """
     A generalized Gamma distribution. 
    
-    The distributions probability density function is given by [1]_ :
+    The distributions probability density function is given by [3]_ , [5]_ and 
+    [6]_ . The parametrization is orientated on [3]_ :
     
-    :math:`f(x, \\alpha, \\beta) = \\frac{|\\beta|x^{\\beta\\alpha-1} exp(-x^{\\beta}) }{\\Gamma(\\alpha)}`
+    :math:`f(x) = \\frac{k(x-a)^{kc-1} exp \\left[ - \\left( \\frac{(x-a)^{k}} {b} \\right) \\right] }{b^{kc}\\Gamma(c)}`
     
     Parameters
     ----------
-    alpha : float
+    c : float
         Shape parameter of the generalized Gamma distribution. Defaults to 1.
-    beta : float
+    k : float
         Second shape parameter of the generalized Gamma distribution. Defaults
         to 1.
-    loc : float
+    a : float
         Additional location parameter of the generalized Gamma distribution 
         (3-parameter generalized Gamma distribution). Defaults to 0.
-    scale : float
+    b : float
         Additional scale parameter of the generalized Gamma distribution 
         (3-parameter generalized Gamma distribution). Defaults to 1.
-    f_alpha : float
+    f_c : float
         Fixed shape parameter of the generalized Gamma distribution (e.g. 
-        given physical parameter). If this parameter is set, alpha is ignored. 
+        given physical parameter). If this parameter is set, c is ignored. 
         Defaults to None.
-    f_beta : float
+    f_k : float
        Fixed second shape parameter of the generalized Gamma distribution (e.g.
-       given  physical parameter). If this parameter is set, beta is ignored. 
+       given  physical parameter). If this parameter is set, k is ignored. 
        Defaults to None. 
-    f_loc : float
+    f_a : float
         Fixed location parameter of the generalized Gamma distribution (e.g. 
-        given physical parameter). If this parameter is set, deta is ignored. 
+        given physical parameter). If this parameter is set, a is ignored. 
+        Defaults to None.
+    f_b : float
+        Fixed scale parameter of the generalized Gamma distribution (e.g. 
+        given physical parameter). If this parameter is set, b is ignored. 
         Defaults to None.
 
     References
     ----------
-    .. [1] E.W. Stacy, “A Generalization of the Gamma Distribution”, Annals of 
+    .. [3] Forbes, C.; Evans, M.; Hastings, N; Peacock, B. (2011)
+        Statistical Distributions, 4th Edition, Published by 
+        John Wiley & Sons, Inc., Hoboken, New Jersey., 
+        Page 143
+    .. [5] E.W. Stacy, “A Generalization of the Gamma Distribution”, Annals of 
         Mathematical Statistics, Vol 33(3), pp. 1187–1192.
+    .. [6] M.K. Ochi, J.E. Wahlen, Prediction of severest significant wave 
+        height, Coast. Eng. Chap. 36 (1980) 587e599.
         
     """
 
     def __init__(
-        self, alpha=1, beta=1, loc=0, scale=1, f_alpha=None, f_beta=None, f_loc=None, f_scale=None
+        self, c=1, k=1, a=0, b=1, f_c=None, f_k=None, f_a=0, f_b=None
     ):
 
         # TODO set parameters to fixed values if provided
-        self.alpha = alpha  # shape
-        self.beta = beta  # shape
-        self.loc = loc  # location
-        self.scale = scale  # location
-        self.f_alpha = f_alpha
-        self.f_beta = f_beta
-        self.f_loc = f_loc
-        self.f_scale= f_scale
+        self.c = c  # shape
+        self.k = k  # shape
+        self.a = a # location
+        self.b = b  # location
+        self.f_c = f_c
+        self.f_k = f_k
+        self.f_a = f_a
+        self.f_b= f_b
 
 
     @property
     def parameters(self):
-        return {"alpha": self.alpha, "beta": self.beta, "loc": self.loc, "scale":self.scale}
+        return {"c": self.c, "k": self.k, "a": self.a, "b":self.b}
     
 
-    def _get_scipy_parameters(self, alpha, beta, loc, scale):
-        if alpha is None:
-            alpha = self.alpha
-        if beta is None:
-            beta = self.beta
-        if loc is None:
-            loc = self.loc
-        if scale is None:
-            scale = self.scale
-        return alpha, beta, loc, scale  # shape1, shape2, location, scale
+    def _get_scipy_parameters(self, c, k, a, b):
+        if c is None:
+            c= self.c
+        if k is None:
+            k = self.k
+        if a is None:
+            a= self.a
+        if b is None:
+            b = self.b
+        return c, k, a, b  # shape1, shape2, location, scale
     
 
 
-    def cdf(self, x, alpha=None, beta=None, loc=None, scale=None):
+    def cdf(self, x, c=None, k=None, a=0, b=None):
         """
         Cumulative distribution function.
         
@@ -1271,20 +1282,20 @@ class GeneralizedGammaDistribution(Distribution):
             Points at which the cdf is evaluated.
             Shape: 1-dimensional.
         alpha : float, optional
-            The shape parameter. Defaults to self.alpha.
+            The shape parameter. Defaults to self.c.
         beta : float, optional
-            The second shape parameter. Defaults to self.beta.
+            The second shape parameter. Defaults to self.k.
         loc: float, optional
-            The additional location parameter . Defaults to self.loc.
+            The additional location parameter . Defaults to self.a.
         scale: float, optional
-            The additional scale parameter . Defaults to self.scale.
+            The additional scale parameter . Defaults to self.b.
         
         """
 
-        scipy_par = self._get_scipy_parameters(alpha, beta, loc, scale)
+        scipy_par = self._get_scipy_parameters(c, k, a, b)
         return sts.gengamma.cdf(x, *scipy_par)
 
-    def icdf(self, prob, alpha=None, beta=None, loc=None, scale=None):
+    def icdf(self, prob, c=None, k=None, a=0, b=None):
         """
         Inverse cumulative distribution function.
         
@@ -1293,21 +1304,21 @@ class GeneralizedGammaDistribution(Distribution):
         prob : array_like
             Probabilities for which the i_cdf is evaluated.
             Shape: 1-dimensional
-        alpha : float, optional
-            The shape parameter. Defaults to self.alpha.
-        beta : float, optional
-            The second shape parameter. Defaults to self.beta.
-        loc: float, optional
-            The additional location parameter . Defaults to self.loc.
-        scale: float, optional
-            The additional scale parameter . Defaults to self.scale.
+        c : float, optional
+            The shape parameter. Defaults to self.c.
+        k : float, optional
+            The second shape parameter. Defaults to self.k.
+        a: float, optional
+            The additional location parameter . Defaults to self.a.
+        b: float, optional
+            The additional scale parameter . Defaults to self.b.
         
         """
 
-        scipy_par = self._get_scipy_parameters(alpha, beta, loc, scale)
+        scipy_par = self._get_scipy_parameters(c, k, a, b)
         return sts.gengamma.ppf(prob, *scipy_par)
 
-    def pdf(self, x, alpha=None, beta=None, loc=None, scale=None):
+    def pdf(self, x, c=None, k=None, a=0, b=None):
         """
         Probability density function.
         
@@ -1316,40 +1327,40 @@ class GeneralizedGammaDistribution(Distribution):
         x : array_like, 
             Points at which the pdf is evaluated.
             Shape: 1-dimensional.
-        alpha_ : float, optional
-            The shape parameter. Defaults to self.alpha.
-        beta : float, optional
-            The second shape parameter. Defaults to self.beta.
-        loc: float, optional
-            The additional location parameter . Defaults to self.loc.
-        scale: float, optional
-            The additional scale parameter . Defaults to self.scale.
+        c : float, optional
+            The shape parameter. Defaults to self.c.
+        k : float, optional
+            The second shape parameter. Defaults to self.k.
+        a: float, optional
+            The additional location parameter . Defaults to self.a.
+        b: float, optional
+            The additional scale parameter . Defaults to self.b.
         
         """
 
-        scipy_par = self._get_scipy_parameters(alpha, beta, loc, scale)
+        scipy_par = self._get_scipy_parameters(c, k, a, b)
         return sts.gengamma.pdf(x, *scipy_par)
 
-    def draw_sample(self, n, alpha=None, beta=None, loc=None, scale=None):
-        scipy_par = self._get_scipy_parameters(alpha, beta, loc, scale)
+    def draw_sample(self, n, c=None, k=None, a=0, b=None):
+        scipy_par = self._get_scipy_parameters(c, k, a, b)
         rvs_size = self._get_rvs_size(n, scipy_par)
         return sts.gengamma.rvs(*scipy_par, size=rvs_size)
 
     def _fit_mle(self, sample):
-        p0 = {"alpha": self.alpha, "beta": self.beta, "loc": self.loc, "scale":self.scale}
+        p0 = {"c": self.c, "k": self.k, "a": self.a, "b":self.b}
 
         fparams = {}
-        if self.f_alpha is not None:
-            fparams["fshape1"] = self.f_alpha
-        if self.f_beta is not None:
-            fparams["fshape2"] = self.f_beta
-        if self.f_loc is not None:
-            fparams["floc"] = self.f_loc
-        if self.f_scale is not None:
-            fparams["fscale"] = self.f_scale
+        if self.f_c is not None:
+            fparams["fshape1"] = self.c
+        if self.f_k is not None:
+            fparams["fshape2"] = self.f_k
+        if self.f_a is not None:
+            fparams["floc"] = self.f_a
+        if self.f_b is not None:
+            fparams["fscale"] = self.f_b
      
-        self.beta, self.loc, self.alpha = sts.gengamma.fit(
-            sample, p0["alpha"], p0["beta"], loc=p0["loc"], scale=p0["scale"], **fparams
+        self.c, self.k, self.a, self.b = sts.gengamma.fit(
+            sample, p0["c"], p0["k"], loc=p0["a"], scale=p0["b"], **fparams
         )
 
     def _fit_lsq(self, data, weights):
