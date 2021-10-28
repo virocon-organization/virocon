@@ -1243,17 +1243,17 @@ class GeneralizedGammaDistribution(Distribution):
     def parameters(self):
         return {"m": self.m, "c": self.c, "lambda":self._lambda}
  
-# HIER NOCH KORRIGIEREN
+# TODO: Check that this is correct
 
     @property
     def _scale(self):
-        return np.exp(self.mu)
+        return (self._lambda)^(-1)
 
     @_scale.setter
     def _scale(self, val):
-        self.mu = np.log(val)
+        self._lambda = (val)^(-1)
  
-# HIER NOCH KORRIGIEREN
+# TODO: Check that this is correct
 
     def _get_scipy_parameters(self, m, c, _lambda):
         if m is None:
@@ -1263,7 +1263,7 @@ class GeneralizedGammaDistribution(Distribution):
         if _lambda is None:
             _lambda = self._lambda
         else:
-            _lamdba = np.exp(_lambda)
+            _lamdba = (_lambda)^(-1)
         return m, c, 0,  _lambda  # shape1, shape2, scale
     
 
