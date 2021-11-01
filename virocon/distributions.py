@@ -1247,11 +1247,11 @@ class GeneralizedGammaDistribution(Distribution):
 
     @property
     def _scale(self):
-        return (self._lambda)^(-1)
+        return 1/(self._lambda)
 
     @_scale.setter
     def _scale(self, val):
-        self._lambda = (val)^(-1)
+        self._lambda = 1/val
  
 # TODO: Check that this is correct
 
@@ -1261,10 +1261,10 @@ class GeneralizedGammaDistribution(Distribution):
         if c is None:
             c = self.c
         if _lambda is None:
-            _lambda = self._lambda
+            scale = self._scale
         else:
-            _lamdba = (_lambda)^(-1)
-        return m, c, 0,  _lambda  # shape1, shape2, scale
+            scale = 1/(_lambda)
+        return m, c, 0,  scale  # shape1, shape2, location=0, scale
     
 
 
@@ -1339,16 +1339,16 @@ class GeneralizedGammaDistribution(Distribution):
     def _fit_mle(self, sample):
         p0 = {"m": self.m, "c": self.c, "lambda":self._lambda}
 
-        fparams = {}
+        fparams = {"floc": 0}
         if self.f_m is not None:
-            fparams["fshape1"] = self.m
+            fparams["fshape1"] = self.f_m
         if self.f_c is not None:
             fparams["fshape2"] = self.f_c
         if self.f_lambda is not None:
-            fparams["fscale"] = self.f_lambda
+            fparams["fscale"] = 1/(self.f_lambda)
      
-        self.m, self.c, self.b = sts.gengamma.fit(
-            sample, p0["m"], p0["c"], loc=0, scale=p0["lambda"], **fparams
+        self.m, self.c, _, self._lambda = sts.gengamma.fit(
+            sample, p0["m"], p0["c"], scale=p0["lambda"], **fparams
         )
 
     def _fit_lsq(self, data, weights):
