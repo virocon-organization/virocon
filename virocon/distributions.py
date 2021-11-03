@@ -1243,17 +1243,6 @@ class GeneralizedGammaDistribution(Distribution):
     def parameters(self):
         return {"m": self.m, "c": self.c, "lambda":self._lambda}
  
-# TODO: Check that this is correct
-
-    @property
-    def _scale(self):
-        return 1/(self._lambda)
-
-    @_scale.setter
-    def _scale(self, val):
-        self._lambda = 1/val
- 
-# TODO: Check that this is correct
 
     def _get_scipy_parameters(self, m, c, _lambda):
         if m is None:
@@ -1261,10 +1250,10 @@ class GeneralizedGammaDistribution(Distribution):
         if c is None:
             c = self.c
         if _lambda is None:
-            scale = self._scale
+            scipy_scale= 1/(self._lambda)
         else:
-            scale = 1/(_lambda)
-        return m, c, 0,  scale  # shape1, shape2, location=0, scale
+            scipy_scale= 1/_lambda
+        return m, c, 0,  scipy_scale  # shape1, shape2, location=0, scale
     
 
 
@@ -1346,7 +1335,9 @@ class GeneralizedGammaDistribution(Distribution):
             fparams["fshape2"] = self.f_c
         if self.f_lambda is not None:
             fparams["fscale"] = 1/(self.f_lambda)
-     
+            
+ # location parameter muss 0 sein
+    
         self.m, self.c, _, self._lambda = sts.gengamma.fit(
             sample, p0["m"], p0["c"], scale=p0["lambda"], **fparams
         )
