@@ -529,7 +529,7 @@ def test_number_of_interval_slicer_numberpoints2_include_max(test_data):
     None.
 
     """
-    
+
     ref_intervals = [[1.2, 1.5, 2.4, 2.5, 2.6], [3.1, 3.5, 3.6, 4.0, 5.0]]
     ref_references = [2.15, 4.05]
     ref_boundaries = [[1.2, 3.1], [3.1, 5.0]]
