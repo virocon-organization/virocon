@@ -81,15 +81,21 @@ class IntervalSlicer(ABC):
     def _slice(self, data):
         pass
 
-    def _drop_too_small_intervals(self, interval_slices, interval_references):
+    def _drop_too_small_intervals(
+        self, interval_slices, interval_references, interval_boundaries
+    ):
         ok_slices = []
         ok_references = []
-        for slice_, int_cent in zip(interval_slices, interval_references):
+        ok_boundaries = []
+        for slice_, int_cent, int_bounds in zip(
+            interval_slices, interval_references, interval_boundaries
+        ):
             # slice_ is a boolean array, so sum returns number of points in interval
             if np.sum(slice_) >= self.min_n_points:
                 ok_slices.append(slice_)
                 ok_references.append(int_cent)
-        return ok_slices, ok_references
+                ok_boundaries.append(int_bounds)
+        return ok_slices, ok_references, ok_boundaries
 
 
 class WidthOfIntervalSlicer(IntervalSlicer):
@@ -158,14 +164,30 @@ class WidthOfIntervalSlicer(IntervalSlicer):
                 data_max = np.max(data)
 
         width = self.width
-        interval_references = np.arange(data_min, data_max + width, width)
+        interval_references = np.arange(data_min, data_max + width, width) + 0.5 * width
+
+        if self.right_open:
+            interval_slices = [
+                ((int_cent - 0.5 * width <= data) & (data < int_cent + 0.5 * width))
+                for int_cent in interval_references
+            ]
+        else:
+            interval_slices = [
+                ((int_cent - 0.5 * width < data) & (data <= int_cent + 0.5 * width))
+                for int_cent in interval_references
+            ]
+
+        interval_boundaries = [
+            (c - width / 2, c + width / 2) for c in interval_references
+        ]
+
         if isinstance(self.reference, str):
             if self.reference.lower() == "center":
-                interval_references += 0.5 * width
+                pass  # interval_references are already center of intervals
             elif self.reference.lower() == "right":
-                interval_references += width
+                interval_references += 0.5 * width
             elif self.reference.lower() == "left":
-                pass  # interval_references are already left bounds of intervals
+                interval_references -= 0.5 * width
             else:
                 raise ValueError(
                     "Unknown value for 'reference'. "
@@ -180,24 +202,13 @@ class WidthOfIntervalSlicer(IntervalSlicer):
                 f"but got {type(self.reference)}."
             )
 
-        if self.right_open:
-            interval_slices = [
-                ((int_cent - 0.5 * width <= data) & (data < int_cent + 0.5 * width))
-                for int_cent in interval_references
-            ]
-        else:
-            interval_slices = [
-                ((int_cent - 0.5 * width < data) & (data <= int_cent + 0.5 * width))
-                for int_cent in interval_references
-            ]
-
-        interval_slices, interval_references = self._drop_too_small_intervals(
-            interval_slices, interval_references
+        (
+            interval_slices,
+            interval_references,
+            interval_boundaries,
+        ) = self._drop_too_small_intervals(
+            interval_slices, interval_references, interval_boundaries
         )
-
-        interval_boundaries = [
-            (c - width / 2, c + width / 2) for c in interval_references
-        ]
 
         return interval_slices, interval_references, interval_boundaries
 
@@ -271,6 +282,12 @@ class NumberOfIntervalsSlicer(IntervalSlicer):
             retstep=True,
         )
         interval_references = interval_starts + 0.5 * interval_width
+
+        interval_boundaries = [
+            (c - interval_width / 2, c + interval_width / 2)
+            for c in interval_references
+        ]
+
         if isinstance(self.reference, str):
             if self.reference.lower() == "center":
                 pass  # default
@@ -308,14 +325,13 @@ class NumberOfIntervalsSlicer(IntervalSlicer):
                 ((data >= int_start) & (data < int_start + interval_width))
             )
 
-        interval_slices, interval_references = self._drop_too_small_intervals(
-            interval_slices, interval_references
+        (
+            interval_slices,
+            interval_references,
+            interval_boundaries,
+        ) = self._drop_too_small_intervals(
+            interval_slices, interval_references, interval_boundaries
         )
-
-        interval_boundaries = [
-            (c - interval_width / 2, c + interval_width / 2)
-            for c in interval_references
-        ]
 
         return interval_slices, interval_references, interval_boundaries
 
@@ -388,8 +404,10 @@ class PointsPerIntervalSlicer(IntervalSlicer):
             interval_slices
         )  # gets overwritten in super().slice_ anyway
 
-        interval_slices, interval_references = self._drop_too_small_intervals(
-            interval_slices, interval_references
+        # Pass interval_references twice instead of boundaries. We calculate
+        # boundaries later.
+        interval_slices, interval_references, _ = self._drop_too_small_intervals(
+            interval_slices, interval_references, interval_references
         )
 
         # calculate the interval boundaries
