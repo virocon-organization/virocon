@@ -56,7 +56,8 @@ class ConditionalDistribution:
     conditional_parameters : dict
         Dictionary of dependence functions for conditional parameters. Parameter names as keys.
     fixed_parameters : dict
-        Values of the fixed parameters. Parameters as keys.
+        Values of the fixed parameters. The fixed parameters do not change, 
+        even when fitting them. Parameters as keys.
     distributions_per_interval : list
         Instances of distribution fitted to intervals
     parameters_per_interval : list of dict
@@ -463,16 +464,16 @@ class WeibullDistribution(Distribution):
         distribution). Defaults to 0.
     f_alpha : float
         Fixed scale parameter of the weibull distribution (e.g. given physical
-        parameter). If this parameter is set, lambda is ignored. Defaults to 
-        None.
+        parameter). If this parameter is set, lambda is ignored. The fixed 
+        parameter does not change, even when fitting it. Defaults to None.
     f_beta : float
        Fixed shape parameter of the weibull distribution (e.g. given physical
-       parameter). If this parameter is set, k is ignored. Defaults to 
-       None. 
+       parameter). If this parameter is set, k is ignored. The fixed parameter 
+       does not change, even when fitting it. Defaults to None. 
     f_gamma : float
         Fixed location parameter of the weibull distribution (e.g. given physical
-        parameter). If this parameter is set, theta is ignored. Defaults to 
-        None.
+        parameter). If this parameter is set, theta is ignored. The fixed 
+        parameter does not change, even when fitting it. Defaults to None.
 
     References
     ----------
@@ -613,12 +614,12 @@ class LogNormalDistribution(Distribution):
         Defaults to 1.
     f_mu : float
         Fixed parameter mu of the lognormal distribution (e.g. given physical
-        parameter). If this parameter is set, mu is ignored. Defaults to 
-        None.
+        parameter). If this parameter is set, mu is ignored. The fixed 
+        parameter does not change, even when fitting it. Defaults to None.
     f_sigma : float
        Fixed parameter sigma of the lognormal distribution (e.g. given 
-       physical parameter). If this parameter is set, sigma is ignored. 
-       Defaults to None
+       physical parameter). If this parameter is set, sigma is ignored. The
+       fixed parameter does not change, even when fitting it. Defaults to None.
     
     References
     ----------
@@ -757,12 +758,12 @@ class NormalDistribution(Distribution):
         Defaults to 1.
     f_mu : float
         Fixed parameter mu of the normal distribution (e.g. given physical
-        parameter). If this parameter is set, mu is ignored. Defaults to 
-        None.
+        parameter). If this parameter is set, mu is ignored. The fixed 
+        parameter does not change, even when fitting it. Defaults to None.
     f_sigma : float
        Fixed parameter sigma of the normal distribution (e.g. given 
        physical parameter). If this parameter is set, sigma is ignored. 
-       Defaults to None
+       Defaults to None.
     
     References
     ----------
@@ -889,11 +890,12 @@ class LogNormalNormFitDistribution(LogNormalDistribution):
         Defaults to 1.
     f_mu : float
         Fixed parameter mu of the lognormal distribution (e.g. given physical
-        parameter). If this parameter is set, mu is ignored. Defaults to 
-        None.
+        parameter). If this parameter is set, mu is ignored. The fixed 
+        parameter does not change, even when fitting it. Defaults to None.
     f_sigma : float
        Fixed parameter sigma of the lognormal distribution (e.g. given 
-       physical parameter). If this parameter is set, sigma is ignored. 
+       physical parameter). If this parameter is set, sigma is ignored. The
+       fixed parameter does not change, even when fitting it.
        Defaults to None. 
     
     """
@@ -998,16 +1000,16 @@ class ExponentiatedWeibullDistribution(Distribution):
         Defaults to 1.
     f_alpha : float
         Fixed alpha parameter of the weibull distribution (e.g. given physical
-        parameter). If this parameter is set, alpha is ignored. Defaults to 
-        None.
+        parameter). If this parameter is set, alpha is ignored. The fixed 
+        parameter does not change, even when fitting it. Defaults to None.
     f_beta : float
        Fixed beta parameter of the weibull distribution (e.g. given physical
-       parameter). If this parameter is set, beta is ignored. Defaults to 
-       None. 
+       parameter). If this parameter is set, beta is ignored. The fixed 
+       parameter does not change, even when fitting it. Defaults to None. 
     f_delta : float
         Fixed delta parameter of the weibull distribution (e.g. given physical
-        parameter). If this parameter is set, delta is ignored. Defaults to 
-        None.
+        parameter). If this parameter is set, delta is ignored. The fixed 
+        parameter does not change, even when fitting it. Defaults to None.
 
     References
     ----------
@@ -1189,9 +1191,8 @@ class ExponentiatedWeibullDistribution(Distribution):
 
 class GeneralizedGammaDistribution(Distribution):
     """
-    A generalized Gamma distribution. 
+    A 4-parameter generalized Gamma distribution. 
    
-    The distributions probability density function is given by [5]_ . 
     The parametrization is orientated on [5]_ :
     
     :math:`f(x) = \\frac{ \\lambda^{cm} cx^{cm-1} \\exp \\left[ - \\left(\\lambda x^{c} \\right) \\right] }{\\Gamma(m)}`
@@ -1199,25 +1200,28 @@ class GeneralizedGammaDistribution(Distribution):
     Parameters
     ----------
     m : float
-        Shape parameter of the generalized Gamma distribution. Defaults to 1.
+        First shape parameter of the generalized Gamma distribution. Defaults to 1.
     c : float
         Second shape parameter of the generalized Gamma distribution. Defaults
         to 1.
     lambda_ : float
-        Additional scale parameter of the generalized Gamma distribution 
-        (3-parameter generalized Gamma distribution). Defaults to 1.
+        Scale parameter of the generalized Gamma distribution. 
+        Defaults to 1.
     f_m : float
         Fixed shape parameter of the generalized Gamma distribution (e.g. 
-        given physical parameter). If this parameter is set, c is ignored. 
+        given physical parameter). If this parameter is set, m is ignored. The
+        fixed parameter does not change, even when fitting it.
         Defaults to None.
     f_c : float
        Fixed second shape parameter of the generalized Gamma distribution (e.g.
-       given  physical parameter). If this parameter is set, k is ignored. 
+       given  physical parameter). If this parameter is set, c is ignored. The
+       fixed parameter does not change, even when fitting it.
        Defaults to None. 
     f_lambda_ : float
-        Fixed scale parameter of the generalized Gamma distribution (e.g. 
-        given physical parameter). If this parameter is set, b is ignored. 
-        Defaults to None.
+        Fixed reciprocal scale parameter of the generalized Gamma distribution (e.g. 
+        given physical parameter). If this parameter is set, lambda_ is ignored. 
+        The fixed parameter does not change, even when fitting it.Defaults to 
+        None.
 
     References
     ----------
@@ -1231,14 +1235,14 @@ class GeneralizedGammaDistribution(Distribution):
         # TODO set parameters to fixed values if provided
         self.m = m  # shape
         self.c = c  # shape
-        self.lambda_ = lambda_  # scale
+        self.lambda_ = lambda_  # reciprocal scale
         self.f_m = f_m
         self.f_c = f_c
         self.f_lambda_ = f_lambda_
 
     @property
     def parameters(self):
-        return {"m": self.m, "c": self.c, "lambda": self.lambda_}
+        return {"m": self.m, "c": self.c, "lambda_": self.lambda_}
 
     @property
     def _scale(self):
@@ -1257,7 +1261,7 @@ class GeneralizedGammaDistribution(Distribution):
             scipy_scale = self._scale
         else:
             scipy_scale = 1 / lambda_
-        return m, c, 0, scipy_scale  # shape1, shape2, location=0, scale
+        return m, c, 0, scipy_scale  # shape1, shape2, location=0, reciprocal scale
 
     def cdf(self, x, m=None, c=None, lambda_=None):
         """
@@ -1269,11 +1273,11 @@ class GeneralizedGammaDistribution(Distribution):
             Points at which the cdf is evaluated.
             Shape: 1-dimensional.
         m : float, optional
-            The shape parameter. Defaults to self.m.
+            First shape parameter. Defaults to self.m.
         c : float, optional
             The second shape parameter. Defaults to self.c.
         lambda_: float, optional
-            The additional scale parameter . Defaults to self.lambda_.
+            The reciprocal scale parameter . Defaults to self.lambda_.
         
         """
 
@@ -1290,11 +1294,11 @@ class GeneralizedGammaDistribution(Distribution):
             Probabilities for which the i_cdf is evaluated.
             Shape: 1-dimensional
         m : float, optional
-            The shape parameter. Defaults to self.m.
+            First shape parameter. Defaults to self.m.
         c : float, optional
             The second shape parameter. Defaults to self.c.
         lambda_: float, optional
-            The additional scale parameter . Defaults to self.lambda_.
+            The reciprocal scale parameter . Defaults to self.lambda_.
         
         """
 
@@ -1311,11 +1315,11 @@ class GeneralizedGammaDistribution(Distribution):
             Points at which the pdf is evaluated.
             Shape: 1-dimensional.
         m : float, optional
-            The shape parameter. Defaults to self.m.
+            First shape parameter. Defaults to self.m.
         c : float, optional
             The second shape parameter. Defaults to self.k.
         lambda_: float, optional
-            The additional scale parameter . Defaults to self.lambda_.
+            The reciprocal scale parameter . Defaults to self.lambda_.
         
         """
 
