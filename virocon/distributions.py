@@ -1226,7 +1226,7 @@ class GeneralizedGammaDistribution(Distribution):
     References
     ----------
     .. [5] M.K. Ochi, J.E. Wahlen, Prediction of severest significant wave 
-        height, Coast. Eng. Chap. 36 (1980) 587e599.
+        height, Coast. Eng. Chap. 36 (1980) pp. 587-599.
         
     """
 
