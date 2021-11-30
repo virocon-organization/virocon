@@ -156,9 +156,10 @@ def test_generalized_gamma_reproduce_Ochi_CDF():
     """
 
     # Define dist with parameters from the distribution of Fig. 4b in
-    # M.K. Ochi, J.E. Wahlen, Prediction of severest significant wave height,
-    # Coast. Eng. Chap. 36 (1980) pp. 587-599.
-
+    # M.K. Ochi, J.E. Wahlen, New approach for estimating the severes
+    # sea state from statistical data , Coast. Eng. Chapter 38 (1992) 
+    # pp. 512-525.
+    
     dist = GeneralizedGammaDistribution(1.60, 0.98, 1.37)
 
     # CDF(0.5) should be roughly 0.21, see Fig. 4b

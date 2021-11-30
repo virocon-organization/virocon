@@ -1225,8 +1225,9 @@ class GeneralizedGammaDistribution(Distribution):
 
     References
     ----------
-    .. [5] M.K. Ochi, J.E. Wahlen, Prediction of severest significant wave 
-        height, Coast. Eng. Chap. 36 (1980) pp. 587-599.
+    .. [5] M.K. Ochi, J.E. Wahlen, New approach for estimating the severes
+        sea state from statistical data , Coast. Eng. Chapter 38 (1992) 
+        pp. 512-525.
         
     """
 
