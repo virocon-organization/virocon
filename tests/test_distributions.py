@@ -189,14 +189,15 @@ def test_generalized_gamma_reproduce_Ochi_CDF():
     
 def test_generalized_gamma_compare_scipy_to_virocon_PDF():
     """
-    Test comparing the PDF a fitted distribution with scipy and compare it to
-    virocons PDF. The results should be the same since virocon uses scipy.
+    Test which compares the PDF of a fitted distribution with scipy and 
+    compare it to the PDF of a fitted distribution with virocon. The results 
+    should be the same since virocon uses scipy.
 
     """  
     
-    # Create sample 
     x = np.linspace(2, 15, num=100)
     
+    # Create sample 
     true_m = 5
     true_c = 2.42
     true_loc = 0
@@ -219,14 +220,15 @@ def test_generalized_gamma_compare_scipy_to_virocon_PDF():
     
 def test_generalized_gamma_compare_scipy_to_virocon_ICDF():
     """
-    Test comparing the PDF a fitted distribution with scipy and compare it to
-    virocons PDF. The results should be the same since virocon uses scipy.
+    Test which compares the ICDF of a fitted distribution with scipy and 
+    compare it to the ICDF of a fitted distribution with virocon. The results 
+    should be the same since virocon uses scipy.
 
     """  
     
-    # Create sample 
     p = np.linspace(0.01, 0.99, num=100)
     
+    # Create sample 
     true_m = 5
     true_c = 2.42
     true_loc = 0
