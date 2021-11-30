@@ -145,20 +145,20 @@ def test_fit_exponentiated_weibull_with_zero():
     assert dist.parameters["beta"] == pytest.approx(1.5, abs=0.5)
     assert dist.parameters["alpha"] == pytest.approx(3, abs=1)
     assert dist.parameters["delta"] == pytest.approx(1, abs=0.5)
-    
-    
+
+
 def test_generalized_gamma_reproduce_Ochi_CDF():
     """
     Test reproducing the fitting of Ochi et. al (1980) and compare it to
     virocons implementation of the generalized gamma distribution. The results
     should be the same.
 
-    """  
-    
-    # Define dist with parameters from the distribution of Fig. 4b in 
-    # M.K. Ochi, J.E. Wahlen, Prediction of severest significant wave height, 
+    """
+
+    # Define dist with parameters from the distribution of Fig. 4b in
+    # M.K. Ochi, J.E. Wahlen, Prediction of severest significant wave height,
     # Coast. Eng. Chap. 36 (1980) pp. 587-599.
-    
+
     dist = GeneralizedGammaDistribution(1.60, 0.98, 1.37)
 
     # CDF(0.5) should be roughly 0.21, see Fig. 4b
@@ -168,13 +168,13 @@ def test_generalized_gamma_reproduce_Ochi_CDF():
     # CDF(4) should be roughly 0.98, see Fig. 4b
     # CDF(6) should be roughly 0.995, see Fig. 4b
 
-    p1= dist.cdf(0.5)
-    p2= dist.cdf(1)
-    p3= dist.cdf(1.5)
-    p4= dist.cdf(2)
-    p5= dist.cdf(4)
-    p6= dist.cdf(6)
-    
+    p1 = dist.cdf(0.5)
+    p2 = dist.cdf(1)
+    p3 = dist.cdf(1.5)
+    p4 = dist.cdf(2)
+    p5 = dist.cdf(4)
+    p6 = dist.cdf(6)
+
     np.testing.assert_allclose(p1, 0.21, atol=0.05)
     np.testing.assert_allclose(p2, 0.55, atol=0.05)
     np.testing.assert_allclose(p3, 0.70, atol=0.05)
@@ -185,101 +185,117 @@ def test_generalized_gamma_reproduce_Ochi_CDF():
     # CDF(negative value) should be 0
     p = dist.cdf(-1)
     assert p == 0
-   
-    
+
+
 def test_generalized_gamma_compare_scipy_to_virocon_PDF():
     """
     Test which compares the PDF of a fitted scipy distribution and compare it 
     to the PDF of a fitted virocon distribution. The results should be the 
     same since virocon uses scipy.
 
-    """  
-    
+    """
+
     x = np.linspace(2, 15, num=100)
-    
-    # Create sample 
+
+    # Create sample
     true_m = 5
     true_c = 2.42
     true_loc = 0
-    true_lambda_= 0.5
-    gamma_samples = sts.gengamma.rvs( a=true_m, c=true_c, loc=true_loc, scale=1/true_lambda_, size=100, random_state=42)
-    
+    true_lambda_ = 0.5
+    gamma_samples = sts.gengamma.rvs(
+        a=true_m,
+        c=true_c,
+        loc=true_loc,
+        scale=1 / true_lambda_,
+        size=100,
+        random_state=42,
+    )
+
     # Fit distribution with virocon
     my_gamma = GeneralizedGammaDistribution()
     my_gamma.fit(gamma_samples, method="mle")
     my_pdf = my_gamma.pdf(x)
-    
+
     # Fit distribution with scipy
     ref_gamma = sts.gengamma.fit(gamma_samples, floc=0)
-    ref_pdf = sts.gengamma.pdf(x, ref_gamma[0], ref_gamma[1], ref_gamma[2], ref_gamma[3])
-    
-    # Compare results 
+    ref_pdf = sts.gengamma.pdf(
+        x, ref_gamma[0], ref_gamma[1], ref_gamma[2], ref_gamma[3]
+    )
+
+    # Compare results
     for i in range(len(ref_pdf)):
         np.testing.assert_almost_equal(my_pdf[i], ref_pdf[i])
-        
-    
+
+
 def test_generalized_gamma_compare_scipy_to_virocon_ICDF():
     """
     Test which compares the ICDF of a fitted scipy distribution and compare it 
     to the ICDF of a fitted virocon distribution. The results should be the 
     same since virocon uses scipy.
 
-    """  
-    
+    """
+
     p = np.linspace(0.01, 0.99, num=100)
-    
-    # Create sample 
+
+    # Create sample
     true_m = 5
     true_c = 2.42
     true_loc = 0
-    true_lambda_= 0.5
-    gamma_samples = sts.gengamma.rvs( a=true_m, c=true_c, loc=true_loc, scale=1/true_lambda_, size=100, random_state=42)
-    
+    true_lambda_ = 0.5
+    gamma_samples = sts.gengamma.rvs(
+        a=true_m,
+        c=true_c,
+        loc=true_loc,
+        scale=1 / true_lambda_,
+        size=100,
+        random_state=42,
+    )
+
     # Fit distribution with virocon
     my_gamma = GeneralizedGammaDistribution()
     my_gamma.fit(gamma_samples, method="mle")
     my_icdf = my_gamma.icdf(p)
-    
+
     # Fit distribution with scipy
     ref_gamma = sts.gengamma.fit(gamma_samples, floc=0)
-    ref_icdf = sts.gengamma.ppf(p, ref_gamma[0], ref_gamma[1], ref_gamma[2], ref_gamma[3])
-    
-    # Compare results 
+    ref_icdf = sts.gengamma.ppf(
+        p, ref_gamma[0], ref_gamma[1], ref_gamma[2], ref_gamma[3]
+    )
+
+    # Compare results
     for i in range(len(ref_icdf)):
         np.testing.assert_almost_equal(my_icdf[i], ref_icdf[i])
- 
-    
+
+
 def test_generalized_gamma_compare_scipy_fit_to_virocon_fit():
     """
     Test comparing the fitting of scipy to the fit of virocon. The results
     should be the same since virocon uses scipy.
 
-    """ 
-    
-    # Create sample 
+    """
+
+    # Create sample
     true_m = 5
     true_c = 2.42
     true_loc = 0
-    true_lambda_= 0.5
-    gamma_samples = sts.gengamma.rvs( a=true_m, c=true_c, loc=true_loc, scale=1/true_lambda_, size=100, random_state=42)
+    true_lambda_ = 0.5
+    gamma_samples = sts.gengamma.rvs(
+        a=true_m,
+        c=true_c,
+        loc=true_loc,
+        scale=1 / true_lambda_,
+        size=100,
+        random_state=42,
+    )
 
     # Fit distribution with virocon
     my_gamma = GeneralizedGammaDistribution()
     my_gamma.fit(gamma_samples, method="mle")
-    
+
     # Fit distribution with scipy
     ref_gamma = sts.gengamma.fit(gamma_samples, floc=0)
-    
-    # Compare results 
+
+    # Compare results
     assert my_gamma.m == ref_gamma[0]
     assert my_gamma.c == ref_gamma[1]
     assert my_gamma._scale == ref_gamma[3]
-    
-    
-    
-    
-    
-    
-    
-    
-    
