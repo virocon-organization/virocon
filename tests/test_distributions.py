@@ -149,15 +149,15 @@ def test_fit_exponentiated_weibull_with_zero():
 
 def test_generalized_gamma_reproduce_Ochi_CDF():
     """
-    Test reproducing the fitting of Ochi et. al (1980) and compare it to
+    Test reproducing the fitting of Ochi et. al (1992) and compare it to
     virocons implementation of the generalized gamma distribution. The results
     should be the same.
 
     """
 
     # Define dist with parameters from the distribution of Fig. 4b in
-    # M.K. Ochi, J.E. Wahlen, New approach for estimating the severes
-    # sea state from statistical data , Coast. Eng. Chapter 38 (1992) 
+    # M.K. Ochi, New approach for estimating the severest sea state from 
+    # statistical data , Coast. Eng. Chapter 38 (1992) 
     # pp. 512-525.
     
     dist = GeneralizedGammaDistribution(1.60, 0.98, 1.37)

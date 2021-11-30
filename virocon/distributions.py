@@ -1225,8 +1225,8 @@ class GeneralizedGammaDistribution(Distribution):
 
     References
     ----------
-    .. [5] M.K. Ochi, J.E. Wahlen, New approach for estimating the severes
-        sea state from statistical data , Coast. Eng. Chapter 38 (1992) 
+    .. [5] M.K. Ochi, New approach for estimating the severest sea state from 
+        statistical data , Coast. Eng. Chapter 38 (1992) 
         pp. 512-525.
         
     """
