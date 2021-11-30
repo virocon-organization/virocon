@@ -16,6 +16,7 @@ __all__ = [
     "LogNormalDistribution",
     "NormalDistribution",
     "ExponentiatedWeibullDistribution",
+    "GeneralizedGammaDistribution",
 ]
 
 # The distributions parameters need to have an order, this order is defined by
@@ -55,7 +56,8 @@ class ConditionalDistribution:
     conditional_parameters : dict
         Dictionary of dependence functions for conditional parameters. Parameter names as keys.
     fixed_parameters : dict
-        Values of the fixed parameters. Parameters as keys.
+        Values of the fixed parameters. The fixed parameters do not change, 
+        even when fitting them. Parameters as keys.
     distributions_per_interval : list
         Instances of distribution fitted to intervals
     parameters_per_interval : list of dict
@@ -462,16 +464,16 @@ class WeibullDistribution(Distribution):
         distribution). Defaults to 0.
     f_alpha : float
         Fixed scale parameter of the weibull distribution (e.g. given physical
-        parameter). If this parameter is set, lambda is ignored. Defaults to 
-        None.
+        parameter). If this parameter is set, lambda is ignored. The fixed 
+        parameter does not change, even when fitting it. Defaults to None.
     f_beta : float
        Fixed shape parameter of the weibull distribution (e.g. given physical
-       parameter). If this parameter is set, k is ignored. Defaults to 
-       None. 
+       parameter). If this parameter is set, k is ignored. The fixed parameter 
+       does not change, even when fitting it. Defaults to None. 
     f_gamma : float
         Fixed location parameter of the weibull distribution (e.g. given physical
-        parameter). If this parameter is set, theta is ignored. Defaults to 
-        None.
+        parameter). If this parameter is set, theta is ignored. The fixed 
+        parameter does not change, even when fitting it. Defaults to None.
 
     References
     ----------
@@ -612,12 +614,12 @@ class LogNormalDistribution(Distribution):
         Defaults to 1.
     f_mu : float
         Fixed parameter mu of the lognormal distribution (e.g. given physical
-        parameter). If this parameter is set, mu is ignored. Defaults to 
-        None.
+        parameter). If this parameter is set, mu is ignored. The fixed 
+        parameter does not change, even when fitting it. Defaults to None.
     f_sigma : float
        Fixed parameter sigma of the lognormal distribution (e.g. given 
-       physical parameter). If this parameter is set, sigma is ignored. 
-       Defaults to None
+       physical parameter). If this parameter is set, sigma is ignored. The
+       fixed parameter does not change, even when fitting it. Defaults to None.
     
     References
     ----------
@@ -756,12 +758,12 @@ class NormalDistribution(Distribution):
         Defaults to 1.
     f_mu : float
         Fixed parameter mu of the normal distribution (e.g. given physical
-        parameter). If this parameter is set, mu is ignored. Defaults to 
-        None.
+        parameter). If this parameter is set, mu is ignored. The fixed 
+        parameter does not change, even when fitting it. Defaults to None.
     f_sigma : float
        Fixed parameter sigma of the normal distribution (e.g. given 
        physical parameter). If this parameter is set, sigma is ignored. 
-       Defaults to None
+       Defaults to None.
     
     References
     ----------
@@ -888,11 +890,12 @@ class LogNormalNormFitDistribution(LogNormalDistribution):
         Defaults to 1.
     f_mu : float
         Fixed parameter mu of the lognormal distribution (e.g. given physical
-        parameter). If this parameter is set, mu is ignored. Defaults to 
-        None.
+        parameter). If this parameter is set, mu is ignored. The fixed 
+        parameter does not change, even when fitting it. Defaults to None.
     f_sigma : float
        Fixed parameter sigma of the lognormal distribution (e.g. given 
-       physical parameter). If this parameter is set, sigma is ignored. 
+       physical parameter). If this parameter is set, sigma is ignored. The
+       fixed parameter does not change, even when fitting it.
        Defaults to None. 
     
     """
@@ -997,16 +1000,16 @@ class ExponentiatedWeibullDistribution(Distribution):
         Defaults to 1.
     f_alpha : float
         Fixed alpha parameter of the weibull distribution (e.g. given physical
-        parameter). If this parameter is set, alpha is ignored. Defaults to 
-        None.
+        parameter). If this parameter is set, alpha is ignored. The fixed 
+        parameter does not change, even when fitting it. Defaults to None.
     f_beta : float
        Fixed beta parameter of the weibull distribution (e.g. given physical
-       parameter). If this parameter is set, beta is ignored. Defaults to 
-       None. 
+       parameter). If this parameter is set, beta is ignored. The fixed 
+       parameter does not change, even when fitting it. Defaults to None. 
     f_delta : float
         Fixed delta parameter of the weibull distribution (e.g. given physical
-        parameter). If this parameter is set, delta is ignored. Defaults to 
-        None.
+        parameter). If this parameter is set, delta is ignored. The fixed 
+        parameter does not change, even when fitting it. Defaults to None.
 
     References
     ----------
@@ -1184,3 +1187,166 @@ class ExponentiatedWeibullDistribution(Distribution):
         wlsq_error = np.sum(w * (x - x_hat) ** 2)
 
         return wlsq_error
+
+
+class GeneralizedGammaDistribution(Distribution):
+    """
+    A 4-parameter generalized Gamma distribution. 
+   
+    The parametrization is orientated on [5]_ :
+    
+    :math:`f(x) = \\frac{ \\lambda^{cm} cx^{cm-1} \\exp \\left[ - \\left(\\lambda x^{c} \\right) \\right] }{\\Gamma(m)}`
+    
+    Parameters
+    ----------
+    m : float
+        First shape parameter of the generalized Gamma distribution. Defaults to 1.
+    c : float
+        Second shape parameter of the generalized Gamma distribution. Defaults
+        to 1.
+    lambda_ : float
+        Scale parameter of the generalized Gamma distribution. 
+        Defaults to 1.
+    f_m : float
+        Fixed shape parameter of the generalized Gamma distribution (e.g. 
+        given physical parameter). If this parameter is set, m is ignored. The
+        fixed parameter does not change, even when fitting it.
+        Defaults to None.
+    f_c : float
+       Fixed second shape parameter of the generalized Gamma distribution (e.g.
+       given  physical parameter). If this parameter is set, c is ignored. The
+       fixed parameter does not change, even when fitting it.
+       Defaults to None. 
+    f_lambda_ : float
+        Fixed reciprocal scale parameter of the generalized Gamma distribution (e.g. 
+        given physical parameter). If this parameter is set, lambda_ is ignored. 
+        The fixed parameter does not change, even when fitting it.Defaults to 
+        None.
+
+    References
+    ----------
+    .. [5] M.K. Ochi, New approach for estimating the severest sea state from 
+        statistical data , Coast. Eng. Chapter 38 (1992) 
+        pp. 512-525.
+        
+    """
+
+    def __init__(self, m=1, c=1, lambda_=1, f_m=None, f_c=None, f_lambda_=None):
+
+        # TODO set parameters to fixed values if provided
+        self.m = m  # shape
+        self.c = c  # shape
+        self.lambda_ = lambda_  # reciprocal scale
+        self.f_m = f_m
+        self.f_c = f_c
+        self.f_lambda_ = f_lambda_
+
+    @property
+    def parameters(self):
+        return {"m": self.m, "c": self.c, "lambda_": self.lambda_}
+
+    @property
+    def _scale(self):
+        return 1 / (self.lambda_)
+
+    @_scale.setter
+    def _scale(self, val):
+        self.lambda_ = 1 / val
+
+    def _get_scipy_parameters(self, m, c, lambda_):
+        if m is None:
+            m = self.m
+        if c is None:
+            c = self.c
+        if lambda_ is None:
+            scipy_scale = self._scale
+        else:
+            scipy_scale = 1 / lambda_
+        return m, c, 0, scipy_scale  # shape1, shape2, location=0, reciprocal scale
+
+    def cdf(self, x, m=None, c=None, lambda_=None):
+        """
+        Cumulative distribution function.
+        
+        Parameters
+        ----------
+        x : array_like, 
+            Points at which the cdf is evaluated.
+            Shape: 1-dimensional.
+        m : float, optional
+            First shape parameter. Defaults to self.m.
+        c : float, optional
+            The second shape parameter. Defaults to self.c.
+        lambda_: float, optional
+            The reciprocal scale parameter . Defaults to self.lambda_.
+        
+        """
+
+        scipy_par = self._get_scipy_parameters(m, c, lambda_)
+        return sts.gengamma.cdf(x, *scipy_par)
+
+    def icdf(self, prob, m=None, c=None, lambda_=None):
+        """
+        Inverse cumulative distribution function.
+        
+        Parameters
+        ----------
+        prob : array_like
+            Probabilities for which the i_cdf is evaluated.
+            Shape: 1-dimensional
+        m : float, optional
+            First shape parameter. Defaults to self.m.
+        c : float, optional
+            The second shape parameter. Defaults to self.c.
+        lambda_: float, optional
+            The reciprocal scale parameter . Defaults to self.lambda_.
+        
+        """
+
+        scipy_par = self._get_scipy_parameters(m, c, lambda_)
+        return sts.gengamma.ppf(prob, *scipy_par)
+
+    def pdf(self, x, m=None, c=None, lambda_=None):
+        """
+        Probability density function.
+        
+        Parameters
+        ----------
+        x : array_like, 
+            Points at which the pdf is evaluated.
+            Shape: 1-dimensional.
+        m : float, optional
+            First shape parameter. Defaults to self.m.
+        c : float, optional
+            The second shape parameter. Defaults to self.k.
+        lambda_: float, optional
+            The reciprocal scale parameter . Defaults to self.lambda_.
+        
+        """
+
+        scipy_par = self._get_scipy_parameters(m, c, lambda_)
+        return sts.gengamma.pdf(x, *scipy_par)
+
+    def draw_sample(self, n, m=None, c=None, lambda_=None):
+        scipy_par = self._get_scipy_parameters(m, c, lambda_)
+        rvs_size = self._get_rvs_size(n, scipy_par)
+        return sts.gengamma.rvs(*scipy_par, size=rvs_size)
+
+    def _fit_mle(self, sample):
+        p0 = {"m": self.m, "c": self.c, "scale": self._scale}
+
+        fparams = {"floc": 0}
+
+        if self.f_m is not None:
+            fparams["fshape1"] = self.f_m
+        if self.f_c is not None:
+            fparams["fshape2"] = self.f_c
+        if self.f_lambda_ is not None:
+            fparams["fscale"] = 1 / (self.f_lambda_)
+
+        self.m, self.c, _, self._scale = sts.gengamma.fit(
+            sample, p0["m"], p0["c"], scale=p0["scale"], **fparams
+        )
+
+    def _fit_lsq(self, data, weights):
+        raise NotImplementedError()
