@@ -212,7 +212,7 @@ In order to use the new implemented distribution, add the name of the new distri
 the imports.
 
 .. figure:: Use_new_dist.png
-    :scale: 70 %
+    :scale: 50 %
     :alt: Use new distribution in virocon.
 
 **4. Write automatic tests**:
@@ -225,7 +225,7 @@ execute these tests automatically, the added test files for a new distribution m
 test_distributions.py.
 
 .. figure:: automatic_tests.png
-    :scale: 70 %
+    :scale: 30 %
     :alt: Automatic tests in virocon.
 
 .. [1] Ochi, M. K. (1992). New approach for estimating the severest sea state. 23rd International Conference on Coastal Engineering, 512–525. https://doi.org/10.1061/9780872629332.038
