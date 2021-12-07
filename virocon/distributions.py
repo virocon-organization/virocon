@@ -1204,7 +1204,7 @@ class GeneralizedGammaDistribution(Distribution):
     c : float
         Second shape parameter of the generalized Gamma distribution. Defaults
         to 1.
-    lambda_scale : float
+    lambda\_ : float
         Scale parameter of the generalized Gamma distribution. 
         Defaults to 1.
     f_m : float
@@ -1217,11 +1217,11 @@ class GeneralizedGammaDistribution(Distribution):
        given  physical parameter). If this parameter is set, c is ignored. The
        fixed parameter does not change, even when fitting it.
        Defaults to None. 
-    f_lambda_scale : float
-        Fixed reciprocal scale parameter of the generalized Gamma distribution (e.g. 
-        given physical parameter). If this parameter is set, lambda_scale is ignored. 
-        The fixed parameter does not change, even when fitting it.Defaults to 
-        None.
+    f_lambda\_ : float
+        Fixed reciprocal scale parameter of the generalized Gamma distribution 
+        (e.g. given physical parameter). If this parameter is set, lambda\_ is 
+        ignored. The fixed parameter does not change, even when fitting it.
+        Defaults to None.
 
     References
     ----------
@@ -1231,40 +1231,40 @@ class GeneralizedGammaDistribution(Distribution):
         
     """
 
-    def __init__(self, m=1, c=1, lambda_scale=1, f_m=None, f_c=None, f_lambda_scale=None):
+    def __init__(self, m=1, c=1, lambda_=1, f_m=None, f_c=None, f_lambda_=None):
 
         # TODO set parameters to fixed values if provided
         self.m = m  # shape
         self.c = c  # shape
-        self.lambda_scale = lambda_scale  # reciprocal scale
+        self.lambda_ = lambda_  # reciprocal scale
         self.f_m = f_m
         self.f_c = f_c
-        self.f_lambda_scale = f_lambda_scale
+        self.f_lambda_ = f_lambda_
 
     @property
     def parameters(self):
-        return {"m": self.m, "c": self.c, "lambda_scale": self.lambda_scale}
+        return {"m": self.m, "c": self.c, "lambda_": self.lambda_}
 
     @property
     def _scale(self):
-        return 1 / (self.lambda_scale)
+        return 1 / (self.lambda_)
 
     @_scale.setter
     def _scale(self, val):
-        self.lambda_scale = 1 / val
+        self.lambda_ = 1 / val
 
-    def _get_scipy_parameters(self, m, c, lambda_scale):
+    def _get_scipy_parameters(self, m, c, lambda_):
         if m is None:
             m = self.m
         if c is None:
             c = self.c
-        if lambda_scale is None:
+        if lambda_ is None:
             scipy_scale = self._scale
         else:
-            scipy_scale = 1 / lambda_scale
+            scipy_scale = 1 / lambda_
         return m, c, 0, scipy_scale  # shape1, shape2, location=0, reciprocal scale
 
-    def cdf(self, x, m=None, c=None, lambda_scale=None):
+    def cdf(self, x, m=None, c=None, lambda_=None):
         """
         Cumulative distribution function.
         
@@ -1277,15 +1277,15 @@ class GeneralizedGammaDistribution(Distribution):
             First shape parameter. Defaults to self.m.
         c : float, optional
             The second shape parameter. Defaults to self.c.
-        lambda_scale: float, optional
-            The reciprocal scale parameter . Defaults to self.lambda_scale.
+        lambda_: float, optional
+            The reciprocal scale parameter . Defaults to self.lambda_.
         
         """
 
-        scipy_par = self._get_scipy_parameters(m, c, lambda_scale)
+        scipy_par = self._get_scipy_parameters(m, c, lambda_)
         return sts.gengamma.cdf(x, *scipy_par)
 
-    def icdf(self, prob, m=None, c=None, lambda_scale=None):
+    def icdf(self, prob, m=None, c=None, lambda_=None):
         """
         Inverse cumulative distribution function.
         
@@ -1298,15 +1298,15 @@ class GeneralizedGammaDistribution(Distribution):
             First shape parameter. Defaults to self.m.
         c : float, optional
             The second shape parameter. Defaults to self.c.
-        lambda_scale: float, optional
-            The reciprocal scale parameter . Defaults to self.lambda_scale.
+        lambda_: float, optional
+            The reciprocal scale parameter . Defaults to self.lambda_.
         
         """
 
-        scipy_par = self._get_scipy_parameters(m, c, lambda_scale)
+        scipy_par = self._get_scipy_parameters(m, c, lambda_)
         return sts.gengamma.ppf(prob, *scipy_par)
 
-    def pdf(self, x, m=None, c=None, lambda_scale=None):
+    def pdf(self, x, m=None, c=None, lambda_=None):
         """
         Probability density function.
         
@@ -1319,16 +1319,16 @@ class GeneralizedGammaDistribution(Distribution):
             First shape parameter. Defaults to self.m.
         c : float, optional
             The second shape parameter. Defaults to self.k.
-        lambda_scale: float, optional
-            The reciprocal scale parameter . Defaults to self.lambda_scale.
+        lambda_: float, optional
+            The reciprocal scale parameter . Defaults to self.lambda_.
         
         """
 
-        scipy_par = self._get_scipy_parameters(m, c, lambda_scale)
+        scipy_par = self._get_scipy_parameters(m, c, lambda_)
         return sts.gengamma.pdf(x, *scipy_par)
 
-    def draw_sample(self, n, m=None, c=None, lambda_scale=None):
-        scipy_par = self._get_scipy_parameters(m, c, lambda_scale)
+    def draw_sample(self, n, m=None, c=None, lambda_=None):
+        scipy_par = self._get_scipy_parameters(m, c, lambda_)
         rvs_size = self._get_rvs_size(n, scipy_par)
         return sts.gengamma.rvs(*scipy_par, size=rvs_size)
 
@@ -1341,8 +1341,8 @@ class GeneralizedGammaDistribution(Distribution):
             fparams["fshape1"] = self.f_m
         if self.f_c is not None:
             fparams["fshape2"] = self.f_c
-        if self.f_lambda_scale is not None:
-            fparams["fscale"] = 1 / (self.f_lambda_scale)
+        if self.f_lambda_ is not None:
+            fparams["fscale"] = 1 / (self.f_lambda_)
 
         self.m, self.c, _, self._scale = sts.gengamma.fit(
             sample, p0["m"], p0["c"], scale=p0["scale"], **fparams
