@@ -1190,12 +1190,12 @@ class ExponentiatedWeibullDistribution(Distribution):
 
 
 class GeneralizedGammaDistribution(Distribution):
-    r"""
+    """
     A 4-parameter generalized Gamma distribution. 
    
     The parametrization is orientated on [5]_ :
     
-    :math:`f(x) = \frac{ \lambda^{cm} cx^{cm-1} \exp \left[ - \left(\lambda x^{c} \right) \right] }{\Gamma(m)}`
+    :math:`f(x) = \\frac{ \\lambda^{cm} cx^{cm-1} \\exp \\left[ - \\left(\\lambda x^{c} \\right) \\right] }{\\Gamma(m)}`
     
     Parameters
     ----------
@@ -1204,7 +1204,7 @@ class GeneralizedGammaDistribution(Distribution):
     c : float
         Second shape parameter of the generalized Gamma distribution. Defaults
         to 1.
-    lambda_ : float
+    lambda\_ : float
         Scale parameter of the generalized Gamma distribution. 
         Defaults to 1.
     f_m : float
@@ -1217,9 +1217,9 @@ class GeneralizedGammaDistribution(Distribution):
        given  physical parameter). If this parameter is set, c is ignored. The
        fixed parameter does not change, even when fitting it.
        Defaults to None. 
-    f_lambda_ : float
+    f_lambda\_ : float
         Fixed reciprocal scale parameter of the generalized Gamma distribution 
-        (e.g. given physical parameter). If this parameter is set, lambda_ is 
+        (e.g. given physical parameter). If this parameter is set, lambda\_ is 
         ignored. The fixed parameter does not change, even when fitting it.
         Defaults to None.
 
@@ -1278,7 +1278,7 @@ class GeneralizedGammaDistribution(Distribution):
         c : float, optional
             The second shape parameter. Defaults to self.c.
         lambda_: float, optional
-            The reciprocal scale parameter . Defaults to self.lambda_.
+            The reciprocal scale parameter . Defaults to self.lambda\_.
         
         """
 
@@ -1299,7 +1299,7 @@ class GeneralizedGammaDistribution(Distribution):
         c : float, optional
             The second shape parameter. Defaults to self.c.
         lambda_: float, optional
-            The reciprocal scale parameter . Defaults to self.lambda_.
+            The reciprocal scale parameter . Defaults to self.lambda\_.
         
         """
 
@@ -1320,7 +1320,7 @@ class GeneralizedGammaDistribution(Distribution):
         c : float, optional
             The second shape parameter. Defaults to self.k.
         lambda_: float, optional
-            The reciprocal scale parameter . Defaults to self.lambda_.
+            The reciprocal scale parameter . Defaults to self.lambda\_.
         
         """
 
