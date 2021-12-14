@@ -20,18 +20,18 @@ the generalized gamma distribution was implemented.
 **1. Clarify the mathematics of the distribution**:
 
 In the following, we implement the 3-parameter generalized gamma distribution as recommended by Ochi (1992) [1]_.
-It's probability density function (pdf) is defined as:
+Its probability density function (PDF) is defined as:
 
 :math:`f(x)= \frac{c}{\Gamma(m)}\lambda^{cm}x^{cm-1} \exp\left[- (\lambda x)^{c} \right]`
 
 To implement the generalized gamma distribution, we make use of the functionality of scipy’s implementation of the
 distribution. Scipy’s implementation is based on the scientific paper of Stacy (1962) [2]_. An overview of the
 generalized gamma distribution is given in [3]_.
-Scipy uses the following pdf:
+Scipy uses the following PDF:
 
 :math:`f(x)=  \frac{k(x-a)^{kc-1}}{b^{kc}\Gamma(c)} \exp \bigg[- \bigg(\frac{x-a}{b}\bigg)^{k}\bigg]`
 
-Stacy’s generalized gamma distribution involves 4 parameters. Two shape parameters (k, c) , one scale (b) and one
+Stacy’s generalized gamma distribution involves 4 parameters. Two shape parameters (k, c), one scale (b) and one
 location parameter (a). Note that Ochi's and Stacy's formulas for the generalized gamma distribution
 differ. Hence, to use scipy’s functionality, we must convert the individual parameters. Comparing the parameters,
 it is seen, that:
@@ -47,11 +47,12 @@ the fixed value zero and the scale parameter needs to be converted and inverted.
 
 **2. Define the characteristics of the distribution and implement it step by step:**
 
-To implement a new distribution, the user should always subclass the Distribution class in distributions.py.
+To implement a new distribution, the new distribution class - in our case the GammaDistribution class - should inherit
+from the Distribution class in distributions.py.
 
 This init method is called when an object of the class GammaDistribution is created. When a new gamma distribution
 object is created, we want to make sure that the attributes of the distribution are passed. Therefore, we build a custom
-initial state, where all parameters of the distribution are initialized with a default value.
+constructor, where all parameters of the distribution are initialized with a default value.
 
 .. code-block:: python
 
@@ -181,9 +182,9 @@ virocon must provide a draw_sample function:
         rvs_size = self._get_rvs_size(n, scipy_par)
         return sts.gengamma.rvs(*scipy_par, size=rvs_size)
 
-Given a data set is available, a user might want to fit a generalized gamma distribution to these data. The fit method
-returns None, instead it sets the instance's values. The default estimation method is maximum likelihood
-estimation (MLE), which is why in virocon all statistical distributions are equipped with a function to fit a
+Given a data set is available, a user might want to fit a generalized gamma distribution to these data. The fit() method
+does not provide a return value, instead it sets the instance's values. The default estimation method is maximum
+likelihood estimation (MLE), which is why in virocon all statistical distributions are equipped with a function to fit a
 distribution to a data set by means of the MLE. The user does not pass in keywords arguments here. If a user wants to
 fix values, they need to pass them to the constructor (__init__).
 
