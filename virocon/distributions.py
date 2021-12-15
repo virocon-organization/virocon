@@ -1204,7 +1204,7 @@ class GeneralizedGammaDistribution(Distribution):
     c : float
         Second shape parameter of the generalized Gamma distribution. Defaults
         to 1.
-    lambda_ : float
+    lambda\_ : float
         Scale parameter of the generalized Gamma distribution. 
         Defaults to 1.
     f_m : float
@@ -1217,11 +1217,11 @@ class GeneralizedGammaDistribution(Distribution):
        given  physical parameter). If this parameter is set, c is ignored. The
        fixed parameter does not change, even when fitting it.
        Defaults to None. 
-    f_lambda_ : float
-        Fixed reciprocal scale parameter of the generalized Gamma distribution (e.g. 
-        given physical parameter). If this parameter is set, lambda_ is ignored. 
-        The fixed parameter does not change, even when fitting it.Defaults to 
-        None.
+    f_lambda\_ : float
+        Fixed reciprocal scale parameter of the generalized Gamma distribution 
+        (e.g. given physical parameter). If this parameter is set, lambda\_ is 
+        ignored. The fixed parameter does not change, even when fitting it.
+        Defaults to None.
 
     References
     ----------
@@ -1278,7 +1278,7 @@ class GeneralizedGammaDistribution(Distribution):
         c : float, optional
             The second shape parameter. Defaults to self.c.
         lambda_: float, optional
-            The reciprocal scale parameter . Defaults to self.lambda_.
+            The reciprocal scale parameter . Defaults to self.lambda\_.
         
         """
 
@@ -1299,7 +1299,7 @@ class GeneralizedGammaDistribution(Distribution):
         c : float, optional
             The second shape parameter. Defaults to self.c.
         lambda_: float, optional
-            The reciprocal scale parameter . Defaults to self.lambda_.
+            The reciprocal scale parameter . Defaults to self.lambda\_.
         
         """
 
@@ -1320,7 +1320,7 @@ class GeneralizedGammaDistribution(Distribution):
         c : float, optional
             The second shape parameter. Defaults to self.k.
         lambda_: float, optional
-            The reciprocal scale parameter . Defaults to self.lambda_.
+            The reciprocal scale parameter . Defaults to self.lambda\_.
         
         """
 
