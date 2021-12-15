@@ -2,13 +2,12 @@
 Defining custom joint models and estimating their parameters
 ************************************************************
 
-.. warning::
-    Stay tuned! We are currently working on this chapter.
-    In the meantime if you have any questions feel free to open an issue.
-
 Creating a global hierarchical model
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+.. warning::
+    Stay tuned! We are currently working on this chapter.
+    In the meantime if you have any questions feel free to open an issue.
 
 Implementing new statistical distributions in virocon: Example of the generalized gamma distribution
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
