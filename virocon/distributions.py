@@ -1191,7 +1191,7 @@ class ExponentiatedWeibullDistribution(Distribution):
 
 class GeneralizedGammaDistribution(Distribution):
     """
-    A 4-parameter generalized Gamma distribution. 
+    A 3-parameter generalized Gamma distribution. 
    
     The parametrization is orientated on [5]_ :
     
