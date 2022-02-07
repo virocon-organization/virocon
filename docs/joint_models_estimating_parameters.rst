@@ -5,7 +5,7 @@ Statistical distributions and parameter estimation
 Predefined joint models
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Predefined joint model structures are available in the file `predefined.py`_.
+Predefined joint model structures are available in the module `predefined.py`_.
 
 Currently, four predefined models are available:
  * Wind speed – wave height model recommended in DNV’s guideline on environmental conditions [1]_
