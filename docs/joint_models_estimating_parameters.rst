@@ -5,24 +5,80 @@ Statistical distributions and parameter estimation
 Predefined joint models
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-.. warning::
-    Stay tuned! We are currently working on this chapter.
-    In the meantime if you have any questions feel free to open an issue.
+Predefined joint model structures are available in the file ``predefined.py''.
+
+Currently, four predefined models are available:
+ * Wind speed – wave height model recommended in DNV’s guideline on environmental conditions [1]_
+ * Wind speed – wave height model proposed by Haselsteiner et al. (2020) [2]_
+ * Wave height - wave period model recommended in DNV’s guideline on environmental conditions [1]_
+ * Wave height - wave period model proposed by Haselsteiner et al. (2020) [2]_
+
+In the documentation's ``quick start example'' section a predefiend wave height - wave period model structure is used.
 
 Custom joint models
 ~~~~~~~~~~~~~~~~~~~
 
-.. warning::
-    Stay tuned! We are currently working on this chapter.
-    In the meantime if you have any questions feel free to open an issue.
+In the documentation's ``detailed examples'' section custom joint models are defined and used (instead of predefined models).
 
 Parameter estimation
 ~~~~~~~~~~~~~~~~~~~~
 
-.. warning::
-    Stay tuned! We are currently working on this chapter.
-    In the meantime if you have any questions feel free to open an issue.
+By default, marginal distribution parameters are estimated using maximum likelihood estimation and dependence function parameters 
+are estimated using least squares, however, other fitting methods can be selected by specifying the ``fit_description'' dictionary.
 
+The following example shows how first, default parameter estimation used and then weighted least squares is used to estimate the 
+parameter values of the wave height's distribution.
+
+.. code block:: python
+        """
+        Brief example that computes a sea state contour and compares MLE vs WLSQ fitting.
+        """
+        import matplotlib.pyplot as plt
+        from virocon import (read_ec_benchmark_dataset, get_OMAE2020_Hs_Tz, 
+            GlobalHierarchicalModel, IFORMContour, plot_2D_contour)
+
+        # Load sea state measurements.
+        data = read_ec_benchmark_dataset("datasets/ec-benchmark_dataset_A.txt")
+
+        # Define the structure of the joint distribution model.
+        dist_descriptions, fit_descriptions, semantics = get_OMAE2020_Hs_Tz()
+        model = GlobalHierarchicalModel(dist_descriptions)
+
+        # Estimate the model's parameter values with the default method (MLE).
+        model.fit(data)
+
+        # Compute an IFORM contour with a return period of 50 years.
+        tr = 50 # Return period in years.
+        ts = 1 # Sea state duration in hours.
+        alpha = 1 / (tr * 365.25 * 24 / ts)
+        contour1 = IFORMContour(model, alpha)
+
+        # Estimate the model's parameter values using weighted lesat squares.
+        fit_description_hs = {"method": "wlsq", "weights": "quadratic"}
+        my_fit_descriptions = [fit_description_hs, None]
+        model2 = GlobalHierarchicalModel(dist_descriptions)
+        model2.fit(data, fit_descriptions=my_fit_descriptions)
+
+        # Compute an IFORM contour with a return period of 50 years.
+        tr = 50 # Return period in years.
+        ts = 1 # Sea state duration in hours.
+        alpha = 1 / (tr * 365.25 * 24 / ts)
+        contour2 = IFORMContour(model2, alpha)
+
+        # Plot the contours.
+        fig, axs = plt.subplots(1, 2, figsize=[7.5, 4], sharex=True, sharey=True)
+        plot_2D_contour(contour1, data, semantics=semantics, swap_axis=True, ax=axs[0])
+        plot_2D_contour(contour2, data, semantics=semantics, swap_axis=True, ax=axs[1])
+        titles = ["Maximum likelihood estimation", "Weighted least squares"]
+        for i, (ax, title) in enumerate(zip(axs, titles)):
+            ax.set_title(title)
+        plt.show()
+
+The code, which is available as a Python file here_, will create this plot:
+
+.. figure:: sea_state_contour_mle_vs_wls.png
+    :scale: 30 %
+    :alt: sea state contour
 
 Implementing new statistical distributions: Example of the generalized gamma distribution
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -33,14 +89,14 @@ the generalized gamma distribution was implemented.
 
 **1. Clarify the mathematics of the distribution**:
 
-In the following, we implement the 3-parameter generalized gamma distribution as recommended by Ochi (1992) [1]_.
+In the following, we implement the 3-parameter generalized gamma distribution as recommended by Ochi (1992) [3]_.
 Its probability density function (PDF) is defined as:
 
 :math:`f(x)= \frac{c}{\Gamma(m)}\lambda^{cm}x^{cm-1} \exp\left[- (\lambda x)^{c} \right]`
 
 To implement the generalized gamma distribution, we make use of the functionality of scipy’s implementation of the
-distribution. Scipy’s implementation is based on the scientific paper of Stacy (1962) [2]_. An overview of the
-generalized gamma distribution is given in [3]_.
+distribution. Scipy’s implementation is based on the scientific paper of Stacy (1962) [4]_. An overview of the
+generalized gamma distribution is given in [5]_.
 Scipy uses the following PDF:
 
 :math:`f(x)=  \frac{k(x-a)^{kc-1}}{b^{kc}\Gamma(c)} \exp \bigg[- \bigg(\frac{x-a}{b}\bigg)^{k}\bigg]`
@@ -301,6 +357,9 @@ test_distributions.py.
         p = dist.cdf(-1)
         assert p == 0
 
-.. [1] Ochi, M. K. (1992). New approach for estimating the severest sea state. 23rd International Conference on Coastal Engineering, 512–525. https://doi.org/10.1061/9780872629332.038
-.. [2] E.W. Stacy, “A Generalization of the Gamma Distribution”, Annals of Mathematical Statistics, Vol 33(3), pp. 1187–1192.
-.. [3] Forbes, C.; Evans, M.; Hastings, N; Peacock, B. (2011), Statistical Distributions, 4th Edition, Published by John Wiley & Sons, Inc., Hoboken, New Jersey., Page 113
+.. [1] DNV GL (2017). Recommended practice DNVGL-RP-C205: Environmental conditions and environmental loads.
+.. [2] Haselsteiner, A. F., Sander, A., Ohlendorf, J.-H., & Thoben, K.-D. (2020). Global hierarchical models for wind and wave contours: Physical interpretations of the dependence functions. Proc. 39th International Conference on Ocean, Offshore and Arctic Engineering (OMAE 2020). https://doi.org/10.1115/OMAE2020-18668
+.. [3] Ochi, M. K. (1992). New approach for estimating the severest sea state. 23rd International Conference on Coastal Engineering, 512–525. https://doi.org/10.1061/9780872629332.038
+.. [4] E.W. Stacy, “A Generalization of the Gamma Distribution”, Annals of Mathematical Statistics, Vol 33(3), pp. 1187–1192.
+.. [5] Forbes, C.; Evans, M.; Hastings, N; Peacock, B. (2011), Statistical Distributions, 4th Edition, Published by John Wiley & Sons, Inc., Hoboken, New Jersey., Page 113
+.. _here: https://github.com/virocon-organization/virocon/blob/master/examples/hstz_contour_simple_wls_vs_mle.py
