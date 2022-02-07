@@ -13,12 +13,12 @@ Currently, four predefined models are available:
  * Wave height - wave period model recommended in DNV’s guideline on environmental conditions [1]_
  * Wave height - wave period model proposed by Haselsteiner et al. (2020) [2]_
 
-In the documentation's ``quick start example'' section a predefiend wave height - wave period model structure is used.
+In the documentation's `quick start example`_ section a predefiend wave height - wave period model structure is used.
 
 Custom joint models
 ~~~~~~~~~~~~~~~~~~~
 
-In the documentation's ``detailed examples'' section custom joint models are defined and used (instead of predefined models).
+In the documentation's `detailed examples`_ section custom joint models are defined and used (instead of predefined models).
 
 Parameter estimation
 ~~~~~~~~~~~~~~~~~~~~
@@ -363,3 +363,5 @@ test_distributions.py.
 .. [4] E.W. Stacy, “A Generalization of the Gamma Distribution”, Annals of Mathematical Statistics, Vol 33(3), pp. 1187–1192.
 .. [5] Forbes, C.; Evans, M.; Hastings, N; Peacock, B. (2011), Statistical Distributions, 4th Edition, Published by John Wiley & Sons, Inc., Hoboken, New Jersey., Page 113
 .. _here: https://github.com/virocon-organization/virocon/blob/master/examples/hstz_contour_simple_wls_vs_mle.py
+.. _quick start example: https://virocon.readthedocs.io/en/latest/example.html
+.. _detailed examples: https://virocon.readthedocs.io/en/latest/detailed_examples.html
