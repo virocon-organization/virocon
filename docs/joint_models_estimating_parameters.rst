@@ -5,7 +5,7 @@ Statistical distributions and parameter estimation
 Predefined joint models
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Predefined joint model structures are available in the file ``predefined.py''.
+Predefined joint model structures are available in the file `predefined.py`_.
 
 Currently, four predefined models are available:
  * Wind speed – wave height model recommended in DNV’s guideline on environmental conditions [1]_
@@ -362,6 +362,7 @@ test_distributions.py.
 .. [3] Ochi, M. K. (1992). New approach for estimating the severest sea state. 23rd International Conference on Coastal Engineering, 512–525. https://doi.org/10.1061/9780872629332.038
 .. [4] E.W. Stacy, “A Generalization of the Gamma Distribution”, Annals of Mathematical Statistics, Vol 33(3), pp. 1187–1192.
 .. [5] Forbes, C.; Evans, M.; Hastings, N; Peacock, B. (2011), Statistical Distributions, 4th Edition, Published by John Wiley & Sons, Inc., Hoboken, New Jersey., Page 113
+.. _predefined.py: https://github.com/virocon-organization/virocon/blob/master/virocon/predefined.py
 .. _here: https://github.com/virocon-organization/virocon/blob/master/examples/hstz_contour_simple_wls_vs_mle.py
 .. _quick start example: https://virocon.readthedocs.io/en/latest/example.html
 .. _detailed examples: https://virocon.readthedocs.io/en/latest/detailed_examples.html
