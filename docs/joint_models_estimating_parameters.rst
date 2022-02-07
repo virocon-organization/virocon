@@ -77,7 +77,7 @@ parameter values of the wave height's distribution.
 The code, which is available as a Python file here_, will create this plot:
 
 .. figure:: sea_state_contour_mle_vs_wls.png
-    :scale: 100 %
+    :scale: 80 %
     :alt: sea state contour
 
 Implementing new statistical distributions: Example of the generalized gamma distribution
