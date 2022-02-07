@@ -80,6 +80,8 @@ The code, which is available as a Python file here_, will create this plot:
     :scale: 80 %
     :alt: sea state contour
 
+Unless you specify otherwise, the parameters of dependence functions are estimated using weighted least squares.
+
 Implementing new statistical distributions: Example of the generalized gamma distribution
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
