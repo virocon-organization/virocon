@@ -360,8 +360,8 @@ test_distributions.py.
 .. [1] DNV GL (2017). Recommended practice DNVGL-RP-C205: Environmental conditions and environmental loads.
 .. [2] Haselsteiner, A. F., Sander, A., Ohlendorf, J.-H., & Thoben, K.-D. (2020). Global hierarchical models for wind and wave contours: Physical interpretations of the dependence functions. Proc. 39th International Conference on Ocean, Offshore and Arctic Engineering (OMAE 2020). https://doi.org/10.1115/OMAE2020-18668
 .. [3] Ochi, M. K. (1992). New approach for estimating the severest sea state. 23rd International Conference on Coastal Engineering, 512–525. https://doi.org/10.1061/9780872629332.038
-.. [4] E.W. Stacy, “A Generalization of the Gamma Distribution”, Annals of Mathematical Statistics, Vol 33(3), pp. 1187–1192.
-.. [5] Forbes, C.; Evans, M.; Hastings, N; Peacock, B. (2011), Statistical Distributions, 4th Edition, Published by John Wiley & Sons, Inc., Hoboken, New Jersey., Page 113
+.. _[4] E.W. Stacy, “A Generalization of the Gamma Distribution”, Annals of Mathematical Statistics, Vol 33(3), pp. 1187–1192.
+.. _[5] Forbes, C.; Evans, M.; Hastings, N; Peacock, B. (2011), Statistical Distributions, 4th Edition, Published by John Wiley & Sons, Inc., Hoboken, New Jersey., Page 113
 .. _predefined.py: https://github.com/virocon-organization/virocon/blob/master/virocon/predefined.py
 .. _here: https://github.com/virocon-organization/virocon/blob/master/examples/hstz_contour_simple_wls_vs_mle.py
 .. _quick start example: https://virocon.readthedocs.io/en/latest/example.html
