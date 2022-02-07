@@ -1,18 +1,33 @@
-************************************************************
-Defining custom joint models and estimating their parameters
-************************************************************
+**************************************************
+Statistical distributions and parameter estimation
+**************************************************
 
-Creating a global hierarchical model
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Predefined joint models
+~~~~~~~~~~~~~~~~~~~~~~~
 
 .. warning::
     Stay tuned! We are currently working on this chapter.
     In the meantime if you have any questions feel free to open an issue.
 
-Implementing new statistical distributions in virocon: Example of the generalized gamma distribution
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Custom joint models
+~~~~~~~~~~~~~~~~~~~
 
-When implementing a new distribution, we recommend orientating oneself on an already existing distribution in virocon.
+.. warning::
+    Stay tuned! We are currently working on this chapter.
+    In the meantime if you have any questions feel free to open an issue.
+
+Parameter estimation
+~~~~~~~~~~~~~~~~~~~~
+
+.. warning::
+    Stay tuned! We are currently working on this chapter.
+    In the meantime if you have any questions feel free to open an issue.
+
+
+Implementing new statistical distributions: Example of the generalized gamma distribution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+When implementing a new distribution in virocon, we recommend orientating oneself on an already existing distribution in virocon.
 You can use a virocon distribution as a template to implement a new distribution. The following sections describe how
 the generalized gamma distribution was implemented.
 
