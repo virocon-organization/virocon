@@ -16,6 +16,10 @@ virocon
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
     :target: https://github.com/psf/black
     :alt: Black
+    
+.. image:: https://anaconda.org/virocon-organization/virocon/badges/installer/conda.svg   
+    :target: https://conda.anaconda.org/virocon-organization
+    :alt: Anaconda-Server Badge 
 
 virocon is a Python package to compute environmental contours (`user guide`_).
 
