@@ -13,6 +13,8 @@ Currently, four predefined models are available:
  * Wave height - wave period model recommended in DNV’s guideline on environmental conditions [1]_
  * Wave height - wave period model proposed by Haselsteiner et al. (2020) [2]_
 
+Additional model structures can be added to the predefined.py module.
+
 In the documentation's `quick start example`_ section a predefiend wave height - wave period model structure is used.
 
 Custom joint models
