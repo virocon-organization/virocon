@@ -296,11 +296,11 @@ def plot_2D_isodensity(
     swap_axis : boolean, optional
         If True the second dimension of the model is plotted on the x-axis and
         the first on the y-axis. Otherwise vice-versa. Defaults to False.
-    limits = list of tuples, optional
+    limits : list of tuples, optional
         Specifies in which rectangular region the density is calculated and 
         plotted. If None (default) limits will be set automatically.
         Example: [(0, 20), (0, 12)]
-    levels = list of floats, optional
+    levels : list of floats, optional
         The probability density levels that are plotted. If None (default)
         levels are set automatically.
         Example: [0.001, 0.01, 0.1]
@@ -384,8 +384,9 @@ def plot_2D_isodensity(
     cmap = _rainbow_PuRd()
     colors = cmap(np.linspace(0, 1, num=n_levels))
     CS = ax.contour(X, Y, Z, levels=levels, colors=colors)
+    proxies = [plt.Line2D([], [], color=pc.get_edgecolor()[0]) for pc in CS.collections]
     ax.legend(
-        CS.collections,
+        proxies,
         lvl_labels,
         loc="upper left",
         ncol=1,
