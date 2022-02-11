@@ -21,7 +21,7 @@ __all__ = [
     "plot_2D_contour",
 ]
 
-# colors (schemes) choosen according to https://personal.sron.nl/~pault/
+# colors (schemes) chosen according to https://personal.sron.nl/~pault/
 
 
 def _rainbow_PuRd():
@@ -147,7 +147,7 @@ def plot_marginal_quantiles(model, sample, semantics=None, axes=None):
         dist_wrapper = MarginalDistWrapper(model, dim)
         ax = axes[dim]
 
-        sts.probplot(sample[:, dim], dist=dist_wrapper, fit=False, plot=ax)
+        sts.probplot(sample[:, dim], dist=dist_wrapper, fit=True, plot=ax)
         ax.get_lines()[0].set_markerfacecolor("k")
         ax.get_lines()[0].set_markeredgecolor("k")
         ax.get_lines()[0].set_marker("x")
