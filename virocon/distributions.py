@@ -486,11 +486,9 @@ class WeibullDistribution(Distribution):
     def __init__(
         self, alpha=1, beta=1, gamma=0, f_alpha=None, f_beta=None, f_gamma=None
     ):
-
-        # TODO set parameters to fixed values if provided
-        self.alpha = alpha  # scale
-        self.beta = beta  # shape
-        self.gamma = gamma  # loc
+        self.alpha = alpha if f_alpha is None else f_alpha  # scale
+        self.beta = beta if f_beta is None else f_beta  # shape
+        self.gamma = gamma if f_gamma is None else f_gamma  # loc
         self.f_alpha = f_alpha
         self.f_beta = f_beta
         self.f_gamma = f_gamma
@@ -631,8 +629,8 @@ class LogNormalDistribution(Distribution):
 
     def __init__(self, mu=0, sigma=1, f_mu=None, f_sigma=None):
 
-        self.mu = mu
-        self.sigma = sigma  # shape
+        self.mu = mu if f_mu is None else f_mu
+        self.sigma = sigma if f_sigma is None else f_sigma  # shape
         self.f_mu = f_mu
         self.f_sigma = f_sigma
         # self.scale = math.exp(mu)
@@ -775,8 +773,8 @@ class NormalDistribution(Distribution):
 
     def __init__(self, mu=0, sigma=1, f_mu=None, f_sigma=None):
 
-        self.mu = mu  # location
-        self.sigma = sigma  # scale
+        self.mu = mu if f_mu is None else f_mu  # location
+        self.sigma = sigma if f_sigma is None else f_sigma  # scale
         self.f_mu = f_mu
         self.f_sigma = f_sigma
 
@@ -902,8 +900,8 @@ class LogNormalNormFitDistribution(LogNormalDistribution):
 
     def __init__(self, mu_norm=0, sigma_norm=1, f_mu_norm=None, f_sigma_norm=None):
 
-        self.mu_norm = mu_norm
-        self.sigma_norm = sigma_norm
+        self.mu_norm = mu_norm if f_mu_norm is None else f_mu_norm
+        self.sigma_norm = sigma_norm if f_sigma_norm is None else f_sigma_norm
         self.f_mu_norm = f_mu_norm
         self.f_sigma_norm = f_sigma_norm
 
@@ -1027,9 +1025,9 @@ class ExponentiatedWeibullDistribution(Distribution):
     def __init__(
         self, alpha=1, beta=1, delta=1, f_alpha=None, f_beta=None, f_delta=None
     ):
-        self.alpha = alpha  # scale
-        self.beta = beta  # shape
-        self.delta = delta  # shape2
+        self.alpha = alpha if f_alpha is None else f_alpha  # scale
+        self.beta = beta if f_beta is None else f_beta  # shape
+        self.delta = delta if f_delta is None else f_delta  # shape2
         self.f_alpha = f_alpha
         self.f_beta = f_beta
         self.f_delta = f_delta
@@ -1233,10 +1231,9 @@ class GeneralizedGammaDistribution(Distribution):
 
     def __init__(self, m=1, c=1, lambda_=1, f_m=None, f_c=None, f_lambda_=None):
 
-        # TODO set parameters to fixed values if provided
-        self.m = m  # shape
-        self.c = c  # shape
-        self.lambda_ = lambda_  # reciprocal scale
+        self.m = m if f_m is None else f_m  # shape
+        self.c = c if f_c is None else f_c  # shape
+        self.lambda_ = lambda_ if f_lambda_ is None else f_lambda_  # reciprocal scale
         self.f_m = f_m
         self.f_c = f_c
         self.f_lambda_ = f_lambda_

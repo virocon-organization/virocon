@@ -2,8 +2,13 @@ import pytest
 import numpy as np
 import scipy.stats as sts
 
-from virocon import ExponentiatedWeibullDistribution
-from virocon import GeneralizedGammaDistribution
+from virocon import (
+    WeibullDistribution,
+    LogNormalDistribution,
+    NormalDistribution,
+    ExponentiatedWeibullDistribution,
+    GeneralizedGammaDistribution,
+)
 
 
 def test_exponentiated_weibull_distribution_cdf():
@@ -156,10 +161,10 @@ def test_generalized_gamma_reproduce_Ochi_CDF():
     """
 
     # Define dist with parameters from the distribution of Fig. 4b in
-    # M.K. Ochi, New approach for estimating the severest sea state from 
-    # statistical data , Coast. Eng. Chapter 38 (1992) 
+    # M.K. Ochi, New approach for estimating the severest sea state from
+    # statistical data , Coast. Eng. Chapter 38 (1992)
     # pp. 512-525.
-    
+
     dist = GeneralizedGammaDistribution(1.60, 0.98, 1.37)
 
     # CDF(0.5) should be roughly 0.21, see Fig. 4b
@@ -300,3 +305,35 @@ def test_generalized_gamma_compare_scipy_fit_to_virocon_fit():
     assert my_gamma.m == ref_gamma[0]
     assert my_gamma.c == ref_gamma[1]
     assert my_gamma._scale == ref_gamma[3]
+
+
+@pytest.fixture(
+    params=[
+        WeibullDistribution,
+        LogNormalDistribution,
+        NormalDistribution,
+        ExponentiatedWeibullDistribution,
+        GeneralizedGammaDistribution,
+    ]
+)
+def dist_cls(request):
+    return request.param
+
+
+def test_use_fixed_values_if_provided(dist_cls):
+    # create distributions without arguments to get the parameter names
+    dist = dist_cls()
+    param_names = dist.parameters.keys()
+    f_param_names = ["f_" + par_name for par_name in param_names]
+
+    # choose arbitrary values, that should work for all distribution and should be different to the default
+    ref_values = [0.42 * (i + 1) for i in range(len(f_param_names))]
+    f_params = {
+        f_param_name: val for f_param_name, val in zip(f_param_names, ref_values)
+    }
+    # create distribution with fixed parameters
+    dist = dist_cls(**f_params)
+    param_values = list(dist.parameters.values())
+    # check that the distribution uses the fixed values
+    for reference_value, actual_value in zip(ref_values, param_values):
+        assert reference_value == pytest.approx(actual_value)
