@@ -464,16 +464,16 @@ class WeibullDistribution(Distribution):
         distribution). Defaults to 0.
     f_alpha : float
         Fixed scale parameter of the weibull distribution (e.g. given physical
-        parameter). If this parameter is set, lambda is ignored. The fixed 
-        parameter does not change, even when fitting it. Defaults to None.
+        parameter). If this parameter is set, alpha is ignored. The fixed
+        parameter does not change, even when fitting the distribution. Defaults to None.
     f_beta : float
        Fixed shape parameter of the weibull distribution (e.g. given physical
-       parameter). If this parameter is set, k is ignored. The fixed parameter 
-       does not change, even when fitting it. Defaults to None. 
+       parameter). If this parameter is set, beta is ignored. The fixed parameter
+       does not change, even when fitting the distribution. Defaults to None.
     f_gamma : float
         Fixed location parameter of the weibull distribution (e.g. given physical
-        parameter). If this parameter is set, theta is ignored. The fixed 
-        parameter does not change, even when fitting it. Defaults to None.
+        parameter). If this parameter is set, gamma is ignored. The fixed
+        parameter does not change, even when fitting the distribution. Defaults to None.
 
     References
     ----------
@@ -613,11 +613,11 @@ class LogNormalDistribution(Distribution):
     f_mu : float
         Fixed parameter mu of the lognormal distribution (e.g. given physical
         parameter). If this parameter is set, mu is ignored. The fixed 
-        parameter does not change, even when fitting it. Defaults to None.
+        parameter does not change, even when fitting the distribution. Defaults to None.
     f_sigma : float
        Fixed parameter sigma of the lognormal distribution (e.g. given 
        physical parameter). If this parameter is set, sigma is ignored. The
-       fixed parameter does not change, even when fitting it. Defaults to None.
+       fixed parameter does not change, even when fitting the distribution. Defaults to None.
     
     References
     ----------
@@ -757,11 +757,11 @@ class NormalDistribution(Distribution):
     f_mu : float
         Fixed parameter mu of the normal distribution (e.g. given physical
         parameter). If this parameter is set, mu is ignored. The fixed 
-        parameter does not change, even when fitting it. Defaults to None.
+        parameter does not change, even when fitting the distribution. Defaults to None.
     f_sigma : float
        Fixed parameter sigma of the normal distribution (e.g. given 
-       physical parameter). If this parameter is set, sigma is ignored. 
-       Defaults to None.
+       physical parameter). If this parameter is set, sigma is ignored. The fixed
+       parameter does not change, even when fitting the distribution. Defaults to None.
     
     References
     ----------
@@ -889,11 +889,11 @@ class LogNormalNormFitDistribution(LogNormalDistribution):
     f_mu : float
         Fixed parameter mu of the lognormal distribution (e.g. given physical
         parameter). If this parameter is set, mu is ignored. The fixed 
-        parameter does not change, even when fitting it. Defaults to None.
+        parameter does not change, even when fitting the distribution. Defaults to None.
     f_sigma : float
        Fixed parameter sigma of the lognormal distribution (e.g. given 
        physical parameter). If this parameter is set, sigma is ignored. The
-       fixed parameter does not change, even when fitting it.
+       fixed parameter does not change, even when fitting the distribution.
        Defaults to None. 
     
     """
@@ -999,15 +999,15 @@ class ExponentiatedWeibullDistribution(Distribution):
     f_alpha : float
         Fixed alpha parameter of the weibull distribution (e.g. given physical
         parameter). If this parameter is set, alpha is ignored. The fixed 
-        parameter does not change, even when fitting it. Defaults to None.
+        parameter does not change, even when fitting the distribution. Defaults to None.
     f_beta : float
        Fixed beta parameter of the weibull distribution (e.g. given physical
        parameter). If this parameter is set, beta is ignored. The fixed 
-       parameter does not change, even when fitting it. Defaults to None. 
+       parameter does not change, even when fitting the distribution. Defaults to None.
     f_delta : float
         Fixed delta parameter of the weibull distribution (e.g. given physical
         parameter). If this parameter is set, delta is ignored. The fixed 
-        parameter does not change, even when fitting it. Defaults to None.
+        parameter does not change, even when fitting the distribution. Defaults to None.
 
     References
     ----------
@@ -1208,17 +1208,17 @@ class GeneralizedGammaDistribution(Distribution):
     f_m : float
         Fixed shape parameter of the generalized Gamma distribution (e.g. 
         given physical parameter). If this parameter is set, m is ignored. The
-        fixed parameter does not change, even when fitting it.
+        fixed parameter does not change, even when fitting the distribution.
         Defaults to None.
     f_c : float
        Fixed second shape parameter of the generalized Gamma distribution (e.g.
        given  physical parameter). If this parameter is set, c is ignored. The
-       fixed parameter does not change, even when fitting it.
+       fixed parameter does not change, even when fitting the distribution.
        Defaults to None. 
     f_lambda\_ : float
         Fixed reciprocal scale parameter of the generalized Gamma distribution 
         (e.g. given physical parameter). If this parameter is set, lambda\_ is 
-        ignored. The fixed parameter does not change, even when fitting it.
+        ignored. The fixed parameter does not change, even when fitting the distribution.
         Defaults to None.
 
     References
