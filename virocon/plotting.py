@@ -101,8 +101,8 @@ def plot_marginal_quantiles(model, sample, semantics=None, axes=None):
         The description of the model. If None (the default) generic semantics
         will be used. The structure is as follows:
         modeldesc = {
-        "names" : [<Names of variables>], 
-        "symbols" : [<Description of symbols>], 
+        "names" : [<Names of variables>],
+        "symbols" : [<Description of symbols>],
         "units" : [<Units of variables>] }
     axes: list, optional
         The matplotlib axes objects to plot into. One for each dimension. If
@@ -111,12 +111,12 @@ def plot_marginal_quantiles(model, sample, semantics=None, axes=None):
     Returns
     -------
     The used matplotlib axes object.
-    
+
     Notes
     -----
-    When saving the resulting axes in a vector image format (pdf, svg) the 
-    `sample` will still be rasterized to reduce the file size. 
-    To prevent that, iterate over the axes and use 
+    When saving the resulting axes in a vector image format (pdf, svg) the
+    `sample` will still be rasterized to reduce the file size.
+    To prevent that, iterate over the axes and use
     ``ax.get_lines()[0].set_rasterized(False)``.
 
     """
@@ -147,7 +147,7 @@ def plot_marginal_quantiles(model, sample, semantics=None, axes=None):
         dist_wrapper = MarginalDistWrapper(model, dim)
         ax = axes[dim]
 
-        sts.probplot(sample[:, dim], dist=dist_wrapper, fit=True, plot=ax)
+        sts.probplot(sample[:, dim], dist=dist_wrapper, fit=False, plot=ax)
         ax.get_lines()[0].set_markerfacecolor("k")
         ax.get_lines()[0].set_markeredgecolor("k")
         ax.get_lines()[0].set_marker("x")
@@ -158,7 +158,22 @@ def plot_marginal_quantiles(model, sample, semantics=None, axes=None):
         # in a vector file format (svg, pdf).
         ax.get_lines()[0].set_rasterized(True)
 
-        ax.get_lines()[1].set_color("#004488")
+        # prior to scipy version 1.7.0 a regression fit line was plotted,
+        # even with option fit=False. As discussed in PR#149 we do not want
+        # keep this line. So here we remove it if it was plotted.
+        if len(ax.lines) > 1:
+            ax.lines[1].remove()
+
+        # draw 45° line
+        # adapted from statsmodels.graphics.gofplots.qqline
+        # https://github.com/statsmodels/statsmodels/blob/161ca84b2b6e2b3ba5ef6b570d8c907c9b06f5de/statsmodels/graphics/gofplots.py#L892-L897
+        end_pts = list(zip(ax.get_xlim(), ax.get_ylim()))
+        end_pts[0] = min(end_pts[0])
+        end_pts[1] = max(end_pts[1])
+        ax.plot(end_pts, end_pts, c="#BB5566")
+        ax.set_xlim(end_pts)
+        ax.set_ylim(end_pts)
+
         name_and_unit = f"{semantics['names'][dim].lower()} ({semantics['units'][dim]})"
         ax.set_xlabel(f"Theoretical quantiles of {name_and_unit}")
         ax.set_ylabel(f"Ordered values of {name_and_unit}")
@@ -297,7 +312,7 @@ def plot_2D_isodensity(
         If True the second dimension of the model is plotted on the x-axis and
         the first on the y-axis. Otherwise vice-versa. Defaults to False.
     limits : list of tuples, optional
-        Specifies in which rectangular region the density is calculated and 
+        Specifies in which rectangular region the density is calculated and
         plotted. If None (default) limits will be set automatically.
         Example: [(0, 20), (0, 12)]
     levels : list of floats, optional
@@ -500,8 +515,8 @@ def plot_2D_contour(
     # was reverted as we were not sure about the reason.
     # https://github.com/virocon-organization/virocon/commit/45482e0b5ff2d21c594f0e292b3db9c971881b5c
     # https://github.com/virocon-organization/virocon/pull/124#discussion_r684193507
-    ax.plot(x, y, c="#BB5566")    
-    #ax.plot(np.asarray(x, dtype=object), np.asarray(y, dtype=object), c="#BB5566")
+    ax.plot(x, y, c="#BB5566")
+    # ax.plot(np.asarray(x, dtype=object), np.asarray(y, dtype=object), c="#BB5566")
 
     x_name = semantics["names"][x_idx]
     x_symbol = semantics["symbols"][x_idx]
