@@ -8,7 +8,7 @@ build-backend = "setuptools.build_meta"
 [tool.pytest.ini_options]
 minversion = "6.0"
 required_plugins = "pytest-cov"
-addopts = "-ra --cov-config=.coveragerc --cov=virocon --doctest-modules -v"
+addopts = "-ra --cov-config=.coveragerc --cov=virocon --doctest-modules"
 testpaths = [
     "tests",
     "virocon",
