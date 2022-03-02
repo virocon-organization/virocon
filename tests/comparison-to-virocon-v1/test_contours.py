@@ -188,5 +188,4 @@ def test_DirectSamplingContour(reference_data_DSContour):
 
     my_coordinates = my_ds_contour.coordinates
 
-    with np.printoptions(threshold=np.inf):
-        np.testing.assert_allclose(my_coordinates, ref_coordinates)
+    np.testing.assert_allclose(my_coordinates, ref_coordinates)
