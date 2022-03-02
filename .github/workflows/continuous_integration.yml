@@ -5,10 +5,9 @@ on: [pull_request, push, workflow_dispatch]
 
 jobs:
   test:
-    if: always()
     runs-on: ${{ matrix.os }}
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
         os: ["ubuntu-latest", "windows-latest", "macos-latest"]
         python-version: ["3.8", "3.9"]
