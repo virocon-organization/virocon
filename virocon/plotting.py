@@ -432,7 +432,7 @@ def plot_histograms(model, sample, semantics=None, plot_pdf=True):
 
 
 def plot_2D_isodensity(
-    model, sample, semantics=None, swap_axis=False, limits=None, levels=None, ax=None
+    model, sample, semantics=None, swap_axis=False, limits=None, levels=None, n_grid_steps=250, ax=None
 ):
     """
     Plot isodensity contours and a data sample for a 2D model.
@@ -457,6 +457,9 @@ def plot_2D_isodensity(
         The probability density levels that are plotted. If None (default)
         levels are set automatically.
         Example: [0.001, 0.01, 0.1]
+    n_grid_steps : int, optional
+        The number of steps along each axis of the grid used to plot the contours.
+        Defaults to 250.
     ax : matplotlib Axes, optional
         Matplotlib axes object to use for plotting. If None (default) a new
         figure will be created.
@@ -507,7 +510,7 @@ def plot_2D_isodensity(
         y_lower = min(sample[:, 1]) - expand_factor * y_range
         y_upper = max(sample[:, 1]) + expand_factor * y_range
 
-    x, y = np.linspace(((x_lower, y_lower)), (x_upper, y_upper)).T
+    x, y = np.linspace(((x_lower, y_lower)), (x_upper, y_upper), num=n_grid_steps).T
     X, Y = np.meshgrid(x, y)
     grid_flat = np.c_[X.ravel(), Y.ravel()]
     f = model.pdf(grid_flat)
