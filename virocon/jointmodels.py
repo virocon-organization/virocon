@@ -33,13 +33,49 @@ class MultivariateModel(ABC):
         """
         pass
 
-    @abstractmethod
-    def cdf(self, *args, **kwargs):
+    def cdf(self, x):
         """
         Cumulative distribution function.
 
+        Parameters
+        ----------
+        x : array_like
+            Points at which the cdf is evaluated.
+            Shape: (n, n_dim), where n is the number of points at which the
+            cdf should be evaluated.
+
         """
-        pass
+
+        x = np.atleast_2d(np.asarray_chkfinite(x))
+
+        n_dim = self.n_dim
+        integral_order = list(range(n_dim))
+
+        def get_integral_func():
+            arg_order = integral_order
+
+            def integral_func(*args):
+                assert len(args) == n_dim
+                # sort arguments as expected by pdf (the models order)
+                x = np.array(args)[np.argsort(arg_order)].reshape((1, n_dim))
+                return self.pdf(x)
+
+            return integral_func
+
+        lower_integration_limits = [0] * n_dim
+
+        integral_func = get_integral_func()
+
+        p = np.empty(len(x))
+        for i in range(len(x)):
+
+            integration_limits = [
+                (lower_integration_limits[j], x[i, j]) for j in range(n_dim)
+            ]
+
+            p[i], error = integrate.nquad(integral_func, integration_limits)
+
+        return p
 
     @abstractmethod
     def marginal_pdf(self, *args, **kwargs):
@@ -370,55 +406,6 @@ class GlobalHierarchicalModel(MultivariateModel):
                 fs[:, i] = self.distributions[i].pdf(x[:, i], given=x[:, cond_idx])
 
         return np.prod(fs, axis=-1)
-
-    def cdf(self, x):
-        """
-        Cumulative distribution function.
-
-        Parameters
-        ----------
-        x : array_like
-            Points at which the cdf is evaluated.
-            Shape: (n, n_dim), where n is the number of points at which the
-            cdf should be evaluated.
-
-        """
-
-        # Ensure that x is a 2D numpy array.
-        x = np.array(x)
-        if x.ndim == 1:
-            x = np.array([x])
-
-        x = np.asarray_chkfinite(x)
-
-        n_dim = self.n_dim
-        integral_order = list(range(n_dim))
-
-        def get_integral_func():
-            arg_order = integral_order
-
-            def integral_func(*args):
-                assert len(args) == n_dim
-                # sort arguments as expected by pdf (the models order)
-                x = np.array(args)[np.argsort(arg_order)].reshape((1, n_dim))
-                return self.pdf(x)
-
-            return integral_func
-
-        lower_integration_limits = [0] * n_dim
-
-        integral_func = get_integral_func()
-
-        p = np.empty(len(x))
-        for i in range(len(x)):
-
-            integration_limits = [
-                (lower_integration_limits[j], x[i, j]) for j in range(n_dim)
-            ]
-
-            p[i], error = integrate.nquad(integral_func, integration_limits)
-
-        return p
 
     def marginal_pdf(self, x, dim):
         """
