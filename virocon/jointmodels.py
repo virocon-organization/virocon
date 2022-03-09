@@ -102,7 +102,7 @@ class MultivariateModel(ABC):
         pass
 
     @abstractmethod
-    def draw_sample(self, *args, **kwargs):
+    def draw_sample(self, *args, random_state=None, **kwargs):
         """
         Draw a random sample of length n.
 
@@ -562,7 +562,7 @@ class GlobalHierarchicalModel(MultivariateModel):
         x = np.quantile(sample[:, dim], p)
         return x
 
-    def draw_sample(self, n):
+    def draw_sample(self, n, *, random_state=None):
         """
         Draw a random sample of size n.
 
@@ -570,17 +570,24 @@ class GlobalHierarchicalModel(MultivariateModel):
         ----------
         n : int
             Sample size.
-
+        random_state : {None, int, numpy.random.Generator}, optional
+            Can be used to draw a reproducible sample.
         """
+
+        if random_state is not None:
+            # if random_state already is a np.random.Generator, default_rng returns it unaltered
+            random_state = np.random.default_rng(random_state)
 
         samples = np.zeros((n, self.n_dim))
         for i in range(self.n_dim):
             cond_idx = self.conditional_on[i]
             dist = self.distributions[i]
             if cond_idx is None:
-                samples[:, i] = dist.draw_sample(n)
+                samples[:, i] = dist.draw_sample(n, random_state=random_state)
             else:
                 conditioning_values = samples[:, cond_idx]
-                samples[:, i] = dist.draw_sample(1, conditioning_values)
+                samples[:, i] = dist.draw_sample(
+                    1, conditioning_values, random_state=random_state
+                )
 
         return samples
