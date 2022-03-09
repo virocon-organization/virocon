@@ -1,0 +1,25 @@
+name: my-virocon-dev
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+  - black
+  - bokeh
+  - matplotlib
+  - numpy
+  - pandas
+  - python=3.9.*
+  - scikit-learn
+  - scipy
+  - seaborn
+  - spyder=5.*
+  - statsmodels
+  - tqdm
+  - networkx
+  - pytest
+  - pytest-cov
+  - coverage
+  - Sphinx
+
+
+
