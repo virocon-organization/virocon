@@ -83,10 +83,11 @@ def get_default_semantics(n_dim):
     }
     return semantics
 
+
 def _get_n_axes(n_intervals):
     if n_intervals > 9:
         raise NotImplementedError()
-        
+
     table = [
         (1, 1),
         (1, 2),
@@ -97,9 +98,11 @@ def _get_n_axes(n_intervals):
         (3, 3),
         (3, 3),
         (3, 3),
-        ]
-    
-    fig, axes = plt.subplots(*table[n_intervals], sharex=True, sharey=True, squeeze=False)
+    ]
+
+    fig, axes = plt.subplots(
+        *table[n_intervals], sharex=True, sharey=True, squeeze=False
+    )
     return fig, axes.ravel()
 
 
@@ -315,7 +318,7 @@ def plot_dependence_functions(model, semantics=None, par_rename={}, axes=None):
 
 def plot_histograms(model, sample, semantics=None, plot_pdf=True):
     """
-    Plot the histograms of data along with the density of the models distributions. 
+    Plot the histograms of data along with the density of the models distributions.
 
     Parameters
     ----------
@@ -326,7 +329,7 @@ def plot_histograms(model, sample, semantics=None, plot_pdf=True):
     semantics: dict, optional
         The description of the model. If None (the default) generic semantics will be used.
     plot_pdf: boolean, optional
-        Whether the fitted probability density should be plotted. Defaults to True. 
+        Whether the fitted probability density should be plotted. Defaults to True.
     Returns
     -------
     The used matplotlib axes objects.
@@ -337,18 +340,17 @@ def plot_histograms(model, sample, semantics=None, plot_pdf=True):
 
     if semantics is None:
         semantics = get_default_semantics(n_dim)
-        
-    
+
     figures = []
     axes_list = []
-    
+
     for dim in range(n_dim):
-        
+
         x_name = semantics["names"][dim]
         x_symbol = semantics["symbols"][dim]
         x_unit = semantics["units"][dim]
         x_label = f"{x_name}," + r" $\it{" + f"{x_symbol}" + r"}$" + f" ({x_unit})"
-        
+
         if model.conditional_on[dim] is None:
             # unconditional
             data = sample[:, dim]
@@ -373,31 +375,37 @@ def plot_histograms(model, sample, semantics=None, plot_pdf=True):
             ax.set_xlabel(x_label)
             ax.set_ylabel("probability density")
             ax.set_title(f"n={len(data)}")
-            
+
             figures.append(fig)
             axes_list.append(ax)
-            
+
         else:
             # conditional
             cond_dist = model.distributions[dim]
             dist_per_interval = cond_dist.distributions_per_interval
             n_intervals = len(dist_per_interval)
-            
+
             conditioning_idx = model.conditional_on[dim]
             conditioning_symbol = semantics["symbols"][conditioning_idx]
             conditioning_unit = semantics["units"][conditioning_idx]
-            
+
             slicer = model.interval_slicers[conditioning_idx]
-            interval_slices, conditioning_values, _ = slicer.slice_(sample[:, conditioning_idx])
+            interval_slices, conditioning_values, _ = slicer.slice_(
+                sample[:, conditioning_idx]
+            )
             data_intervals = [sample[int_slice, dim] for int_slice in interval_slices]
-            
+
             # if the following fails, the sample was probably not used for fitting
             # TODO raise proper exception then
-            np.testing.assert_allclose(conditioning_values, cond_dist.conditioning_values)
+            np.testing.assert_allclose(
+                conditioning_values, cond_dist.conditioning_values
+            )
             assert len(data_intervals) == len(cond_dist.data_intervals)
             for i in range(len(data_intervals)):
-                np.testing.assert_allclose(np.sort(data_intervals[i]), np.sort(cond_dist.data_intervals[i]))
-                
+                np.testing.assert_allclose(
+                    np.sort(data_intervals[i]), np.sort(cond_dist.data_intervals[i])
+                )
+
             fig, axes = _get_n_axes(n_intervals)
             for interval_idx in range(n_intervals):
                 cond_val = conditioning_values[interval_idx]
@@ -424,15 +432,22 @@ def plot_histograms(model, sample, semantics=None, plot_pdf=True):
                 ax.set_ylabel("probability density")
                 title = f"{conditioning_symbol} = {cond_val:.3f} {conditioning_unit}, n={len(data)}"
                 ax.set_title(title)
-                
+
             figures.append(fig)
             axes_list.append(axes)
-            
+
     return figures, axes_list
 
 
 def plot_2D_isodensity(
-    model, sample, semantics=None, swap_axis=False, limits=None, levels=None, n_grid_steps=250, ax=None
+    model,
+    sample,
+    semantics=None,
+    swap_axis=False,
+    limits=None,
+    levels=None,
+    n_grid_steps=250,
+    ax=None,
 ):
     """
     Plot isodensity contours and a data sample for a 2D model.
@@ -528,7 +543,7 @@ def plot_2D_isodensity(
         # Define the lowest isodensity level based on the density values on the evaluated grid.
         q = np.quantile(f, q=0.5)
         if q > 0:
-            min_lvl = int(str(q).split("e")[1])
+            min_lvl = int(f"{q:.0e}".split("e")[1])
         else:
             min_lvl = -5
         n_levels = np.abs(min_lvl)
