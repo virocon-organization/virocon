@@ -1,6 +1,7 @@
 """
 Models for the joint probability distribution.
 """
+import warnings
 
 from abc import ABC, abstractmethod
 
@@ -12,6 +13,14 @@ from virocon.distributions import ConditionalDistribution
 from virocon.intervals import NumberOfIntervalsSlicer
 
 __all__ = ["GlobalHierarchicalModel"]
+
+
+class MaxIterationWarning(RuntimeWarning):
+    """The maximum number of iterations was reached."""
+
+
+class CouldNotSampleError(RuntimeError):
+    """Could not draw sample for the supplied parameters."""
 
 
 class MultivariateModel(ABC):
@@ -93,13 +102,39 @@ class MultivariateModel(ABC):
         """
         pass
 
-    @abstractmethod
-    def marginal_icdf(self, *args, **kwargs):
+    def marginal_icdf(self, p, dim, precision_factor=1):
+
         """
         Marginal inverse cumulative distribution function.
 
+        Estimates the marginal icdf by drawing a Monte-Carlo sample.
+
+        Parameters
+        ----------
+        p : array_like
+            Probabilities for which the icdf is evaluated.
+            Shape: 1-dimensional
+        dim : int
+            The dimension for which the marginal is calculated.
+        precision_factor : float
+            Precision factor that determines the size of the sample to draw.
+            A sample is drawn of which on average precision_factor * 100
+            realizations exceed the quantile. Minimum sample size is 100000.
+            Defaults to 1.0
+
         """
-        pass
+
+        p = np.array(p)
+
+        p_min = np.min(p)
+        p_max = np.max(p)
+        nr_exceeding_points = 100 * precision_factor
+        p_small = np.min([p_min, 1 - p_max])
+        n = int((1 / p_small) * nr_exceeding_points)
+        n = max([n, 100000])
+        sample = self.draw_sample(n)
+        x = np.quantile(sample[:, dim], p)
+        return x
 
     @abstractmethod
     def draw_sample(self, *args, random_state=None, **kwargs):
@@ -108,6 +143,140 @@ class MultivariateModel(ABC):
 
         """
         pass
+
+    def conditional_cdf(self, x, dim, given, *, random_state=None):
+        # assert len(x) == len(given)
+        # TODO optimize: reuse sample for equal givens
+        p = np.empty_like(x)
+        n = 100_000
+        for i, (x_val, given_val) in enumerate(zip(x, given)):
+            try:
+                sample = self.conditional_sample(n, dim, given_val)
+                p[i] = (sample <= x_val).sum() / n
+            except CouldNotSampleError:
+                p[i] = 0
+
+        return p
+
+    def conditional_icdf(
+        self, p, dim, given, precision_factor=1.0, *, random_state=None
+    ):
+        # assert len(p) == len(given)
+        # TODO optimize: reuse sample for equal givens
+        x = np.empty_like(p)
+        # n = 100_000
+        nr_exceeding_points = 100 * precision_factor
+        for i, (p_val, given_val) in enumerate(zip(p, given)):
+
+            # p_small = np.min([p_min, 1 - p_max])
+            p_small = p_val if p_val < 0.5 else 1 - p_val
+            n = (1 / p_small) * nr_exceeding_points
+            n = min([max([n, 100_000]), 10_000_000])
+            n = int(n)
+            try:
+                sample = self.conditional_sample(n, dim, given_val)
+                x[i] = np.quantile(sample, p_val)
+            except CouldNotSampleError:
+                x[i] = 0  # TODO
+
+        return x
+
+    def conditional_sample(
+        self, n, dim, given, *, random_state=None, max_iter=100, debug=False
+    ):
+
+        # rejection sampling
+        # https://github.com/peteroupc/peteroupc.github.io/blob/master/randomfunc.md#rejection-sampling-with-a-pdf-like-function
+        # https://github.com/peteroupc/peteroupc.github.io/blob/master/randomfunc.md#Rejection_Sampling
+        # https://gist.github.com/rsnemmen/d1c4322d2bc3d6e36be8
+
+        # TODO use given properly
+        def get_pdf_like(dim, given):
+            """
+            let y = given
+            We want f(x| y).
+
+            => f(x| y) = f(x, y) / f(y)
+            f(y) is const as y is const.
+            => f(y) is just a normalization constant
+            which is not necessary for rejection sampling
+
+            so we need to use dim and given to get f(x, y)
+            """
+
+            def pdf_like(x):
+                nonlocal dim, given, self
+                n_dim = self.n_dim
+                given = np.atleast_1d(given)
+                x_hat = np.empty((len(x), n_dim))
+                j = 0
+                for i in range(n_dim):
+                    if i == dim:
+                        x_hat[:, i] = x
+                    else:
+                        x_hat[:, i] = given[j]
+                        j += 1
+                pdf = self.pdf(x_hat)
+                return pdf
+
+            return pdf_like
+
+        pdf = get_pdf_like(dim, given)
+
+        # if random_state already is a np.random.Generator,
+        # default_rng returns it unaltered
+        rng = np.random.default_rng(random_state)
+
+        # set distribution lower limit to zero TODO is there a better way?
+        x_min = 0
+        # TODO is there a better way to find an upper limit of the distribution?
+        x_max = 30
+
+        # find max value of pdf
+        x = np.linspace(x_min, x_max, 1000)
+        y = pdf(x)
+        p_min = 0.0
+        p_max = y.max() * 1.001
+
+        n_counter = 0
+        reject_counter = 0
+        partial_samples = []
+
+        for i in range(max_iter):
+            if n_counter >= n:
+                break
+            # tmp_n = int((n - n_counter) * 1.5)
+            # tmp_n = n
+            tmp_n = max([(n - n_counter) * 10, n])
+            x = rng.uniform(x_min, x_max, size=tmp_n)
+            y = rng.uniform(p_min, p_max, size=tmp_n)
+
+            accept_mask = y < pdf(x)
+
+            n_accept = accept_mask.sum()
+            n_reject = tmp_n - n_accept
+
+            n_counter += n_accept
+            reject_counter += n_reject
+
+            if n_accept > 0:
+                partial_samples.append(x[accept_mask])
+
+        if debug:
+            print(f"acceptance rate: {n_counter / (n_counter + reject_counter)}")
+
+        if i == max_iter - 1:
+            warnings.warn(
+                f"Max iterations was reached, sample size is only {n_counter}.",
+                MaxIterationWarning,
+            )
+            if len(partial_samples) == 0:
+                raise CouldNotSampleError(
+                    "Could not draw sample for the supplied parameters."
+                )
+            return np.concatenate(partial_samples)
+        else:
+            return np.concatenate(partial_samples)[:n]
 
 
 class GlobalHierarchicalModel(MultivariateModel):
@@ -551,15 +720,33 @@ class GlobalHierarchicalModel(MultivariateModel):
         if self.conditional_on[dim] is None:
             # the distribution is not conditional -> it is the marginal
             return self.distributions[dim].icdf(p)
+        else:
+            return super().marginal_icdf(p, dim, precision_factor)
 
-        p_min = np.min(p)
-        p_max = np.max(p)
-        nr_exceeding_points = 100 * precision_factor
-        p_small = np.min([p_min, 1 - p_max])
-        n = int((1 / p_small) * nr_exceeding_points)
-        n = max([n, 100000])
-        sample = self.draw_sample(n)
-        x = np.quantile(sample[:, dim], p)
+    def conditional_cdf(self, x, dim, given, *, random_state=None):
+        # assert len(x) == len(given)
+        distributions = self.distributions
+        conditional_on = self.conditional_on
+
+        if conditional_on[dim] is None:
+            p = distributions[dim].cdf(x)
+        else:
+            cond_idx = conditional_on[dim]
+            p = distributions[dim].cdf(x, given=given[:, cond_idx])
+
+        return p
+
+    def conditional_icdf(self, p, dim, given, *, random_state=None):
+        # assert len(p) == len(given)
+        distributions = self.distributions
+        conditional_on = self.conditional_on
+
+        if conditional_on[dim] is None:
+            x = distributions[dim].icdf(p)
+        else:
+            cond_idx = conditional_on[dim]
+            x = distributions[dim].icdf(p, given=given[:, cond_idx])
+
         return x
 
     def draw_sample(self, n, *, random_state=None):
