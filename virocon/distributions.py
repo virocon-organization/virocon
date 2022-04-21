@@ -1472,6 +1472,9 @@ def from_scipy_distribution(scipy_dist: Union[str, sts.rv_continuous]):
                 if val is not None:
                     fparams[f"f{par_name}"] = val
 
+            if len(fparams) == len(self.parameters):
+                return  # nothing to do
+
             params = self._scipy_dist.fit(
                 sample, *p0, loc=loc0, scale=scale0, **fparams
             )
