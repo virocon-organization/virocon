@@ -77,7 +77,7 @@ class ConditionalDistribution:
         # allow setting fitting initials on class creation?
         self.distribution = distribution
         self.distribution_class = distribution.__class__
-        self.param_names = distribution.parameters.keys()
+        self.param_names = list(distribution.parameters)
         self.conditional_parameters = {}
         self.fixed_parameters = {}
         self.conditioning_values = None
