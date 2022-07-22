@@ -861,7 +861,7 @@ class NormalDistribution(Distribution):
         if self.f_sigma is not None:
             fparams["fscale"] = self.f_sigma
 
-        self.mu, self.sigma = sts.lognorm.fit(
+        self.mu, self.sigma = sts.norm.fit(
             sample, loc=p0["loc"], scale=p0["scale"], **fparams
         )
 
@@ -1343,6 +1343,161 @@ class GeneralizedGammaDistribution(Distribution):
 
         self.m, self.c, _, self._scale = sts.gengamma.fit(
             sample, p0["m"], p0["c"], scale=p0["scale"], **fparams
+        )
+
+    def _fit_lsq(self, data, weights):
+        raise NotImplementedError()
+ 
+class VonMisesDistribution(Distribution):
+    """
+    A Von Mises (Circular Norm) Distribution. 
+    
+    The distributions probability density function is given by [1]_: 
+    
+    :math:`f(x) = \\frac{\\exp{k \\cos{x - \\mu}}}{2 \\pi I_0(k) \\sigma}`
+     
+    The distribution is used to model wind-wave misalignment in [2]_. 
+    Being a circular norm distribution it can be used to model direction. 
+    
+    Parameters
+    ----------
+    mu : float
+        Location parameter, the mean.
+        Defaults to 0.
+    sigma : float
+        Scale parameter, the standard deviation.
+        Defaults to 1.
+        IF NOT 1 DISTRIBUTION DOES NOT FIT WELL [3]_.
+    kappa: float
+        Shape parameter
+        Defaults to 1.
+    f_mu : float
+        Fixed parameter mu of the von mises distribution (e.g. given physical
+        parameter). If this parameter is set, mu is ignored. Defaults to 
+        None.
+    f_sigma : float
+       Fixed parameter sigma of the von mises distribution (e.g. given 
+       physical parameter). If this parameter is set, sigma is ignored. 
+       Defaults to None
+    
+    References
+    ----------
+    .. [1] Mardia, Kantilal; Jupp, Peter E. (1999). 
+       Directional Statistics. Wiley. ISBN 978-0-471-95333-3.
+       
+    .. [2] Stewart G M, Robertson A, Jonkman J and Lackner M A 2016 
+       The creation of a comprehensive metocean data set for offshore 
+       wind turbine simulations: Comprehensive metocean data set 
+       Wind Energy 19 1151–9
+       
+       [3] https://stackoverflow.com/questions/39020222/python-scipy-how-to-fit-a-von-mises-distribution
+       last accessed: 22/07/2022
+    """
+    
+    def __init__(self, kappa = 1, mu=0, sigma=1, f_kappa = None, f_mu=None, f_sigma=None):
+
+        self.kappa = kappa # shpae
+        self.mu = mu  # location
+        self.sigma = sigma  # scale
+        self.f_kappa = f_kappa
+        self.f_mu = f_mu
+        self.f_sigma = f_sigma
+
+    @property
+    def parameters(self):
+        return {"kappa": self.kappa, "mu": self.mu, "sigma": self.sigma}
+
+    def _get_scipy_parameters(self, kappa, mu, sigma):
+        if mu is None:
+            loc = self.mu
+        else:
+            loc = mu
+        if sigma is None:
+            scale = self.sigma
+        else:
+            scale = self.sigma
+        if kappa is None:
+            shape = self.kappa
+        else: 
+            shape = kappa
+        return shape, loc, scale  # loc, scale
+
+    def cdf(self, x, kappa = None, mu=None, sigma=None):
+        """
+        Cumulative distribution function.
+        
+        Parameters
+        ----------
+        x : array_like, 
+            Points at which the cdf is evaluated.
+            Shape: 1-dimensional.
+        mu : float, optional
+            The location parameter. Defaults to self.mu .
+        sigma : float, optional
+            The scale parameter. Defaults to self.sigma .
+        
+        """
+        scipy_par = self._get_scipy_parameters(kappa, mu, sigma)
+        return sts.vonmises.cdf(x, *scipy_par)
+
+    def icdf(self, prob, kappa= None, mu=None, sigma=None):
+        """
+        Inverse cumulative distribution function.
+        
+        Parameters
+        ----------
+        prob : Probabilities for which the i_cdf is evaluated.
+            Shape: 1-dimensional
+        kappa : float, optional
+            The shape parameter. Defaults to self.kappa .
+        mu : float, optional
+            The location parameter. Defaults to self.mu .
+        sigma : float, optional
+            The scale parameter. Defaults to self.sigma .
+        
+        """
+        scipy_par = self._get_scipy_parameters(kappa, mu, sigma)
+        return sts.vonmises.ppf(prob, *scipy_par)
+
+    def pdf(self, x, kappa=None, mu=None, sigma=None):
+        """
+        Probability density function.
+        
+        Parameters
+        ----------
+        x : array_like, 
+            Points at which the pdf is evaluated.
+            Shape: 1-dimensional.
+        kappa : float. optional,
+            The shape parameter. Defaults to self.kappa .
+        mu : float, optional
+            The location parameter. Defaults to self.mu .
+        sigma : float, optional
+            The scale parameter. Defaults to self.sigma .
+        
+        """
+        scipy_par = self._get_scipy_parameters(kappa, mu, sigma)
+        return sts.vonmises.pdf(x, *scipy_par)
+
+    def draw_sample(self, n, kappa=None, mu=None, sigma=None):
+        scipy_par = self._get_scipy_parameters(kappa, mu, sigma)
+        rvs_size = self._get_rvs_size(n, scipy_par)
+        return sts.vonmises.rvs(*scipy_par, size=rvs_size)
+
+    def _fit_mle(self, sample):
+        p0 = {"shape": self.kappa, "loc": self.mu, "scale": self.sigma}
+
+        fparams = {}
+
+        if self.f_mu is not None:
+            fparams["floc"] = self.f_mu
+        if self.f_sigma is not None:
+            fparams["fscale"] = self.f_sigma
+        if self.f_kappa is not None:
+            fparams["fshape"] = self.f_kappa
+
+        self.kappa, self.mu, self.sigma = sts.vonmises.fit(
+            sample, p0["shape"], loc=p0["loc"], scale=p0["scale"], **fparams
         )
 
     def _fit_lsq(self, data, weights):
