@@ -1355,7 +1355,7 @@ class VonMisesDistribution(Distribution):
     
     The distributions probability density function is given by [1]_: 
     
-    :math:`f(x) = \\frac{\\exp{\\kappa \\cos{x - \\mu}}}{2 \\pi I_0(k) \\sigma}`
+    :math:`f(x) = \frac{\exp{(\kappa \cos{(x - \mu)})}}{2 \pi I_0(\kappa)}`
      
     The distribution is used to model wind-wave misalignment in [2]_. 
     Being a circular norm distribution it can be used to model direction. 
@@ -1368,11 +1368,6 @@ class VonMisesDistribution(Distribution):
     mu : float
         Location parameter, the mean.
         Defaults to 0.
-    sigma : float
-        Scale parameter, the standard deviation.
-        Defaults to 1.
-        IF NOT FIXED DISTRIBUTION DOES NOT FIT WELL [3]_. The used is
-        recommended to set a value for f_sigma (dafaults to 1). 
     f_kappa : float
        Fixed parameter kappa of the von mises distribution (e.g. given 
        physical parameter). If this parameter is set, kappa is ignored. 
@@ -1381,10 +1376,6 @@ class VonMisesDistribution(Distribution):
         Fixed parameter mu of the von mises distribution (e.g. given physical
         parameter). If this parameter is set, mu is ignored. Defaults to 
         None.
-    f_sigma : float
-       Fixed parameter sigma of the von mises distribution (e.g. given 
-       physical parameter). If this parameter is set, sigma is ignored. 
-       Defaults to 1.
 
     
     References
@@ -1396,40 +1387,31 @@ class VonMisesDistribution(Distribution):
        The creation of a comprehensive metocean data set for offshore 
        wind turbine simulations: Comprehensive metocean data set 
        Wind Energy 19 1151–9
-       
-       [3] https://stackoverflow.com/questions/39020222/python-scipy-how-to-fit-a-von-mises-distribution
-       last accessed: 22/07/2022
     """
     
-    def __init__(self, kappa = 1, mu=0, sigma=1, f_kappa=None, f_mu=None, f_sigma=1):
+    def __init__(self, kappa = 1, mu=0, f_kappa=None, f_mu=None):
 
         self.kappa = kappa # shpae
         self.mu = mu  # location
-        self.sigma = sigma  # scale
         self.f_kappa = f_kappa
         self.f_mu = f_mu
-        self.f_sigma = f_sigma
 
     @property
     def parameters(self):
-        return {"kappa": self.kappa, "mu": self.mu, "sigma": self.sigma}
+        return {"kappa": self.kappa, "mu": self.mu}
 
-    def _get_scipy_parameters(self, kappa, mu, sigma):
+    def _get_scipy_parameters(self, kappa, mu):
         if mu is None:
             loc = self.mu
         else:
             loc = mu
-        if sigma is None:
-            scale = self.sigma
-        else:
-            scale = self.sigma
         if kappa is None:
             shape = self.kappa
         else: 
             shape = kappa
-        return shape, loc, scale  # loc, scale
+        return shape, loc
 
-    def cdf(self, x, kappa = None, mu=None, sigma=None):
+    def cdf(self, x, kappa = None, mu=None):
         """
         Cumulative distribution function.
         
@@ -1442,14 +1424,12 @@ class VonMisesDistribution(Distribution):
             The shape parameter. Defaults to self.kappa .
         mu : float, optional
             The location parameter. Defaults to self.mu .
-        sigma : float, optional
-            The scale parameter. Defaults to self.sigma .
         
         """
-        scipy_par = self._get_scipy_parameters(kappa, mu, sigma)
+        scipy_par = self._get_scipy_parameters(kappa, mu)
         return sts.vonmises.cdf(x, *scipy_par)
 
-    def icdf(self, prob, kappa= None, mu=None, sigma=None):
+    def icdf(self, prob, kappa= None, mu=None):
         """
         Inverse cumulative distribution function.
         
@@ -1461,14 +1441,12 @@ class VonMisesDistribution(Distribution):
             The shape parameter. Defaults to self.kappa .
         mu : float, optional
             The location parameter. Defaults to self.mu .
-        sigma : float, optional
-            The scale parameter. Defaults to self.sigma .
         
         """
-        scipy_par = self._get_scipy_parameters(kappa, mu, sigma)
+        scipy_par = self._get_scipy_parameters(kappa, mu)
         return sts.vonmises.ppf(prob, *scipy_par)
 
-    def pdf(self, x, kappa=None, mu=None, sigma=None):
+    def pdf(self, x, kappa=None, mu=None):
         """
         Probability density function.
         
@@ -1481,32 +1459,28 @@ class VonMisesDistribution(Distribution):
             The shape parameter. Defaults to self.kappa .
         mu : float, optional
             The location parameter. Defaults to self.mu .
-        sigma : float, optional
-            The scale parameter. Defaults to self.sigma .
         
         """
-        scipy_par = self._get_scipy_parameters(kappa, mu, sigma)
+        scipy_par = self._get_scipy_parameters(kappa, mu)
         return sts.vonmises.pdf(x, *scipy_par)
 
-    def draw_sample(self, n, kappa=None, mu=None, sigma=None):
-        scipy_par = self._get_scipy_parameters(kappa, mu, sigma)
+    def draw_sample(self, n, kappa=None, mu=None):
+        scipy_par = self._get_scipy_parameters(kappa, mu)
         rvs_size = self._get_rvs_size(n, scipy_par)
         return sts.vonmises.rvs(*scipy_par, size=rvs_size)
 
     def _fit_mle(self, sample):
-        p0 = {"shape": self.kappa, "loc": self.mu, "scale": self.sigma}
+        p0 = {"shape": self.kappa, "loc": self.mu}
 
-        fparams = {}
+        fparams = {"fscale" : 1}
 
         if self.f_mu is not None:
             fparams["floc"] = self.f_mu
-        if self.f_sigma is not None:
-            fparams["fscale"] = self.f_sigma
         if self.f_kappa is not None:
             fparams["fshape"] = self.f_kappa
 
-        self.kappa, self.mu, self.sigma = sts.vonmises.fit(
-            sample, p0["shape"], loc=p0["loc"], scale=p0["scale"], **fparams
+        self.kappa, self.mu, _, = sts.vonmises.fit(
+            sample, p0["shape"], loc=p0["loc"], scale=1, **fparams
         )
 
     def _fit_lsq(self, data, weights):
