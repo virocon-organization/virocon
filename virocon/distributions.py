@@ -17,6 +17,7 @@ __all__ = [
     "NormalDistribution",
     "ExponentiatedWeibullDistribution",
     "GeneralizedGammaDistribution",
+    "VonMisesDistribution"
 ]
 
 # The distributions parameters need to have an order, this order is defined by
@@ -1354,23 +1355,28 @@ class VonMisesDistribution(Distribution):
     
     The distributions probability density function is given by [1]_: 
     
-    :math:`f(x) = \\frac{\\exp{k \\cos{x - \\mu}}}{2 \\pi I_0(k) \\sigma}`
+    :math:`f(x) = \\frac{\\exp{\\kappa \\cos{x - \\mu}}}{2 \\pi I_0(k) \\sigma}`
      
     The distribution is used to model wind-wave misalignment in [2]_. 
     Being a circular norm distribution it can be used to model direction. 
     
     Parameters
     ----------
+    kappa: float
+        Shape parameter
+        Defaults to 1.
     mu : float
         Location parameter, the mean.
         Defaults to 0.
     sigma : float
         Scale parameter, the standard deviation.
         Defaults to 1.
-        IF NOT 1 DISTRIBUTION DOES NOT FIT WELL [3]_.
-    kappa: float
-        Shape parameter
-        Defaults to 1.
+        IF NOT FIXED DISTRIBUTION DOES NOT FIT WELL [3]_. The used is
+        recommended to set a value for f_sigma (dafaults to 1). 
+    f_kappa : float
+       Fixed parameter kappa of the von mises distribution (e.g. given 
+       physical parameter). If this parameter is set, kappa is ignored. 
+       Defaults to None.
     f_mu : float
         Fixed parameter mu of the von mises distribution (e.g. given physical
         parameter). If this parameter is set, mu is ignored. Defaults to 
@@ -1378,7 +1384,8 @@ class VonMisesDistribution(Distribution):
     f_sigma : float
        Fixed parameter sigma of the von mises distribution (e.g. given 
        physical parameter). If this parameter is set, sigma is ignored. 
-       Defaults to None
+       Defaults to 1.
+
     
     References
     ----------
@@ -1394,7 +1401,7 @@ class VonMisesDistribution(Distribution):
        last accessed: 22/07/2022
     """
     
-    def __init__(self, kappa = 1, mu=0, sigma=1, f_kappa = None, f_mu=None, f_sigma=None):
+    def __init__(self, kappa = 1, mu=0, sigma=1, f_kappa=None, f_mu=None, f_sigma=1):
 
         self.kappa = kappa # shpae
         self.mu = mu  # location
@@ -1431,6 +1438,8 @@ class VonMisesDistribution(Distribution):
         x : array_like, 
             Points at which the cdf is evaluated.
             Shape: 1-dimensional.
+        kappa : float, optional
+            The shape parameter. Defaults to self.kappa .
         mu : float, optional
             The location parameter. Defaults to self.mu .
         sigma : float, optional
