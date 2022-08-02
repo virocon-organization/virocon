@@ -4,6 +4,7 @@ Distributions for single variables.
 
 import math
 import copy
+import warnings
 
 import numpy as np
 import scipy.stats as sts
@@ -18,6 +19,7 @@ __all__ = [
     "NormalDistribution",
     "ExponentiatedWeibullDistribution",
     "GeneralizedGammaDistribution",
+    "ScipyDistribution",
     "from_scipy_distribution",
 ]
 
@@ -1366,124 +1368,150 @@ class GeneralizedGammaDistribution(Distribution):
         raise NotImplementedError()
 
 
-#  https://stackoverflow.com/a/53640468
-def _list_scipy_parameters(distribution):
-    """List parameters for scipy.stats.distribution.
-    # Arguments
-        distribution: a string or scipy.stats distribution object.
-    # Returns
-        A list of distribution parameter strings.
-    """
-    if isinstance(distribution, str):
-        distribution = getattr(sts, distribution)
-    if distribution.shapes:
-        parameters = [name.strip() for name in distribution.shapes.split(",")]
-    else:
-        parameters = []
-    # assert distribution is continous
-    parameters += ["loc", "scale"]
-    return parameters
+class ScipyDistribution(Distribution):
+
+    # either scipy_dist or scipy_dist_name has to be overwritten by subclass
+    scipy_dist: sts.rv_continuous
+    scipy_dist_name: str
+
+    def __init__(self, *args, **kwargs):
+        try:
+            self.scipy_dist = getattr(sts, self.scipy_dist_name)
+        except AttributeError:
+            pass
+        try:
+            self.scipy_dist
+        except AttributeError:
+            raise TypeError(
+                f"Can't instantiate abstract class {self.__class__.__name__} "
+                "with abstract attribute scipy_dist"
+            )
+        self.scipy_dist_name = self.scipy_dist.name
+        self._param_names = self._list_scipy_parameters(self.scipy_dist)
+        self._set_default_parameter_values()
+
+        # read parameter from args: (shape(s), loc, scale)
+        assert len(args) <= len(self._param_names)
+        for arg, par_name in zip(args, self._param_names):
+            setattr(self, par_name, arg)
+
+        assert len(kwargs) <= 2 * len(self._param_names)
+        for key, arg in kwargs.items():
+            if key in self._param_names:
+                setattr(self, key, arg)
+            elif key.startswith("f_") and key[2:] in self._param_names:
+                setattr(self, key, arg)
+                setattr(self, key[2:], arg)
+            else:
+                assert False
+
+    #  https://stackoverflow.com/a/53640468
+    @staticmethod
+    def _list_scipy_parameters(distribution):
+        """List parameters for scipy.stats.distribution.
+        # Arguments
+            distribution: a string or scipy.stats distribution object.
+        # Returns
+            A list of distribution parameter strings.
+        """
+        if isinstance(distribution, str):
+            distribution = getattr(sts, distribution)
+        if distribution.shapes:
+            parameters = [name.strip() for name in distribution.shapes.split(",")]
+        else:
+            parameters = []
+        # assert distribution is continous
+        parameters += ["loc", "scale"]
+        return parameters
+
+    def _set_default_parameter_values(self):
+        for par_name in self._param_names:
+            if par_name == "loc":
+                setattr(self, par_name, 0)
+            else:
+                setattr(self, par_name, 1)
+            setattr(self, f"f_{par_name}", None)
+
+    @property
+    def parameters(self):
+        return {par_name: getattr(self, par_name) for par_name in self._param_names}
+
+    def _get_scipy_parameters(self, *args, **kwargs):
+        args_with_default = list(self.parameters.values())
+        for i, arg in enumerate(args):
+            if arg is not None:
+                args_with_default[i] = arg
+
+        for key, arg in kwargs.items():
+            try:
+                idx = self._param_names.index(key)
+            except ValueError:
+                # unknown parameter name
+                assert False
+            args_with_default[idx] = arg
+
+        return args_with_default
+
+    def cdf(self, x, *args, **kwargs):
+        scipy_par = self._get_scipy_parameters(*args, **kwargs)
+        return self.scipy_dist.cdf(x, *scipy_par)
+
+    def icdf(self, prob, *args, **kwargs):
+        scipy_par = self._get_scipy_parameters(*args, **kwargs)
+        return self.scipy_dist.ppf(prob, *scipy_par)
+
+    def pdf(self, x, *args, **kwargs):
+        scipy_par = self._get_scipy_parameters(*args, **kwargs)
+        return self.scipy_dist.pdf(x, *scipy_par)
+
+    def draw_sample(self, n, *args, random_state=None, **kwargs):
+        scipy_par = self._get_scipy_parameters(*args, **kwargs)
+        rvs_size = self._get_rvs_size(n, scipy_par)
+        return self.scipy_dist.rvs(*scipy_par, size=rvs_size, random_state=random_state)
+
+    def _fit_mle(self, sample):
+        p0 = [v for k, v in self.parameters.items() if k != "loc" and k != "scale"]
+        loc0 = self.parameters.get("loc", 0)
+        scale0 = self.parameters.get("scale", 1)
+
+        fparams = {}
+        for par_name in self._param_names:
+            val = getattr(self, f"f_{par_name}")
+            if val is not None:
+                fparams[f"f{par_name}"] = val
+
+        if len(fparams) == len(self.parameters):
+            return  # nothing to do
+
+        params = self.scipy_dist.fit(sample, *p0, loc=loc0, scale=scale0, **fparams)
+
+        assert len(params) == len(self._param_names)
+        for par_name, par_value in zip(self._param_names, params):
+            setattr(self, par_name, par_value)
+
+    def _fit_lsq(self, data, weights):
+        raise NotImplementedError()
 
 
-# TODO this returns a Distribution that is local and thus not pickleable
-# maybe use metaclass instead?
+# %% below is deprecated
+
+
 def from_scipy_distribution(scipy_dist: Union[str, sts.rv_continuous]):
+    warnings.warn(
+        "Using from_scipy_distribution is deprecated. Subclass ScipyDistribution instead.",
+        FutureWarning,
+        stacklevel=2,
+    )
     if isinstance(scipy_dist, str):
         scipy_dist = getattr(sts, scipy_dist)
 
-    class ScipyDistribution(Distribution):
+    class ConcreteScipyDistribution(ScipyDistribution):
+        scipy_dist = scipy_dist
 
-        _scipy_dist = scipy_dist
+    new_class_name = scipy_dist.name.capitalize() + "Distribution"
+    ConcreteScipyDistribution.__name__ = new_class_name
+    ConcreteScipyDistribution.__qualname__ = (
+        "from_scipy_distribution.<locals>." + new_class_name
+    )
 
-        def _set_default_parameter_values(self):
-            for par_name in self._param_names:
-                if par_name == "loc":
-                    setattr(self, par_name, 0)
-                else:
-                    setattr(self, par_name, 1)
-                setattr(self, f"f_{par_name}", None)
-
-        def __init__(self, *args, **kwargs):
-            self._param_names = _list_scipy_parameters(self._scipy_dist)
-            self._set_default_parameter_values()
-
-            # read parameter from args: (shape(s), loc, scale)
-            assert len(args) <= len(self._param_names)
-            for arg, par_name in zip(args, self._param_names):
-                setattr(self, par_name, arg)
-
-            assert len(kwargs) <= 2 * len(self._param_names)
-            for key, arg in kwargs.items():
-                if key in self._param_names:
-                    setattr(self, key, arg)
-                elif key.startswith("f_") and key[2:] in self._param_names:
-                    setattr(self, key, arg)
-                    setattr(self, key[2:], arg)
-                else:
-                    assert False
-
-        @property
-        def parameters(self):
-            return {par_name: getattr(self, par_name) for par_name in self._param_names}
-
-        def _get_scipy_parameters(self, *args, **kwargs):
-            args_with_default = list(self.parameters.values())
-            for i, arg in enumerate(args):
-                if arg is not None:
-                    args_with_default[i] = arg
-
-            for key, arg in kwargs.items():
-                try:
-                    idx = self._param_names.index(key)
-                except ValueError:
-                    # unknown parameter name
-                    assert False
-                args_with_default[idx] = arg
-
-            return args_with_default
-
-        def cdf(self, x, *args, **kwargs):
-            scipy_par = self._get_scipy_parameters(*args, **kwargs)
-            return self._scipy_dist.cdf(x, *scipy_par)
-
-        def icdf(self, prob, *args, **kwargs):
-            scipy_par = self._get_scipy_parameters(*args, **kwargs)
-            return self._scipy_dist.ppf(prob, *scipy_par)
-
-        def pdf(self, x, *args, **kwargs):
-            scipy_par = self._get_scipy_parameters(*args, **kwargs)
-            return self._scipy_dist.pdf(x, *scipy_par)
-
-        def draw_sample(self, n, *args, random_state=None, **kwargs):
-            scipy_par = self._get_scipy_parameters(*args, **kwargs)
-            rvs_size = self._get_rvs_size(n, scipy_par)
-            return self._scipy_dist.rvs(
-                *scipy_par, size=rvs_size, random_state=random_state
-            )
-
-        def _fit_mle(self, sample):
-            p0 = [v for k, v in self.parameters.items() if k != "loc" and k != "scale"]
-            loc0 = self.parameters.get("loc", 0)
-            scale0 = self.parameters.get("scale", 1)
-
-            fparams = {}
-            for par_name in self._param_names:
-                val = getattr(self, f"f_{par_name}")
-                if val is not None:
-                    fparams[f"f{par_name}"] = val
-
-            if len(fparams) == len(self.parameters):
-                return  # nothing to do
-
-            params = self._scipy_dist.fit(
-                sample, *p0, loc=loc0, scale=scale0, **fparams
-            )
-
-            assert len(params) == len(self._param_names)
-            for par_name, par_value in zip(self._param_names, params):
-                setattr(self, par_name, par_value)
-
-        def _fit_lsq(self, data, weights):
-            raise NotImplementedError()
-
-    return ScipyDistribution
+    return ConcreteScipyDistribution
