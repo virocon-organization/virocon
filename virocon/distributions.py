@@ -1355,7 +1355,7 @@ class VonMisesDistribution(Distribution):
     
     The distributions probability density function is given by [1]_: 
     
-    :math:`f(x) = \frac{\exp{(\kappa \cos{(x - \mu)})}}{2 \pi I_0(\kappa)}`
+    :math:`f(x) = \\frac{\\exp{(\\kappa \\cos{(x - \\mu)})}}{2 \\pi I_0(\\kappa)}`
      
     The distribution is used to model wind-wave misalignment in [2]_. 
     Being a circular norm distribution it can be used to model direction. 
