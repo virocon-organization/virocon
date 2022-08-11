@@ -9,6 +9,7 @@ GitHub archive:
 * `git commit`
 * `git tag 1.1.3 -m "Your commit message"`
 * `git push --tags origin master`
+* create a release from the tag on Github
 
 PyPI:
 
