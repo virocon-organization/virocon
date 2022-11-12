@@ -1,5 +1,0 @@
-name: virocon-build
-dependencies:
-  - python=3.9
-  - anaconda-client
-  - conda-build

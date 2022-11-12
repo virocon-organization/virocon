@@ -1,6 +1,6 @@
 # Releasing new versions
 
-When a new version is released, we make sure that it is available in GitHub archive, on PyPi and on anaconda.org.
+When a new version is released, we make sure that it is available in GitHub archive, on PyPi and on conda-forge.
 
 GitHub archive:
 
@@ -31,14 +31,9 @@ PyPI(old approach, uploads only a wheel):
 * `twine upload dist/* -r pypitest`
 * `twine upload dist/*`
 
-Anaconda:
+conda-forge:
 
-* `conda env create -f dev-info/virocon-build.yml` (create build env, if not done yet)
-* `conda env update -f dev-info/virocon-build.yml --prune` (update the build env if necessary)
-* `conda activate virocon-build`
-* `conda build --python 3.9 conda-recipe`
-* `anaconda login` (if not already logged in)
-* `anaconda upload -u virocon-organization <path of file mentioned in build>`
+* Tell kawindme to update version and checksum for conda-forge feedstock.
 
  ## Generating HTML documentation on the local machine
  
