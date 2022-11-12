@@ -68,7 +68,7 @@ setup(
         "test": ["pytest", "pytest-cov", "coverage", "coveralls"],
     },
     project_urls={  # Optional
-        "Documentation": "https://virocon-organization.github.io/virocon/",
+        "Documentation": "https://virocon.readthedocs.io",
         "Source Code": "https://github.com/virocon-organization/virocon",
     },
 )
