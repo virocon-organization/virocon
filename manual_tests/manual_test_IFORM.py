@@ -133,7 +133,12 @@ plt.plot(x[:, 0], my_f_expweib, label="my_expweib")
 plt.plot(x[:, 0], ref_f_expweib, label="ref_expweib")
 plt.legend()
 
-fig, axes = plt.subplots(3, 3, sharex=True, sharey=True,)
+fig, axes = plt.subplots(
+    3,
+    3,
+    sharex=True,
+    sharey=True,
+)
 for i in range(len(my_given)):
     ax = axes.flatten()[i]
     ax.plot(x[:, 1], my_f_ln[:, i], label="my_ln")

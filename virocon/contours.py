@@ -411,7 +411,7 @@ class HighestDensityContour(Contour):
         if limits is None:
             alpha = self.alpha
             marginal_icdf = self.model.marginal_icdf
-            non_exceedance_p = 1 - 0.2 ** n_dim * alpha
+            non_exceedance_p = 1 - 0.2**n_dim * alpha
             limits = [
                 (0, marginal_icdf(non_exceedance_p, dim, precision_factor=0.05))
                 for dim in range(n_dim)
@@ -900,7 +900,7 @@ class AndContour(Contour):
             unity_vector = np.empty((2, 1))
             unity_vector[0] = np.cos(theta / 180 * np.pi)
             unity_vector[1] = np.sin(theta / 180 * np.pi)
-            max_distance = np.sqrt(x_marginal ** 2 + y_marginal ** 2)
+            max_distance = np.sqrt(x_marginal**2 + y_marginal**2)
             rel_dist = 0.2
             rel_step_size = 0.1
             current_pe = 0  # pe = probability of exceedance.
@@ -1041,10 +1041,10 @@ class OrContour(Contour):
             unity_vector = np.empty((2, 1))
             unity_vector[0] = np.cos(theta / 180 * np.pi)
             unity_vector[1] = np.sin(theta / 180 * np.pi)
-            max_distance = np.sqrt(x_marginal ** 2 + y_marginal ** 2)
+            max_distance = np.sqrt(x_marginal**2 + y_marginal**2)
             rel_dist = 0.2
             rel_step_size = 0.1
-            current_pe = 0 # pe = probability of exceedance.
+            current_pe = 0  # pe = probability of exceedance.
             nr_iterations = 0
             while np.abs((current_pe - alpha)) / alpha > allowed_error:
                 abs_dist = rel_dist * max_distance

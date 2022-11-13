@@ -35,7 +35,7 @@ def _logistics4(x, a=1, b=1, c=-1, d=1):
 
 
 def _alpha3(x, a, b, c, d_of_x):
-    return (a + b * x ** c) / 2.0445 ** (1 / d_of_x(x))
+    return (a + b * x**c) / 2.0445 ** (1 / d_of_x(x))
 
 
 # Define the conditional distribution for Hs.

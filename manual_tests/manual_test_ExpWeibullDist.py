@@ -77,7 +77,13 @@ plt.plot(x, my_pdf, label="my pdf")
 plt.plot(x, ref_pdf, label="ref pdf")
 plt.plot(
     x,
-    sts.exponweib.pdf(x, a=true_delta, c=true_beta, loc=0, scale=true_alpha,),
+    sts.exponweib.pdf(
+        x,
+        a=true_delta,
+        c=true_beta,
+        loc=0,
+        scale=true_alpha,
+    ),
     label="true pdf",
 )
 plt.hist(expweibull_samples, density=True)

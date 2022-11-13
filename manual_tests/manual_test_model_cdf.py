@@ -14,7 +14,7 @@ from virocon import (
 # OMEA2019 A
 # A 3-parameter power function (a dependence function).
 def _power3(x, a=1.47, b=0.214, c=0.641):
-    return a + b * x ** c
+    return a + b * x**c
 
 
 # A 3-parameter exponential function (a dependence function).
