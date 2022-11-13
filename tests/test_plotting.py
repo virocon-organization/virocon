@@ -27,7 +27,7 @@ def seastate_model():
     """
 
     def _power3(x, a=0.1000, b=1.489, c=0.1901):
-        return a + b * x ** c
+        return a + b * x**c
 
     def _exp3(x, a=0.0400, b=0.1748, c=-0.2243):
         return a + b * np.exp(c * x)
@@ -87,7 +87,7 @@ def test_plot_dependence_function(seastate_model, fitted_model, semantics_fitted
         par_rename={"alpha": r"$\alpha$", "beta": r"$\beta$"},
     )
     # plt.show()
-    plt.close('all')
+    plt.close("all")
 
 
 def test_plot_2D_isodensity():
@@ -99,8 +99,9 @@ def test_plot_2D_isodensity():
     limits = [(0, 40), (0, 15)]
     levels = [0.00001, 0.0001, 0.001]
     plot_2D_isodensity(model, data, limits=limits, levels=levels)
-    #plt.show()
-    plt.close('all')
+    # plt.show()
+    plt.close("all")
+
 
 def test_plot_2D_contour():
     dist_descriptions, fit_descriptions, semantics = get_OMAE2020_V_Hs()
@@ -109,5 +110,5 @@ def test_plot_2D_contour():
     model.fit(data, fit_descriptions)
     contour = IFORMContour(model, alpha=0.001)
     plot_2D_contour(contour)
-    #plt.show()
-    plt.close('all')
+    # plt.show()
+    plt.close("all")

@@ -20,12 +20,12 @@ from virocon import (
 def seastate_model():
     """
     This joint distribution model described by Vanem and Bitner-Gregersen (2012)
-    is widely used in academia. Here, we use it for evaluation. 
+    is widely used in academia. Here, we use it for evaluation.
     DOI: 10.1016/j.apor.2012.05.006
     """
 
     def _power3(x, a=0.1000, b=1.489, c=0.1901):
-        return a + b * x ** c
+        return a + b * x**c
 
     # A 3-parameter exponential function (a dependence function).
     def _exp3(x, a=0.0400, b=0.1748, c=-0.2243):
@@ -50,7 +50,7 @@ def seastate_model():
 
 def test_IFORMContour(seastate_model):
     """
-    Compare the coordinates of an IFORM contour with the results from Haselsteiner 
+    Compare the coordinates of an IFORM contour with the results from Haselsteiner
     et al. (2017; DOI: 10.1016/j.coastaleng.2017.03.002)
     """
     alpha = calculate_alpha(3, 25)
@@ -63,7 +63,7 @@ def test_IFORMContour(seastate_model):
 
 def test_ISORMContour(seastate_model):
     """
-    Compare the coordinates of an ISORM contour with the results from Haselsteiner 
+    Compare the coordinates of an ISORM contour with the results from Haselsteiner
     et al. (2017; DOI: 10.1016/j.coastaleng.2017.03.002, Fig. 8). The shown
     308.8-year IFORM contour is the same as an 25-year IFORM contour.
     """
@@ -153,7 +153,7 @@ def test_DirectSamplingContour(seastate_model):
 
 def test_HighestDensityContour(seastate_model):
     """
-    Compare the coordinates of a HD contour with the results from Haselsteiner 
+    Compare the coordinates of a HD contour with the results from Haselsteiner
     et al. (2017; DOI: 10.1016/j.coastaleng.2017.03.002, Fig. 5)
     """
     alpha = calculate_alpha(3, 25)
@@ -174,18 +174,20 @@ def test_AndContour_correct_coordinates(seastate_model):
     coords = contour.coordinates
 
     # Significant wave height at an angle of 0 deg.
-    np.testing.assert_allclose(coords[0,0], 9, atol=0.7)
+    np.testing.assert_allclose(coords[0, 0], 9, atol=0.7)
 
     # Zero-up-crossing period at an angle of 90 deg.
-    np.testing.assert_allclose(coords[-2,1], 11, atol=0.5)
+    np.testing.assert_allclose(coords[-2, 1], 11, atol=0.5)
 
 
 def test_AndContour_too_small_sample(seastate_model):
     alpha = 0.01
     with pytest.warns(UserWarning):
-        n = 80 # Not sufficient datapoints to find precise alpha-regions.
+        n = 80  # Not sufficient datapoints to find precise alpha-regions.
         sample = seastate_model.draw_sample(n)
-        contour = AndContour(seastate_model, alpha, deg_step=1, sample=sample, allowed_error=0.01)
+        contour = AndContour(
+            seastate_model, alpha, deg_step=1, sample=sample, allowed_error=0.01
+        )
 
 
 def test_OrContour_correct_coordinates(seastate_model):
@@ -196,15 +198,17 @@ def test_OrContour_correct_coordinates(seastate_model):
     coords = contour.coordinates
 
     # Significant wave height at the lowest angle (close to 0 deg).
-    np.testing.assert_allclose(coords[0,1], 11, atol=0.5)
+    np.testing.assert_allclose(coords[0, 1], 11, atol=0.5)
 
     # Zero-up-crossing period at the highest angle (close to 90 deg).
-    np.testing.assert_allclose(coords[-4,0], 8.5, atol=0.7)    
+    np.testing.assert_allclose(coords[-4, 0], 8.5, atol=0.7)
 
 
 def test_OrContour_too_small_sample(seastate_model):
     alpha = 0.01
     with pytest.warns(UserWarning):
-        n = 80 # Not sufficient datapoints to find precise alpha-regions.
+        n = 80  # Not sufficient datapoints to find precise alpha-regions.
         sample = seastate_model.draw_sample(n)
-        contour = OrContour(seastate_model, alpha, deg_step=1, sample=sample, allowed_error=0.01)
+        contour = OrContour(
+            seastate_model, alpha, deg_step=1, sample=sample, allowed_error=0.01
+        )

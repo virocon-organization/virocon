@@ -17,16 +17,16 @@ __all__ = ["GlobalHierarchicalModel"]
 class MultivariateModel(ABC):
     """
     Abstract base class for MultivariateModel.
-    
+
     Statistical model of multiple variables.
-    
+
     """
 
     @abstractmethod
     def pdf(self, *args, **kwargs):
         """
         Probability density function.
-        
+
         """
         pass
 
@@ -34,7 +34,7 @@ class MultivariateModel(ABC):
     def cdf(self, *args, **kwargs):
         """
         Cumulative distribution function.
-        
+
         """
         pass
 
@@ -42,7 +42,7 @@ class MultivariateModel(ABC):
     def marginal_pdf(self, *args, **kwargs):
         """
         Marginal probability density function.
-        
+
         """
         pass
 
@@ -50,7 +50,7 @@ class MultivariateModel(ABC):
     def marginal_cdf(self, *args, **kwargs):
         """
         Marginal cumulative distribution function.
-        
+
         """
         pass
 
@@ -58,7 +58,7 @@ class MultivariateModel(ABC):
     def marginal_icdf(self, *args, **kwargs):
         """
         Marginal inverse cumulative distribution function.
-        
+
         """
         pass
 
@@ -66,7 +66,7 @@ class MultivariateModel(ABC):
     def draw_sample(self, *args, **kwargs):
         """
         Draw a random sample of length n.
-       
+
         """
         pass
 
@@ -74,84 +74,84 @@ class MultivariateModel(ABC):
 class GlobalHierarchicalModel(MultivariateModel):
     """
     Hierarchical probabilistic model.
-    
-    Probabilistic model that covers the complete range of an environmental 
-    variable ("global"), following a particular hierarchical dependence 
-    structure. The factorization describes a hierarchy where a random 
-    variable with index i can only depend upon random variables with 
+
+    Probabilistic model that covers the complete range of an environmental
+    variable ("global"), following a particular hierarchical dependence
+    structure. The factorization describes a hierarchy where a random
+    variable with index i can only depend upon random variables with
     indices less than i [1]_ .
-       
+
     Parameters
-    ----------   
+    ----------
     dist_descriptions : dict
         Description of the distributions.
-        
+
     Attributes
     ----------
     distributions : list
         The distributions used in the GlobalHierachicalModel.
     conditional_on : list
-        Indicates the dependencies between the variables of the model. One 
-        entry per distribution/dimension. Contains either None or int. If the 
-        ith entry is None, the ith distribution is unconditional. If the ith 
+        Indicates the dependencies between the variables of the model. One
+        entry per distribution/dimension. Contains either None or int. If the
+        ith entry is None, the ith distribution is unconditional. If the ith
         entry is an int j, the ith distribution depends on the jth dimension.
     interval_slicers : list
-        One interval slicer per dimension. The interval slicer used for 
-        slicing the intervals of the corresponding dimension, when necessary 
+        One interval slicer per dimension. The interval slicer used for
+        slicing the intervals of the corresponding dimension, when necessary
         during fitting.
     n_dim : int
         The number of dimensions, i.e. the number of variables of the model.
-        
-       
+
+
     References
     ----------
     .. [1] Haselsteiner, A.F.; Sander, A.; Ohlendorf, J.H.; Thoben, K.D. (2020)
         Global hierarchical models for wind and wave contours: physical
         interpretations of the dependence functions. OMAE 2020, Fort Lauderdale,
-        USA. Proceedings of the 39th International Conference on Ocean, 
+        USA. Proceedings of the 39th International Conference on Ocean,
         Offshore and Arctic Engineering.
-    
+
     Examples
     --------
-    Create a Hs-Tz model and fit it to the available data. The following 
-    example follows the methodology of OMAE2020 [1]_ . 
-    
-    Example 1.1: 
-        
+    Create a Hs-Tz model and fit it to the available data. The following
+    example follows the methodology of OMAE2020 [1]_ .
+
+    Example 1.1:
+
     Load the predefined OMAE 2020 model of Hs-Tz.
-  
-    >>> from virocon import (GlobalHierarchicalModel, get_OMAE2020_Hs_Tz, 
-    ...                      read_ec_benchmark_dataset) 
+
+    >>> from virocon import (GlobalHierarchicalModel, get_OMAE2020_Hs_Tz,
+    ...                      read_ec_benchmark_dataset)
     >>> data = read_ec_benchmark_dataset("datasets/ec-benchmark_dataset_D_1year.txt")
     >>> dist_descriptions, fit_descriptions, semantics = get_OMAE2020_Hs_Tz()
     >>> ghm = GlobalHierarchicalModel(dist_descriptions)
     >>> ghm.fit(data, fit_descriptions=fit_descriptions)
-    
-    Example 1.2: 
-        
+
+    Example 1.2:
+
     Create the same OMEA 2020 model manually.
-    
+
     >>> from virocon import (DependenceFunction, ExponentiatedWeibullDistribution,
-    ...                      LogNormalDistribution, WidthOfIntervalSlicer) 
-    
+    ...                      LogNormalDistribution, WidthOfIntervalSlicer)
+
     >>> def _asymdecrease3(x, a, b, c):
     ...     return a + b / (1 + c * x)
-    
+
     >>> def _lnsquare2(x, a, b, c):
     ...     return np.log(a + b * np.sqrt(np.divide(x, 9.81)))
-    
-    >>> bounds = [(0, None), 
-    ...           (0, None), 
+
+    >>> bounds = [(0, None),
+    ...           (0, None),
     ...           (None, None)]
-    
+
     >>> sigma_dep = DependenceFunction(_asymdecrease3, bounds=bounds)
     >>> mu_dep = DependenceFunction(_lnsquare2, bounds=bounds)
-    
+
     >>> dist_description_hs = {"distribution" : ExponentiatedWeibullDistribution(),
-    ...                        "intervals" : WidthOfIntervalSlicer(width=0.5, 
+    ...                        "intervals" : WidthOfIntervalSlicer(width=0.5,
     ...                                                            min_n_points=50)
     ...                       }
-    
+
     >>> dist_description_tz = {"distribution" : LogNormalDistribution(),
     ...                        "conditional_on" : 0,
     ...                        "parameters" : {"sigma" : sigma_dep,
@@ -159,20 +159,20 @@ class GlobalHierarchicalModel(MultivariateModel):
     ...                                        },
     ...                       }
 
-    
+
     >>> dist_descriptions = [dist_description_hs, dist_description_tz]
-    
+
     >>> fit_description_hs = {"method" : "wlsq", "weights" : "quadratic"}
     >>> fit_descriptions = [fit_description_hs, None]
-    
+
     >>> semantics = {"names" : ["Significant wave height", "Zero-crossing wave period"],
     ...              "symbols" : ["H_s", "T_z"],
     ...              "units" : ["m", "s"]
     ...              }
-    
+
     >>> ghm = GlobalHierarchicalModel(dist_descriptions)
     >>> ghm.fit(data, fit_descriptions=fit_descriptions)
-    
+
     """
 
     _dist_description_keys = {
@@ -282,14 +282,14 @@ class GlobalHierarchicalModel(MultivariateModel):
     def fit(self, data, fit_descriptions=None):
         """
         Fit joint model to data.
-        
+
         Method of estimating the parameters of a probability distribution to
         given data.
-        
+
         Parameters
         ----------
         data : array-like
-            The data that should be used to fit the joint model. 
+            The data that should be used to fit the joint model.
             Shape: (number of realizations, n_dim)
         fit_description : dict
             Description of the fit method. Defaults to None.
@@ -339,14 +339,14 @@ class GlobalHierarchicalModel(MultivariateModel):
     def pdf(self, x):
         """
         Probability density function.
-        
+
         Parameters
         ----------
         x : array_like
             Points at which the pdf is evaluated.
-            Shape: (n, n_dim), where n is the number of points at which the 
+            Shape: (n, n_dim), where n is the number of points at which the
             pdf should be evaluated.
-            
+
         """
 
         # Ensure that x is a 2D numpy array.
@@ -371,14 +371,14 @@ class GlobalHierarchicalModel(MultivariateModel):
     def cdf(self, x):
         """
         Cumulative distribution function.
-        
+
         Parameters
         ----------
         x : array_like
             Points at which the cdf is evaluated.
-            Shape: (n, n_dim), where n is the number of points at which the 
+            Shape: (n, n_dim), where n is the number of points at which the
             cdf should be evaluated.
-        
+
         """
 
         # Ensure that x is a 2D numpy array.
@@ -420,7 +420,7 @@ class GlobalHierarchicalModel(MultivariateModel):
     def marginal_pdf(self, x, dim):
         """
         Marginal probability density function.
-                
+
         Parameters
         ----------
         x : array_like
@@ -428,7 +428,7 @@ class GlobalHierarchicalModel(MultivariateModel):
             Shape: 1-dimensional
         dim : int
             The dimension for which the marginal is calculated.
-   
+
         """
 
         # x = x.reshape((-1, 1))
@@ -478,7 +478,7 @@ class GlobalHierarchicalModel(MultivariateModel):
 
         """
         Marginal cumulative distribution function.
-                
+
         Parameters
         ----------
         x : array_like
@@ -486,7 +486,7 @@ class GlobalHierarchicalModel(MultivariateModel):
             Shape: 1-dimensional
         dim : int
             The dimension for which the marginal is calculated.
-  
+
         """
 
         # x = x.reshape((-1, 1))
@@ -538,9 +538,9 @@ class GlobalHierarchicalModel(MultivariateModel):
 
         """
         Marginal inverse cumulative distribution function.
-        
+
         Estimates the marginal icdf by drawing a Monte-Carlo sample.
-                        
+
         Parameters
         ----------
         p : array_like
@@ -549,11 +549,11 @@ class GlobalHierarchicalModel(MultivariateModel):
         dim : int
             The dimension for which the marginal is calculated.
         precision_factor : float
-            Precision factor that determines the size of the sample to draw. 
-            A sample is drawn of which on average precision_factor * 100 
+            Precision factor that determines the size of the sample to draw.
+            A sample is drawn of which on average precision_factor * 100
             realizations exceed the quantile. Minimum sample size is 100000.
             Defaults to 1.0
-   
+
         """
 
         p = np.array(p)
@@ -575,12 +575,12 @@ class GlobalHierarchicalModel(MultivariateModel):
     def draw_sample(self, n):
         """
         Draw a random sample of size n.
-        
+
         Parameters
         ----------
         n : int
             Sample size.
-       
+
         """
 
         samples = np.zeros((n, self.n_dim))

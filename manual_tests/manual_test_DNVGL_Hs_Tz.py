@@ -151,7 +151,12 @@ plt.plot(x[:, 0], my_f_weibull, label="my_weibull")
 plt.plot(x[:, 0], ref_f_weibull, label="ref_weibull")
 plt.legend()
 
-fig, axes = plt.subplots(3, 3, sharex=True, sharey=True,)
+fig, axes = plt.subplots(
+    3,
+    3,
+    sharex=True,
+    sharey=True,
+)
 givens = fit.multiple_fit_inspection_data[1].scale_at
 for i in range(len(ref_given)):
     ax = axes.flatten()[i]
