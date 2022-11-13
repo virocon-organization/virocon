@@ -35,7 +35,7 @@ data.index = pd.to_datetime(data.pop(data.columns[0]), format="%Y-%m-%d-%H")
 
 # A 3-parameter power function, which will be used as a dependence function.
 def _power3(x, a, b, c):
-    return a + b * x ** c
+    return a + b * x**c
 
 
 # A 3-parameter exponential function, which will be used as a dependence function.
@@ -45,7 +45,7 @@ def _exp3(x, a, b, c):
 
 # A 3- parameter alpha function, which will be used as a dependence function.
 def _alpha3(x, a, b, c, d_of_x):
-    return (a + b * x ** c) / 2.0445 ** (1 / d_of_x(x))
+    return (a + b * x**c) / 2.0445 ** (1 / d_of_x(x))
 
 
 # A 4- parameter logistic function, which will be used as a dependence function.
@@ -85,7 +85,10 @@ dist_description_1 = {
     "distribution": ExponentiatedWeibullDistribution(f_delta=5),
     "intervals": WidthOfIntervalSlicer(0.5),
     "conditional_on": 0,
-    "parameters": {"alpha": alpha3, "beta": logistics4,},
+    "parameters": {
+        "alpha": alpha3,
+        "beta": logistics4,
+    },
 }
 # Zero-up-crossing period.
 dist_description_2 = {

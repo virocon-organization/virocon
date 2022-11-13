@@ -68,7 +68,9 @@ class NSphere:
         self.rela_e_pot = self._pot_energy()
         self.improvement = (self.init_e_pot - self.rela_e_pot) / self.init_e_pot * 100
 
-    def _relax_points(self,):
+    def _relax_points(
+        self,
+    ):
         """
         Iteratively move points to reduce potential energy.
 
@@ -93,7 +95,12 @@ class NSphere:
             tang_forces = self._tangential_forces(self._get_forces())
 
             # Norm to max force
-            max_force = np.max(np.linalg.norm(tang_forces, axis=1,))
+            max_force = np.max(
+                np.linalg.norm(
+                    tang_forces,
+                    axis=1,
+                )
+            )
             tang_forces /= max_force
 
             self.unit_sphere_points += tang_forces * tau
@@ -130,7 +137,9 @@ class NSphere:
         # normalize
         return rand_points / radii
 
-    def _pot_energy(self,):
+    def _pot_energy(
+        self,
+    ):
         """
         Calculates the potential energy of the current state.
 
@@ -154,9 +163,11 @@ class NSphere:
 
         distances = np.linalg.norm(dist_vectors, axis=1, keepdims=True)
 
-        return np.sum(distances ** -1)
+        return np.sum(distances**-1)
 
-    def _get_forces(self,):
+    def _get_forces(
+        self,
+    ):
         """
         Calculates the Coloumb forces.
 

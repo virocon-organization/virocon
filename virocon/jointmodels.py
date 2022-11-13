@@ -229,7 +229,9 @@ class MultivariateModel(ABC):
 
         # set distribution lower limit to zero TODO is there a better way?
         # x_min = 0
-        x_min = 1e-16  # prevents divide by zero in transform in pdf of transformed model
+        x_min = (
+            1e-16  # prevents divide by zero in transform in pdf of transformed model
+        )
         # TODO is there a better way to find an upper limit of the distribution?
         x_max = 30
 
@@ -264,9 +266,7 @@ class MultivariateModel(ABC):
                 partial_samples.append(x[accept_mask])
 
         if debug:
-            print(
-                f"acceptance rate: {n_counter / (n_counter + reject_counter)}"
-            )
+            print(f"acceptance rate: {n_counter / (n_counter + reject_counter)}")
 
         if i == max_iter - 1:
             warnings.warn(
@@ -403,9 +403,7 @@ class GlobalHierarchicalModel(MultivariateModel):
             # dist_class = dist_desc["distribution"]
             dist = dist_desc["distribution"]
             self.interval_slicers.append(
-                dist_desc.get(
-                    "intervals", NumberOfIntervalsSlicer(n_intervals=10)
-                )
+                dist_desc.get("intervals", NumberOfIntervalsSlicer(n_intervals=10))
             )
 
             if "conditional_on" in dist_desc:
@@ -446,9 +444,7 @@ class GlobalHierarchicalModel(MultivariateModel):
                     f"is mandatory but was missing for dimension {i}."
                 )
 
-            unknown_keys = set(dist_desc).difference(
-                self._dist_description_keys
-            )
+            unknown_keys = set(dist_desc).difference(self._dist_description_keys)
             if len(unknown_keys) > 0:
                 raise ValueError(
                     "Unknown key(s) in dist_description for "
@@ -464,9 +460,7 @@ class GlobalHierarchicalModel(MultivariateModel):
             conditioning_data
         )
 
-        dist_data = [
-            data[int_slice, dist_idx] for int_slice in interval_slices
-        ]
+        dist_data = [data[int_slice, dist_idx] for int_slice in interval_slices]
 
         return dist_data, interval_centers, interval_boundaries
 
@@ -581,9 +575,7 @@ class GlobalHierarchicalModel(MultivariateModel):
                 fs[:, i] = self.distributions[i].pdf(x[:, i])
             else:
                 cond_idx = self.conditional_on[i]
-                fs[:, i] = self.distributions[i].pdf(
-                    x[:, i], given=x[:, cond_idx]
-                )
+                fs[:, i] = self.distributions[i].pdf(x[:, i], given=x[:, cond_idx])
 
         return np.prod(fs, axis=-1)
 
@@ -614,9 +606,7 @@ class GlobalHierarchicalModel(MultivariateModel):
         n_dim = self.n_dim
         integral_order = list(range(n_dim))
         del integral_order[dim]  # we do not integrate over the dim'th variable
-        integral_order = integral_order[
-            ::-1
-        ]  # we integrate over last dimensions first
+        integral_order = integral_order[::-1]  # we integrate over last dimensions first
 
         # scipy.integrate.nquad expects one argument per dimension
         # thus we have to wrap the (joint) pdf
@@ -642,9 +632,7 @@ class GlobalHierarchicalModel(MultivariateModel):
         f = np.empty_like(x)
         integral_func = get_integral_func()
         for i, x_i in enumerate(x):
-            result, _ = integrate.nquad(
-                integral_func, ranges=limits, args=[x_i]
-            )
+            result, _ = integrate.nquad(integral_func, ranges=limits, args=[x_i])
             f[i] = result
         return f
 
@@ -677,9 +665,7 @@ class GlobalHierarchicalModel(MultivariateModel):
         n_dim = self.n_dim
         integral_order = list(range(n_dim))
         del integral_order[dim]
-        integral_order = integral_order[
-            ::-1
-        ]  # we integrate over last dimensions first
+        integral_order = integral_order[::-1]  # we integrate over last dimensions first
         integral_order = integral_order + [
             dim
         ]  # finally we integrate over the dim'th var
@@ -706,9 +692,7 @@ class GlobalHierarchicalModel(MultivariateModel):
         F = np.empty_like(x)
         integral_func = get_integral_func()
         for i, x_i in enumerate(x):
-            result, _ = integrate.nquad(
-                integral_func, ranges=limits + [(0, x_i)]
-            )
+            result, _ = integrate.nquad(integral_func, ranges=limits + [(0, x_i)])
             F[i] = result
         return F
 

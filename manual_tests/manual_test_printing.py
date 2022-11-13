@@ -32,7 +32,7 @@ def _logistics4(x, a=1, b=1, c=-1, d=1):
 # exponentiated Weibull distribution with shape2=5 (see 'Global hierarchical
 # models for wind and wave contours').
 def _alpha3(x, a, b, c, d_of_x):
-    return (a + b * x ** c) / 2.0445 ** (1 / d_of_x(x))
+    return (a + b * x**c) / 2.0445 ** (1 / d_of_x(x))
 
 
 logistics_bounds = [(0, None), (0, None), (None, 0), (0, None)]
@@ -53,7 +53,10 @@ dist_description_vs = {
 dist_description_hs = {
     "distribution": ExponentiatedWeibullDistribution(f_delta=5),
     "conditional_on": 0,
-    "parameters": {"alpha": alpha_dep, "beta": beta_dep,},
+    "parameters": {
+        "alpha": alpha_dep,
+        "beta": beta_dep,
+    },
 }
 
 

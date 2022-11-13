@@ -16,10 +16,10 @@ __all__ = [
 class IntervalSlicer(ABC):
     """
     Abstract base class for IntervalSlicer
-        
+
     Sorts the conditional variable (e.g Tp|Hs) into intervals of the
-    independent variable (Hs). 
-        
+    independent variable (Hs).
+
     """
 
     def __init__(self, **kwargs):
@@ -41,16 +41,16 @@ class IntervalSlicer(ABC):
     def slice_(self, data):
         """
         Slices the data into intervals of equal width.
-        
+
         Parameters
-        ----------   
+        ----------
         data : one-dimensional ndarray.
             Contains the data of the independent variable.
-            
+
         Returns
         -------
         interval_slices: list of ndarray
-            Boolean arrays with same length as data. One for each interval. 
+            Boolean arrays with same length as data. One for each interval.
             True where a value in data falls in the corresponding interval.
 
         interval_references: ndarray
@@ -58,7 +58,7 @@ class IntervalSlicer(ABC):
 
         interval_boundaries: list of tuple
             List of (upper, lower) limit tuples. One tuple for each interval.
-        
+
         """
 
         interval_slices, interval_references, interval_boundaries = self._slice(data)
@@ -100,43 +100,43 @@ class IntervalSlicer(ABC):
 
 class WidthOfIntervalSlicer(IntervalSlicer):
     """
-        IntervalSlicer that uses width of intervals to define intervals.
-        
-        Parameters
-        ----------   
-        width : float
-            The width of each interval.
-        reference : str or callable, optional
-            Determines the reference value for each interval. 
-            If a string the following keywords are available: 
-            'center': use the center / midpoint of the interval as reference,
-            'left': use the left / lower bound of the interval and 
-            'right': use the right / upper bound of the interval as reference.
-            If a callable, a function is expected, that maps from an array with 
-            the values of an interval to the reference of that interval
-            (e.g. np.median). Defaults to 'center'.
-        right_open : boolean, optional
-            Determines how the boundaries of the intervals are defined. Either 
-            the left or the right boundary is inclusive. Defaults to True, 
-            meaning the left boundary is inclusive and the right exclusive, 
-            i.e. :math:`[a, b)`.
-        value_range : tuple, optional
-            Determines the value range used for creating the intervals. 
-            If None, 0 and np.max(data) are used.
-            If a 2-tuple it contains the lower and upper limit of the range. 
-            If either entry of the tuple is None the default for that entry is 
-            used. Defaults to None.
-        min_n_points : int, optional
-            Minimal number of points per interval. Intervals with fewer points 
-            are discarded. Defaults to 50.
-        min_n_intervals : int, optional
-            Minimal number of intervals. Raises a RuntimeError if slicing 
-            resulted in fewer intervals. Defaults to 3.
-            
-        Raises
-        ------
-        RuntimeError
-            if slicing resulted in fewer than min_n_intervals intervals.
+    IntervalSlicer that uses width of intervals to define intervals.
+
+    Parameters
+    ----------
+    width : float
+        The width of each interval.
+    reference : str or callable, optional
+        Determines the reference value for each interval.
+        If a string the following keywords are available:
+        'center': use the center / midpoint of the interval as reference,
+        'left': use the left / lower bound of the interval and
+        'right': use the right / upper bound of the interval as reference.
+        If a callable, a function is expected, that maps from an array with
+        the values of an interval to the reference of that interval
+        (e.g. np.median). Defaults to 'center'.
+    right_open : boolean, optional
+        Determines how the boundaries of the intervals are defined. Either
+        the left or the right boundary is inclusive. Defaults to True,
+        meaning the left boundary is inclusive and the right exclusive,
+        i.e. :math:`[a, b)`.
+    value_range : tuple, optional
+        Determines the value range used for creating the intervals.
+        If None, 0 and np.max(data) are used.
+        If a 2-tuple it contains the lower and upper limit of the range.
+        If either entry of the tuple is None the default for that entry is
+        used. Defaults to None.
+    min_n_points : int, optional
+        Minimal number of points per interval. Intervals with fewer points
+        are discarded. Defaults to 50.
+    min_n_intervals : int, optional
+        Minimal number of intervals. Raises a RuntimeError if slicing
+        resulted in fewer intervals. Defaults to 3.
+
+    Raises
+    ------
+    RuntimeError
+        if slicing resulted in fewer than min_n_intervals intervals.
     """
 
     def __init__(
@@ -214,42 +214,42 @@ class WidthOfIntervalSlicer(IntervalSlicer):
 
 
 class NumberOfIntervalsSlicer(IntervalSlicer):
-    """     
-        IntervalSlicer that uses a number of intervals to define intervals of 
-        equal width.
-        
-        Parameters
-        ----------   
-        n_intervals : int
-            Number of intervals the dataset is split into.
-        reference : str or callable, optional
-            Determines the reference value for each interval. 
-            If a string the following keywords are available: 
-            'center': use the center / midpoint of the interval as reference,
-            'left': use the left / lower bound of the interval and 
-            'right': use the right / upper bound of the interval as reference.
-            If a callable, a function is expected, that maps from an array with 
-            the values of an interval to the reference of that interval
-            (e.g. np.median). Defaults to 'center'.
-        include_max : boolean, optional
-            Determines if the upper boundary of the last interval is inclusive.
-            True if inclusive. Defaults to True.
-        value_range : tuple or None, optional
-            Determines the value range used for creating n_intervals equally 
-            sized intervals. If a tuple it contains the upper and lower limit 
-            of the range. If None the min and max of the data are used. 
-            Defaults to None.
-        min_n_points : int, optional
-            Minimal number of points per interval. Intervals with fewer points 
-            are discarded. Defaults to 50.
-        min_n_intervals : int, optional
-            Minimal number of intervals. Raises a RuntimeError if slicing 
-            resulted in fewer intervals. Defaults to 3.
-            
-        Raises
-        ------
-        RuntimeError
-            if slicing resulted in fewer than min_n_intervals intervals.
+    """
+    IntervalSlicer that uses a number of intervals to define intervals of
+    equal width.
+
+    Parameters
+    ----------
+    n_intervals : int
+        Number of intervals the dataset is split into.
+    reference : str or callable, optional
+        Determines the reference value for each interval.
+        If a string the following keywords are available:
+        'center': use the center / midpoint of the interval as reference,
+        'left': use the left / lower bound of the interval and
+        'right': use the right / upper bound of the interval as reference.
+        If a callable, a function is expected, that maps from an array with
+        the values of an interval to the reference of that interval
+        (e.g. np.median). Defaults to 'center'.
+    include_max : boolean, optional
+        Determines if the upper boundary of the last interval is inclusive.
+        True if inclusive. Defaults to True.
+    value_range : tuple or None, optional
+        Determines the value range used for creating n_intervals equally
+        sized intervals. If a tuple it contains the upper and lower limit
+        of the range. If None the min and max of the data are used.
+        Defaults to None.
+    min_n_points : int, optional
+        Minimal number of points per interval. Intervals with fewer points
+        are discarded. Defaults to 50.
+    min_n_intervals : int, optional
+        Minimal number of intervals. Raises a RuntimeError if slicing
+        resulted in fewer intervals. Defaults to 3.
+
+    Raises
+    ------
+    RuntimeError
+        if slicing resulted in fewer than min_n_intervals intervals.
     """
 
     def __init__(
@@ -338,37 +338,37 @@ class NumberOfIntervalsSlicer(IntervalSlicer):
 
 class PointsPerIntervalSlicer(IntervalSlicer):
     """
-        Uses a number of points per interval to define intervals.
+    Uses a number of points per interval to define intervals.
 
-        Sorts the data and splits it into intervals with the same number of 
-        points. In general this results in intervals with varying width.
-        
-        Parameters
-        ----------   
-        n_points : int
-            The number of points per interval.
-        reference : callable, optional
-            Determines the reference value for each interval. 
-            A function is expected, that maps from an array with 
-            the values of an interval to the reference of that interval. 
-            Defaults to np.median.
-        last_full : boolean, optional
-            If it is not possible to split the data in chunks with the same 
-            number of points, one interval will have fewer points. This 
-            determines if the last or the first interval should have n_points 
-            points. If True the last interval contains n_points points and the 
-            first interval contains the remaining points. Defaults to True.
-        min_n_points : int, optional
-            Minimal number of points per interval. Intervals with fewer points 
-            are discarded. Defaults to 50.
-        min_n_intervals : int, optional
-            Minimal number of intervals. Raises a RuntimeError if slicing 
-            resulted in fewer intervals. Defaults to 3.
-            
-        Raises
-        ------
-        RuntimeError
-            if slicing resulted in fewer than min_n_intervals intervals.
+    Sorts the data and splits it into intervals with the same number of
+    points. In general this results in intervals with varying width.
+
+    Parameters
+    ----------
+    n_points : int
+        The number of points per interval.
+    reference : callable, optional
+        Determines the reference value for each interval.
+        A function is expected, that maps from an array with
+        the values of an interval to the reference of that interval.
+        Defaults to np.median.
+    last_full : boolean, optional
+        If it is not possible to split the data in chunks with the same
+        number of points, one interval will have fewer points. This
+        determines if the last or the first interval should have n_points
+        points. If True the last interval contains n_points points and the
+        first interval contains the remaining points. Defaults to True.
+    min_n_points : int, optional
+        Minimal number of points per interval. Intervals with fewer points
+        are discarded. Defaults to 50.
+    min_n_intervals : int, optional
+        Minimal number of intervals. Raises a RuntimeError if slicing
+        resulted in fewer intervals. Defaults to 3.
+
+    Raises
+    ------
+    RuntimeError
+        if slicing resulted in fewer than min_n_intervals intervals.
     """
 
     def __init__(self, n_points, reference=np.median, last_full=True, **kwargs):

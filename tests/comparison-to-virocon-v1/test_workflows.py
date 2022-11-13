@@ -57,7 +57,7 @@ def refdata_dnvgl_hstz():
 def test_DNVGL_Hs_Tz_model(dataset_dnvgl_hstz, refdata_dnvgl_hstz):
     # A 3-parameter power function (a dependence function).
     def _power3(x, a, b, c):
-        return a + b * x ** c
+        return a + b * x**c
 
     # A 3-parameter exponential function (a dependence function).
     def _exp3(x, a, b, c):
@@ -175,7 +175,7 @@ def test_OMAE2020(dataset_omae2020_vhs, refdata_omae2020_vhs):
         return a + b / (1 + np.exp(c * (x - d)))
 
     def _alpha3(x, a, b, c, d_of_x):
-        return (a + b * x ** c) / 2.0445 ** (1 / d_of_x(x))
+        return (a + b * x**c) / 2.0445 ** (1 / d_of_x(x))
 
     logistics_bounds = [(0, None), (0, None), (None, 0), (0, None)]
 
@@ -194,7 +194,10 @@ def test_OMAE2020(dataset_omae2020_vhs, refdata_omae2020_vhs):
     dist_description_hs = {
         "distribution": ExponentiatedWeibullDistribution(f_delta=5),
         "conditional_on": 0,
-        "parameters": {"alpha": alpha_dep, "beta": beta_dep,},
+        "parameters": {
+            "alpha": alpha_dep,
+            "beta": beta_dep,
+        },
     }
 
     ghm = GlobalHierarchicalModel([dist_description_vs, dist_description_hs])
@@ -326,10 +329,10 @@ def test_WES4(dataset_wes_sigmau, refdata_wes_sigmau):
             return ok_slices, ok_references, ok_boundaries
 
     def _poly3(x, a, b, c, d):
-        return a * x ** 3 + b * x ** 2 + c * x + d
+        return a * x**3 + b * x**2 + c * x + d
 
     def _poly2(x, a, b, c):
-        return a * x ** 2 + b * x + c
+        return a * x**2 + b * x + c
 
     poly3 = DependenceFunction(_poly3)
     poly2 = DependenceFunction(_poly2)
