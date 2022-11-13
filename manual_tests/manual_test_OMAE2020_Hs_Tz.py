@@ -136,12 +136,7 @@ plt.plot(x[:, 0], my_f_expweib, label="my_exp_weibull0")
 plt.plot(x[:, 0], ref_f_expweib, label="ref_exp_weibull0")
 plt.legend()
 
-fig, axes = plt.subplots(
-    3,
-    4,
-    sharex=True,
-    sharey=True,
-)
+fig, axes = plt.subplots(3, 4, sharex=True, sharey=True,)
 givens = fit.multiple_fit_inspection_data[1].scale_at
 for i in range(len(ref_givens)):
     ax = axes.flatten()[i]

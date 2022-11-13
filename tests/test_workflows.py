@@ -24,20 +24,20 @@ from virocon import (
 def test_hs_tz_iform_contour():
     """
     Use a sea state dataset with the variables Hs and Tz,
-    fit the join distribution recommended in DNVGL-RP-C203 to
+    fit the join distribution recommended in DNVGL-RP-C203 to 
     it and compute an IFORM contour. This tests reproduces
     the results published in Haseltseiner et al. (2019).
 
     Such a work flow is for example typical in ship design.
 
-    Haselsteiner, A. F., Coe, R. G., Manuel, L., Nguyen, P. T. T.,
-    Martin, N., & Eckert-Gallup, A. (2019). A benchmarking exercise
-    on estimating extreme environmental conditions: Methodology &
-    baseline results. Proc. 38th International Conference on Ocean,
-    Offshore and Arctic Engineering (OMAE 2019).
+    Haselsteiner, A. F., Coe, R. G., Manuel, L., Nguyen, P. T. T., 
+    Martin, N., & Eckert-Gallup, A. (2019). A benchmarking exercise 
+    on estimating extreme environmental conditions: Methodology & 
+    baseline results. Proc. 38th International Conference on Ocean, 
+    Offshore and Arctic Engineering (OMAE 2019). 
     https://doi.org/10.1115/OMAE2019-96523
-
-    DNV GL. (2017). Recommended practice DNVGL-RP-C205:
+    
+    DNV GL. (2017). Recommended practice DNVGL-RP-C205: 
     Environmental conditions and environmental loads.
     """
 
@@ -45,7 +45,7 @@ def test_hs_tz_iform_contour():
 
     # A 3-parameter power function (a dependence function).
     def _power3(x, a, b, c):
-        return a + b * x**c
+        return a + b * x ** c
 
     # A 3-parameter exponential function (a dependence function).
     def _exp3(x, a, b, c):
@@ -83,7 +83,7 @@ def test_hs_tz_iform_contour():
 
 def test_v_hs_hd_contour():
     """
-    Use a wind speed - wave height dataset, fit the joint
+    Use a wind speed - wave height dataset, fit the joint 
     distribution that was proposed by Haselsteiner et al. (2020)
     and compute a highest density contour. This test reproduces
     the results presented in Haselestiner et al. (2020). The
@@ -91,18 +91,18 @@ def test_v_hs_hd_contour():
     ec-benchmark/blob/master/results/exercise-1/contribution-4/haselsteiner_
     andreas_dataset_d_50.txt
 
-    Such a work flow is for example typical when generationg
+    Such a work flow is for example typical when generationg 
     a 50-year contour for DLC 1.6 in the offshore wind standard
     IEC 61400-3-1.
 
-    Haselsteiner, A. F., Sander, A., Ohlendorf, J.-H., & Thoben, K.-D. (2020).
-    Global hierarchical models for wind and wave contours: Physical
-    interpretations of the dependence functions. Proc. 39th International
-    Conference on Ocean, Offshore and Arctic Engineering (OMAE 2020).
+    Haselsteiner, A. F., Sander, A., Ohlendorf, J.-H., & Thoben, K.-D. (2020). 
+    Global hierarchical models for wind and wave contours: Physical 
+    interpretations of the dependence functions. Proc. 39th International 
+    Conference on Ocean, Offshore and Arctic Engineering (OMAE 2020). 
     https://doi.org/10.1115/OMAE2020-18668
 
-    International Electrotechnical Commission. (2019). Wind energy
-    generation systems - Part 3-1: Design requirements for fixed
+    International Electrotechnical Commission. (2019). Wind energy 
+    generation systems - Part 3-1: Design requirements for fixed 
     offshore wind turbines (IEC 61400-3-1).
     """
 
@@ -112,7 +112,7 @@ def test_v_hs_hd_contour():
         return a + b / (1 + np.exp(c * (x - d)))
 
     def _alpha3(x, a, b, c, d_of_x):
-        return (a + b * x**c) / 2.0445 ** (1 / d_of_x(x))
+        return (a + b * x ** c) / 2.0445 ** (1 / d_of_x(x))
 
     logistics_bounds = [(0, None), (0, None), (None, 0), (0, None)]
 
@@ -131,10 +131,7 @@ def test_v_hs_hd_contour():
     dist_description_hs = {
         "distribution": ExponentiatedWeibullDistribution(f_delta=5),
         "conditional_on": 0,
-        "parameters": {
-            "alpha": alpha_dep,
-            "beta": beta_dep,
-        },
+        "parameters": {"alpha": alpha_dep, "beta": beta_dep,},
     }
 
     model = GlobalHierarchicalModel([dist_description_v, dist_description_hs])

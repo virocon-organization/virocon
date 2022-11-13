@@ -48,7 +48,7 @@ data = read_ec_benchmark_dataset("datasets/ec-benchmark_dataset_A.txt")
 
 # A 3-parameter power function, which will be used as a dependence function.
 def _power3(x, a, b, c):
-    return a + b * x**c
+    return a + b * x ** c
 
 
 # A 3-parameter exponential function, which will be used a dependence function.

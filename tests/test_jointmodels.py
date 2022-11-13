@@ -18,7 +18,7 @@ def seastate_model():
     """
 
     def _power3(x, a=0.1000, b=1.489, c=0.1901):
-        return a + b * x**c
+        return a + b * x ** c
 
     # A 3-parameter exponential function (a dependence function).
     def _exp3(x, a=0.0400, b=0.1748, c=-0.2243):

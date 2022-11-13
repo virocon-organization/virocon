@@ -13,7 +13,7 @@ from virocon import (
 
 
 def _power3(x, a=0.1000, b=1.489, c=0.1901):
-    return a + b * x**c
+    return a + b * x ** c
 
 
 # A 3-parameter exponential function (a dependence function).

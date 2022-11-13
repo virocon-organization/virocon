@@ -127,7 +127,7 @@ def test_ISORM(reference_coordinates_ISORM):
 
 def test_HDC(reference_coordinates_HDC):
     def _power3(x, a=0.1000, b=1.489, c=0.1901):
-        return a + b * x**c
+        return a + b * x ** c
 
     # A 3-parameter exponential function (a dependence function).
     def _exp3(x, a=0.0400, b=0.1748, c=-0.2243):
@@ -163,7 +163,7 @@ def test_DirectSamplingContour(reference_data_DSContour):
     ref_coordinates = reference_data_DSContour["ref_coordinates"]
 
     def _power3(x, a=0.1000, b=1.489, c=0.1901):
-        return a + b * x**c
+        return a + b * x ** c
 
     # A 3-parameter exponential function (a dependence function).
     def _exp3(x, a=0.0400, b=0.1748, c=-0.2243):

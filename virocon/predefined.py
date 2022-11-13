@@ -23,32 +23,32 @@ __all__ = [
 def get_DNVGL_Hs_Tz():
     """
     Get DNVGL significant wave height and wave period model.
-
-    Get the descriptions necessary to create th significant wave height
+    
+    Get the descriptions necessary to create th significant wave height 
     and wave period model as defined in DNVGL [1]_ in section 3.6.3.
-
+    
     Returns
     -------
     dist_descriptions : list of dict
         List of dictionaries containing the dist descriptions for each dimension.
         Can be used to create a GlobalHierarchicalModel.
     fit_descriptions : None
-        Default fit is used so None is returned.
+        Default fit is used so None is returned. 
         Can be passed to fit function of GlobalHierarchicalModel.
     semantics : dict
         Dictionary with a semantic description of the model.
         Can be passed to plot functions.
-
+    
     References
     ----------
-    .. [1] DNV GL (2017). Recommended practice DNVGL-RP-C205: Environmental
+    .. [1] DNV GL (2017). Recommended practice DNVGL-RP-C205: Environmental 
         conditions and environmental loads.
-
+        
     """
     # TODO docstrings with links to literature
     # DNVGL 3.6.3
     def _power3(x, a, b, c):
-        return a + b * x**c
+        return a + b * x ** c
 
     def _exp3(x, a, b, c):
         return a + b * np.exp(c * x)
@@ -85,30 +85,30 @@ def get_DNVGL_Hs_Tz():
 def get_DNVGL_Hs_U():
     """
     Get DNVGL significant wave height and wind speed model.
-
-    Get the descriptions necessary to create the significant wave height
+    
+    Get the descriptions necessary to create the significant wave height 
     and wind speed model as defined in DNVGL [2]_ in section 3.6.4.
-
+    
     Returns
     -------
     dist_descriptions : list of dict
         List of dictionaries containing the dist descriptions for each dimension.
         Can be used to create a GlobalHierarchicalModel.
     fit_descriptions : None
-        Default fit is used so None is returned.
+        Default fit is used so None is returned. 
         Can be passed to fit function of GlobalHierarchicalModel.
     semantics : dict
         Dictionary with a semantic description of the model.
         Can be passed to plot functions.
-
+        
     References
     ----------
-    .. [2] DNV GL (2017). Recommended practice DNVGL-RP-C205: Environmental
+    .. [2] DNV GL (2017). Recommended practice DNVGL-RP-C205: Environmental 
         conditions and environmental loads.
     """
 
     def _power3(x, a, b, c):
-        return a + b * x**c
+        return a + b * x ** c
 
     bounds = [(0, None), (0, None), (None, None)]
 
@@ -123,10 +123,7 @@ def get_DNVGL_Hs_U():
     dist_description_u = {
         "distribution": WeibullDistribution(f_gamma=0),
         "conditional_on": 0,
-        "parameters": {
-            "alpha": alpha_dep,
-            "beta": beta_dep,
-        },
+        "parameters": {"alpha": alpha_dep, "beta": beta_dep,},
     }
 
     dist_descriptions = [dist_description_hs, dist_description_u]
@@ -145,10 +142,10 @@ def get_DNVGL_Hs_U():
 def get_OMAE2020_Hs_Tz():
     """
     Get OMAE2020 significant wave height and wave period model.
-
-    Get the descriptions necessary to create the significant wave height
-    and wave period model as described by Haselsteiner et al. [3]_.
-
+    
+    Get the descriptions necessary to create the significant wave height 
+    and wave period model as described by Haselsteiner et al. [3]_. 
+    
     Returns
     -------
     dist_descriptions : list of dict
@@ -160,13 +157,13 @@ def get_OMAE2020_Hs_Tz():
     semantics : dict
         Dictionary with a semantic description of the model.
         Can be passed to plot functions.
-
+        
     References
     ----------
     .. [3] Haselsteiner, A.F.; Sander, A.; Ohlendorf, J.H.; Thoben, K.D. (2020)
         Global hierarchical models for wind and wave contours: Physical
         interpretations of the dependence functions. OMAE 2020, Fort Lauderdale,
-        USA. Proceedings of the 39th International Conference on Ocean,
+        USA. Proceedings of the 39th International Conference on Ocean, 
         Offshore and Arctic Engineering.
     """
 
@@ -178,12 +175,8 @@ def get_OMAE2020_Hs_Tz():
 
     bounds = [(0, None), (0, None), (None, None)]
 
-    sigma_dep = DependenceFunction(
-        _asymdecrease3, bounds=bounds, latex="$a + b / (1 + c * x)$"
-    )
-    mu_dep = DependenceFunction(
-        _lnsquare2, bounds=bounds, latex="$\ln(a + b \sqrt{x / 9.81})$"
-    )
+    sigma_dep = DependenceFunction(_asymdecrease3, bounds=bounds, latex="$a + b / (1 + c * x)$")
+    mu_dep = DependenceFunction(_lnsquare2, bounds=bounds, latex="$\ln(a + b \sqrt{x / 9.81})$")
 
     dist_description_hs = {
         "distribution": ExponentiatedWeibullDistribution(),
@@ -193,10 +186,7 @@ def get_OMAE2020_Hs_Tz():
     dist_description_tz = {
         "distribution": LogNormalDistribution(),
         "conditional_on": 0,
-        "parameters": {
-            "sigma": sigma_dep,
-            "mu": mu_dep,
-        },
+        "parameters": {"sigma": sigma_dep, "mu": mu_dep,},
     }
 
     dist_descriptions = [dist_description_hs, dist_description_tz]
@@ -216,10 +206,10 @@ def get_OMAE2020_Hs_Tz():
 def get_OMAE2020_V_Hs():
     """
     Get OMAE2020 wind speed and significant wave height model.
-
-    Get the descriptions necessary to create the wind speed and
-    significant wave height model as described by Haselsteiner et al. [4]_.
-
+    
+    Get the descriptions necessary to create the wind speed and 
+    significant wave height model as described by Haselsteiner et al. [4]_. 
+    
     Returns
     -------
     dist_descriptions : list of dict
@@ -231,13 +221,13 @@ def get_OMAE2020_V_Hs():
     semantics : dict
         Dictionary with a semantic description of the model.
         Can be passed to plot functions.
-
+        
     References
     ----------
     .. [4] Haselsteiner, A.F.; Sander, A.; Ohlendorf, J.H.; Thoben, K.D. (2020)
         Global hierarchical models for wind and wave contours: Physical
         interpretations of the dependence functions. OMAE 2020, Fort Lauderdale,
-        USA. Proceedings of the 39th International Conference on Ocean,
+        USA. Proceedings of the 39th International Conference on Ocean, 
         Offshore and Arctic Engineering.
     """
 
@@ -245,24 +235,17 @@ def get_OMAE2020_V_Hs():
         return a + b / (1 + np.exp(c * (x - d)))
 
     def _alpha3(x, a, b, c, d_of_x):
-        return (a + b * x**c) / 2.0445 ** (1 / d_of_x(x))
+        return (a + b * x ** c) / 2.0445 ** (1 / d_of_x(x))
 
     logistics_bounds = [(0, None), (0, None), (None, 0), (0, None)]
 
     alpha_bounds = [(0, None), (0, None), (None, None)]
 
-    beta_dep = DependenceFunction(
-        _logistics4,
-        logistics_bounds,
-        weights=lambda x, y: y,
-        latex="$a + b / (1 + \exp[c * (x -d)])$",
-    )
+    beta_dep = DependenceFunction(_logistics4, logistics_bounds, weights=lambda x, y: y, 
+        latex="$a + b / (1 + \exp[c * (x -d)])$")
     alpha_dep = DependenceFunction(
-        _alpha3,
-        alpha_bounds,
-        d_of_x=beta_dep,
-        weights=lambda x, y: y,
-        latex="$(a + b * x^c) / 2.0445^{1 / F()}$",
+        _alpha3, alpha_bounds, d_of_x=beta_dep, weights=lambda x, y: y,
+        latex="$(a + b * x^c) / 2.0445^{1 / F()}$"
     )
 
     dist_description_v = {
@@ -273,10 +256,7 @@ def get_OMAE2020_V_Hs():
     dist_description_hs = {
         "distribution": ExponentiatedWeibullDistribution(f_delta=5),
         "conditional_on": 0,
-        "parameters": {
-            "alpha": alpha_dep,
-            "beta": beta_dep,
-        },
+        "parameters": {"alpha": alpha_dep, "beta": beta_dep,},
     }
 
     dist_descriptions = [dist_description_v, dist_description_hs]
@@ -288,10 +268,7 @@ def get_OMAE2020_V_Hs():
     semantics = {
         "names": ["Wind speed", "Significant wave height"],
         "symbols": ["V", "H_s"],
-        "units": [
-            "m s$^{-1}$",
-            "m",
-        ],
+        "units": ["m s$^{-1}$", "m",],
     }
 
     return dist_descriptions, fit_descriptions, semantics

@@ -18,7 +18,7 @@ data = pd.read_csv("datasets/NDBC_buoy_46025.csv", sep=",")[["Hs", "T"]]
 
 # A 3-parameter power function (a dependence function).
 def _power3(x, a, b, c):
-    return a + b * x**c
+    return a + b * x ** c
 
 
 # A 3-parameter exponential function (a dependence function).
