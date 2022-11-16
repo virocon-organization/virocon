@@ -17,10 +17,6 @@ virocon
     :target: https://github.com/psf/black
     :alt: Black
     
-.. image:: https://anaconda.org/virocon-organization/virocon/badges/installer/conda.svg   
-    :target: https://conda.anaconda.org/virocon-organization
-    :alt: Anaconda-Server Badge 
-
 virocon is a Python package to compute environmental contours (`user guide`_).
 
 About
@@ -47,7 +43,7 @@ How to use virocon
 ------------------
 Requirements
 ~~~~~~~~~~~~
-Make sure you have installed Python `3.8` or `3.9` by typing
+Make sure you have installed Python `3.8`, `3.9` or `3.10` by typing
 
 .. code:: console
 
@@ -74,18 +70,18 @@ by typing
    pip install https://github.com/virocon-organization/virocon/archive/master.zip
    
    
-virocon is also available as a `conda`_ package. We recommend to first create a new environment.
+virocon is also available on `conda-forge`_. We recommend to first create a new environment.
 
 .. code:: console
 
-   conda create --name virocon python=3.9
+   conda create --name virocon python=3.10
 
 And then activate that new environment and install virocon.
 
 .. code:: console
 
    conda activate virocon
-   conda install -c virocon-organization virocon
+   conda install -c conda-forge virocon
 
 
 Usage
@@ -145,5 +141,5 @@ read the file `LICENSE`_.
 .. _here: https://virocon.readthedocs.io/en/latest/index.html
 .. _LICENSE: https://github.com/virocon-organization/virocon/blob/master/LICENSE
 .. _SoftwareX paper: https://github.com/ahaselsteiner/publications/blob/master/2018-10-25_SoftwareX_ViroCon_revised.pdf
-.. _conda: https://docs.conda.io/en/latest/
+.. _conda-forge: https://conda-forge.org/
 .. _WESC 2021 presentation: http://doi.org/10.13140/RG.2.2.35455.53925

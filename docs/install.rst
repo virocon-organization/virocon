@@ -24,26 +24,29 @@ Install the latest version of virocon from PyPI by typing
 
    pip install virocon
 
+
 Alternatively, you can install from virocon repository’s Master branch
 by typing
 
 .. code:: console
 
    pip install https://github.com/virocon-organization/virocon/archive/master.zip
-
-virocon is also available as a conda_ package. We recommend to first create a new environment.
+   
+   
+virocon is also available on `conda-forge`_. We recommend to first create a new environment.
 
 .. code:: console
 
-    conda create --name virocon python=3.9
+   conda create --name virocon python=3.10
 
 And then activate that new environment and install virocon.
 
 .. code:: console
 
-    conda activate virocon
-    conda install -c virocon-organization virocon
+   conda activate virocon
+   conda install -c conda-forge virocon
+
 
 .. _shell: https://en.wikipedia.org/wiki/Command-line_interface#Modern_usage_as_an_operating_system_shell
 .. _pyenv: https://github.com/pyenv/pyenv
-.. _conda: https://docs.conda.io/en/latest/
+.. _conda-forge: https://conda-forge.org/
