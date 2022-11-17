@@ -318,18 +318,19 @@ def plot_dependence_functions(model, semantics=None, par_rename={}, axes=None):
 
 def plot_histograms(model, sample, semantics=None, plot_pdf=True):
     """
-    Plot the histograms of data along with the density of the models distributions.
+    Plot the histograms of data along with the densities of the model.
 
     Parameters
     ----------
     model : MultivariateModel
-        The fit model.
+        The model that was fitted to the dataset.
     sample : ndarray
         The data that was used to fit the model.
     semantics: dict, optional
         The description of the model. If None (the default) generic semantics will be used.
     plot_pdf: boolean, optional
         Whether the fitted probability density should be plotted. Defaults to True.
+
     Returns
     -------
     The used matplotlib axes objects.
@@ -373,7 +374,7 @@ def plot_histograms(model, sample, semantics=None, plot_pdf=True):
                     color="#004488",
                 )
             ax.set_xlabel(x_label)
-            ax.set_ylabel("probability density")
+            ax.set_ylabel("Probability density")
             ax.set_title(f"n={len(data)}")
 
             figures.append(fig)
@@ -429,7 +430,7 @@ def plot_histograms(model, sample, semantics=None, plot_pdf=True):
                         color="#004488",
                     )
                 ax.set_xlabel(x_label)
-                ax.set_ylabel("probability density")
+                ax.set_ylabel("Probability density")
                 title = f"{conditioning_symbol} = {cond_val:.3f} {conditioning_unit}, n={len(data)}"
                 ax.set_title(title)
 
@@ -446,8 +447,8 @@ def plot_2D_isodensity(
     swap_axis=False,
     limits=None,
     levels=None,
-    n_grid_steps=250,
     ax=None,
+    n_grid_steps=250,
 ):
     """
     Plot isodensity contours and a data sample for a 2D model.
