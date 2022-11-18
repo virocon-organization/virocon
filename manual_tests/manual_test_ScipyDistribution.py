@@ -4,15 +4,16 @@ import scipy.stats as sts
 
 import matplotlib.pyplot as plt
 import numpy as np
+import pickle
 
 
 # Generalized Gamma Distribution
-scipy_dist_name = "gengamma"
-scipy_dist = sts.gengamma
+generalized_gamma_name = "gengamma"
+generalized_gamma_dist = sts.gengamma
 
 sample_params = {"a": 1.5, "c": 2, "loc": 0, "scale": 0.5}
 n = 1000
-sample = scipy_dist.rvs(**sample_params, size=n, random_state=42)
+sample = generalized_gamma_dist.rvs(**sample_params, size=n, random_state=42)
 plt.close("all")
 x = np.linspace(sample.min(), sample.max())
 sample.sort()
@@ -24,12 +25,12 @@ q = np.quantile(sample, p)
 
 class GeneralizedGammaDistributionByName(ScipyDistribution):
 
-    scipy_dist_name = scipy_dist_name
+    scipy_dist_name = generalized_gamma_name
 
 
 class GeneralizedGammaDistributionByDist(ScipyDistribution):
 
-    scipy_dist = scipy_dist
+    scipy_dist = generalized_gamma_dist
 
 
 # For the 3 parameter variant fix the loc parameter when instantiating
@@ -112,7 +113,9 @@ ax.plot(x, pdf_by_name, label="by_name")
 ax.plot(x, pdf_by_dist, label="by_dist")
 ax.legend()
 assert (pdf_by_name == pdf_by_dist).all()
-assert (scipy_dist.pdf(x, **gengamma_by_name.parameters) == pdf_by_name).all()
+assert (
+    generalized_gamma_dist.pdf(x, **gengamma_by_name.parameters) == pdf_by_name
+).all()
 
 # cdf
 cdf_by_name = gengamma_by_name.cdf(x)
@@ -123,7 +126,9 @@ ax.plot(x, cdf_by_name, label="by_name")
 ax.plot(x, cdf_by_dist, label="by_dist")
 ax.legend()
 assert (cdf_by_name == cdf_by_dist).all()
-assert (scipy_dist.cdf(x, **gengamma_by_name.parameters) == cdf_by_name).all()
+assert (
+    generalized_gamma_dist.cdf(x, **gengamma_by_name.parameters) == cdf_by_name
+).all()
 
 # icdf
 icdf_by_name = gengamma_by_name.icdf(p)
@@ -134,4 +139,17 @@ ax.plot(p, icdf_by_name, label="by_name")
 ax.plot(p, icdf_by_dist, label="by_dist")
 ax.legend()
 assert (icdf_by_name == icdf_by_dist).all()
-assert (scipy_dist.ppf(p, **gengamma_by_name.parameters) == icdf_by_name).all()
+assert (
+    generalized_gamma_dist.ppf(p, **gengamma_by_name.parameters) == icdf_by_name
+).all()
+
+
+# pickle
+assert (
+    pickle.loads(pickle.dumps(gengamma_by_name)).parameters
+    == gengamma_by_name.parameters
+)
+assert (
+    pickle.loads(pickle.dumps(gengamma_by_dist)).parameters
+    == gengamma_by_dist.parameters
+)
