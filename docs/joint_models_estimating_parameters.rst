@@ -146,8 +146,7 @@ In the following, we implement the 3-parameter generalized gamma distribution as
 Its probability density function (PDF) is defined as:
 
 :math:`f(x)= \frac{c}{\Gamma(m)}\lambda^{cm}x^{cm-1} \exp\left[- (\lambda x)^{c} \right]`
-First Approach
---------------
+
 To implement the generalized gamma distribution, we make use of the functionality of scipy’s implementation of the
 distribution. Scipy’s implementation is based on the scientific paper of Stacy (1962) [4]_. An overview of the
 generalized gamma distribution is given in [5]_.
