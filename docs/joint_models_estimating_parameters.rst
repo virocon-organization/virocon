@@ -88,15 +88,15 @@ Implementing new statistical distributions: Example of the generalized gamma dis
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 When implementing a new distribution in virocon there are two general approaches available.
-The first and easiest approach is to use a distribution defined in scipy and directly use it derive a distribution for virocon.
+The first and easiest approach is to use a distribution defined in scipy and directly use it to derive a distribution for virocon ("scipy approach").
 A distribution created this way will have the same parameters as the scipy distribution.
-The second, more flexible approach is to build a new distribution from scratch. Such a distribution may or may not used scipy functions
-and allows to freely design the distributions parameters.
-When implementing a new distribution in this way, we recommend starting with an existing distribution in virocon and adapting it step by step.
+The second, more flexible approach is to build a new distribution from scratch ("from scratch approach"). Such a distribution may or may not use scipy functions
+and allows to freely design the distribution parameters.
+When implementing a new distribution from scratch, we recommend starting with an existing distribution in virocon and adapting it step by step.
 You can use a virocon distribution as a template to implement a new distribution. The following sections describe how
-the generalized gamma distribution was implemented(second approach) and how it could have been implemented using the first approach.
+the generalized gamma distribution was implemented (from scratch approach) and how it could have been implemented using the scipy approach.
 
-First Approach: Subclassing ScipyDistribution
+Scipy approach: Subclassing ScipyDistribution
 ---------------------------------------------
 
 To create a virocon based on a scipy distribution is as easy as subclassing :py:class:`virocon.distributions.ScipyDistribution`
