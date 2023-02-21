@@ -92,13 +92,11 @@ virocon is designed as an importable package.
 The folder `examples`_ contains python files that show how one can
 import and use virocon.
 
-As an example, to run the file `hstz_contour_simple.py`_, use
-your shell to navigate to the folder that contains the file. Make sure
-that you have installed matplotlib and run the Python file by typing
+As an example, to run the file `hstz_contour_simple.py`_, type
 
 .. code:: console
 
-   python hstz_contour_simple.py
+   python examples\\hstz_contour_simple.py
 
 Documentation
 -------------
