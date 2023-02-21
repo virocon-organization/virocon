@@ -96,7 +96,7 @@ As an example, to run the file `hstz_contour_simple.py`_, type
 
 .. code:: console
 
-   python examples\\hstz_contour_simple.py
+   python examples\hstz_contour_simple.py
 
 Documentation
 -------------
