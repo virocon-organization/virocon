@@ -352,7 +352,6 @@ class Distribution(ABC):
     @property
     @abstractmethod
     def parameters(self):
-
         """
         Parameters of the probability distribution.
 
@@ -629,7 +628,6 @@ class LogNormalDistribution(Distribution):
     """
 
     def __init__(self, mu=0, sigma=1, f_mu=None, f_sigma=None):
-
         self.mu = mu if f_mu is None else f_mu
         self.sigma = sigma if f_sigma is None else f_sigma  # shape
         self.f_mu = f_mu
@@ -773,7 +771,6 @@ class NormalDistribution(Distribution):
     """
 
     def __init__(self, mu=0, sigma=1, f_mu=None, f_sigma=None):
-
         self.mu = mu if f_mu is None else f_mu  # location
         self.sigma = sigma if f_sigma is None else f_sigma  # scale
         self.f_mu = f_mu
@@ -900,7 +897,6 @@ class LogNormalNormFitDistribution(LogNormalDistribution):
     """
 
     def __init__(self, mu_norm=0, sigma_norm=1, f_mu_norm=None, f_sigma_norm=None):
-
         self.mu_norm = mu_norm if f_mu_norm is None else f_mu_norm
         self.sigma_norm = sigma_norm if f_sigma_norm is None else f_sigma_norm
         self.f_mu_norm = f_mu_norm
@@ -961,7 +957,6 @@ class LogNormalNormFitDistribution(LogNormalDistribution):
         return sts.lognorm.rvs(*scipy_par, size=rvs_size)
 
     def _fit_mle(self, sample):
-
         if self.f_mu_norm is None:
             self.mu_norm = np.mean(sample)
         else:
@@ -1149,7 +1144,6 @@ class ExponentiatedWeibullDistribution(Distribution):
 
     @staticmethod
     def _estimate_alpha_beta(delta, x, p, w, falpha=None, fbeta=None):
-
         # As x = 0 causes problems when x_star is calculated, zero-elements
         # are not considered in the parameter estimation.
         indices = np.nonzero(x)
@@ -1175,7 +1169,6 @@ class ExponentiatedWeibullDistribution(Distribution):
 
     @staticmethod
     def _wlsq_error(delta, x, p, w, return_alpha_beta=False, falpha=None, fbeta=None):
-
         # As x = 0 causes problems when x_star is calculated, zero-elements
         # are not considered in the parameter estimation.
         indices = np.nonzero(x)
@@ -1237,7 +1230,6 @@ class GeneralizedGammaDistribution(Distribution):
     """
 
     def __init__(self, m=1, c=1, lambda_=1, f_m=None, f_c=None, f_lambda_=None):
-
         self.m = m if f_m is None else f_m  # shape
         self.c = c if f_c is None else f_c  # shape
         self.lambda_ = lambda_ if f_lambda_ is None else f_lambda_  # reciprocal scale
@@ -1397,7 +1389,6 @@ class VonMisesDistribution(Distribution):
     """
 
     def __init__(self, kappa=1, mu=0, f_kappa=None, f_mu=None):
-
         self.kappa = kappa  # shpae
         self.mu = mu  # location
         self.f_kappa = f_kappa

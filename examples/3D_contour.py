@@ -33,6 +33,7 @@ data.index = pd.to_datetime(data.pop(data.columns[0]), format="%Y-%m-%d-%H")
 # univariate parametric distributions and the dependence structure.
 # The dependence structure is defined using parametric functions.
 
+
 # A 3-parameter power function, which will be used as a dependence function.
 def _power3(x, a, b, c):
     return a + b * x**c

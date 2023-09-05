@@ -21,12 +21,14 @@ from virocon import (
 # def _logistics4(x, a, b, c, d):
 #     return a + b / (1 + np.exp(-1 * np.abs(c) * (x - d)))
 
+
 # A 4-parameter logististics function (a dependence function).
 def _logistics4(x, a=1, b=1, c=-1, d=1):
     return a + b / (1 + np.exp(c * (x - d)))
 
 
 # _logistics4 = lambda x, a, b, c=-1, d=1 : a + b / (1 + np.exp(c * (x - d)))
+
 
 # A 3-parameter function designed for the scale parameter (alpha) of an
 # exponentiated Weibull distribution with shape2=5 (see 'Global hierarchical

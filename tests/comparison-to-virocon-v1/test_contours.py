@@ -52,7 +52,6 @@ def reference_data_DSContour():
 
 
 def test_IFORM(reference_coordinates_IFORM):
-
     # Logarithmic square function.
     def _lnsquare2(x, a=3.62, b=5.77):
         return np.log(a + b * np.sqrt(x / 9.81))
@@ -89,7 +88,6 @@ def test_IFORM(reference_coordinates_IFORM):
 
 
 def test_ISORM(reference_coordinates_ISORM):
-
     # Logarithmic square function.
     def _lnsquare2(x, a=3.62, b=5.77):
         return np.log(a + b * np.sqrt(x / 9.81))
@@ -158,7 +156,6 @@ def test_HDC(reference_coordinates_HDC):
 
 
 def test_DirectSamplingContour(reference_data_DSContour):
-
     sample = reference_data_DSContour["sample"]
     ref_coordinates = reference_data_DSContour["ref_coordinates"]
 

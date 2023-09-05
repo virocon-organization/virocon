@@ -48,7 +48,6 @@ def read_ec_benchmark_dataset(file_path=None):
 
 
 def calculate_design_conditions(contour, steps=None, swap_axis=False):
-
     if swap_axis:
         x_idx = 1
         y_idx = 0
@@ -79,7 +78,6 @@ def calculate_design_conditions(contour, steps=None, swap_axis=False):
     frontier_y = []
 
     for x2 in zip(steps, steps):
-
         x, y = intersection(x1, y1, x2, y2)
         assert len(x) <= 2
         assert len(y) <= 2

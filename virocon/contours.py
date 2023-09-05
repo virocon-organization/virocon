@@ -395,7 +395,6 @@ class HighestDensityContour(Contour):
     """
 
     def __init__(self, model, alpha, limits=None, deltas=None):
-
         self.model = model
         self.alpha = alpha
         self.limits = limits

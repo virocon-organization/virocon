@@ -149,7 +149,6 @@ class WidthOfIntervalSlicer(IntervalSlicer):
         self.value_range = value_range
 
     def _slice(self, data):
-
         if self.value_range is None:
             data_min = 0
             data_max = np.max(data)

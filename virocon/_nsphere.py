@@ -87,7 +87,6 @@ class NSphere:
         max_iters = max([10, int(10000 / self.n_samples)])
 
         for iteration in range(1, max_iters):
-
             # Tau controls the step size of the optimization. With each iteration
             # a smaller step is chosen. 3 is an empirical value.
             tau = 3 / iteration
@@ -219,7 +218,6 @@ class NSphere:
 
 
 if __name__ == "__main__":
-
     #    sphere = NSphere(3, 1000)
     #
     #    samples = sphere.unit_sphere_points

@@ -140,7 +140,6 @@ def plot_marginal_quantiles(model, sample, semantics=None, axes=None):
             self.idx = idx
 
         def ppf(self, q):
-
             return self.model.marginal_icdf(q, self.idx)
 
     for dim in range(n_dim):
