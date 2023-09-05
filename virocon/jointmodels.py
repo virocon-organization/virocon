@@ -408,7 +408,6 @@ class GlobalHierarchicalModel(MultivariateModel):
 
         p = np.empty(len(x))
         for i in range(len(x)):
-
             integration_limits = [
                 (lower_integration_limits[j], x[i, j]) for j in range(n_dim)
             ]
@@ -475,7 +474,6 @@ class GlobalHierarchicalModel(MultivariateModel):
         return f
 
     def marginal_cdf(self, x, dim):
-
         """
         Marginal cumulative distribution function.
 
@@ -535,7 +533,6 @@ class GlobalHierarchicalModel(MultivariateModel):
         return F
 
     def marginal_icdf(self, p, dim, precision_factor=1):
-
         """
         Marginal inverse cumulative distribution function.
 
