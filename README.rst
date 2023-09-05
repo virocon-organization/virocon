@@ -106,7 +106,8 @@ Documentation
 
 **Paper.** Our `SoftwareX paper`_ "ViroCon: A software to compute multivariate
 extremes using the environmental contour method." provides a concise
-description of virocon (version 1).
+description of virocon version 1 and our `update paper`_ describes the changes
+introduced in virocon version 2.
 
 **Conference presentation.** In a `WESC 2021 presentation`_, we showed how virocon 
 (version 2) can be used to support the design process of offshore wind turbines. 
@@ -138,6 +139,7 @@ read the file `LICENSE`_.
 .. _hstz_contour_simple.py: https://github.com/virocon-organization/virocon/blob/main/examples/hstz_contour_simple.py
 .. _here: https://virocon.readthedocs.io/en/latest/index.html
 .. _LICENSE: https://github.com/virocon-organization/virocon/blob/main/LICENSE
-.. _SoftwareX paper: https://github.com/ahaselsteiner/publications/blob/main/2018-10-25_SoftwareX_ViroCon_revised.pdf
+.. _SoftwareX paper: https://ahaselsteiner.github.io/assets/pdf/SoftwareX2019_ViroCon.pdf
+.. _update paper: https://ahaselsteiner.github.io/assets/pdf/SoftwareX2022_ViroCon_2p0.pdf
 .. _conda-forge: https://conda-forge.org/
 .. _WESC 2021 presentation: http://doi.org/10.13140/RG.2.2.35455.53925
