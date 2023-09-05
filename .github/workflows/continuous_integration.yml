@@ -1,7 +1,12 @@
-# Example from https://jacobtomlinson.dev/posts/2021/testing-and-continuous-integration-for-python-packages-with-github-actions/
+# The first version of this file was based on
+# https://jacobtomlinson.dev/posts/2021/testing-and-continuous-integration-for-python-packages-with-github-actions/
 name: Continuous integration
-
-on: [pull_request, push, workflow_dispatch]
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
 
 jobs:
   test:
