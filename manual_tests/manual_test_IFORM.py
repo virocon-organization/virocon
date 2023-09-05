@@ -14,6 +14,7 @@ from virocon import (
 
 x = np.linspace((0, 0), (10, 10), num=100)
 
+
 # Logarithmic square function.
 def _lnsquare2(x, a=3.62, b=5.77):
     return np.log(a + b * np.sqrt(x / 9.81))

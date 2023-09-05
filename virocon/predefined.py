@@ -45,6 +45,7 @@ def get_DNVGL_Hs_Tz():
         conditions and environmental loads.
 
     """
+
     # TODO docstrings with links to literature
     # DNVGL 3.6.3
     def _power3(x, a, b, c):

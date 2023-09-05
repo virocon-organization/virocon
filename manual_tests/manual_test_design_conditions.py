@@ -16,6 +16,7 @@ from virocon.utils import calculate_design_conditions
 
 data = pd.read_csv("datasets/NDBC_buoy_46025.csv", sep=",")[["Hs", "T"]]
 
+
 # A 3-parameter power function (a dependence function).
 def _power3(x, a, b, c):
     return a + b * x**c

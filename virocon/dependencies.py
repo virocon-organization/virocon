@@ -9,6 +9,7 @@ from virocon._fitting import fit_function, fit_constrained_function
 
 __all__ = ["DependenceFunction"]
 
+
 # TODO test that order of execution does not matter
 # it should not matter if the dependent or the conditioner are fitted first
 class DependenceFunction:

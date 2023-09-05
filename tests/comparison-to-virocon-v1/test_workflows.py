@@ -309,7 +309,6 @@ def test_WES4(dataset_wes_sigmau, refdata_wes_sigmau):
 
     class MyIntervalSlicer(WidthOfIntervalSlicer):
         def _slice(self, data):
-
             interval_slices, interval_references, interval_boundaries = super()._slice(
                 data
             )
