@@ -62,12 +62,12 @@ Install the latest version of virocon from PyPI by typing
    pip install virocon
 
 
-Alternatively, you can install from virocon repository’s Master branch
+Alternatively, you can install from virocon repository’s main branch
 by typing
 
 .. code:: console
 
-   pip install https://github.com/virocon-organization/virocon/archive/master.zip
+   pip install https://github.com/virocon-organization/virocon/archive/main.zip
    
    
 virocon is also available on `conda-forge`_. We recommend to first create a new environment.
@@ -134,10 +134,10 @@ read the file `LICENSE`_.
 .. _user guide: https://virocon.readthedocs.io/en/latest/user_guide.html
 .. _shell: https://en.wikipedia.org/wiki/Command-line_interface#Modern_usage_as_an_operating_system_shell
 .. _www.python.org: https://www.python.org
-.. _examples: https://github.com/virocon-organization/virocon/tree/master/examples
-.. _hstz_contour_simple.py: https://github.com/virocon-organization/virocon/blob/master/examples/hstz_contour_simple.py
+.. _examples: https://github.com/virocon-organization/virocon/tree/main/examples
+.. _hstz_contour_simple.py: https://github.com/virocon-organization/virocon/blob/main/examples/hstz_contour_simple.py
 .. _here: https://virocon.readthedocs.io/en/latest/index.html
-.. _LICENSE: https://github.com/virocon-organization/virocon/blob/master/LICENSE
-.. _SoftwareX paper: https://github.com/ahaselsteiner/publications/blob/master/2018-10-25_SoftwareX_ViroCon_revised.pdf
+.. _LICENSE: https://github.com/virocon-organization/virocon/blob/main/LICENSE
+.. _SoftwareX paper: https://github.com/ahaselsteiner/publications/blob/main/2018-10-25_SoftwareX_ViroCon_revised.pdf
 .. _conda-forge: https://conda-forge.org/
 .. _WESC 2021 presentation: http://doi.org/10.13140/RG.2.2.35455.53925

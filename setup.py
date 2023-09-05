@@ -1,5 +1,5 @@
 # This is based on the setup.py example at:
-# https://github.com/pypa/sampleproject/blob/master/setup.py
+# https://github.com/pypa/sampleproject/blob/main/setup.py
 
 from setuptools import setup
 

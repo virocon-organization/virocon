@@ -175,8 +175,8 @@ metocean data.
     :scale: 100 %
     :alt: Sea state contour.
 
-.. _examples: https://github.com/virocon-organization/virocon/tree/master/examples
-.. _data: https://github.com/virocon-organization/virocon/tree/master/datasets
+.. _examples: https://github.com/virocon-organization/virocon/tree/main/examples
+.. _data: https://github.com/virocon-organization/virocon/tree/main/datasets
 .. _datasets: https://www.ndbc.noaa.gov/station_page.php?station=44007
 
 .. [1] DNV GL (2017). Recommended practice DNVGL-RP-C205: Environmental conditions and environmental loads.
