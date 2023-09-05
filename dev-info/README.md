@@ -4,11 +4,11 @@ When a new version is released, we make sure that it is available in GitHub arch
 
 GitHub archive:
 
-* checkout master
+* checkout main
 * in virocon/__init__.py change __version__ = "1.1.3" (to the new version number)
 * `git commit`
 * `git tag 1.1.3 -m "Your commit message"`
-* `git push --tags origin master`
+* `git push --tags origin main`
 * create a release from the tag on Github
 
 PyPI:

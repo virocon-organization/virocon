@@ -88,7 +88,7 @@ def test_v_hs_hd_contour():
     and compute a highest density contour. This test reproduces
     the results presented in Haselestiner et al. (2020). The
     coorindates are availble at https://github.com/ec-benchmark-organizers/
-    ec-benchmark/blob/master/results/exercise-1/contribution-4/haselsteiner_
+    ec-benchmark/blob/main/results/exercise-1/contribution-4/haselsteiner_
     andreas_dataset_d_50.txt
 
     Such a work flow is for example typical when generationg

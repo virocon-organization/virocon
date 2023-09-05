@@ -68,8 +68,8 @@ The code, which is available as a Python file here_, will create this plot
     :scale: 80 %
     :alt: sea state contour
 
-.. _examples: https://github.com/virocon-organization/virocon/tree/master/examples
-.. _here: https://github.com/virocon-organization/virocon/blob/master/examples/hstz_contour_simple.py
-.. _data: https://github.com/virocon-organization/virocon/tree/master/datasets
+.. _examples: https://github.com/virocon-organization/virocon/tree/main/examples
+.. _here: https://github.com/virocon-organization/virocon/blob/main/examples/hstz_contour_simple.py
+.. _data: https://github.com/virocon-organization/virocon/tree/main/datasets
 .. [1] Haselsteiner, A.F.; Sander, A.; Ohlendorf, J.H.; Thoben, K.D. (2020): Global hierarchical models for wind and wave contours: physical interpretations of the dependence functions. OMAE 2020, Fort Lauderdale, USA. Proceedings of the 39th International Conference on Ocean, Offshore and Arctic Engineering.
 .. [2] Haselsteiner, A.F.; Coe, R.; Manuel, L.; Nguyen, P.T.T.; Martin, N.; Eckert-Gallup, A. (2019): A benchmarking exercise on estimating extreme environmental conditions: methodology and baseline results. Proceedings of the 38th International Conference on Ocean, Offshore and Arctic Engineering OMAE2019, June 09-14, 2019, Glasgow, Scotland.
