@@ -57,7 +57,6 @@ sigma_data_key = "sigma"
 
 class MyIntervalSlicer(WidthOfIntervalSlicer):
     def _slice(self, data):
-
         interval_slices, interval_references, interval_boundaries = super()._slice(data)
 
         # discard slices below 4 m/s

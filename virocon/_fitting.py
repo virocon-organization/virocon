@@ -34,7 +34,7 @@ def fit_function(func, x, y, p0, method, bounds, weights=None):
 def convert_bounds_for_curve_fit(bounds):
     lower_bounds = []
     upper_bounds = []
-    for (lower, upper) in bounds:
+    for lower, upper in bounds:
         lower_bounds.append(lower if lower is not None else -np.inf)
         upper_bounds.append(upper if upper is not None else np.inf)
     return [lower_bounds, upper_bounds]
