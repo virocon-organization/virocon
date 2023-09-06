@@ -2,7 +2,6 @@
 Functions to plot distributions and contours.
 """
 
-
 import re
 from functools import partial
 
@@ -17,10 +16,11 @@ from virocon.utils import calculate_design_conditions
 __all__ = [
     "plot_marginal_quantiles",
     "plot_dependence_functions",
-    "plot_histograms",
+    "plot_histograms_of_interval_distributions",
     "plot_2D_isodensity",
     "plot_2D_contour",
 ]
+
 
 # colors (schemes) chosen according to https://personal.sron.nl/~pault/
 
@@ -77,8 +77,8 @@ def get_default_semantics(n_dim):
     """
 
     semantics = {
-        "names": [f"Variable {dim+1}" for dim in range(n_dim)],
-        "symbols": [f"X_{dim+1}" for dim in range(n_dim)],
+        "names": [f"Variable {dim + 1}" for dim in range(n_dim)],
+        "symbols": [f"X_{dim + 1}" for dim in range(n_dim)],
         "units": ["arb. unit" for dim in range(n_dim)],
     }
     return semantics
@@ -283,7 +283,7 @@ def plot_dependence_functions(model, semantics=None, par_rename={}, axes=None):
                     var_symbol = splitted_symbol[0].lower()
                 else:  # If there was one or many underscores.
                     var_symbol = (
-                        splitted_symbol[0].lower() + "_" + "_".join(splitted_symbol[1:])
+                            splitted_symbol[0].lower() + "_" + "_".join(splitted_symbol[1:])
                     )
 
                 # Replace 'x' if it is not part of '\exp' which is checked by checking whether
@@ -302,7 +302,7 @@ def plot_dependence_functions(model, semantics=None, par_rename={}, axes=None):
                     dep_func_label = "Dependence function: " + dep_func.func.__name__
                 else:
                     dep_func_label = (
-                        "Dependence function: " + dep_func.func.func.__name__
+                            "Dependence function: " + dep_func.func.func.__name__
                     )
             ax.plot(x, dep_func(x), c="#004488", label=dep_func_label)
             ax.set_xlabel(x_label)
@@ -316,9 +316,12 @@ def plot_dependence_functions(model, semantics=None, par_rename={}, axes=None):
     return axes
 
 
-def plot_histograms(model, sample, semantics=None, plot_pdf=True):
+def plot_histograms_of_interval_distributions(model, sample, semantics=None, plot_pdf=True):
     """
-    Plot the histograms of data along with the densities of the model.
+    Plot histograms of all model dimensions.
+
+    If the model is conditional in a dimension all histograms per interval are plotted for that dimension.
+    In such a case the fitted interval distributions are generally different from the final joint distribution.
 
     Parameters
     ----------
@@ -441,14 +444,14 @@ def plot_histograms(model, sample, semantics=None, plot_pdf=True):
 
 
 def plot_2D_isodensity(
-    model,
-    sample,
-    semantics=None,
-    swap_axis=False,
-    limits=None,
-    levels=None,
-    ax=None,
-    n_grid_steps=250,
+        model,
+        sample,
+        semantics=None,
+        swap_axis=False,
+        limits=None,
+        levels=None,
+        ax=None,
+        n_grid_steps=250,
 ):
     """
     Plot isodensity contours and a data sample for a 2D model.
@@ -550,8 +553,8 @@ def plot_2D_isodensity(
         n_levels = np.abs(min_lvl)
         levels = np.logspace(-1, min_lvl, num=n_levels)[::-1]
         lvl_labels = [f"1E{int(i)}" for i in np.linspace(-1, min_lvl, num=n_levels)][
-            ::-1
-        ]
+                     ::-1
+                     ]
 
     cmap = _rainbow_PuRd()
     colors = cmap(np.linspace(0, 1, num=n_levels))
@@ -580,12 +583,12 @@ def plot_2D_isodensity(
 
 
 def plot_2D_contour(
-    contour,
-    sample=None,
-    design_conditions=None,
-    semantics=None,
-    swap_axis=False,
-    ax=None,
+        contour,
+        sample=None,
+        design_conditions=None,
+        semantics=None,
+        swap_axis=False,
+        ax=None,
 ):
     """
     Plot a 2D contour.
