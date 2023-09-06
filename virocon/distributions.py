@@ -1579,9 +1579,8 @@ class ScipyDistribution(Distribution):
         for key, arg in kwargs.items():
             try:
                 idx = self._param_names.index(key)
-            except ValueError:
-                # unknown parameter name
-                assert False
+            except ValueError as e:
+                raise ValueError("Unknown parameter name") from e
             args_with_default[idx] = arg
 
         return args_with_default
