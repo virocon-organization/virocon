@@ -1603,6 +1603,7 @@ class ScipyDistribution(Distribution):
         return self.scipy_dist.rvs(*scipy_par, size=rvs_size, random_state=random_state)
 
     def _fit_mle(self, sample):
+        # Split initial parameter values into positional shape parameters and loc and scale.
         p0 = [v for k, v in self.parameters.items() if k != "loc" and k != "scale"]
         loc0 = self.parameters.get("loc", 0)
         scale0 = self.parameters.get("scale", 1)
