@@ -24,12 +24,10 @@ q = np.quantile(sample, p)
 
 
 class GeneralizedGammaDistributionByName(ScipyDistribution):
-
     scipy_dist_name = generalized_gamma_name
 
 
 class GeneralizedGammaDistributionByDist(ScipyDistribution):
-
     scipy_dist = generalized_gamma_dist
 
 
@@ -46,7 +44,6 @@ except TypeError:
 
 gengamma_by_name = GeneralizedGammaDistributionByName(f_loc=0)
 gengamma_by_dist = GeneralizedGammaDistributionByDist(f_loc=0)
-
 
 
 # Fit

@@ -25,11 +25,9 @@ def test_scipydistribution():
     p = np.linspace(0, 1, num=n)
 
     class GeneralizedGammaDistributionByName(ScipyDistribution):
-
         scipy_dist_name = generalized_gamma_name
 
     class GeneralizedGammaDistributionByDist(ScipyDistribution):
-
         scipy_dist = generalized_gamma_dist
 
     # test wrong parameter instantiation
