@@ -2,7 +2,6 @@
 Functions to plot distributions and contours.
 """
 
-
 import re
 from functools import partial
 
@@ -17,9 +16,11 @@ from virocon.utils import calculate_design_conditions
 __all__ = [
     "plot_marginal_quantiles",
     "plot_dependence_functions",
+    "plot_histograms_of_interval_distributions",
     "plot_2D_isodensity",
     "plot_2D_contour",
 ]
+
 
 # colors (schemes) chosen according to https://personal.sron.nl/~pault/
 
@@ -76,19 +77,42 @@ def get_default_semantics(n_dim):
     """
 
     semantics = {
-        "names": [f"Variable {dim+1}" for dim in range(n_dim)],
-        "symbols": [f"X_{dim+1}" for dim in range(n_dim)],
+        "names": [f"Variable {dim + 1}" for dim in range(n_dim)],
+        "symbols": [f"X_{dim + 1}" for dim in range(n_dim)],
         "units": ["arb. unit" for dim in range(n_dim)],
     }
     return semantics
+
+
+def _get_n_axes(n_intervals):
+    if n_intervals > 9:
+        raise NotImplementedError(
+            "Automatic axes creation is only supported for up to 9 intervals."
+        )
+
+    table = [
+        (1, 1),
+        (1, 2),
+        (1, 3),
+        (2, 2),
+        (2, 3),
+        (2, 3),
+        (3, 3),
+        (3, 3),
+        (3, 3),
+    ]
+
+    fig, axes = plt.subplots(
+        *table[n_intervals], sharex=True, sharey=True, squeeze=False
+    )
+    return fig, axes.ravel()
 
 
 def plot_marginal_quantiles(model, sample, semantics=None, axes=None):
     """
     Plot all marginal quantiles of a model.
 
-    Plots the fitted marginal distribution versus a dataset in a quantile-
-    quantile (QQ) plot.
+    Plots the fitted marginal distribution versus a dataset in a quantile-quantile (QQ) plot.
 
     Parameters
     ----------
@@ -159,7 +183,7 @@ def plot_marginal_quantiles(model, sample, semantics=None, axes=None):
 
         # prior to scipy version 1.7.0 a regression fit line was plotted,
         # even with option fit=False. As discussed in PR#149 we do not want
-        # keep this line. So here we remove it if it was plotted.
+        # to keep this line. So here we remove it if it was plotted.
         if len(ax.lines) > 1:
             ax.lines[1].remove()
 
@@ -292,8 +316,143 @@ def plot_dependence_functions(model, semantics=None, par_rename={}, axes=None):
     return axes
 
 
+def plot_histograms_of_interval_distributions(
+    model, sample, semantics=None, plot_pdf=True
+):
+    """
+    Plot histograms of all model dimensions.
+
+    If the model is conditional in a dimension all histograms per interval are plotted for that dimension.
+    In such a case the fitted interval distributions are generally different from the final joint distribution.
+
+    Parameters
+    ----------
+    model : MultivariateModel
+        The model that was fitted to the dataset.
+    sample : ndarray
+        The data that was used to fit the model.
+    semantics: dict, optional
+        The description of the model. If None (the default) generic semantics will be used.
+    plot_pdf: boolean, optional
+        Whether the fitted probability density should be plotted. Defaults to True.
+
+    Returns
+    -------
+    The used matplotlib axes objects.
+
+    """
+    sample = np.asarray(sample)
+    n_dim = model.n_dim
+
+    if semantics is None:
+        semantics = get_default_semantics(n_dim)
+
+    figures = []
+    axes_list = []
+
+    for dim in range(n_dim):
+        x_name = semantics["names"][dim]
+        x_symbol = semantics["symbols"][dim]
+        x_unit = semantics["units"][dim]
+        x_label = f"{x_name}," + r" $\it{" + f"{x_symbol}" + r"}$" + f" ({x_unit})"
+
+        if model.conditional_on[dim] is None:
+            # unconditional
+            data = sample[:, dim]
+            dist = model.distributions[dim]
+            x = np.linspace(np.min(data), np.max(data))
+            fig, ax = plt.subplots()
+            ax.hist(
+                data,
+                bins="doane",
+                density=True,
+                color="#000000",
+                histtype="stepfilled",
+                alpha=0.2,
+            )
+            if plot_pdf:
+                density = dist.pdf(x)
+                ax.plot(
+                    x,
+                    density,
+                    color="#004488",
+                )
+            ax.set_xlabel(x_label)
+            ax.set_ylabel("Probability density")
+            ax.set_title(f"n={len(data)}")
+
+            figures.append(fig)
+            axes_list.append(ax)
+
+        else:
+            # conditional
+            cond_dist = model.distributions[dim]
+            dist_per_interval = cond_dist.distributions_per_interval
+            n_intervals = len(dist_per_interval)
+
+            conditioning_idx = model.conditional_on[dim]
+            conditioning_symbol = semantics["symbols"][conditioning_idx]
+            conditioning_unit = semantics["units"][conditioning_idx]
+
+            slicer = model.interval_slicers[conditioning_idx]
+            interval_slices, conditioning_values, _ = slicer.slice_(
+                sample[:, conditioning_idx]
+            )
+            data_intervals = [sample[int_slice, dim] for int_slice in interval_slices]
+
+            # if the following fails, the sample was probably not used for fitting
+            # TODO raise proper exception then
+            np.testing.assert_allclose(
+                conditioning_values, cond_dist.conditioning_values
+            )
+            assert len(data_intervals) == len(cond_dist.data_intervals)
+            for i in range(len(data_intervals)):
+                np.testing.assert_allclose(
+                    np.sort(data_intervals[i]), np.sort(cond_dist.data_intervals[i])
+                )
+
+            fig, axes = _get_n_axes(n_intervals)
+            for interval_idx in range(n_intervals):
+                cond_val = conditioning_values[interval_idx]
+                data = data_intervals[interval_idx]
+                x = np.linspace(np.min(data), np.max(data))
+                dist = dist_per_interval[interval_idx]
+                ax = axes[interval_idx]
+                ax.hist(
+                    data,
+                    bins="doane",
+                    density=True,
+                    color="#000000",
+                    histtype="stepfilled",
+                    alpha=0.2,
+                )
+                if plot_pdf:
+                    density = dist.pdf(x)
+                    ax.plot(
+                        x,
+                        density,
+                        color="#004488",
+                    )
+                ax.set_xlabel(x_label)
+                ax.set_ylabel("Probability density")
+                title = f"{conditioning_symbol} = {cond_val:.3f} {conditioning_unit}, n={len(data)}"
+                ax.set_title(title)
+
+            figures.append(fig)
+            axes_list.append(axes)
+
+    return figures, axes_list
+
+
 def plot_2D_isodensity(
-    model, sample, semantics=None, swap_axis=False, limits=None, levels=None, ax=None
+    model,
+    sample,
+    semantics=None,
+    swap_axis=False,
+    limits=None,
+    levels=None,
+    ax=None,
+    n_grid_steps=250,
 ):
     """
     Plot isodensity contours and a data sample for a 2D model.
@@ -309,7 +468,7 @@ def plot_2D_isodensity(
         will be used.
     swap_axis : boolean, optional
         If True the second dimension of the model is plotted on the x-axis and
-        the first on the y-axis. Otherwise vice-versa. Defaults to False.
+        the first on the y-axis. Otherwise, vice-versa. Defaults to False.
     limits : list of tuples, optional
         Specifies in which rectangular region the density is calculated and
         plotted. If None (default) limits will be set automatically.
@@ -318,6 +477,9 @@ def plot_2D_isodensity(
         The probability density levels that are plotted. If None (default)
         levels are set automatically.
         Example: [0.001, 0.01, 0.1]
+    n_grid_steps : int, optional
+        The number of steps along each axis of the grid used to plot the contours.
+        Defaults to 250.
     ax : matplotlib Axes, optional
         Matplotlib axes object to use for plotting. If None (default) a new
         figure will be created.
@@ -368,7 +530,7 @@ def plot_2D_isodensity(
         y_lower = min(sample[:, 1]) - expand_factor * y_range
         y_upper = max(sample[:, 1]) + expand_factor * y_range
 
-    x, y = np.linspace(((x_lower, y_lower)), (x_upper, y_upper)).T
+    x, y = np.linspace((x_lower, y_lower), (x_upper, y_upper), num=n_grid_steps).T
     X, Y = np.meshgrid(x, y)
     grid_flat = np.c_[X.ravel(), Y.ravel()]
     f = model.pdf(grid_flat)
@@ -386,7 +548,7 @@ def plot_2D_isodensity(
         # Define the lowest isodensity level based on the density values on the evaluated grid.
         q = np.quantile(f, q=0.5)
         if q > 0:
-            min_lvl = int(str(q).split("e")[1])
+            min_lvl = int(f"{q:.0e}".split("e")[1])
         else:
             min_lvl = -5
         n_levels = np.abs(min_lvl)
@@ -405,7 +567,7 @@ def plot_2D_isodensity(
         loc="upper left",
         ncol=1,
         frameon=False,
-        title="Probabilty density",
+        title="Probability density",
     )
     x_name = semantics["names"][x_idx]
     x_symbol = semantics["symbols"][x_idx]
@@ -442,15 +604,15 @@ def plot_2D_contour(
     design_conditions : array-like or boolean, optional
        Specified environmental conditions under which the system must operate.
        If an array it is assumed to be a 2D array of shape
-       (number of points, 2) and should contain the precalulated design
+       (number of points, 2) and should contain the precalculated design
        conditions. If it is True design_conditions are computed with default
-       values and plotted. Otherwise no design conditions will be plotted
+       values and plotted. Otherwise, no design conditions will be plotted
        (the default).
     semantics: dict, optional
         Generated model description. Defaults to None.
     swap_axis : boolean, optional
         f True the second dimension of the model is plotted on the x-axis and
-        the first on the y-axis. Otherwise vice-versa. Defaults to False.
+        the first on the y-axis. Otherwise, vice-versa. Defaults to False.
     ax : matplotlib Axes, optional
         Matplotlib axes object to use for plotting. If None (default) a new
         figure will be created.
@@ -480,7 +642,9 @@ def plot_2D_contour(
     if design_conditions:
         try:  # if iterable assume it's already the design conditions
             iter(design_conditions)
-        except:  # if it is not an array we compute the default design_conditions
+        except (
+            TypeError
+        ):  # if it is not an array we compute the default design_conditions
             design_conditions = calculate_design_conditions(
                 contour, swap_axis=swap_axis
             )
