@@ -1555,7 +1555,6 @@ class ScipyDistribution(Distribution):
             parameters = [name.strip() for name in distribution.shapes.split(",")]
         else:
             parameters = []
-        # assert distribution is continous
         parameters += ["loc", "scale"]
         return parameters
 
