@@ -87,9 +87,58 @@ Unless you specify otherwise, the parameters of dependence functions are estimat
 Implementing new statistical distributions: Example of the generalized gamma distribution
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-When implementing a new distribution in virocon, we recommend orientating oneself on an already existing distribution in virocon.
+When implementing a new distribution in virocon there are two general approaches available.
+The first and easiest approach is to use a distribution defined in scipy and directly use it to derive a distribution for virocon ("scipy approach").
+A distribution created this way will have the same parameters as the scipy distribution.
+The second, more flexible approach is to build a new distribution from scratch ("from scratch approach"). Such a distribution may or may not use scipy functions
+and allows to freely design the distribution parameters.
+When implementing a new distribution from scratch, we recommend starting with an existing distribution in virocon and adapting it step by step.
 You can use a virocon distribution as a template to implement a new distribution. The following sections describe how
-the generalized gamma distribution was implemented.
+the generalized gamma distribution was implemented (from scratch approach) and how it could have been implemented using the scipy approach.
+
+Scipy approach: Subclassing ScipyDistribution
+---------------------------------------------
+
+To create a virocon based on a scipy distribution is as easy as subclassing :py:class:`virocon.distributions.ScipyDistribution`
+and overwriting one of its attributes: `scipy_dist_name` or `scipy_dist`.
+Which attribute to overwrite is a matter of preference and does not change the behaviour of the subclass.
+The generalized gamma distribution is named 'gengamma' in scipy.
+
+.. code-block:: python
+
+       from virocon import ScipyDistribution
+
+       class GeneralizedGammaDistribution(ScipyDistribution):
+
+           scipy_dist_name = "gengamma"
+
+
+is equivalent to
+
+.. code-block:: python
+
+       from virocon import ScipyDistribution
+       from scipy.stats import gengamma
+
+       class GeneralizedGammaDistributionByDist(ScipyDistribution):
+
+           scipy_dist = gengamma
+
+The resulting distribution class has the same parameters as the scipy distribution: `a`, `c`, `loc`, `scale`.
+If instead a 3 parameter version of the distribution is requested,
+one of the parameters can be fixed creating an instance of  the distribution. E.g. fix the location parameter to zero:
+
+.. code-block:: python
+
+       my_gengamma = GeneralizedGammaDistributionByDist(f_loc=0)
+
+
+Second Approach: Building from scratch
+--------------------------------------
+
+If a specific parameterization of the distribution is necessary,
+or if the distribution to implement is not available in scipy, the distribution can be created from scratch, instead.
+The steps to create such a distribution is shown in the following with the generalized gamma distribution as an example.
 
 **1. Clarify the mathematics of the distribution**:
 

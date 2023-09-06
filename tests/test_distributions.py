@@ -8,7 +8,105 @@ from virocon import (
     NormalDistribution,
     ExponentiatedWeibullDistribution,
     GeneralizedGammaDistribution,
+    ScipyDistribution,
 )
+
+
+def test_scipydistribution():
+    # Generalized Gamma Distribution
+    generalized_gamma_name = "gengamma"
+    generalized_gamma_dist = sts.gengamma
+
+    sample_params = {"a": 1.5, "c": 2, "loc": 0, "scale": 0.5}
+    n = 1000
+    sample = generalized_gamma_dist.rvs(**sample_params, size=n, random_state=42)
+    sample.sort()
+    x = np.linspace(sample.min(), sample.max())
+    p = np.linspace(0, 1, num=n)
+
+    class GeneralizedGammaDistributionByName(ScipyDistribution):
+        scipy_dist_name = generalized_gamma_name
+
+    class GeneralizedGammaDistributionByDist(ScipyDistribution):
+        scipy_dist = generalized_gamma_dist
+
+    # test wrong parameter instantiation
+    with pytest.raises(TypeError):
+        gengamma_by_name = GeneralizedGammaDistributionByName(floc=0)
+    with pytest.raises(TypeError):
+        gengamma_by_dist = GeneralizedGammaDistributionByDist(floc=0)
+
+    gengamma_by_name = GeneralizedGammaDistributionByName(f_loc=0)
+    gengamma_by_dist = GeneralizedGammaDistributionByDist(f_loc=0)
+
+    # fit
+    gengamma_by_name.fit(sample)
+    gengamma_by_dist.fit(sample)
+
+    assert list(gengamma_by_name.parameters.keys()) == ["a", "c", "loc", "scale"]
+    assert list(gengamma_by_dist.parameters.keys()) == ["a", "c", "loc", "scale"]
+
+    np.testing.assert_allclose(
+        gengamma_by_name.parameters["a"], sample_params["a"], rtol=0.1
+    )
+    np.testing.assert_allclose(
+        gengamma_by_name.parameters["c"], sample_params["c"], rtol=0.1
+    )
+    assert gengamma_by_name.parameters["loc"] == 0.0
+    np.testing.assert_allclose(
+        gengamma_by_name.parameters["scale"], sample_params["scale"], rtol=0.1
+    )
+
+    np.testing.assert_allclose(
+        gengamma_by_name.parameters["a"], sample_params["a"], rtol=0.1
+    )
+    np.testing.assert_allclose(
+        gengamma_by_name.parameters["c"], sample_params["c"], rtol=0.1
+    )
+    assert gengamma_by_name.parameters["loc"] == 0.0
+    np.testing.assert_allclose(
+        gengamma_by_name.parameters["scale"], sample_params["scale"], rtol=0.1
+    )
+
+    # sample
+    sample_mean = sample.mean()
+    sample_var = sample.var()
+
+    sample_by_name = gengamma_by_name.draw_sample(n, random_state=42)
+    sample_by_dist = gengamma_by_dist.draw_sample(n, random_state=42)
+    mean_by_name = sample_by_name.mean()
+    var_by_name = sample_by_name.var()
+    mean_by_dist = sample_by_dist.mean()
+    var_by_dist = sample_by_dist.var()
+    assert mean_by_name == mean_by_dist
+    assert var_by_name == var_by_dist
+
+    np.testing.assert_allclose(sample_mean, mean_by_name, rtol=0.1)
+    np.testing.assert_allclose(sample_var, var_by_name, rtol=0.1)
+
+    # pdf
+    pdf_by_name = gengamma_by_name.pdf(x)
+    pdf_by_dist = gengamma_by_dist.pdf(x)
+    assert (pdf_by_name == pdf_by_dist).all()
+    assert (
+        generalized_gamma_dist.pdf(x, **gengamma_by_name.parameters) == pdf_by_name
+    ).all()
+
+    # cdf
+    cdf_by_name = gengamma_by_name.cdf(x)
+    cdf_by_dist = gengamma_by_dist.cdf(x)
+    assert (cdf_by_name == cdf_by_dist).all()
+    assert (
+        generalized_gamma_dist.cdf(x, **gengamma_by_name.parameters) == cdf_by_name
+    ).all()
+
+    # icdf
+    icdf_by_name = gengamma_by_name.icdf(p)
+    icdf_by_dist = gengamma_by_dist.icdf(p)
+    assert (icdf_by_name == icdf_by_dist).all()
+    assert (
+        generalized_gamma_dist.ppf(p, **gengamma_by_name.parameters) == icdf_by_name
+    ).all()
 
 
 def test_exponentiated_weibull_distribution_cdf():
