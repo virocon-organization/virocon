@@ -48,7 +48,6 @@ gengamma_by_name = GeneralizedGammaDistributionByName(f_loc=0)
 gengamma_by_dist = GeneralizedGammaDistributionByDist(f_loc=0)
 
 
-# Done
 
 # Fit
 gengamma_by_name.fit(sample)
