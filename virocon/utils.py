@@ -11,6 +11,8 @@ from pathlib import Path
 from sklearn.neighbors import NearestNeighbors
 
 from virocon._intersection import intersection
+from typing import Union
+import numpy.typing as npt
 
 __all__ = [
     "read_ec_benchmark_dataset",
@@ -47,7 +49,22 @@ def read_ec_benchmark_dataset(file_path=None):
     return data
 
 
-def calculate_design_conditions(contour, steps=None, swap_axis=False):
+def calculate_design_conditions(contour, steps: Union[list, int] = None, swap_axis=False) -> npt.ArrayLike:
+    """Calculates design conditions (relevant points for structural analysis) for a contour.
+
+    For example, in a sea state contour, one is interested in the upper Hs part for
+    a given Tz/Tp. And one often likes to have points that are evenly spaced in
+    the Tz/Tp direction, e.g. one Hs-Tz design condition per 0.5 s of Tz.
+
+    Args:
+        contour (Contour): Environmental conntour object.
+        steps (list of floats or int, optional): Either a list of design conditoin x-values or the number how many
+            steps shall be used (then the x-values will be evenly spaced). Defaults to None.
+        swap_axis (bool, optional): Wheter x and y shall be swapped. Defaults to False.
+
+    Returns:
+        npt.ArrayLike: design conditions (points for structural analysis calculations).
+    """
     if swap_axis:
         x_idx = 1
         y_idx = 0
@@ -59,40 +76,40 @@ def calculate_design_conditions(contour, steps=None, swap_axis=False):
 
     x1 = np.append(coords[:, x_idx], coords[0, x_idx])
     y1 = np.append(coords[:, y_idx], coords[0, y_idx])
-    # x1 = coords[:, x_idx].tolist()
-    # x1.append(x1[0])
-    # y1 = coords[:, x_idx].tolist()
-    # y1.append(y1[0])
 
-    y2 = [np.min(y1) - np.max(y1) * 0.1, np.max(y1) + np.max(y1) * 0.1]
-
+    # Define the x-positions where a design condition will be calculated
+    # The y value will be found by calculating the intersection between
+    # a vetical line and the contour coordinates.
+    small_spacer = 0.0001 * (np.max(x1) - np.min(x1))
+    default_lower_limit = np.min(x1) + small_spacer
+    default_uppper_limit = np.max(x1) - small_spacer
     if steps is None:
-        steps = np.linspace(np.min(x1), np.max(x1), endpoint=True, num=10)
+        steps = np.linspace(default_lower_limit, default_uppper_limit, endpoint=True, num=10)
     else:
         try:
             iter(steps)  # if steps is iterable use it
         except TypeError:  # if steps is not iterable assume it's an int
-            steps = np.linspace(np.min(x1), np.max(x1), endpoint=True, num=steps)
+            steps = np.linspace(default_lower_limit, default_uppper_limit, endpoint=True, num=steps)
+
+    # Vertical line ylimits.
+    y2 = [np.min(y1) - np.max(y1) * 0.1, np.max(y1) + np.max(y1) * 0.1]
 
     frontier_x = []
     frontier_y = []
 
-    for x2 in zip(steps, steps):
-        x, y = intersection(x1, y1, x2, y2)
+    for x2 in steps:
+        x, y = intersection(x1, y1, [x2, x2], y2)
         assert len(x) <= 2
         assert len(y) <= 2
 
         if len(y) == 0:
             continue
 
-        frontier_x.append(x2[0])
+        frontier_x.append(x2)
         frontier_y.append(np.max(y))
 
     design_conditions = np.c_[frontier_x, frontier_y]
     return design_conditions
-
-
-# TODO should the design conditoins returned in x, y order or should they be swapped if swap_axis
 
 
 def sort_points_to_form_continuous_line(x, y, search_for_optimal_start=False):
