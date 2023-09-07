@@ -10,14 +10,14 @@ from virocon import (
     WeibullDistribution,
     LogNormalDistribution,
     GlobalHierarchicalModel,
-    IFORMContour
+    IFORMContour,
 )
 
 from virocon.utils import (
     read_ec_benchmark_dataset,
     ROOT_DIR,
     sort_points_to_form_continuous_line,
-    calculate_design_conditions
+    calculate_design_conditions,
 )
 
 
@@ -67,24 +67,31 @@ def test_read_ec_benchmark_dataset():
 def test_calculate_design_conditions(seastate_model):
     # Test design condition calculation with  the IFORM contour presented in
     # Haselsteiner et al. (2017; DOI: 10.1016/j.coastaleng.2017.03.002 .
-    alpha = 1 / (25 * 365.25 * 24/3)
+    alpha = 1 / (25 * 365.25 * 24 / 3)
     contour = IFORMContour(seastate_model, alpha)
 
-    design_conditions = calculate_design_conditions(contour, steps=None, swap_axis=False)
+    design_conditions = calculate_design_conditions(
+        contour, steps=None, swap_axis=False
+    )
     assert design_conditions.shape == (10, 2)
     np.testing.assert_allclose(design_conditions[1], [2.5, 11.6], atol=0.5)
     np.testing.assert_allclose(design_conditions[9], [15.2, 13.4], atol=0.5)
 
     steps = 20
-    design_conditions = calculate_design_conditions(contour, steps=steps, swap_axis=False)
+    design_conditions = calculate_design_conditions(
+        contour, steps=steps, swap_axis=False
+    )
     assert design_conditions.shape == (steps, 2)
     np.testing.assert_allclose(design_conditions[1], [1.6, 10.9], atol=0.5)
     np.testing.assert_allclose(design_conditions[19], [15.2, 13.4], atol=0.5)
 
-    design_conditions = calculate_design_conditions(contour, steps=steps, swap_axis=True)
+    design_conditions = calculate_design_conditions(
+        contour, steps=steps, swap_axis=True
+    )
     assert design_conditions.shape == (steps, 2)
     np.testing.assert_allclose(design_conditions[0], [2.6, 1.1], atol=0.5)
     np.testing.assert_allclose(design_conditions[19], [13.9, 14.1], atol=0.5)
+
 
 def test_sort_points_to_form_continuous_line():
     phi = np.linspace(0, 1.8 * np.pi, num=10, endpoint=False)

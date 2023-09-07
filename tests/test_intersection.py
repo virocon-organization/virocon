@@ -2,6 +2,7 @@ import numpy as np
 
 from virocon._intersection import intersection
 
+
 def test_intersection():
     x = np.linspace(1, 5, 11)
     y1 = 0 * x + 1

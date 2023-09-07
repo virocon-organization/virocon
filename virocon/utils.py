@@ -49,7 +49,9 @@ def read_ec_benchmark_dataset(file_path=None):
     return data
 
 
-def calculate_design_conditions(contour, steps: Union[list, int] = None, swap_axis=False) -> npt.ArrayLike:
+def calculate_design_conditions(
+    contour, steps: Union[list, int] = None, swap_axis=False
+) -> npt.ArrayLike:
     """Calculates design conditions (relevant points for structural analysis) for a contour.
 
     For example, in a sea state contour, one is interested in the upper Hs part for
@@ -80,16 +82,22 @@ def calculate_design_conditions(contour, steps: Union[list, int] = None, swap_ax
     # Define the x-positions where a design condition will be calculated
     # The y-values will be found by calculating the intersections between
     # vertical lines and the contour coordinates.
-    small_spacer = 0.0001 * (np.max(x1) - np.min(x1)) # Required to ensure that conditions on limits are picked up.
+    small_spacer = 0.0001 * (
+        np.max(x1) - np.min(x1)
+    )  # Required to ensure that conditions on limits are picked up.
     default_lower_limit = np.min(x1) + small_spacer
     default_uppper_limit = np.max(x1) - small_spacer
     if steps is None:
-        steps = np.linspace(default_lower_limit, default_uppper_limit, endpoint=True, num=10)
+        steps = np.linspace(
+            default_lower_limit, default_uppper_limit, endpoint=True, num=10
+        )
     else:
         try:
             iter(steps)  # if steps is iterable use it
         except TypeError:  # if steps is not iterable assume it's an int
-            steps = np.linspace(default_lower_limit, default_uppper_limit, endpoint=True, num=steps)
+            steps = np.linspace(
+                default_lower_limit, default_uppper_limit, endpoint=True, num=steps
+            )
 
     # Vertical line ylimits.
     y2 = [np.min(y1) - np.max(y1) * 0.1, np.max(y1) + np.max(y1) * 0.1]
