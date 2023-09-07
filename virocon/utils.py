@@ -79,8 +79,8 @@ def calculate_design_conditions(contour, steps: Union[list, int] = None, swap_ax
 
     # Define the x-positions where a design condition will be calculated
     # The y value will be found by calculating the intersection between
-    # a vetical line and the contour coordinates.
-    small_spacer = 0.0001 * (np.max(x1) - np.min(x1))
+    # a vertical line and the contour coordinates.
+    small_spacer = 0.0001 * (np.max(x1) - np.min(x1)) # Required to ensure that conditions on limits are picked up.
     default_lower_limit = np.min(x1) + small_spacer
     default_uppper_limit = np.max(x1) - small_spacer
     if steps is None:
