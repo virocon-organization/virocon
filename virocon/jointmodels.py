@@ -137,7 +137,9 @@ class MultivariateModel(ABC):
         n = 100_000
         for i, (x_val, given_val) in enumerate(zip(x, given)):
             try:
-                sample = self.conditional_sample(n, dim, given_val, random_state=random_state)
+                sample = self.conditional_sample(
+                    n, dim, given_val, random_state=random_state
+                )
                 p[i] = (sample <= x_val).sum() / n
             except CouldNotSampleError:
                 p[i] = 0
@@ -159,7 +161,9 @@ class MultivariateModel(ABC):
             n = min([max([n, 100_000]), 10_000_000])
             n = int(n)
             try:
-                sample = self.conditional_sample(n, dim, given_val, random_state=random_state)
+                sample = self.conditional_sample(
+                    n, dim, given_val, random_state=random_state
+                )
                 x[i] = np.quantile(sample, p_val)
             except CouldNotSampleError:
                 x[i] = 0  # TODO
@@ -855,7 +859,6 @@ class TransformedModel(MultivariateModel):
 
         p = np.empty(len(x))
         for i in range(len(x)):
-
             integration_limits = [
                 (lower_integration_limits[j], x[i, j]) for j in range(n_dim)
             ]
@@ -894,7 +897,6 @@ class TransformedModel(MultivariateModel):
         raise NotImplementedError()
 
     def marginal_cdf(self, x, dim):
-
         """
         Marginal cumulative distribution function.
 
