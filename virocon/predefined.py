@@ -10,8 +10,7 @@ from virocon import (
     ExponentiatedWeibullDistribution,
     DependenceFunction,
     WidthOfIntervalSlicer,
-    hs_tz_to_s_d,
-    hs_s_to_hs_tz,
+    variable_transform
 )
 
 __all__ = [
@@ -328,13 +327,13 @@ def get_Hs_S_ExpWeib_WLS_Hs_Tz():
     def _transform(hs_tz):
         hs = hs_tz[:, 0]
         tz = hs_tz[:, 1]
-        s, _ = hs_tz_to_s_d(hs, tz)
+        s, _ = variable_transform.hs_tz_to_s_d(hs, tz)
         return np.c_[hs, s]
 
     def _inv_transform(hs_s):
         hs = hs_s[:, 0]
         s = hs_s[:, 1]
-        hs, tz = hs_s_to_hs_tz(hs, s)
+        hs, tz = variable_transform.hs_s_to_hs_tz(hs, s)
         return np.c_[hs, tz]
 
     def _jacobian(hs_s):

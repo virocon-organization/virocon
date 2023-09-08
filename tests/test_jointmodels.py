@@ -10,7 +10,7 @@ from virocon import (
 
 
 @pytest.fixture(scope="module")
-def seastate_model():
+def vanem2012_seastate_model():
     """
     This joint distribution model described by Vanem and Bitner-Gregersen (2012)
     is widely used in academia. Here, we use it for evaluation.
@@ -41,24 +41,24 @@ def seastate_model():
     return model
 
 
-def test_joint_pdf(seastate_model):
+def test_joint_pdf(vanem2012_seastate_model):
     x = [2.5, 6]  # (hs, tz) in (m, s).
-    f = seastate_model.pdf(x)
+    f = vanem2012_seastate_model.pdf(x)
 
     # Second sea state's period is unphysical due to wave breaking.
     xs = [
         [2.5, 6],
         [2.5, 2],
     ]
-    fs = seastate_model.pdf(xs)
+    fs = vanem2012_seastate_model.pdf(xs)
     assert fs[0] > fs[1]
 
 
-def test_joint_cdf(seastate_model):
+def test_joint_cdf(vanem2012_seastate_model):
     # cdf() takes is slow to evaluate (one call ~ 5 s)
     x = [2.5, 6]  # (hs, tz) in (m, s).
-    F = seastate_model.cdf(x)
+    F = vanem2012_seastate_model.cdf(x)
     xs = [[2.5, 2], [2.5, 6], [2.5, 10]]
-    Fs = seastate_model.cdf(xs)
+    Fs = vanem2012_seastate_model.cdf(xs)
     assert Fs[1] > Fs[0]
     assert Fs[2] > Fs[1]
