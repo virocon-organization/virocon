@@ -90,7 +90,7 @@ def test_kai_ew_mode():
         transformations["inverse"],
         transformations["jacobian"],
         precision_factor=0.2,
-        random_state=42
+        random_state=42,
     )
 
     # TODO: Speed this up (takes long due to the contour calculation which

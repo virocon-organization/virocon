@@ -215,13 +215,13 @@ class IFORMContour(Contour):
 
         # A GlobalHierarchicalModel has the attributes distributions and conditional_on
         # but a TransformedModel not. TransformedModel is used in Kai's EW model.
-        if type(self.model).__name__ == 'GlobalHierarchicalModel':
+        if type(self.model).__name__ == "GlobalHierarchicalModel":
             distributions = self.model.distributions
             conditional_on = self.model.conditional_on
         else:
             distributions = None
             conditional_on = None
-            if type(self.model).__name__ != 'TransformedModel':
+            if type(self.model).__name__ != "TransformedModel":
                 raise TypeError
 
         beta = sts.norm.ppf(1 - self.alpha)
@@ -250,7 +250,9 @@ class IFORMContour(Contour):
         if distributions:
             coordinates[:, 0] = distributions[0].icdf(p[:, 0])
         else:
-            coordinates[:, 0] = self.model.marginal_icdf(p[:, 0], 0, precision_factor=self.model.precision_factor)
+            coordinates[:, 0] = self.model.marginal_icdf(
+                p[:, 0], 0, precision_factor=self.model.precision_factor
+            )
 
         for i in range(1, n_dim):
             if distributions:
@@ -263,7 +265,9 @@ class IFORMContour(Contour):
                     )
             else:
                 given = coordinates[:, np.arange(n_dim) != i]
-                coordinates[:, i] = self.model.conditional_icdf(p[:, i], i, given, random_state=self.model.random_state)
+                coordinates[:, i] = self.model.conditional_icdf(
+                    p[:, i], i, given, random_state=self.model.random_state
+                )
 
         self.sphere_points = sphere_points
         self.coordinates = coordinates

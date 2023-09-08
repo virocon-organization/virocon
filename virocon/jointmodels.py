@@ -767,7 +767,15 @@ class GlobalHierarchicalModel(MultivariateModel):
 
 
 class TransformedModel(MultivariateModel):
-    def __init__(self, model, transform, inverse, jacobian, precision_factor=1.0, random_state=None):
+    def __init__(
+        self,
+        model,
+        transform,
+        inverse,
+        jacobian,
+        precision_factor=1.0,
+        random_state=None,
+    ):
         # model: the model for the transformed data
         # transform: function that transforms data for the model
         # inverse: the inverse of transform
