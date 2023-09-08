@@ -12,7 +12,7 @@ import scipy.integrate as integrate
 from virocon.distributions import ConditionalDistribution
 from virocon.intervals import NumberOfIntervalsSlicer
 
-__all__ = ["GlobalHierarchicalModel"]
+__all__ = ["GlobalHierarchicalModel", "TransformedModel"]
 
 
 class MaxIterationWarning(RuntimeWarning):
@@ -767,7 +767,7 @@ class GlobalHierarchicalModel(MultivariateModel):
 
 
 class TransformedModel(MultivariateModel):
-    def __init__(self, model, transform, inverse, jacobian):
+    def __init__(self, model, transform, inverse, jacobian, precision_factor=1.0, random_state=None):
         # model: the model for the transformed data
         # transform: function that transforms data for the model
         # inverse: the inverse of transform
@@ -776,6 +776,8 @@ class TransformedModel(MultivariateModel):
         self.transform = transform
         self.inverse = inverse
         self.jacobian = jacobian
+        self.precision_factor = precision_factor
+        self.random_state = random_state
 
         self.n_dim = self.model.n_dim
         self._sample = None
@@ -788,7 +790,13 @@ class TransformedModel(MultivariateModel):
         return self._sample
 
     def __repr__(self):
-        pass
+        name = "TransformedModel"
+        model = repr(self.model)
+        transform = repr(self.transform)
+        inverse = repr(self.inverse)
+        jacobian = repr(self.jacobian)
+
+        return f"{name}(model={model}, transform={transform}, inverse={inverse}, jacobian={jacobian})"
 
     def fit(self, data, *args, **kwargs):
         """

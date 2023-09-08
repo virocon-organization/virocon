@@ -18,6 +18,7 @@ __all__ = [
     "get_DNVGL_Hs_U",
     "get_OMAE2020_Hs_Tz",
     "get_OMAE2020_V_Hs",
+    "get_Hs_S_ExpWeib_WLS_Hs_Tz",
 ]
 
 
@@ -337,10 +338,9 @@ def get_Hs_S_ExpWeib_WLS_Hs_Tz():
         return np.c_[hs, tz]
 
     def _jacobian(hs_s):
-        global factor
         hs = hs_s[:, 0]
         s = hs_s[:, 1]
-        return 2 * factor * hs / s**3
+        return 2 * variable_transform.factor * hs / s**3
 
     linear_2_bounds = [(0, None), (0, None)]
     limited_growth2_bounds = [(0, 1), (0, None)]
@@ -378,11 +378,4 @@ def get_Hs_S_ExpWeib_WLS_Hs_Tz():
         "units": ["m", "s"],
     }
 
-    model_description = {
-        "distributions": dist_descriptions,
-        "fits": fit_descriptions,
-        "semantics": semantics,
-        "transformations": transformations,
-    }
-
-    return model_description
+    return dist_descriptions, fit_descriptions, semantics, transformations

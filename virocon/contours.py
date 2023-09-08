@@ -212,8 +212,17 @@ class IFORMContour(Contour):
         """
         n_dim = self.model.n_dim
         n_points = self.n_points
-        distributions = self.model.distributions
-        conditional_on = self.model.conditional_on
+
+        # A GlobalHierarchicalModel has the attributes distributions and conditional_on
+        # but a TransformedModel not. TransformedModel is used in Kai's EW model.
+        if type(self.model).__name__ == 'GlobalHierarchicalModel':
+            distributions = self.model.distributions
+            conditional_on = self.model.conditional_on
+        else:
+            distributions = None
+            conditional_on = None
+            if type(self.model).__name__ != 'TransformedModel':
+                raise TypeError
 
         beta = sts.norm.ppf(1 - self.alpha)
         self.beta = beta
@@ -238,16 +247,23 @@ class IFORMContour(Contour):
         p = norm_cdf
         coordinates = np.empty_like(p)
 
-        coordinates[:, 0] = distributions[0].icdf(p[:, 0])
+        if distributions:
+            coordinates[:, 0] = distributions[0].icdf(p[:, 0])
+        else:
+            coordinates[:, 0] = self.model.marginal_icdf(p[:, 0], 0, precision_factor=self.model.precision_factor)
 
         for i in range(1, n_dim):
-            if conditional_on[i] is None:
-                coordinates[:, i] = distributions[i].icdf(p[:, i])
+            if distributions:
+                if conditional_on[i] is None:
+                    coordinates[:, i] = distributions[i].icdf(p[:, i])
+                else:
+                    cond_idx = conditional_on[i]
+                    coordinates[:, i] = distributions[i].icdf(
+                        p[:, i], given=coordinates[:, cond_idx]
+                    )
             else:
-                cond_idx = conditional_on[i]
-                coordinates[:, i] = distributions[i].icdf(
-                    p[:, i], given=coordinates[:, cond_idx]
-                )
+                given = coordinates[:, np.arange(n_dim) != i]
+                coordinates[:, i] = self.model.conditional_icdf(p[:, i], i, given, random_state=self.model.random_state)
 
         self.sphere_points = sphere_points
         self.coordinates = coordinates
