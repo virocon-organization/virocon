@@ -267,7 +267,6 @@ class ConditionalDistribution:
             n, **self._get_param_values(given), random_state=random_state
         )
 
-
     def fit(
         self,
         data,
