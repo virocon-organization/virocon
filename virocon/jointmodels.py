@@ -760,3 +760,165 @@ class GlobalHierarchicalModel(MultivariateModel):
                 )
 
         return samples
+
+
+class TransformedModel(MultivariateModel):
+    def __init__(self, model, transform, inverse, jacobian):
+        # model: the model for the transformed data
+        # transform: function that transforms data for the model
+        # inverse: the inverse of transform
+        # jacobian: the jacobi determinant of the inverse transform function
+        self.model = model
+        self.transform = transform
+        self.inverse = inverse
+        self.jacobian = jacobian
+
+        self.n_dim = self.model.n_dim
+        self._sample = None
+
+    @property
+    def sample(self):
+        if self._sample is None:
+            self._sample = self.draw_sample(int(1e6))
+
+        return self._sample
+
+    def __repr__(self):
+        pass
+
+    def fit(self, data, *args, **kwargs):
+        """
+        Fit joint model to data.
+
+        Method of estimating the parameters of a probability distribution to
+        given data.
+
+        Parameters
+        ----------
+        data : array-like
+            The data that should be used to fit the joint model.
+            Shape: (number of realizations, n_dim)
+
+        """
+
+        return self.model.fit(self.transform(data), *args, **kwargs)
+
+    def pdf(self, x):
+        """
+        Probability density function.
+
+        Parameters
+        ----------
+        x : array_like
+            Points at which the pdf is evaluated.
+            Shape: (n, n_dim), where n is the number of points at which the
+            pdf should be evaluated.
+
+        """
+
+        # model_pdf = self.model.pdf(self.transform(x))
+        # return np.where(model_pdf >= 1e-8, model_pdf * self.jacobian(x), 0)
+        return self.model.pdf(self.transform(x)) * self.jacobian(x)
+
+    def cdf(self, x):
+        """
+        Cumulative distribution function.
+
+        Parameters
+        ----------
+        x : array_like
+            Points at which the cdf is evaluated.
+            Shape: (n, n_dim), where n is the number of points at which the
+            cdf should be evaluated.
+
+        """
+
+        x = np.atleast_2d(np.asarray_chkfinite(x))
+
+        n_dim = self.n_dim
+        integral_order = list(range(n_dim))
+
+        def get_integral_func():
+            arg_order = integral_order
+
+            def integral_func(*args):
+                assert len(args) == n_dim
+                # sort arguments as expected by pdf (the models order)
+                x = np.array(args)[np.argsort(arg_order)].reshape((1, n_dim))
+                return self.pdf(x)
+
+            return integral_func
+
+        lower_integration_limits = [0] * n_dim
+
+        integral_func = get_integral_func()
+
+        p = np.empty(len(x))
+        for i in range(len(x)):
+
+            integration_limits = [
+                (lower_integration_limits[j], x[i, j]) for j in range(n_dim)
+            ]
+
+            p[i], error = integrate.nquad(integral_func, integration_limits)
+
+        return p
+
+    def empirical_cdf(self, x, sample=None):
+        if sample is None:
+            sample = self.sample
+        n = len(sample)
+
+        x = np.atleast_2d(np.asarray_chkfinite(x))
+
+        events = x[:, np.newaxis, :]
+        leq_events = (sample <= events).all(axis=-1)
+        result = leq_events.sum(axis=-1) / n
+
+        return result
+
+    def marginal_pdf(self, x, dim):
+        """
+        Marginal probability density function.
+
+        Parameters
+        ----------
+        x : array_like
+            Points at which the pdf is evaluated.
+            Shape: 1-dimensional
+        dim : int
+            The dimension for which the marginal is calculated.
+
+        """
+
+        raise NotImplementedError()
+
+    def marginal_cdf(self, x, dim):
+
+        """
+        Marginal cumulative distribution function.
+
+        Parameters
+        ----------
+        x : array_like
+            Points at which the cdf is evaluated.
+            Shape: 1-dimensional
+        dim : int
+            The dimension for which the marginal is calculated.
+
+        """
+
+        raise NotImplementedError()
+
+    def draw_sample(self, n):
+        """
+        Draw a random sample of size n.
+
+        Parameters
+        ----------
+        n : int
+            Sample size.
+
+        """
+
+        return self.inverse(self.model.draw_sample(n))
