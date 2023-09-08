@@ -123,14 +123,6 @@ class MultivariateModel(ABC):
         return x
 
     @abstractmethod
-    def marginal_icdf(self, *args, **kwargs):
-        """
-        Marginal inverse cumulative distribution function.
-
-        """
-        pass
-
-    @abstractmethod
     def draw_sample(self, *args, random_state=None, **kwargs):
         """
         Draw a random sample of length n.

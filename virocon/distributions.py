@@ -77,7 +77,7 @@ class ConditionalDistribution:
         # allow setting fitting initials on class creation?
         self.distribution = distribution
         self.distribution_class = distribution.__class__
-        self.param_names = distribution.parameters.keys()
+        self.param_names = list(distribution.parameters)
         self.conditional_parameters = {}
         self.fixed_parameters = {}
         self.conditioning_values = None
@@ -240,21 +240,22 @@ class ConditionalDistribution:
 
         return self.distribution.icdf(prob, **self._get_param_values(given))
 
-    def draw_sample(self, n, given):
+    def draw_sample(self, n, given, *, random_state=None):
         """
         Draw a random sample of size n, conditioned on given.
 
 
         Parameters
         ----------
-        n : float
+        n : int
             Number of observations that shall be drawn.
 
         given : float or array_like
            The conditioning value of the conditioning variable i.e. the
            y in x|y.
            Shape: TODO
-
+        random_state : {None, int, numpy.random.Generator}, optional
+            Can be used to draw a reproducible sample.
         Returns
         -------
         ndarray or float
@@ -262,7 +263,10 @@ class ConditionalDistribution:
 
         """
 
-        return self.distribution.draw_sample(n, **self._get_param_values(given))
+        return self.distribution.draw_sample(
+            n, **self._get_param_values(given), random_state=random_state
+        )
+
 
     def fit(
         self,
@@ -384,10 +388,16 @@ class Distribution(ABC):
         """
 
     @abstractmethod
-    def draw_sample(self, n, *args, **kwargs):
+    def draw_sample(self, n, *args, random_state=None, **kwargs):
         """
         Draw a random sample of length n.
 
+        n : float
+            Number of observations that shall be drawn.
+        args, kwargs : float, optional
+            Parameter of the distribution
+        random_state : {None, int, numpy.random.Generator}, optional
+            Can be used to draw a reproducible sample.
         """
 
     def fit(self, data, method="mle", weights=None):
@@ -570,10 +580,10 @@ class WeibullDistribution(Distribution):
         scipy_par = self._get_scipy_parameters(alpha, beta, gamma)
         return sts.weibull_min.pdf(x, *scipy_par)
 
-    def draw_sample(self, n, alpha=None, beta=None, gamma=None):
+    def draw_sample(self, n, alpha=None, beta=None, gamma=None, *, random_state=None):
         scipy_par = self._get_scipy_parameters(alpha, beta, gamma)
         rvs_size = self._get_rvs_size(n, scipy_par)
-        return sts.weibull_min.rvs(*scipy_par, size=rvs_size)
+        return sts.weibull_min.rvs(*scipy_par, size=rvs_size, random_state=random_state)
 
     def _fit_mle(self, sample):
         p0 = {"alpha": self.alpha, "beta": self.beta, "gamma": self.gamma}
@@ -712,10 +722,10 @@ class LogNormalDistribution(Distribution):
         scipy_par = self._get_scipy_parameters(mu, sigma)
         return sts.lognorm.pdf(x, *scipy_par)
 
-    def draw_sample(self, n, mu=None, sigma=None):
+    def draw_sample(self, n, mu=None, sigma=None, *, random_state=None):
         scipy_par = self._get_scipy_parameters(mu, sigma)
         rvs_size = self._get_rvs_size(n, scipy_par)
-        return sts.lognorm.rvs(*scipy_par, size=rvs_size)
+        return sts.lognorm.rvs(*scipy_par, size=rvs_size, random_state=random_state)
 
     def _fit_mle(self, sample):
         p0 = {"scale": self._scale, "sigma": self.sigma}
@@ -845,10 +855,10 @@ class NormalDistribution(Distribution):
         scipy_par = self._get_scipy_parameters(mu, sigma)
         return sts.norm.pdf(x, *scipy_par)
 
-    def draw_sample(self, n, mu=None, sigma=None):
+    def draw_sample(self, n, mu=None, sigma=None, *, random_state=None):
         scipy_par = self._get_scipy_parameters(mu, sigma)
         rvs_size = self._get_rvs_size(n, scipy_par)
-        return sts.norm.rvs(*scipy_par, size=rvs_size)
+        return sts.norm.rvs(*scipy_par, size=rvs_size, random_state=random_state)
 
     def _fit_mle(self, sample):
         p0 = {"loc": self.mu, "scale": self.sigma}
@@ -952,10 +962,10 @@ class LogNormalNormFitDistribution(LogNormalDistribution):
         scipy_par = self._get_scipy_parameters(mu_norm, sigma_norm)
         return sts.lognorm.pdf(x, *scipy_par)
 
-    def draw_sample(self, n, mu_norm=None, sigma_norm=None):
+    def draw_sample(self, n, mu_norm=None, sigma_norm=None, *, random_state=None):
         scipy_par = self._get_scipy_parameters(mu_norm, sigma_norm)
         rvs_size = self._get_rvs_size(n, scipy_par)
-        return sts.lognorm.rvs(*scipy_par, size=rvs_size)
+        return sts.lognorm.rvs(*scipy_par, size=rvs_size, random_state=random_state)
 
     def _fit_mle(self, sample):
         if self.f_mu_norm is None:
@@ -1064,10 +1074,10 @@ class ExponentiatedWeibullDistribution(Distribution):
             _pdf[np.isnan(_pdf)] = 0
         return _pdf
 
-    def draw_sample(self, n, alpha=None, beta=None, delta=None):
+    def draw_sample(self, n, alpha=None, beta=None, delta=None, *, random_state=None):
         scipy_par = self._get_scipy_parameters(alpha, beta, delta)
         rvs_size = self._get_rvs_size(n, scipy_par)
-        return sts.exponweib.rvs(*scipy_par, size=rvs_size)
+        return sts.exponweib.rvs(*scipy_par, size=rvs_size, random_state=random_state)
 
     def _fit_mle(self, sample):
         p0 = {"alpha": self.alpha, "beta": self.beta, "delta": self.delta}
