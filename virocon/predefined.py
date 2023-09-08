@@ -10,7 +10,7 @@ from virocon import (
     ExponentiatedWeibullDistribution,
     DependenceFunction,
     WidthOfIntervalSlicer,
-    variable_transform
+    variable_transform,
 )
 
 __all__ = [
