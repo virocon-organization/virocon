@@ -18,7 +18,8 @@ __all__ = [
     "get_DNVGL_Hs_U",
     "get_OMAE2020_Hs_Tz",
     "get_OMAE2020_V_Hs",
-    "get_Hs_S_ExpWeib_WLS_Hs_Tz",
+    "get_Windmeier_Hs_S",
+    "get_EW_Hs_S",
 ]
 
 
@@ -300,9 +301,9 @@ def get_OMAE2020_V_Hs():
     return dist_descriptions, fit_descriptions, semantics
 
 
-def get_Hs_S_ExpWeib_WLS_Hs_Tz():
+def get_Windmeier_Hs_S():
     """
-    Get the EW sea state mdoel .
+    Get Windmeier's sea state model.
 
     Get the descriptions necessary to create the significant wave height - steepness
     model that was proposed by Windmeier [5]_. Both, Hs and Steepness follow
@@ -335,6 +336,102 @@ def get_Hs_S_ExpWeib_WLS_Hs_Tz():
 
     def _limited_growth2(x, a=0.08, b=1):
         return a * (1 - np.exp(-b * x))
+
+    def _transform(hs_tz):
+        hs = hs_tz[:, 0]
+        tz = hs_tz[:, 1]
+        s, _ = variable_transform.hs_tz_to_s_d(hs, tz)
+        return np.c_[hs, s]
+
+    def _inv_transform(hs_s):
+        hs = hs_s[:, 0]
+        s = hs_s[:, 1]
+        hs, tz = variable_transform.hs_s_to_hs_tz(hs, s)
+        return np.c_[hs, tz]
+
+    def _jacobian(hs_s):
+        hs = hs_s[:, 0]
+        s = hs_s[:, 1]
+        return 2 * variable_transform.factor * hs / s**3
+
+    linear_2_bounds = [(0, None), (0, None)]
+    limited_growth2_bounds = [(0, 1), (0, None)]
+
+    linear2 = DependenceFunction(_linear2, bounds=linear_2_bounds)
+    limited_growth2 = DependenceFunction(
+        _limited_growth2, bounds=limited_growth2_bounds
+    )
+
+    dist_description_hs = {
+        "distribution": ExponentiatedWeibullDistribution(),
+        "intervals": WidthOfIntervalSlicer(width=0.5, min_n_points=50),
+    }
+
+    dist_description_s = {
+        "distribution": ExponentiatedWeibullDistribution(f_delta=2.35),
+        "conditional_on": 0,
+        "parameters": {"alpha": limited_growth2, "beta": linear2},
+    }
+
+    dist_descriptions = [dist_description_hs, dist_description_s]
+
+    fit_description_hs = {"method": "wlsq", "weights": "quadratic"}
+    fit_descriptions = [fit_description_hs, None]
+
+    transformations = transformations = {
+        "transform": _transform,
+        "inverse": _inv_transform,
+        "jacobian": _jacobian,
+    }
+
+    semantics = {
+        "names": ["Significant wave height", "Zero-up-crossing period"],
+        "symbols": ["H_s", "T_z"],
+        "units": ["m", "s"],
+    }
+
+    return dist_descriptions, fit_descriptions, semantics, transformations
+
+
+def get_EW_Hs_S():
+    """
+    Get the EW sea state mdoel .
+
+    Get the descriptions necessary to create the significant wave height - steepness
+    model that is an adaptation of Windmeier's EW model [5]_. Both, Hs and Steepness follow
+    an exponentiated Weibull distribution.
+
+    Compared to Windmeier's EW model, this model has a dependence function for scale
+    that evaluates to scale > 0 at hs = 0 m.
+
+    Because the model is defined in Hs-steepness space it must be transformed to
+    Hs-Tz for contour calculation.
+
+    Returns
+    -------
+    dist_descriptions : list of dict
+        List of dictionaries containing the dist descriptions for each dimension.
+        Can be used to create a GlobalHierarchicalModel.
+    fit_descriptions : None
+        Default fit is used so None is returned.
+        Can be passed to fit function of GlobalHierarchicalModel.
+    semantics : dict
+        Dictionary with a semantic description of the model.
+        Can be passed to plot functions.
+    transformations : dict
+
+    References
+    ----------
+    .. [5] Windmeier, K.-L. (2022). Modeling the statistical distribution of sea state
+    parameters [Master Thesis, University of Bremen]. https://doi.org/10.26092/elib/2181
+    """
+
+    def _linear2(x, a=0, b=1):
+        return a + b * x
+
+    def _limited_growth2(x, a=0.08, b=1):
+        # Idea to start at > 0 is based on the Figure 4.10 in Windmeier's thesis.
+        return 0.005 + a * (1 - np.exp(-b * x))
 
     def _transform(hs_tz):
         hs = hs_tz[:, 0]

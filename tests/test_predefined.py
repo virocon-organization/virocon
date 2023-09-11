@@ -4,7 +4,8 @@ import pandas as pd
 from virocon import (
     get_DNVGL_Hs_Tz,
     get_DNVGL_Hs_U,
-    get_Hs_S_ExpWeib_WLS_Hs_Tz,
+    get_Windmeier_Hs_S,
+    get_EW_Hs_S,
     read_ec_benchmark_dataset,
     factor,
     GlobalHierarchicalModel,
@@ -66,9 +67,9 @@ def test_DNVGL_Hs_U():
     np.testing.assert_allclose(max(coords[:, 1]), 28, atol=3)
 
 
-def test_kai_ew_mode():
+def test_windmeier_model():
     """
-    Test the EW sea state model proposed by Kai-Lukas Windmeier (DOI: 10.26092/elib/2181).
+    Test the sea state model proposed by Kai-Lukas Windmeier (DOI: 10.26092/elib/2181).
     This model is defined in Hs-steepness space such that a variable transformation
     to Hs-Tz space is necessary.
     """
@@ -87,7 +88,7 @@ def test_kai_ew_mode():
         fit_descriptions,
         semantics,
         transformations,
-    ) = get_Hs_S_ExpWeib_WLS_Hs_Tz()
+    ) = get_Windmeier_Hs_S()
     model = GlobalHierarchicalModel(dist_descriptions)
 
     # Fit the model in Hs-S space.
@@ -127,3 +128,63 @@ def test_kai_ew_mode():
     # Note that in the Master thesis contours for dataset A and B are incorrect.
     np.testing.assert_allclose(max(coords[:, 0]), 7.2, atol=1)
     np.testing.assert_allclose(max(coords[:, 1]), 11, atol=1.5)
+
+
+def test_ew_model():
+    """
+    Test the EW sea state model.
+    This model is defined in Hs-steepness space such that a variable transformation
+    to Hs-Tz space is necessary.
+    """
+
+    # Load sea state measurements.
+    data_hs_tz = read_ec_benchmark_dataset("datasets/ec-benchmark_dataset_C_1year.txt")
+    hs = data_hs_tz["significant wave height (m)"]
+    tz = data_hs_tz["zero-up-crossing period (s)"]
+    temp, steepness = variable_transform.hs_tz_to_hs_s(hs, tz)
+    steepness.name = "steepness"
+    data_hs_s = pd.concat([hs, steepness], axis=1)
+
+    # Define the structure of the joint distribution model.
+    (
+        dist_descriptions,
+        fit_descriptions,
+        semantics,
+        transformations,
+    ) = get_EW_Hs_S()
+    model = GlobalHierarchicalModel(dist_descriptions)
+
+    # Fit the model in Hs-S space.
+    model.fit(data_hs_s, fit_descriptions)
+
+    # Transform the fitted model to Hs-Tz space.
+    t_model = TransformedModel(
+        model,
+        transformations["transform"],
+        transformations["inverse"],
+        transformations["jacobian"],
+        precision_factor=0.2,  # Use low precision to speed up test.
+        random_state=42,
+    )
+
+    # TODO: Speed the contour calcultaion up (takes long due to the contour calculation which
+    # uses a Monte Carlo based method.
+
+    # Compute a contour.
+    tr = 1  # Return period in years.
+    ts = 1  # Sea state duration in hours.
+    alpha = 1 / (tr * 365.25 * 24 / ts)
+    contour = IFORMContour(
+        t_model, alpha, n_points=50
+    )  # Use few points to speed up tests.
+    coords = contour.coordinates
+
+    # A test during development of this test.
+    # import matplotlib.pyplot as plt
+    # from virocon import plot_2D_contour, plot_2D_isodensity
+    # plot_2D_contour(contour, data_hs_tz, semantics=semantics, swap_axis=True)
+    # plot_2D_isodensity(t_model, data_hs_tz, semantics=semantics, swap_axis=True)
+    # plt.show()
+
+    np.testing.assert_allclose(max(coords[:, 0]), 7.8, atol=1)
+    np.testing.assert_allclose(max(coords[:, 1]), 11.9, atol=1.5)
