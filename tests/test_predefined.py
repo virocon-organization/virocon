@@ -74,12 +74,11 @@ def test_kai_ew_mode():
 
     # Load sea state measurements.
     data_hs_tz = read_ec_benchmark_dataset("datasets/ec-benchmark_dataset_A.txt")
-    hs  = data_hs_tz["significant wave height (m)"]
+    hs = data_hs_tz["significant wave height (m)"]
     tz = data_hs_tz["zero-up-crossing period (s)"]
     temp, steepness = variable_transform.hs_tz_to_hs_s(hs, tz)
     steepness.name = "steepness"
     data_hs_s = pd.concat([hs, steepness], axis=1)
-
 
     # Define the structure of the joint distribution model.
     (
@@ -118,6 +117,7 @@ def test_kai_ew_mode():
     # A test during development of this test.
     import matplotlib.pyplot as plt
     from virocon import plot_2D_contour, plot_2D_isodensity
+
     plot_2D_contour(contour, data_hs_tz, semantics=semantics, swap_axis=True)
     plot_2D_isodensity(t_model, data_hs_tz, semantics=semantics, swap_axis=True)
     plt.show()
