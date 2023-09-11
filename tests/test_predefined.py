@@ -105,7 +105,7 @@ def test_kai_ew_mode():
 
     # TODO: Speed the contour calcultaion up (takes long due to the contour calculation which
     # uses a Monte Carlo based method.
-    
+
     # Compute a contour.
     tr = 1  # Return period in years.
     ts = 1  # Sea state duration in hours.
@@ -114,9 +114,6 @@ def test_kai_ew_mode():
         t_model, alpha, n_points=20
     )  # Use few points to speed up tests.
     coords = contour.coordinates
-
-    print(f"Contour coordinates:{coords}")
-    print(f"Model: {model}")
 
     # A test during development of this test.
     # import matplotlib.pyplot as plt
