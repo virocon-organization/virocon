@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 
 from virocon import (
     get_DNVGL_Hs_Tz,
@@ -9,6 +10,7 @@ from virocon import (
     GlobalHierarchicalModel,
     TransformedModel,
     IFORMContour,
+    variable_transform,
 )
 
 
@@ -71,7 +73,13 @@ def test_kai_ew_mode():
     """
 
     # Load sea state measurements.
-    data = read_ec_benchmark_dataset("datasets/ec-benchmark_dataset_A_1year.txt")
+    data_hs_tz = read_ec_benchmark_dataset("datasets/ec-benchmark_dataset_A.txt")
+    hs  = data_hs_tz["significant wave height (m)"]
+    tz = data_hs_tz["zero-up-crossing period (s)"]
+    temp, steepness = variable_transform.hs_tz_to_hs_s(hs, tz)
+    steepness.name = "steepness"
+    data_hs_s = pd.concat([hs, steepness], axis=1)
+
 
     # Define the structure of the joint distribution model.
     (
@@ -82,14 +90,16 @@ def test_kai_ew_mode():
     ) = get_Hs_S_ExpWeib_WLS_Hs_Tz()
     model = GlobalHierarchicalModel(dist_descriptions)
 
-    # Fit the model.
-    model.fit(data, fit_descriptions)
+    # Fit the model in Hs-S space.
+    model.fit(data_hs_s, fit_descriptions)
+
+    # Transform the fitted model to Hs-Tz space.
     t_model = TransformedModel(
         model,
         transformations["transform"],
         transformations["inverse"],
         transformations["jacobian"],
-        precision_factor=0.2,
+        precision_factor=0.5,
         random_state=42,
     )
 
@@ -99,10 +109,18 @@ def test_kai_ew_mode():
     tr = 1  # Return period in years.
     ts = 1  # Sea state duration in hours.
     alpha = 1 / (tr * 365.25 * 24 / ts)
-    contour = IFORMContour(t_model, alpha, n_points=10)
+    contour = IFORMContour(t_model, alpha, n_points=50)
     coords = contour.coordinates
 
-    print("coords: " + str(coords))
+    print(f"Contour coordinates:{coords}")
+    print(f"Model: {model}")
+
+    # A test during development of this test.
+    import matplotlib.pyplot as plt
+    from virocon import plot_2D_contour, plot_2D_isodensity
+    plot_2D_contour(contour, data_hs_tz, semantics=semantics, swap_axis=True)
+    plot_2D_isodensity(t_model, data_hs_tz, semantics=semantics, swap_axis=True)
+    plt.show()
 
     # Reference values are from Kai's Master thesis, page 60, DOI: 10.26092/elib/2181
     # Highest Hs values of the contour should be roughly Hs = 7.2 m, Tz = 11 s.

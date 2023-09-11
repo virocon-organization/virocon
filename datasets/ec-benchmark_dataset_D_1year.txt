@@ -1,4 +1,4 @@
-Time (YYYY-MM-DD-HH); Wind speed (m/s); Significant wave height (m)
+time (YYYY-MM-DD-HH); wind speed (m/s); significant wave height (m)
 1965-01-01-00; 15.3839; 3.9879
 1965-01-01-01; 15.4990; 4.0086
 1965-01-01-02; 15.3554; 4.0247
