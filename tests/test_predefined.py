@@ -69,11 +69,12 @@ def test_DNVGL_Hs_U():
 def test_kai_ew_mode():
     """
     Test the EW sea state model proposed by Kai-Lukas Windmeier (DOI: 10.26092/elib/2181).
-    This model uses a variable transformation.
+    This model is defined in Hs-steepness space such that a variable transformation
+    to Hs-Tz space is necessary.
     """
 
     # Load sea state measurements.
-    data_hs_tz = read_ec_benchmark_dataset("datasets/ec-benchmark_dataset_A.txt")
+    data_hs_tz = read_ec_benchmark_dataset("datasets/ec-benchmark_dataset_C_1year.txt")
     hs = data_hs_tz["significant wave height (m)"]
     tz = data_hs_tz["zero-up-crossing period (s)"]
     temp, steepness = variable_transform.hs_tz_to_hs_s(hs, tz)
@@ -115,12 +116,11 @@ def test_kai_ew_mode():
     print(f"Model: {model}")
 
     # A test during development of this test.
-    import matplotlib.pyplot as plt
-    from virocon import plot_2D_contour, plot_2D_isodensity
-
-    plot_2D_contour(contour, data_hs_tz, semantics=semantics, swap_axis=True)
-    plot_2D_isodensity(t_model, data_hs_tz, semantics=semantics, swap_axis=True)
-    plt.show()
+    # import matplotlib.pyplot as plt
+    # from virocon import plot_2D_contour, plot_2D_isodensity
+    # plot_2D_contour(contour, data_hs_tz, semantics=semantics, swap_axis=True)
+    # plot_2D_isodensity(t_model, data_hs_tz, semantics=semantics, swap_axis=True)
+    # plt.show()
 
     # Reference values are from Kai's Master thesis, page 60, DOI: 10.26092/elib/2181
     # Highest Hs values of the contour should be roughly Hs = 7.2 m, Tz = 11 s.

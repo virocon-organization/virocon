@@ -302,7 +302,14 @@ def get_OMAE2020_V_Hs():
 
 def get_Hs_S_ExpWeib_WLS_Hs_Tz():
     """
-    Hs ~ ExpWeib, S ~ ExpWeib
+    Get the EW sea state mdoel .
+
+    Get the descriptions necessary to create the significant wave height - steepness 
+    model that was proposed by Windmeier [5]_. Both, Hs and Steepness follow
+    an exponentiated Weibull distribution.
+
+    Because the model is defined in Hs-steepness space it must be transformed to 
+    Hs-Tz for contour calculation.
 
     Returns
     -------
@@ -317,6 +324,10 @@ def get_Hs_S_ExpWeib_WLS_Hs_Tz():
         Can be passed to plot functions.
     transformations : dict
 
+    References
+    ----------
+    .. [5] Windmeier, K.-L. (2022). Modeling the statistical distribution of sea state
+    parameters [Master Thesis, University of Bremen]. https://doi.org/10.26092/elib/2181
     """
 
     def _linear2(x, a=0, b=1):
