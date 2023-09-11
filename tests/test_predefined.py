@@ -99,7 +99,7 @@ def test_kai_ew_mode():
         transformations["transform"],
         transformations["inverse"],
         transformations["jacobian"],
-        precision_factor=0.2,  # UselLow precision to speed up test.
+        precision_factor=0.2,  # Use low precision to speed up test.
         random_state=42,
     )
 
