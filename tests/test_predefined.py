@@ -99,17 +99,20 @@ def test_kai_ew_mode():
         transformations["transform"],
         transformations["inverse"],
         transformations["jacobian"],
-        precision_factor=0.5,
+        precision_factor=0.2,  # UselLow precision to speed up test.
         random_state=42,
     )
 
-    # TODO: Speed this up (takes long due to the contour calculation which
+    # TODO: Speed the contour calcultaion up (takes long due to the contour calculation which
     # uses a Monte Carlo based method.
+    
     # Compute a contour.
     tr = 1  # Return period in years.
     ts = 1  # Sea state duration in hours.
     alpha = 1 / (tr * 365.25 * 24 / ts)
-    contour = IFORMContour(t_model, alpha, n_points=50)
+    contour = IFORMContour(
+        t_model, alpha, n_points=20
+    )  # Use few points to speed up tests.
     coords = contour.coordinates
 
     print(f"Contour coordinates:{coords}")
@@ -124,5 +127,6 @@ def test_kai_ew_mode():
 
     # Reference values are from Kai's Master thesis, page 60, DOI: 10.26092/elib/2181
     # Highest Hs values of the contour should be roughly Hs = 7.2 m, Tz = 11 s.
+    # Note that in the Master thesis contours for dataset A and B are incorrect.
     np.testing.assert_allclose(max(coords[:, 0]), 7.2, atol=1)
     np.testing.assert_allclose(max(coords[:, 1]), 11, atol=1.5)
