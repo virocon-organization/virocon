@@ -304,11 +304,11 @@ def get_Hs_S_ExpWeib_WLS_Hs_Tz():
     """
     Get the EW sea state mdoel .
 
-    Get the descriptions necessary to create the significant wave height - steepness 
+    Get the descriptions necessary to create the significant wave height - steepness
     model that was proposed by Windmeier [5]_. Both, Hs and Steepness follow
     an exponentiated Weibull distribution.
 
-    Because the model is defined in Hs-steepness space it must be transformed to 
+    Because the model is defined in Hs-steepness space it must be transformed to
     Hs-Tz for contour calculation.
 
     Returns
