@@ -1,5 +1,10 @@
 """
 Fit an exponentiated Weibull distribution to a significant wave height dataset.
+
+You can compare the printed distribution parameter values to the parameter values
+listed in Table 3.4 on page 45 in Haselsteiner, A. F. (2022). Offshore structures
+under extreme loads: A methodology to determine design loads 
+[University of Bremen]. https://doi.org/10.26092/elib/1615
 """
 
 import numpy as np
@@ -10,7 +15,7 @@ from virocon import ExponentiatedWeibullDistribution, read_ec_benchmark_dataset
 
 # Load sea state measurements from the NDBC buoy 44007.
 data = read_ec_benchmark_dataset("datasets/ec-benchmark_dataset_A_1year.txt")
-hs = data["Significant wave height (m)"].to_numpy()
+hs = data["significant wave height (m)"].to_numpy()
 
 # Fit the exponentiated Weibull distribution to the measurements.
 dist = ExponentiatedWeibullDistribution()

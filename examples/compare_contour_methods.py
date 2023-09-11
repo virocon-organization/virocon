@@ -4,7 +4,7 @@ proposed by Haselsteiner et al. (2020) and compare four different
 contour construction methods. 
 
 A 50-year wind speed - wave height contour is for example used in 
-offshore wind turbine design
+offshore wind turbine design.
 
 Haselsteiner, A. F., Sander, A., Ohlendorf, J.-H., & Thoben, 
 K.-D. (2020). Global hierarchical models for wind and wave contours: 

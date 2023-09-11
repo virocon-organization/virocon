@@ -6,6 +6,10 @@ Global hierarchical models for wind and wave contours:
 Physical interpretations of the dependence functions.
 Proc. 39th International Conference on Ocean, Offshore and Arctic Engineering (OMAE 2020). 
 https://doi.org/10.1115/OMAE2020-18668
+
+This figure is presented as the right panel of Figure 6.4 on page 109 in Haselsteiner, 
+A. F. (2022). Offshore structures under extreme loads: A methodology to determine 
+design loads [University of Bremen]. https://doi.org/10.26092/elib/1615
 """
 
 import numpy as np
