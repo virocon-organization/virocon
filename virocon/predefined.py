@@ -352,7 +352,7 @@ def get_Hs_S_ExpWeib_WLS_Hs_Tz():
 
     dist_description_hs = {
         "distribution": ExponentiatedWeibullDistribution(),
-        "intervals": WidthOfIntervalSlicer(width=0.5),
+        "intervals": WidthOfIntervalSlicer(width=0.5, min_n_points=50),
     }
 
     dist_description_s = {
