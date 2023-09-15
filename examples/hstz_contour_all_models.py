@@ -1,5 +1,5 @@
 """
-Computes sea state contours using all available Hs-Tz joint model structures.
+Computes IFORM sea state contours using all available Hs-Tz joint model structures.
 """
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -68,7 +68,7 @@ n_contour_points = 50
 windmeier_model_contour = IFORMContour(
     windmeier_t_model, alpha, n_points=n_contour_points
 )
-
+print("1/2 computational expensive contours done.")
 
 # Define the structure of the EW model which has a dependence function for scale
 # that evaluates to >0 at Hs=0 (the model was inspired by Windmeier's
@@ -90,7 +90,7 @@ ew_t_model = TransformedModel(
     random_state=42,
 )
 ew_model_contour = IFORMContour(ew_t_model, alpha, n_points=n_contour_points)
-
+print("2/2 computational expensive contours done.")
 
 # Compute a contour based on on a DNV model for comparison
 (
