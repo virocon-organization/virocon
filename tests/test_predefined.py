@@ -94,6 +94,14 @@ def test_windmeier_ew_model():
     # Fit the model in Hs-S space.
     model.fit(data_hs_s, fit_descriptions)
 
+    f = model.marginal_pdf(1.0, 0)
+    assert f > 0.1
+    assert f < 2
+
+    p = model.marginal_cdf(1.0, 0)
+    assert p > 0.1
+    assert p < 0.8
+
     # Transform the fitted model to Hs-Tz space.
     t_model = TransformedModel(
         model,
@@ -104,7 +112,28 @@ def test_windmeier_ew_model():
         random_state=42,
     )
 
-    # TODO: Speed the contour calcultaion up (takes long due to the contour calculation which
+    assert "TransformedModel" in str(t_model)
+    assert "ExponentiatedWeibullDistribution" in str(t_model)
+
+    p = t_model.cdf([2, 3])
+    assert p < 1
+
+    p = t_model.empirical_cdf([2, 3])
+    assert p < 1
+
+    try:
+        t_model.marginal_pdf(3, 1)
+        assert False
+    except NotImplementedError:
+        assert True
+
+    try:
+        t_model.marginal_cdf(3, 1)
+        assert False
+    except NotImplementedError:
+        assert True
+
+    # TODO: Speed the contour calculation up (takes long due to the contour calculation which
     # uses a Monte Carlo based method.
 
     # Compute a contour.
@@ -123,7 +152,7 @@ def test_windmeier_ew_model():
     # plot_2D_isodensity(t_model, data_hs_tz, semantics=semantics, swap_axis=True)
     # plt.show()
 
-    # Reference values are from Kai's Master thesis, page 60, DOI: 10.26092/elib/2181
+    # Reference values are from Windmeier's Master thesis, page 60, DOI: 10.26092/elib/2181
     # Highest Hs values of the contour should be roughly Hs = 7.2 m, Tz = 11 s.
     # Note that in the Master thesis contours for dataset A and B are incorrect.
     np.testing.assert_allclose(max(coords[:, 0]), 7.2, atol=1)
