@@ -18,8 +18,8 @@ __all__ = [
     "get_DNVGL_Hs_U",
     "get_OMAE2020_Hs_Tz",
     "get_OMAE2020_V_Hs",
-    "get_Windmeier_Hs_S",
-    "get_EW_Hs_S",
+    "get_Windmeier_EW_Hs_S",
+    "get_Nonzero_EW_Hs_S",
 ]
 
 
@@ -301,9 +301,9 @@ def get_OMAE2020_V_Hs():
     return dist_descriptions, fit_descriptions, semantics
 
 
-def get_Windmeier_Hs_S():
+def get_Windmeier_EW_Hs_S():
     """
-    Get Windmeier's sea state model.
+    Get Windmeier's EW sea state model.
 
     Get the descriptions necessary to create the significant wave height - steepness
     model that was proposed by Windmeier [5]_. Both, Hs and Steepness follow
@@ -393,16 +393,17 @@ def get_Windmeier_Hs_S():
     return dist_descriptions, fit_descriptions, semantics, transformations
 
 
-def get_EW_Hs_S():
+def get_Nonzero_EW_Hs_S():
     """
-    Get the EW sea state mdoel .
+    Get the non-zero EW sea state model.
 
     Get the descriptions necessary to create the significant wave height - steepness
     model that is an adaptation of Windmeier's EW model [5]_. Both, Hs and Steepness follow
     an exponentiated Weibull distribution.
 
     Compared to Windmeier's EW model, this model has a dependence function for scale
-    that evaluates to scale > 0 at hs = 0 m.
+    that evaluates to scale > 0 at hs = 0 m .
+    The dependence function reads: 0.005 + a * (1 - np.exp(-b * hs))
 
     Because the model is defined in Hs-steepness space it must be transformed to
     Hs-Tz for contour calculation.

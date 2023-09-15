@@ -7,8 +7,8 @@ import pandas as pd
 from virocon import (
     read_ec_benchmark_dataset,
     variable_transform,
-    get_Windmeier_Hs_S,
-    get_EW_Hs_S,
+    get_Windmeier_EW_Hs_S,
+    get_Nonzero_EW_Hs_S,
     get_OMAE2020_Hs_Tz,
     get_DNVGL_Hs_Tz,
     GlobalHierarchicalModel,
@@ -31,7 +31,7 @@ data_hs_s = pd.concat([hs, steepness], axis=1)
     fit_descriptions,
     hs_tz_semantics,
     transformations,
-) = get_Windmeier_Hs_S()
+) = get_Windmeier_EW_Hs_S()
 windmeier_ew_model = GlobalHierarchicalModel(dist_descriptions)
 
 # Fit the model in Hs-S space.
@@ -80,7 +80,7 @@ print("1/2 computational expensive contours done.")
     fit_descriptions,
     hs_tz_semantics,
     transformations,
-) = get_EW_Hs_S()
+) = get_Nonzero_EW_Hs_S()
 ew_model = GlobalHierarchicalModel(dist_descriptions)
 ew_model.fit(data_hs_s, fit_descriptions)
 ew_t_model = TransformedModel(
