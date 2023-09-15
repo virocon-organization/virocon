@@ -65,7 +65,9 @@ tr = 1  # Return period in years.
 ts = 1  # Sea state duration in hours.
 alpha = 1 / (tr * 365.25 * 24 / ts)
 n_contour_points = 50
-windmeier_model_contour = IFORMContour(windmeier_t_model, alpha, n_points=n_contour_points)
+windmeier_model_contour = IFORMContour(
+    windmeier_t_model, alpha, n_points=n_contour_points
+)
 
 
 # Define the structure of the EW model which has a dependence function for scale
@@ -132,7 +134,8 @@ ax.lines[1].set_color("orchid")
 ax.lines[2].set_color("blue")
 ax.lines[3].set_color("gray")
 ax.legend(
-    [ax.lines[0], ax.lines[1], ax.lines[2]], ax.lines[3],
+    [ax.lines[0], ax.lines[1], ax.lines[2]],
+    ax.lines[3],
     ["DNV model", "OMAE2020 model", "Windmeier's EW model", "Nonzero EW model"],
     ncol=1,
     frameon=False,
