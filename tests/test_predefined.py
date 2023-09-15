@@ -4,8 +4,8 @@ import pandas as pd
 from virocon import (
     get_DNVGL_Hs_Tz,
     get_DNVGL_Hs_U,
-    get_Windmeier_Hs_S,
-    get_EW_Hs_S,
+    get_Windmeier_EW_Hs_S,
+    get_Nonzero_EW_Hs_S,
     read_ec_benchmark_dataset,
     factor,
     GlobalHierarchicalModel,
@@ -88,7 +88,7 @@ def test_windmeier_model():
         fit_descriptions,
         semantics,
         transformations,
-    ) = get_Windmeier_Hs_S()
+    ) = get_Windmeier_EW_Hs_S()
     model = GlobalHierarchicalModel(dist_descriptions)
 
     # Fit the model in Hs-S space.
@@ -151,7 +151,7 @@ def test_ew_model():
         fit_descriptions,
         semantics,
         transformations,
-    ) = get_EW_Hs_S()
+    ) = get_Nonzero_EW_Hs_S()
     model = GlobalHierarchicalModel(dist_descriptions)
 
     # Fit the model in Hs-S space.
