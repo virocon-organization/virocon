@@ -57,8 +57,8 @@ windmeier_t_model = TransformedModel(
 
 # Compute a contour.
 s = (
-    "Computing contours. This will take 1-10 minutes because a Monte Carlo "
-    "method is used for evaluating the ICDF of the TransFormedModel."
+    "Computing contours. This will take about 5 minute per contour because a "
+    "Monte Carlo method is used for evaluating the ICDF of the TransFormedModel."
 )
 print(s)
 tr = 1  # Return period in years.
