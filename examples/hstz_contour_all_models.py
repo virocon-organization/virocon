@@ -14,7 +14,6 @@ from virocon import (
     GlobalHierarchicalModel,
     TransformedModel,
     IFORMContour,
-    plot_2D_isodensity,
     plot_2D_contour,
 )
 
@@ -46,13 +45,15 @@ hs_s_semantics = {
 }
 
 # Transform the fitted model to Hs-Tz space.
+precision_factor=0.2 # Use low precision to speed up this example.
+random_state=42
 windmeier_t_model = TransformedModel(
     windmeier_ew_model,
     transformations["transform"],
     transformations["inverse"],
     transformations["jacobian"],
-    precision_factor=0.2,  # Use low precision to speed up test.
-    random_state=42,
+    precision_factor=precision_factor,
+    random_state=random_state,
 )
 
 # Compute a contour.
@@ -61,7 +62,7 @@ s = (
     "Monte Carlo method is used for evaluating the ICDF of the TransFormedModel."
 )
 print(s)
-tr = 1  # Return period in years.
+tr = 0.001  # Return period in years.
 ts = 1  # Sea state duration in hours.
 alpha = 1 / (tr * 365.25 * 24 / ts)
 n_contour_points = 50
@@ -81,13 +82,14 @@ print("1/2 computational expensive contours done.")
     transformations,
 ) = get_EW_Hs_S()
 ew_model = GlobalHierarchicalModel(dist_descriptions)
+ew_model.fit(data_hs_s, fit_descriptions)
 ew_t_model = TransformedModel(
     ew_model,
     transformations["transform"],
     transformations["inverse"],
     transformations["jacobian"],
-    precision_factor=0.2,  # Use low precision to speed up test.
-    random_state=42,
+    precision_factor=precision_factor,
+    random_state=random_state,
 )
 ew_model_contour = IFORMContour(ew_t_model, alpha, n_points=n_contour_points)
 print("2/2 computational expensive contours done.")
@@ -134,8 +136,7 @@ ax.lines[1].set_color("orchid")
 ax.lines[2].set_color("blue")
 ax.lines[3].set_color("gray")
 ax.legend(
-    [ax.lines[0], ax.lines[1], ax.lines[2]],
-    ax.lines[3],
+    [ax.lines[0], ax.lines[1], ax.lines[2], ax.lines[3]],
     ["DNV model", "OMAE2020 model", "Windmeier's EW model", "Nonzero EW model"],
     ncol=1,
     frameon=False,
