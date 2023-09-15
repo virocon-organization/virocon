@@ -1,5 +1,5 @@
 """
-Computes IFORM sea state contours using all available Hs-Tz joint model structures.
+Computes IFORM sea state contours using all predefined Hs-Tz joint model structures.
 """
 import matplotlib.pyplot as plt
 import pandas as pd
