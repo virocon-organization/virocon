@@ -4,6 +4,7 @@ Models for the joint probability distribution.
 import warnings
 
 from abc import ABC, abstractmethod
+from typing import Callable
 
 import numpy as np
 
@@ -769,12 +770,12 @@ class GlobalHierarchicalModel(MultivariateModel):
 class TransformedModel(MultivariateModel):
     def __init__(
         self,
-        model,
-        transform,
-        inverse,
-        jacobian,
-        precision_factor=1.0,
-        random_state=None,
+        model: GlobalHierarchicalModel,
+        transform: Callable,
+        inverse: Callable,
+        jacobian: Callable,
+        precision_factor: float=1.0,
+        random_state: int=None,
     ):
         # model: the model for the transformed data
         # transform: function that transforms data for the model
