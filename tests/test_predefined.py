@@ -67,7 +67,7 @@ def test_DNVGL_Hs_U():
     np.testing.assert_allclose(max(coords[:, 1]), 28, atol=3)
 
 
-def test_windmeier_model():
+def test_windmeier_ew_model():
     """
     Test the sea state model proposed by Kai-Lukas Windmeier (DOI: 10.26092/elib/2181).
     This model is defined in Hs-steepness space such that a variable transformation
@@ -130,9 +130,9 @@ def test_windmeier_model():
     np.testing.assert_allclose(max(coords[:, 1]), 11, atol=1.5)
 
 
-def test_ew_model():
+def test_nonzero_ew_model():
     """
-    Test the EW sea state model.
+    Test the nonzero EW sea state model.
     This model is defined in Hs-steepness space such that a variable transformation
     to Hs-Tz space is necessary.
     """
