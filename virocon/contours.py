@@ -214,7 +214,7 @@ class IFORMContour(Contour):
         n_points = self.n_points
 
         # A GlobalHierarchicalModel has the attributes distributions and conditional_on
-        # but a TransformedModel not. TransformedModel is used in Kai's EW model.
+        # but a TransformedModel not. TransformedModel is used the EW models defined in predined.py .
         if type(self.model).__name__ == "GlobalHierarchicalModel":
             distributions = self.model.distributions
             conditional_on = self.model.conditional_on
