@@ -64,12 +64,14 @@ print(s)
 tr = 1  # Return period in years.
 ts = 1  # Sea state duration in hours.
 alpha = 1 / (tr * 365.25 * 24 / ts)
-windmeier_model_contour = IFORMContour(windmeier_t_model, alpha, n_points=50)
+n_contour_points = 50
+windmeier_model_contour = IFORMContour(windmeier_t_model, alpha, n_points=n_contour_points)
 
 
 # Define the structure of the EW model which has a dependence function for scale
 # that evaluates to >0 at Hs=0 (the model was inspired by Windmeier's
-# original EW model that was presented in DOI: 10.26092/elib/2181).
+# original EW model that was presented in DOI: 10.26092/elib/2181) and
+# compute a contour.
 (
     dist_descriptions,
     fit_descriptions,
@@ -77,18 +79,6 @@ windmeier_model_contour = IFORMContour(windmeier_t_model, alpha, n_points=50)
     transformations,
 ) = get_EW_Hs_S()
 ew_model = GlobalHierarchicalModel(dist_descriptions)
-
-# Fit the model in Hs-S space.
-print("Fitting the model.")
-ew_model.fit(data_hs_s, fit_descriptions)
-
-hs_s_semantics = {
-    "names": ["Significant wave height", "Steepness"],
-    "symbols": ["H_s", "S"],
-    "units": ["m", "-"],
-}
-
-# Transform the fitted model to Hs-Tz space.
 ew_t_model = TransformedModel(
     ew_model,
     transformations["transform"],
@@ -97,8 +87,7 @@ ew_t_model = TransformedModel(
     precision_factor=0.2,  # Use low precision to speed up test.
     random_state=42,
 )
-
-ew_model_contour = IFORMContour(ew_t_model, alpha, n_points=50)
+ew_model_contour = IFORMContour(ew_t_model, alpha, n_points=n_contour_points)
 
 
 # Compute a contour based on on a DNV model for comparison
@@ -143,7 +132,7 @@ ax.lines[1].set_color("orchid")
 ax.lines[2].set_color("blue")
 ax.lines[3].set_color("gray")
 ax.legend(
-    [ax.lines[0], ax.lines[1], ax.lines[2]],
+    [ax.lines[0], ax.lines[1], ax.lines[2]], ax.lines[3],
     ["DNV model", "OMAE2020 model", "Windmeier's EW model", "Nonzero EW model"],
     ncol=1,
     frameon=False,
