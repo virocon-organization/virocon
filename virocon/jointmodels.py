@@ -774,8 +774,8 @@ class TransformedModel(MultivariateModel):
         transform: Callable,
         inverse: Callable,
         jacobian: Callable,
-        precision_factor: float=1.0,
-        random_state: int=None,
+        precision_factor: float = 1.0,
+        random_state: int = None,
     ):
         """A joint distribution that was defined in another variable space.
 
