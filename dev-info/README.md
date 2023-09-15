@@ -58,3 +58,11 @@ Second approach (Windows powershell):
 * `sphinx-build -b html . _build/html`
  
 -> Then open index.html located in docs/_build/html .
+
+# Install virocon from a feature branch
+
+If you like to install a feature branch virocon version during the development run
+
+`pip install https://github.com/virocon-organization/virocon/archive/feature-branch.zip`
+
+where `feature-branch`is the name of your feature branch.
