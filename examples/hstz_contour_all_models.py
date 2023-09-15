@@ -45,8 +45,8 @@ hs_s_semantics = {
 }
 
 # Transform the fitted model to Hs-Tz space.
-precision_factor=0.2 # Use low precision to speed up this example.
-random_state=42
+precision_factor = 0.2  # Use low precision to speed up this example.
+random_state = 42
 windmeier_t_model = TransformedModel(
     windmeier_ew_model,
     transformations["transform"],
@@ -62,7 +62,7 @@ s = (
     "Monte Carlo method is used for evaluating the ICDF of the TransFormedModel."
 )
 print(s)
-tr = 0.001  # Return period in years.
+tr = 1  # Return period in years.
 ts = 1  # Sea state duration in hours.
 alpha = 1 / (tr * 365.25 * 24 / ts)
 n_contour_points = 50
