@@ -14,6 +14,7 @@ from virocon import (
     read_ec_benchmark_dataset,
     variable_transform,
     get_Windmeier_Hs_S,
+    get_OMAE2020_Hs_Tz,
     GlobalHierarchicalModel,
     TransformedModel,
     IFORMContour,
@@ -70,10 +71,22 @@ print(s)
 tr = 1  # Return period in years.
 ts = 1  # Sea state duration in hours.
 alpha = 1 / (tr * 365.25 * 24 / ts)
-contour = IFORMContour(t_model, alpha, n_points=50)
+ew_model_contour = IFORMContour(t_model, alpha, n_points=50)
 coords = contour.coordinates
 
-
-plot_2D_contour(contour, data_hs_tz, semantics=hs_tz_semantics, swap_axis=True)
+# Plot iso probability density lines on top of metocean data.
 plot_2D_isodensity(t_model, data_hs_tz, semantics=hs_tz_semantics, swap_axis=True)
+
+
+# Compute a contour based on on a OMAE2020 model for comparison
+omae2020_dist_descriptions, omae2020_fit_descriptions, omae2020_semantics = get_OMAE2020_Hs_Tz()
+omae2020_model = GlobalHierarchicalModel(omae2020_dist_descriptions)
+omae2020_model.fit(data_hs_tz, fit_descriptions=omae2020_fit_descriptions)
+omae2020_contour = IFORMContour(model, alpha)
+
+# Plot the contours on top of the metocean data.
+fig, axs = plt.subplots(1, 1, figsize=[4, 4])
+plot_2D_contour(omae2020_contour, data_hs_tz, semantics=hs_tz_semantics, swap_axis=True, ax=axs[0])
+plot_2D_contour(ew_model_contour, data_hs_tz, semantics=hs_tz_semantics, swap_axis=True, ax=axs[0])
+
 plt.show()
