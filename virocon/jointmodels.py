@@ -777,10 +777,16 @@ class TransformedModel(MultivariateModel):
         precision_factor: float=1.0,
         random_state: int=None,
     ):
-        # model: the model for the transformed data
-        # transform: function that transforms data for the model
-        # inverse: the inverse of transform
-        # jacobian: the jacobi determinant of the inverse transform function
+        """A joint distribution that was defined in another variable space.
+
+        Args:
+            model (GlobalHierarchicalModel): Joint distribution in original variable space
+            transform (Callable): Function to transform this model back to original variable space
+            inverse (Callable): Function to transform from the original variable space to this model's space
+            jacobian (Callable): jacobian matrix, see page 31 in DOI: 10.26092/elib/2181
+            precision_factor (float, optional): Lower precision results in faster computation. Defaults to 1.0.
+            random_state (int, optional): Can be used to fix random numbers. Defaults to None.
+        """
         self.model = model
         self.transform = transform
         self.inverse = inverse
