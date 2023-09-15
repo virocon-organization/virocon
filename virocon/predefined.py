@@ -335,6 +335,8 @@ def get_Windmeier_EW_Hs_S():
         return a + b * x
 
     def _limited_growth2(x, a=0.08, b=1):
+        # Some people call this equatoin "negative exponential equation"
+        # https://www.statforbiology.com/nonlinearregression/usefulequations#negative_exponential_equation
         return a * (1 - np.exp(-b * x))
 
     def _transform(hs_tz):
@@ -432,7 +434,10 @@ def get_Nonzero_EW_Hs_S():
 
     def _limited_growth2(x, a=0.08, b=1):
         # Idea to start at > 0 is based on the Figure 4.10 in Windmeier's thesis.
-        return 0.005 + a * (1 - np.exp(-b * x))
+        # Some people call this equation "negative exponential equation" when the
+        # shift is zero, https://www.statforbiology.com/nonlinearregression/usefulequations#negative_exponential_equation
+        shift = 0.005
+        return shift + a * (1 - np.exp(-b * x))
 
     def _transform(hs_tz):
         hs = hs_tz[:, 0]
