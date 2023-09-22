@@ -432,7 +432,7 @@ def get_Nonzero_EW_Hs_S():
     def _linear2(x, a=0, b=1):
         return a + b * x
 
-    def _limited_growth_with_shift2(x, a=0.08, b=1, c=0.05):
+    def _limited_growth_with_shift2(x, a=0.08, b=1):
         # Compared to Windmeier's EW model the idea here is to ensure that f(0) > 0.
         # The idea is based on on the Figure 4.10 in Windmeier's thesis.
         # DOI: 10.26092/elib/2181
