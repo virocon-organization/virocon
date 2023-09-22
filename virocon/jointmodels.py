@@ -235,7 +235,6 @@ class MultivariateModel(ABC):
             and x_max * multiply_xmax_per_iteration > lowest_possible_x_max
         ):
             x_max = multiply_xmax_per_iteration * x_max
-        print(f"x_max: {x_max}")
 
         # find max value of pdf
         x = np.linspace(x_min, x_max, 1000)
