@@ -15,7 +15,6 @@ from virocon import (
     TransformedModel,
     IFORMContour,
     plot_2D_contour,
-    plot_2D_isodensity
 )
 
 # Load sea state measurements.
@@ -36,7 +35,6 @@ data_hs_s = pd.concat([hs, steepness], axis=1)
 windmeier_ew_model = GlobalHierarchicalModel(dist_descriptions)
 
 # Fit the model in Hs-S space.
-print("Fitting the model.")
 windmeier_ew_model.fit(data_hs_s, fit_descriptions)
 
 hs_s_semantics = {
@@ -73,7 +71,7 @@ windmeier_model_contour = IFORMContour(
 print("1/2 computational expensive contours done.")
 
 # Define the structure of the EW model which has a dependence function for scale
-# that evaluates to >0 at Hs=0 (the model was inspired by Windmeier's
+# that evaluates to > 0 at Hs=0 (the model was inspired by Windmeier's
 # original EW model that was presented in DOI: 10.26092/elib/2181) and
 # compute a contour.
 (
@@ -143,9 +141,5 @@ ax.legend(
     frameon=False,
 )
 ax.set_title(f"{tr}-year IFORM contour")
-
-# Plot isodensity lines for the Nonzero EW model
-fig, ax = plt.subplots(1, 1, figsize=[5, 5])
-plot_2D_isodensity(ew_t_model, data_hs_s, semantics=hs_tz_semantics, swap_axis=True, ax=ax)
 
 plt.show()

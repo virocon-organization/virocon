@@ -405,7 +405,7 @@ def get_Nonzero_EW_Hs_S():
 
     Compared to Windmeier's EW model, this model has a dependence function for scale
     that evaluates to scale > 0 at hs = 0 m .
-    The dependence function reads: 0.005 + a * (1 - np.exp(-b * hs))
+    The dependence function reads: c + a * (1 - np.exp(-b * hs))
 
     Because the model is defined in Hs-steepness space it must be transformed to
     Hs-Tz for contour calculation.
@@ -432,15 +432,15 @@ def get_Nonzero_EW_Hs_S():
     def _linear2(x, a=0, b=1):
         return a + b * x
 
-    def _limited_growth2(x, a=0.08, b=1, c=0.05):
+    def _limited_growth_with_shift2(x, a=0.08, b=1, c=0.05):
         # Compared to Windmeier's EW model the idea here is to ensure that f(0) > 0.
-        # The idea is informed based on on the Figure 4.10 in Windmeier's thesis.
+        # The idea is based on on the Figure 4.10 in Windmeier's thesis.
         # DOI: 10.26092/elib/2181
-        #shift = 0.008
+        shift = 0.006
 
         # Some people call this equation "negative exponential equation" when the
         # shift is zero, https://www.statforbiology.com/nonlinearregression/usefulequations#negative_exponential_equation
-        return c + a * (1 - np.exp(-b * x))
+        return shift + a * (1 - np.exp(-b * x))
 
     def _transform(hs_tz):
         hs = hs_tz[:, 0]
@@ -460,11 +460,11 @@ def get_Nonzero_EW_Hs_S():
         return 2 * variable_transform.factor * hs / s**3
 
     linear_2_bounds = [(0, None), (0, None)]
-    limited_growth2_bounds = [(0, None), (0, 1), (0, None)]
+    limited_growth_with_shift2_bounds = [(0, 1), (0, None)]
 
     linear2 = DependenceFunction(_linear2, bounds=linear_2_bounds)
-    limited_growth2 = DependenceFunction(
-        _limited_growth2, bounds=limited_growth2_bounds
+    limited_growth_with_shift2 = DependenceFunction(
+        _limited_growth_with_shift2, bounds=limited_growth_with_shift2_bounds
     )
 
     dist_description_hs = {
@@ -475,7 +475,7 @@ def get_Nonzero_EW_Hs_S():
     dist_description_s = {
         "distribution": ExponentiatedWeibullDistribution(f_delta=2.35),
         "conditional_on": 0,
-        "parameters": {"alpha": limited_growth2, "beta": linear2},
+        "parameters": {"alpha": limited_growth_with_shift2, "beta": linear2},
     }
 
     dist_descriptions = [dist_description_hs, dist_description_s]
