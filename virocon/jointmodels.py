@@ -226,7 +226,9 @@ class MultivariateModel(ABC):
         highest_possible_x_max = 100
         lowest_possible_x_max = 0.05
         x_max = highest_possible_x_max
-        f_threshold = 1e-7 # 10-7 is losely based on Figure 3.4 in DOI: 10.26092/elib/1615
+        f_threshold = (
+            1e-7  # 10-7 is losely based on Figure 3.4 in DOI: 10.26092/elib/1615
+        )
         multiply_xmax_per_iteration = 0.7
         if (
             pdf([x_max]) < f_threshold
