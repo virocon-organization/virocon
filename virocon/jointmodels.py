@@ -230,11 +230,15 @@ class MultivariateModel(ABC):
             1e-7  # 10-7 is losely based on Figure 3.4 in DOI: 10.26092/elib/1615
         )
         multiply_xmax_per_iteration = 0.7
-        if (
-            pdf([x_max]) < f_threshold
-            and x_max * multiply_xmax_per_iteration > lowest_possible_x_max
-        ):
-            x_max = multiply_xmax_per_iteration * x_max
+        while pdf([x_max]) < f_threshold:
+            if x_max * multiply_xmax_per_iteration > lowest_possible_x_max:
+                x_max = multiply_xmax_per_iteration * x_max
+            else:
+                warnings.warn(
+                    f"Using the smallest possible x_max value of {lowest_possible_x_max} although the density is still lower than {f_threshold}"
+                )
+                x_max = lowest_possible_x_max
+                break
 
         # find max value of pdf
         x = np.linspace(x_min, x_max, 1000)
