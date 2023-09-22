@@ -235,7 +235,7 @@ class MultivariateModel(ABC):
                 x_max = multiply_xmax_per_iteration * x_max
             else:
                 warnings.warn(
-                    f"Using the smallest possible x_max value of {lowest_possible_x_max} although the density is still lower than {f_threshold}"
+                    f"Using the smallest possible x_max value of {lowest_possible_x_max} in conditional_sample although the density is still lower than {f_threshold}"
                 )
                 x_max = lowest_possible_x_max
                 break
