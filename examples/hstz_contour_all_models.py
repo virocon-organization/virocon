@@ -15,6 +15,7 @@ from virocon import (
     TransformedModel,
     IFORMContour,
     plot_2D_contour,
+    plot_2D_isodensity
 )
 
 # Load sea state measurements.
@@ -142,5 +143,9 @@ ax.legend(
     frameon=False,
 )
 ax.set_title(f"{tr}-year IFORM contour")
+
+# Plot isodensity lines for the Nonzero EW model
+fig, ax = plt.subplots(1, 1, figsize=[5, 5])
+plot_2D_isodensity(ew_t_model, data_hs_s, semantics=hs_tz_semantics, swap_axis=True, ax=ax)
 
 plt.show()
