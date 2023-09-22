@@ -433,10 +433,13 @@ def get_Nonzero_EW_Hs_S():
         return a + b * x
 
     def _limited_growth2(x, a=0.08, b=1):
-        # Idea to start at > 0 is based on the Figure 4.10 in Windmeier's thesis.
+        # Compared to Windmeier's EW model the idea here is to ensure that f(0) > 0.
+        # The idea is informed based on on the Figure 4.10 in Windmeier's thesis.
+        # DOI: 10.26092/elib/2181
+        shift = 0.008
+
         # Some people call this equation "negative exponential equation" when the
         # shift is zero, https://www.statforbiology.com/nonlinearregression/usefulequations#negative_exponential_equation
-        shift = 0.005
         return shift + a * (1 - np.exp(-b * x))
 
     def _transform(hs_tz):
