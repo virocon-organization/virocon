@@ -405,7 +405,7 @@ def get_Nonzero_EW_Hs_S():
 
     Compared to Windmeier's EW model, this model has a dependence function for scale
     that evaluates to scale > 0 at hs = 0 m .
-    The dependence function reads: c + a * (1 - np.exp(-b * hs))
+    The dependence function reads: shift + a * (1 - np.exp(-b * hs))
 
     Because the model is defined in Hs-steepness space it must be transformed to
     Hs-Tz for contour calculation.
@@ -435,7 +435,9 @@ def get_Nonzero_EW_Hs_S():
     def _limited_growth_with_shift2(x, a=0.08, b=1):
         # Compared to Windmeier's EW model the idea here is to ensure that f(0) > 0.
         # The idea is based on on the Figure 4.10 in Windmeier's thesis.
-        # DOI: 10.26092/elib/2181
+        # DOI: 10.26092/elib/2181 .
+        # The value of 0.006 is chosen by extrapolating the median scale value line in
+        # Figure 4.10 to hs = 0.
         shift = 0.006
 
         # Some people call this equation "negative exponential equation" when the
