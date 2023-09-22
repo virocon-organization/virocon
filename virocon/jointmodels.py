@@ -214,19 +214,32 @@ class MultivariateModel(ABC):
         # default_rng returns it unaltered
         rng = np.random.default_rng(random_state)
 
-        # set distribution lower limit to zero TODO is there a better way?
-        # x_min = 0
-        x_min = (
-            1e-16  # prevents divide by zero in transform in pdf of transformed model
-        )
+        # TODO is there a better way to set the minimum value than to set it to close to zero?
+        # We use 1e-16 to avoid divide by zero in transform in pdf of transformed model
+        x_min = 1e-16
+
         # TODO is there a better way to find an upper limit of the distribution?
-        x_max = 30
+        # For the variables wind speed, significant wave height, peak period and steepness
+        # we usually have density approaching 0 at values between 0.07 (steepness) and 50 (wind speed in m/s)
+        #
+        # Current implementation: Iteratively find a reasonable x_max above which density is close to zero.
+        highest_possible_x_max = 100
+        lowest_possible_x_max = 0.05
+        x_max = highest_possible_x_max
+        f_threshold = 1e-7 # 10-7 is losely based on Figure 3.4 in DOI: 10.26092/elib/1615
+        multiply_xmax_per_iteration = 0.7
+        if (
+            pdf([x_max]) < f_threshold
+            and x_max * multiply_xmax_per_iteration > lowest_possible_x_max
+        ):
+            x_max = multiply_xmax_per_iteration * x_max
+        print(f"x_max: {x_max}")
 
         # find max value of pdf
         x = np.linspace(x_min, x_max, 1000)
         y = pdf(x)
         f_min = 0.0
-        f_max = y.max() * 1.001 # TODO: Add comment why this is multiplied by 1.001
+        f_max = y.max() * 1.001  # TODO: Add comment why this is multiplied by 1.001
 
         n_counter = 0
         reject_counter = 0
