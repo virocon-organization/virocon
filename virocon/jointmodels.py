@@ -225,8 +225,8 @@ class MultivariateModel(ABC):
         # find max value of pdf
         x = np.linspace(x_min, x_max, 1000)
         y = pdf(x)
-        p_min = 0.0
-        p_max = y.max() * 1.001
+        f_min = 0.0
+        f_max = y.max() * 1.001 # TODO: Add comment why this is multiplied by 1.001
 
         n_counter = 0
         reject_counter = 0
@@ -239,7 +239,7 @@ class MultivariateModel(ABC):
             # tmp_n = n
             tmp_n = max([(n - n_counter) * 10, n])
             x = rng.uniform(x_min, x_max, size=tmp_n)
-            y = rng.uniform(p_min, p_max, size=tmp_n)
+            y = rng.uniform(f_min, f_max, size=tmp_n)
 
             accept_mask = y < pdf(x)
 
