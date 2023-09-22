@@ -18,14 +18,52 @@ from virocon import (
 )
 
 # Load sea state measurements.
-data_hs_tz = read_ec_benchmark_dataset("datasets/ec-benchmark_dataset_A_1year.txt")
+fname = "datasets/ec-benchmark_dataset_A_1year.txt"
+data_hs_tz = read_ec_benchmark_dataset(fname)
 hs = data_hs_tz["significant wave height (m)"]
 tz = data_hs_tz["zero-up-crossing period (s)"]
 temp, steepness = variable_transform.hs_tz_to_hs_s(hs, tz)
 steepness.name = "steepness"
 data_hs_s = pd.concat([hs, steepness], axis=1)
 
-# Define the structure of Windmeier's originial EW model (see DOI: 10.26092/elib/2181).
+# Properties for contour calculation.
+tr = 1  # Return period in years.
+ts = 1  # Sea state duration in hours.
+alpha = 1 / (tr * 365.25 * 24 / ts)
+n_contour_points = 50
+
+# Properties for Monte Carlo methods.
+precision_factor = 0.2  # Use low precision to speed up this example.
+random_state = 42
+
+# Compute a contour based on on a DNV model.
+print("Calculating contour 1/4.")
+(
+    dnv_dist_descriptions,
+    dnv_fit_descriptions,
+    dnv_semantics,
+) = get_DNVGL_Hs_Tz()
+dnv_model = GlobalHierarchicalModel(dnv_dist_descriptions)
+dnv_model.fit(data_hs_tz, fit_descriptions=dnv_fit_descriptions)
+dnv_contour = IFORMContour(dnv_model, alpha)
+
+
+# Compute a contour based on a OMAE2020 model.
+print("Calculating contour 2/4.")
+(
+    omae2020_dist_descriptions,
+    omae2020_fit_descriptions,
+    omae2020_semantics,
+) = get_OMAE2020_Hs_Tz()
+omae2020_model = GlobalHierarchicalModel(omae2020_dist_descriptions)
+omae2020_model.fit(data_hs_tz, fit_descriptions=omae2020_fit_descriptions)
+omae2020_contour = IFORMContour(omae2020_model, alpha)
+
+# Compute a contour based on Windmeier's originial EW model.
+print(
+    "Calculating contour 3/4. Calculating this contour will take about 5 minutes because "
+    "a Monte Carlo method is used for evaluating the ICDF of the TransFormedModel."
+)
 (
     dist_descriptions,
     fit_descriptions,
@@ -33,20 +71,13 @@ data_hs_s = pd.concat([hs, steepness], axis=1)
     transformations,
 ) = get_Windmeier_EW_Hs_S()
 windmeier_ew_model = GlobalHierarchicalModel(dist_descriptions)
-
-# Fit the model in Hs-S space.
-windmeier_ew_model.fit(data_hs_s, fit_descriptions)
-
+windmeier_ew_model.fit(data_hs_s, fit_descriptions)  # Fit the model in Hs-S space.
 hs_s_semantics = {
     "names": ["Significant wave height", "Steepness"],
     "symbols": ["H_s", "S"],
     "units": ["m", "-"],
 }
-
-# Transform the fitted model to Hs-Tz space.
-precision_factor = 0.2  # Use low precision to speed up this example.
-random_state = 42
-windmeier_t_model = TransformedModel(
+windmeier_t_model = TransformedModel(  # Transform the fitted model to Hs-Tz space.
     windmeier_ew_model,
     transformations["transform"],
     transformations["inverse"],
@@ -54,26 +85,15 @@ windmeier_t_model = TransformedModel(
     precision_factor=precision_factor,
     random_state=random_state,
 )
-
-# Compute a contour.
-s = (
-    "Computing contours. This will take about 5 minute per contour because a "
-    "Monte Carlo method is used for evaluating the ICDF of the TransFormedModel."
-)
-print(s)
-tr = 1  # Return period in years.
-ts = 1  # Sea state duration in hours.
-alpha = 1 / (tr * 365.25 * 24 / ts)
-n_contour_points = 50
 windmeier_model_contour = IFORMContour(
     windmeier_t_model, alpha, n_points=n_contour_points
 )
-print("1/2 computational expensive contours done.")
 
-# Define the structure of the EW model which has a dependence function for scale
-# that evaluates to > 0 at Hs=0 (the model was inspired by Windmeier's
-# original EW model that was presented in DOI: 10.26092/elib/2181) and
-# compute a contour.
+# Compute a contour based on the Nonnzero EW model.
+print(
+    "Calculating contour 4/4. Calculating this contour will take about 5 minutes because "
+    "a Monte Carlo method is used for evaluating the ICDF of the TransFormedModel."
+)
 (
     dist_descriptions,
     fit_descriptions,
@@ -91,27 +111,7 @@ ew_t_model = TransformedModel(
     random_state=random_state,
 )
 ew_model_contour = IFORMContour(ew_t_model, alpha, n_points=n_contour_points)
-print("2/2 computational expensive contours done.")
 
-# Compute a contour based on on a DNV model for comparison
-(
-    dnv_dist_descriptions,
-    dnv_fit_descriptions,
-    dnv_semantics,
-) = get_DNVGL_Hs_Tz()
-dnv_model = GlobalHierarchicalModel(dnv_dist_descriptions)
-dnv_model.fit(data_hs_tz, fit_descriptions=dnv_fit_descriptions)
-dnv_contour = IFORMContour(dnv_model, alpha)
-
-# Compute a contour based on on a OMAE2020 model for comparison
-(
-    omae2020_dist_descriptions,
-    omae2020_fit_descriptions,
-    omae2020_semantics,
-) = get_OMAE2020_Hs_Tz()
-omae2020_model = GlobalHierarchicalModel(omae2020_dist_descriptions)
-omae2020_model.fit(data_hs_tz, fit_descriptions=omae2020_fit_descriptions)
-omae2020_contour = IFORMContour(omae2020_model, alpha)
 
 # Plot the contours on top of the metocean data.
 fig, ax = plt.subplots(1, 1, figsize=[5, 5])
