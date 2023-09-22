@@ -235,8 +235,6 @@ class MultivariateModel(ABC):
         for i in range(max_iter):
             if n_counter >= n:
                 break
-            # tmp_n = int((n - n_counter) * 1.5)
-            # tmp_n = n
             tmp_n = max([(n - n_counter) * 10, n])
             x = rng.uniform(x_min, x_max, size=tmp_n)
             y = rng.uniform(f_min, f_max, size=tmp_n)
