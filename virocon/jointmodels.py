@@ -244,7 +244,7 @@ class MultivariateModel(ABC):
         x = np.linspace(x_min, x_max, 1000)
         y = pdf(x)
         f_min = 0.0
-        f_max = y.max() * 1.001  # TODO: Add comment why this is multiplied by 1.001
+        f_max = y.max() * 1.001  # Use a limit greater than the maximum of the data
 
         n_counter = 0
         reject_counter = 0
@@ -273,7 +273,7 @@ class MultivariateModel(ABC):
 
         if i == max_iter - 1:
             warnings.warn(
-                f"Max iterations was reached, sample size is only {n_counter}.",
+                f"Max iterations was reached, sample size is only {n_counter}. Acceptance rate was {n_counter / (n_counter + reject_counter)} and x_max was {x_max}.",
                 MaxIterationWarning,
             )
             if len(partial_samples) == 0:
