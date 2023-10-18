@@ -51,5 +51,5 @@ sphinxcontrib-serializinghtml==1.1.5
 threadpoolctl==3.1.0
 tomli==2.0.1
 typing_extensions==4.1.1
-urllib3==1.26.8
+urllib3==1.26.18
 zipp==3.7.0
