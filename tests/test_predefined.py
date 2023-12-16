@@ -133,9 +133,6 @@ def test_windmeier_ew_model():
     except NotImplementedError:
         assert True
 
-    # TODO: Speed the contour calculation up (takes long due to the contour calculation which
-    # uses a Monte Carlo based method).
-
     # Compute a contour.
     tr = 1  # Return period in years.
     ts = 1  # Sea state duration in hours.
@@ -195,9 +192,6 @@ def test_nonzero_ew_model():
         precision_factor=0.2,  # Use low precision to speed up test.
         random_state=42,
     )
-
-    # TODO: Speed the contour calcultaion up (takes long due to the contour calculation which
-    # uses a Monte Carlo based method).
 
     # Compute a contour.
     tr = 1  # Return period in years.
