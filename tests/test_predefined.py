@@ -197,7 +197,7 @@ def test_nonzero_ew_model():
     )
 
     # TODO: Speed the contour calcultaion up (takes long due to the contour calculation which
-    # uses a Monte Carlo based method.
+    # uses a Monte Carlo based method).
 
     # Compute a contour.
     tr = 1  # Return period in years.
