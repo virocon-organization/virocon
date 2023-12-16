@@ -1333,10 +1333,10 @@ class GeneralizedGammaDistribution(Distribution):
         scipy_par = self._get_scipy_parameters(m, c, lambda_)
         return sts.gengamma.pdf(x, *scipy_par)
 
-    def draw_sample(self, n, m=None, c=None, lambda_=None):
+    def draw_sample(self, n, m=None, c=None, lambda_=None, random_state=None):
         scipy_par = self._get_scipy_parameters(m, c, lambda_)
         rvs_size = self._get_rvs_size(n, scipy_par)
-        return sts.gengamma.rvs(*scipy_par, size=rvs_size)
+        return sts.gengamma.rvs(*scipy_par, size=rvs_size, random_state=random_state)
 
     def _fit_mle(self, sample):
         p0 = {"m": self.m, "c": self.c, "scale": self._scale}
@@ -1472,10 +1472,10 @@ class VonMisesDistribution(Distribution):
         scipy_par = self._get_scipy_parameters(kappa, mu)
         return sts.vonmises.pdf(x, *scipy_par)
 
-    def draw_sample(self, n, kappa=None, mu=None):
+    def draw_sample(self, n, kappa=None, mu=None, random_state=None):
         scipy_par = self._get_scipy_parameters(kappa, mu)
         rvs_size = self._get_rvs_size(n, scipy_par)
-        return sts.vonmises.rvs(*scipy_par, size=rvs_size)
+        return sts.vonmises.rvs(*scipy_par, size=rvs_size, random_state=random_state)
 
     def _fit_mle(self, sample):
         p0 = {"shape": self.kappa, "loc": self.mu}
