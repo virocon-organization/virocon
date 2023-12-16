@@ -125,5 +125,5 @@ def test_plot_histograms_of_interval_distributions(
     plot_histograms_of_interval_distributions(
         fitted_model, data_used_for_fitting_model, semantics_fitted_model
     )
-    #plt.show()
+    # plt.show()
     plt.close("all")
