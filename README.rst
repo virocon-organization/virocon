@@ -43,7 +43,7 @@ How to use virocon
 ------------------
 Requirements
 ~~~~~~~~~~~~
-Make sure you have installed Python `3.8`, `3.9` or `3.10` by typing
+Make sure you have installed Python `3.8` or higher by typing
 
 .. code:: console
 
