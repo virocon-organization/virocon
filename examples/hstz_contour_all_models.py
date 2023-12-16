@@ -37,7 +37,7 @@ precision_factor = 0.2  # Use low precision to speed up this example.
 random_state = 42
 
 # Compute a contour based on on a DNV model.
-print("Calculating contour 1/4.")
+print("Calculating contour 1/4 (with DNVGL model)")
 (
     dnv_dist_descriptions,
     dnv_fit_descriptions,
@@ -49,7 +49,7 @@ dnv_contour = IFORMContour(dnv_model, alpha)
 
 
 # Compute a contour based on a OMAE2020 model.
-print("Calculating contour 2/4.")
+print("Calculating contour 2/4 (with OMAE2020 model)")
 (
     omae2020_dist_descriptions,
     omae2020_fit_descriptions,
@@ -61,7 +61,8 @@ omae2020_contour = IFORMContour(omae2020_model, alpha)
 
 # Compute a contour based on Windmeier's originial EW model.
 print(
-    "Calculating contour 3/4. Calculating this contour will take about 5 minutes because "
+    "Calculating contour 3/4 (with Windmeier's EW model). "
+    "Calculating this contour will take about 5 minutes because "
     "a Monte Carlo method is used for evaluating the ICDF of the TransFormedModel."
 )
 (
@@ -89,9 +90,10 @@ windmeier_model_contour = IFORMContour(
     windmeier_t_model, alpha, n_points=n_contour_points
 )
 
-# Compute a contour based on the Nonnzero EW model.
+# Compute a contour based on the non-zero EW model.
 print(
-    "Calculating contour 4/4. Calculating this contour will take about 5 minutes because "
+    "Calculating contour 4/4 (with non-zero EW model). "
+    "Calculating this contour will take about 5 minutes because "
     "a Monte Carlo method is used for evaluating the ICDF of the TransFormedModel."
 )
 (
