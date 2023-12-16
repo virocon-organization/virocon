@@ -218,7 +218,7 @@ class IFORMContour(Contour):
         if type(self.model).__name__ == "GlobalHierarchicalModel":
             distributions = self.model.distributions
             conditional_on = self.model.conditional_on
-        elif type(self.model).__name__ != "TransformedModel":
+        elif type(self.model).__name__ == "TransformedModel":
             distributions = None
             conditional_on = None
         else:
