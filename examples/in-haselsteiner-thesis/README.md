@@ -1,4 +1,4 @@
-# Examples that produce figure presented in Haselsteiner's doctoral thesis
+# Examples that produce figures presented in Haselsteiner's doctoral thesis
 
 The docstrings in the first lines of the Python scripts describe at which page the resulting figures are presented.
 
