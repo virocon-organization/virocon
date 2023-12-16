@@ -134,7 +134,7 @@ def test_windmeier_ew_model():
         assert True
 
     # TODO: Speed the contour calculation up (takes long due to the contour calculation which
-    # uses a Monte Carlo based method.
+    # uses a Monte Carlo based method).
 
     # Compute a contour.
     tr = 1  # Return period in years.
