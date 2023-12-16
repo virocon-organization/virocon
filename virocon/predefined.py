@@ -410,6 +410,9 @@ def get_Nonzero_EW_Hs_S():
     Because the model is defined in Hs-steepness space it must be transformed to
     Hs-Tz for contour calculation.
 
+    This model was introduced in the virocon software, there is research paper
+    describing it.
+
     Returns
     -------
     dist_descriptions : list of dict
@@ -433,7 +436,7 @@ def get_Nonzero_EW_Hs_S():
         return a + b * x
 
     def _limited_growth_with_shift2(x, a=0.08, b=1):
-        # Compared to Windmeier's EW model the idea here is to ensure that f(0) > 0.
+        # Compared to Windmeier's EW model the idea here is to have f(0) > 0.
         # The idea is based on on the Figure 4.10 in Windmeier's thesis.
         # DOI: 10.26092/elib/2181 .
         # The value of 0.006 is chosen by extrapolating the median scale value line in
