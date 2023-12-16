@@ -198,7 +198,13 @@ class IFORMContour(Contour):
     """
 
     def __init__(self, model, alpha, n_points=180):
-        self.model = model
+        allowed_model_types = ("GlobalHierarchicalModel", "TransformedModel")
+        if type(model).__name__ in allowed_model_types:
+            self.model = model
+        else:
+            raise TypeError(
+                f"Type of model was {type(model).__name__} but among {allowed_model_types}"
+            )
         self.alpha = alpha
         self.n_points = n_points
         super().__init__()
@@ -222,7 +228,7 @@ class IFORMContour(Contour):
             distributions = None
             conditional_on = None
         else:
-            raise TypeError
+            raise TypeError()
 
         beta = sts.norm.ppf(1 - self.alpha)
         self.beta = beta
