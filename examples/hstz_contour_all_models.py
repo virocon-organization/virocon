@@ -121,7 +121,9 @@ ew_t_model = TransformedModel(
 )
 ew_model_contour_hs_s = IFORMContour(ew_model, alpha, n_points=n_contour_points)
 ew_model_contour_hs_tz = copy.deepcopy(ew_model_contour_hs_s)
-ew_model_contour_hs_tz.coordinates = transformations["inverse"](ew_model_contour_hs_tz.coordinates)
+ew_model_contour_hs_tz.coordinates = transformations["inverse"](
+    ew_model_contour_hs_tz.coordinates
+)
 
 
 # Plot the contours on top of the metocean data.
