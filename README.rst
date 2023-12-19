@@ -43,7 +43,7 @@ How to use virocon
 ------------------
 Requirements
 ~~~~~~~~~~~~
-Make sure you have installed Python `3.8`, `3.9` or `3.10` by typing
+Make sure you have installed Python `3.8` or higher by typing
 
 .. code:: console
 
@@ -110,7 +110,7 @@ description of virocon version 1 and our `update paper`_ describes the changes
 introduced in virocon version 2.
 
 **Conference presentation.** In a `WESC 2021 presentation`_, we showed how virocon 
-(version 2) can be used to support the design process of offshore wind turbines. 
+can be used to support the design process of offshore wind turbines.
 
 Contributing
 ------------

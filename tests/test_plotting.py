@@ -9,12 +9,12 @@ from virocon import (
     LogNormalDistribution,
     WeibullDistribution,
     GlobalHierarchicalModel,
-    get_DNVGL_Hs_Tz,
     get_OMAE2020_V_Hs,
     plot_marginal_quantiles,
     plot_dependence_functions,
     plot_2D_isodensity,
     plot_2D_contour,
+    plot_histograms_of_interval_distributions,
 )
 
 
@@ -50,15 +50,20 @@ def seastate_model():
 
 
 @pytest.fixture(scope="module")
-def fitted_model():
+def data_used_for_fitting_model():
+    return read_ec_benchmark_dataset("datasets/ec-benchmark_dataset_D_1year.txt")
+
+
+@pytest.fixture(scope="module")
+def fitted_model(data_used_for_fitting_model):
     """
     Here we fit the joint distribution model described by Haselsteiner et al. (2020)
     to a dataset. We will use this model for various plot tests.
     """
     dist_descriptions, fit_descriptions, semantics = get_OMAE2020_V_Hs()
     model = GlobalHierarchicalModel(dist_descriptions)
-    data = read_ec_benchmark_dataset("datasets/ec-benchmark_dataset_D_1year.txt")
-    model.fit(data, fit_descriptions)
+
+    model.fit(data_used_for_fitting_model, fit_descriptions)
 
     return model
 
@@ -110,5 +115,15 @@ def test_plot_2D_contour():
     model.fit(data, fit_descriptions)
     contour = IFORMContour(model, alpha=0.001)
     plot_2D_contour(contour)
+    # plt.show()
+    plt.close("all")
+
+
+def test_plot_histograms_of_interval_distributions(
+    data_used_for_fitting_model, fitted_model, semantics_fitted_model
+):
+    plot_histograms_of_interval_distributions(
+        fitted_model, data_used_for_fitting_model, semantics_fitted_model
+    )
     # plt.show()
     plt.close("all")

@@ -435,3 +435,10 @@ def test_use_fixed_values_if_provided(dist_cls):
     # check that the distribution uses the fixed values
     for reference_value, actual_value in zip(ref_values, param_values):
         assert reference_value == pytest.approx(actual_value)
+
+
+def test_draw_sample(dist_cls):
+    dist = dist_cls(1, 1)
+    n = 4
+    sample = dist.draw_sample(n, random_state=42)
+    assert len(sample) == n

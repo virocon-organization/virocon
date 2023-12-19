@@ -1,8 +1,10 @@
 """
 Models for the joint probability distribution.
 """
+import warnings
 
 from abc import ABC, abstractmethod
+from typing import Callable
 
 import numpy as np
 
@@ -11,7 +13,15 @@ import scipy.integrate as integrate
 from virocon.distributions import ConditionalDistribution
 from virocon.intervals import NumberOfIntervalsSlicer
 
-__all__ = ["GlobalHierarchicalModel"]
+__all__ = ["GlobalHierarchicalModel", "TransformedModel"]
+
+
+class MaxIterationWarning(RuntimeWarning):
+    """The maximum number of iterations was reached."""
+
+
+class CouldNotSampleError(RuntimeError):
+    """Could not draw sample for the supplied parameters."""
 
 
 class MultivariateModel(ABC):
@@ -30,13 +40,48 @@ class MultivariateModel(ABC):
         """
         pass
 
-    @abstractmethod
-    def cdf(self, *args, **kwargs):
+    def cdf(self, x):
         """
         Cumulative distribution function.
 
+
+        Parameters
+        ----------
+        x : array_like
+            Points at which the cdf is evaluated.
+            Shape: (n, n_dim), where n is the number of points at which the
+            cdf should be evaluated.
         """
-        pass
+
+        x = np.atleast_2d(np.asarray_chkfinite(x))
+
+        n_dim = self.n_dim
+        integral_order = list(range(n_dim))
+
+        def get_integral_func():
+            arg_order = integral_order
+
+            def integral_func(*args):
+                assert len(args) == n_dim
+                # sort arguments as expected by pdf (the models order)
+                x = np.array(args)[np.argsort(arg_order)].reshape((1, n_dim))
+                return self.pdf(x)
+
+            return integral_func
+
+        lower_integration_limits = [0] * n_dim
+
+        integral_func = get_integral_func()
+
+        p = np.empty(len(x))
+        for i in range(len(x)):
+            integration_limits = [
+                (lower_integration_limits[j], x[i, j]) for j in range(n_dim)
+            ]
+
+            p[i], error = integrate.nquad(integral_func, integration_limits)
+
+        return p
 
     @abstractmethod
     def marginal_pdf(self, *args, **kwargs):
@@ -46,29 +91,198 @@ class MultivariateModel(ABC):
         """
         pass
 
-    @abstractmethod
-    def marginal_cdf(self, *args, **kwargs):
-        """
-        Marginal cumulative distribution function.
-
-        """
-        pass
-
-    @abstractmethod
-    def marginal_icdf(self, *args, **kwargs):
+    def marginal_icdf(self, p, dim, precision_factor=1):
         """
         Marginal inverse cumulative distribution function.
 
+        Estimates the marginal icdf by drawing a Monte-Carlo sample.
+        Parameters
+        ----------
+        p : array_like
+            Probabilities for which the icdf is evaluated.
+            Shape: 1-dimensional
+        dim : int
+            The dimension for which the marginal is calculated.
+        precision_factor : float
+            Precision factor that determines the size of the sample to draw.
+            A sample is drawn of which on average precision_factor * 100
+            realizations exceed the quantile. Minimum sample size is 100000.
+            Defaults to 1.0
         """
         pass
 
+        p = np.array(p)
+
+        p_min = np.min(p)
+        p_max = np.max(p)
+        nr_exceeding_points = 100 * precision_factor
+        p_small = np.min([p_min, 1 - p_max])
+        n = int((1 / p_small) * nr_exceeding_points)
+        n = max([n, 100000])
+        sample = self.draw_sample(n)
+        x = np.quantile(sample[:, dim], p)
+        return x
+
     @abstractmethod
-    def draw_sample(self, *args, **kwargs):
+    def draw_sample(self, *args, random_state=None, **kwargs):
         """
         Draw a random sample of length n.
 
         """
         pass
+
+    def conditional_cdf(self, x, dim, given, *, random_state=None):
+        # assert len(x) == len(given)
+        # TODO optimize: reuse sample for equal givens
+        p = np.empty_like(x)
+        n = 100_000
+        for i, (x_val, given_val) in enumerate(zip(x, given)):
+            try:
+                sample = self.conditional_sample(
+                    n, dim, given_val, random_state=random_state
+                )
+                p[i] = (sample <= x_val).sum() / n
+            except CouldNotSampleError:
+                p[i] = 0
+
+        return p
+
+    def conditional_icdf(
+        self, p, dim, given, precision_factor=1.0, *, random_state=None
+    ):
+        # assert len(p) == len(given)
+        # TODO optimize: reuse sample for equal givens
+        x = np.empty_like(p)
+        # n = 100_000
+        nr_exceeding_points = 100 * precision_factor
+        for i, (p_val, given_val) in enumerate(zip(p, given)):
+            # p_small = np.min([p_min, 1 - p_max])
+            p_small = p_val if p_val < 0.5 else 1 - p_val
+            n = (1 / p_small) * nr_exceeding_points
+            n = min([max([n, 100_000]), 10_000_000])
+            n = int(n)
+            try:
+                sample = self.conditional_sample(
+                    n, dim, given_val, random_state=random_state
+                )
+                x[i] = np.quantile(sample, p_val)
+            except CouldNotSampleError:
+                x[i] = 0  # TODO
+
+        return x
+
+    def conditional_sample(
+        self, n, dim, given, *, random_state=None, max_iter=100, debug=False
+    ):
+        # rejection sampling
+        # https://github.com/peteroupc/peteroupc.github.io/blob/master/randomfunc.md#rejection-sampling-with-a-pdf-like-function
+        # https://github.com/peteroupc/peteroupc.github.io/blob/master/randomfunc.md#Rejection_Sampling
+        # https://gist.github.com/rsnemmen/d1c4322d2bc3d6e36be8
+
+        # TODO use given properly
+        def get_pdf_like(dim, given):
+            """
+            let y = given
+            We want f(x| y).
+            => f(x| y) = f(x, y) / f(y)
+            f(y) is const as y is const.
+            => f(y) is just a normalization constant
+            which is not necessary for rejection sampling
+            so we need to use dim and given to get f(x, y)
+            """
+
+            def pdf_like(x):
+                nonlocal dim, given, self
+                n_dim = self.n_dim
+                given = np.atleast_1d(given)
+                x_hat = np.empty((len(x), n_dim))
+                j = 0
+                for i in range(n_dim):
+                    if i == dim:
+                        x_hat[:, i] = x
+                    else:
+                        x_hat[:, i] = given[j]
+                        j += 1
+                pdf = self.pdf(x_hat)
+                return pdf
+
+            return pdf_like
+
+        pdf = get_pdf_like(dim, given)
+
+        # if random_state already is a np.random.Generator,
+        # default_rng returns it unaltered
+        rng = np.random.default_rng(random_state)
+
+        # TODO is there a better way to set the minimum value than to set it to close to zero?
+        # We use 1e-16 to avoid divide by zero in transform in pdf of transformed model
+        x_min = 1e-16
+
+        # TODO is there a better way to find an upper limit of the distribution?
+        # For the variables wind speed, significant wave height, peak period and steepness
+        # we usually have density approaching 0 at values between 0.07 (steepness) and 50 (wind speed in m/s)
+        #
+        # Current implementation: Iteratively find a reasonable x_max above which density is close to zero.
+        highest_possible_x_max = 100
+        lowest_possible_x_max = 0.05
+        x_max = highest_possible_x_max
+        f_threshold = (
+            1e-7  # 10-7 is losely based on Figure 3.4 in DOI: 10.26092/elib/1615
+        )
+        multiply_xmax_per_iteration = 0.7
+        while pdf([x_max]) < f_threshold:
+            if x_max * multiply_xmax_per_iteration > lowest_possible_x_max:
+                x_max = multiply_xmax_per_iteration * x_max
+            else:
+                warnings.warn(
+                    f"Using the smallest possible x_max value of {lowest_possible_x_max} in conditional_sample although the density is still lower than {f_threshold}"
+                )
+                x_max = lowest_possible_x_max
+                break
+
+        # find max value of pdf
+        x = np.linspace(x_min, x_max, 1000)
+        y = pdf(x)
+        f_min = 0.0
+        f_max = y.max() * 1.001  # Use a limit greater than the maximum of the data
+
+        n_counter = 0
+        reject_counter = 0
+        partial_samples = []
+
+        for i in range(max_iter):
+            if n_counter >= n:
+                break
+            tmp_n = max([(n - n_counter) * 10, n])
+            x = rng.uniform(x_min, x_max, size=tmp_n)
+            y = rng.uniform(f_min, f_max, size=tmp_n)
+
+            accept_mask = y < pdf(x)
+
+            n_accept = accept_mask.sum()
+            n_reject = tmp_n - n_accept
+
+            n_counter += n_accept
+            reject_counter += n_reject
+
+            if n_accept > 0:
+                partial_samples.append(x[accept_mask])
+
+        if debug:
+            print(f"acceptance rate: {n_counter / (n_counter + reject_counter)}")
+
+        if i == max_iter - 1:
+            warnings.warn(
+                f"Max iterations was reached, sample size is only {n_counter}. Acceptance rate was {n_counter / (n_counter + reject_counter)} and x_max was {x_max}.",
+                MaxIterationWarning,
+            )
+            if len(partial_samples) == 0:
+                raise CouldNotSampleError(
+                    "Could not draw sample for the supplied parameters."
+                )
+            return np.concatenate(partial_samples)
+        else:
+            return np.concatenate(partial_samples)[:n]
 
 
 class GlobalHierarchicalModel(MultivariateModel):
@@ -368,54 +582,6 @@ class GlobalHierarchicalModel(MultivariateModel):
 
         return np.prod(fs, axis=-1)
 
-    def cdf(self, x):
-        """
-        Cumulative distribution function.
-
-        Parameters
-        ----------
-        x : array_like
-            Points at which the cdf is evaluated.
-            Shape: (n, n_dim), where n is the number of points at which the
-            cdf should be evaluated.
-
-        """
-
-        # Ensure that x is a 2D numpy array.
-        x = np.array(x)
-        if x.ndim == 1:
-            x = np.array([x])
-
-        x = np.asarray_chkfinite(x)
-
-        n_dim = self.n_dim
-        integral_order = list(range(n_dim))
-
-        def get_integral_func():
-            arg_order = integral_order
-
-            def integral_func(*args):
-                assert len(args) == n_dim
-                # sort arguments as expected by pdf (the models order)
-                x = np.array(args)[np.argsort(arg_order)].reshape((1, n_dim))
-                return self.pdf(x)
-
-            return integral_func
-
-        lower_integration_limits = [0] * n_dim
-
-        integral_func = get_integral_func()
-
-        p = np.empty(len(x))
-        for i in range(len(x)):
-            integration_limits = [
-                (lower_integration_limits[j], x[i, j]) for j in range(n_dim)
-            ]
-
-            p[i], error = integrate.nquad(integral_func, integration_limits)
-
-        return p
-
     def marginal_pdf(self, x, dim):
         """
         Marginal probability density function.
@@ -558,16 +724,232 @@ class GlobalHierarchicalModel(MultivariateModel):
         if self.conditional_on[dim] is None:
             # the distribution is not conditional -> it is the marginal
             return self.distributions[dim].icdf(p)
+        else:
+            return super().marginal_icdf(p, dim, precision_factor)
 
-        p_min = np.min(p)
-        p_max = np.max(p)
-        nr_exceeding_points = 100 * precision_factor
-        p_small = np.min([p_min, 1 - p_max])
-        n = int((1 / p_small) * nr_exceeding_points)
-        n = max([n, 100000])
-        sample = self.draw_sample(n)
-        x = np.quantile(sample[:, dim], p)
+    def conditional_cdf(self, x, dim, given, *, random_state=None):
+        # assert len(x) == len(given)
+        distributions = self.distributions
+        conditional_on = self.conditional_on
+
+        if conditional_on[dim] is None:
+            p = distributions[dim].cdf(x)
+        else:
+            cond_idx = conditional_on[dim]
+            p = distributions[dim].cdf(x, given=given[:, cond_idx])
+
+        return p
+
+    def conditional_icdf(self, p, dim, given, *, random_state=None):
+        # assert len(p) == len(given)
+        distributions = self.distributions
+        conditional_on = self.conditional_on
+
+        if conditional_on[dim] is None:
+            x = distributions[dim].icdf(p)
+        else:
+            cond_idx = conditional_on[dim]
+            x = distributions[dim].icdf(p, given=given[:, cond_idx])
         return x
+
+    def draw_sample(self, n, *, random_state=None):
+        """
+        Draw a random sample of size n.
+
+        Parameters
+        ----------
+        n : int
+            Sample size.
+        random_state : {None, int, numpy.random.Generator}, optional
+            Can be used to draw a reproducible sample.
+        """
+
+        if random_state is not None:
+            # if random_state already is a np.random.Generator, default_rng returns it unaltered
+            random_state = np.random.default_rng(random_state)
+
+        samples = np.zeros((n, self.n_dim))
+        for i in range(self.n_dim):
+            cond_idx = self.conditional_on[i]
+            dist = self.distributions[i]
+            if cond_idx is None:
+                samples[:, i] = dist.draw_sample(n, random_state=random_state)
+            else:
+                conditioning_values = samples[:, cond_idx]
+                samples[:, i] = dist.draw_sample(
+                    1, conditioning_values, random_state=random_state
+                )
+
+        return samples
+
+
+class TransformedModel(MultivariateModel):
+    def __init__(
+        self,
+        model: GlobalHierarchicalModel,
+        transform: Callable,
+        inverse: Callable,
+        jacobian: Callable,
+        precision_factor: float = 1.0,
+        random_state: int = None,
+    ):
+        """A joint distribution that was defined in another variable space.
+
+        Args:
+            model (GlobalHierarchicalModel): Joint distribution in original variable space
+            transform (Callable): Function to transform this model back to original variable space
+            inverse (Callable): Function to transform from the original variable space to this model's space
+            jacobian (Callable): jacobian matrix, see page 31 in DOI: 10.26092/elib/2181
+            precision_factor (float, optional): Lower precision results in faster computation. Defaults to 1.0.
+            random_state (int, optional): Can be used to fix random numbers. Defaults to None.
+        """
+        self.model = model
+        self.transform = transform
+        self.inverse = inverse
+        self.jacobian = jacobian
+        self.precision_factor = precision_factor
+        self.random_state = random_state
+
+        self.n_dim = self.model.n_dim
+        self._sample = None
+
+    @property
+    def sample(self):
+        if self._sample is None:
+            self._sample = self.draw_sample(int(1e6))
+
+        return self._sample
+
+    def __repr__(self):
+        name = "TransformedModel"
+        model = repr(self.model)
+        transform = repr(self.transform)
+        inverse = repr(self.inverse)
+        jacobian = repr(self.jacobian)
+
+        return f"{name}(model={model}, transform={transform}, inverse={inverse}, jacobian={jacobian})"
+
+    def fit(self, data, *args, **kwargs):
+        """
+        Fit joint model to data.
+
+        Method of estimating the parameters of a probability distribution to
+        given data.
+
+        Parameters
+        ----------
+        data : array-like
+            The data that should be used to fit the joint model.
+            Shape: (number of realizations, n_dim)
+
+        """
+
+        return self.model.fit(self.transform(data), *args, **kwargs)
+
+    def pdf(self, x):
+        """
+        Probability density function.
+
+        Parameters
+        ----------
+        x : array_like
+            Points at which the pdf is evaluated.
+            Shape: (n, n_dim), where n is the number of points at which the
+            pdf should be evaluated.
+
+        """
+
+        # model_pdf = self.model.pdf(self.transform(x))
+        # return np.where(model_pdf >= 1e-8, model_pdf * self.jacobian(x), 0)
+        return self.model.pdf(self.transform(x)) * self.jacobian(x)
+
+    def cdf(self, x):
+        """
+        Cumulative distribution function.
+
+        Parameters
+        ----------
+        x : array_like
+            Points at which the cdf is evaluated.
+            Shape: (n, n_dim), where n is the number of points at which the
+            cdf should be evaluated.
+
+        """
+
+        x = np.atleast_2d(np.asarray_chkfinite(x))
+
+        n_dim = self.n_dim
+        integral_order = list(range(n_dim))
+
+        def get_integral_func():
+            arg_order = integral_order
+
+            def integral_func(*args):
+                assert len(args) == n_dim
+                # sort arguments as expected by pdf (the models order)
+                x = np.array(args)[np.argsort(arg_order)].reshape((1, n_dim))
+                return self.pdf(x)
+
+            return integral_func
+
+        lower_integration_limits = [0] * n_dim
+
+        integral_func = get_integral_func()
+
+        p = np.empty(len(x))
+        for i in range(len(x)):
+            integration_limits = [
+                (lower_integration_limits[j], x[i, j]) for j in range(n_dim)
+            ]
+
+            p[i], error = integrate.nquad(integral_func, integration_limits)
+
+        return p
+
+    def empirical_cdf(self, x, sample=None):
+        if sample is None:
+            sample = self.sample
+        n = len(sample)
+
+        x = np.atleast_2d(np.asarray_chkfinite(x))
+
+        events = x[:, np.newaxis, :]
+        leq_events = (sample <= events).all(axis=-1)
+        result = leq_events.sum(axis=-1) / n
+
+        return result
+
+    def marginal_pdf(self, x, dim):
+        """
+        Marginal probability density function.
+
+        Parameters
+        ----------
+        x : array_like
+            Points at which the pdf is evaluated.
+            Shape: 1-dimensional
+        dim : int
+            The dimension for which the marginal is calculated.
+
+        """
+
+        raise NotImplementedError()
+
+    def marginal_cdf(self, x, dim):
+        """
+        Marginal cumulative distribution function.
+
+        Parameters
+        ----------
+        x : array_like
+            Points at which the cdf is evaluated.
+            Shape: 1-dimensional
+        dim : int
+            The dimension for which the marginal is calculated.
+
+        """
+
+        raise NotImplementedError()
 
     def draw_sample(self, n):
         """
@@ -580,14 +962,4 @@ class GlobalHierarchicalModel(MultivariateModel):
 
         """
 
-        samples = np.zeros((n, self.n_dim))
-        for i in range(self.n_dim):
-            cond_idx = self.conditional_on[i]
-            dist = self.distributions[i]
-            if cond_idx is None:
-                samples[:, i] = dist.draw_sample(n)
-            else:
-                conditioning_values = samples[:, cond_idx]
-                samples[:, i] = dist.draw_sample(1, conditioning_values)
-
-        return samples
+        return self.inverse(self.model.draw_sample(n))

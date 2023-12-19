@@ -85,9 +85,10 @@ def get_default_semantics(n_dim):
 
 
 def _get_n_axes(n_intervals):
-    if n_intervals > 9:
+    max_intervals = 16
+    if n_intervals > max_intervals:
         raise NotImplementedError(
-            "Automatic axes creation is only supported for up to 9 intervals."
+            f"Automatic axes creation is only supported for up to {max_intervals} intervals."
         )
 
     table = [
@@ -100,6 +101,13 @@ def _get_n_axes(n_intervals):
         (3, 3),
         (3, 3),
         (3, 3),
+        (4, 4),
+        (4, 4),
+        (4, 4),
+        (4, 4),
+        (4, 4),
+        (4, 4),
+        (4, 4),
     ]
 
     fig, axes = plt.subplots(

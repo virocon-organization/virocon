@@ -7,3 +7,4 @@ from virocon.jointmodels import *
 from virocon.plotting import *
 from virocon.predefined import *
 from virocon.utils import *
+from virocon.variable_transform import *

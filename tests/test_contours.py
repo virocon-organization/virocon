@@ -60,6 +60,8 @@ def test_IFORMContour(seastate_model):
     np.testing.assert_allclose(max(my_coordinates[:, 0]), 15.23, atol=0.05)
     np.testing.assert_allclose(max(my_coordinates[:, 1]), 13.96, atol=0.05)
 
+    np.testing.assert_raises(TypeError, IFORMContour, "string", alpha)
+
 
 def test_ISORMContour(seastate_model):
     """

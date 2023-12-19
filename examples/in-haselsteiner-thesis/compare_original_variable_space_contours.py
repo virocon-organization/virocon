@@ -1,7 +1,12 @@
 """
 Compute four types of contour with the same dataset.
+
 Namely a direct sampling contour, a highest density contour, an AND contour
 and an OR contour. These contours are all defined in the original variable space.
+
+This figure is presented as Figure 2.8 on page 18 in Haselsteiner, A. F. (2022). 
+Offshore structures under extreme loads: A methodology to determine design loads 
+[University of Bremen]. https://doi.org/10.26092/elib/1615
 """
 
 import matplotlib.pyplot as plt
