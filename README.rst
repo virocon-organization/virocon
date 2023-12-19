@@ -110,7 +110,7 @@ description of virocon version 1 and our `update paper`_ describes the changes
 introduced in virocon version 2.
 
 **Conference presentation.** In a `WESC 2021 presentation`_, we showed how virocon 
-(version 2) can be used to support the design process of offshore wind turbines. 
+can be used to support the design process of offshore wind turbines.
 
 Contributing
 ------------
