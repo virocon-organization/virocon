@@ -3,6 +3,7 @@ Computes IFORM sea state contours using all predefined Hs-Tz joint model structu
 """
 import matplotlib.pyplot as plt
 import pandas as pd
+import copy
 
 from virocon import (
     read_ec_benchmark_dataset,
@@ -60,6 +61,11 @@ omae2020_model.fit(data_hs_tz, fit_descriptions=omae2020_fit_descriptions)
 omae2020_contour = IFORMContour(omae2020_model, alpha)
 
 # Compute a contour based on Windmeier's originial EW model.
+# Before contour calculation the model is transformed from Hs-S variable space to Hs-Tz.
+# Contour calculation using this transfromed joint distribution is numerically expensive.
+# Alternatively, we could calculate the contour in Hs-S variable space and then transfer
+# the contour coordinates to Hs-Tz. This would be computationally faster and this approach
+# is shown with the next model ('non-zero EW model').
 print(
     "Calculating contour 3/4 (with Windmeier's EW model). "
     "Calculating this contour will take about 5 minutes because "
@@ -91,10 +97,11 @@ windmeier_model_contour = IFORMContour(
 )
 
 # Compute a contour based on the non-zero EW model.
+# The contour is calculated in Hs-S variable space and then transformed to Hs-Tz.
 print(
     "Calculating contour 4/4 (with non-zero EW model). "
-    "Calculating this contour will take about 5 minutes because "
-    "a Monte Carlo method is used for evaluating the ICDF of the TransFormedModel."
+    "Calculating this contour will be fast because we compute the contour in the "
+    "original Hs-S variable space and then transform the coordinates to Hs-Tz space."
 )
 (
     dist_descriptions,
@@ -112,7 +119,9 @@ ew_t_model = TransformedModel(
     precision_factor=precision_factor,
     random_state=random_state,
 )
-ew_model_contour = IFORMContour(ew_t_model, alpha, n_points=n_contour_points)
+ew_model_contour_hs_s = IFORMContour(ew_model, alpha, n_points=n_contour_points)
+ew_model_contour_hs_tz = copy.deepcopy(ew_model_contour_hs_s)
+ew_model_contour_hs_tz.coordinates = transformations["inverse"](ew_model_contour_hs_tz.coordinates)
 
 
 # Plot the contours on top of the metocean data.
@@ -131,7 +140,7 @@ plot_2D_contour(
     ax=ax,
 )
 plot_2D_contour(
-    ew_model_contour, data_hs_tz, semantics=hs_tz_semantics, swap_axis=True, ax=ax
+    ew_model_contour_hs_tz, data_hs_tz, semantics=hs_tz_semantics, swap_axis=True, ax=ax
 )
 ax.lines[1].set_color("orchid")
 ax.lines[2].set_color("blue")
