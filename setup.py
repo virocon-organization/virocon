@@ -64,7 +64,7 @@ setup(
         "scipy",
     ],
     extras_require={
-        "dev": ["Sphinx", "black"],
+        "dev": ["Sphinx", "ruff", "pre-commit"],
         "test": ["pytest", "pytest-cov", "coverage", "coveralls"],
     },
     project_urls={  # Optional
