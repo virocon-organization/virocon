@@ -43,7 +43,7 @@ How to use virocon
 ------------------
 Requirements
 ~~~~~~~~~~~~
-Make sure you have installed Python `3.8` or higher by typing
+Make sure you have installed Python `3.11` or `3.12` by typing
 
 .. code:: console
 
@@ -74,7 +74,7 @@ virocon is also available on `conda-forge`_. We recommend to first create a new 
 
 .. code:: console
 
-   conda create --name virocon python=3.10
+   conda create --name virocon python=3.12
 
 And then activate that new environment and install virocon.
 
