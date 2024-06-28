@@ -1,15 +1,15 @@
 """
 Use a wind speed - wave height dataset, fit the join distribution
-proposed by Haselsteiner et al. (2020) and compare four different 
-contour construction methods. 
+proposed by Haselsteiner et al. (2020) and compare four different
+contour construction methods.
 
-A 50-year wind speed - wave height contour is for example used in 
+A 50-year wind speed - wave height contour is for example used in
 offshore wind turbine design.
 
-Haselsteiner, A. F., Sander, A., Ohlendorf, J.-H., & Thoben, 
-K.-D. (2020). Global hierarchical models for wind and wave contours: 
-Physical interpretations of the dependence functions. Proc. 39th 
-International Conference on Ocean, Offshore and Arctic Engineering 
+Haselsteiner, A. F., Sander, A., Ohlendorf, J.-H., & Thoben,
+K.-D. (2020). Global hierarchical models for wind and wave contours:
+Physical interpretations of the dependence functions. Proc. 39th
+International Conference on Ocean, Offshore and Arctic Engineering
 (OMAE 2020). https://doi.org/10.1115/OMAE2020-18668
 """
 

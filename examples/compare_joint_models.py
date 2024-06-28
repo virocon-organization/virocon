@@ -1,5 +1,5 @@
 """
-Fit two different joint distribution models to a wind speed - 
+Fit two different joint distribution models to a wind speed -
 wave height dataset and compare their goodness of fits.
 """
 

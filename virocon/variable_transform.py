@@ -1,7 +1,7 @@
 """
 Variable transformation for Hs, Tz, and steepness.
 
-These transformations are used in Windmeier's EW and in the 
+These transformations are used in Windmeier's EW and in the
 nonzero EW model (see doi.org/10.26092/elib/2181 and predefined.py)
 """
 

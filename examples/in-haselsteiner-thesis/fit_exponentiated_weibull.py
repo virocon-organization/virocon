@@ -3,7 +3,7 @@ Fit an exponentiated Weibull distribution to a significant wave height dataset.
 
 You can compare the printed distribution parameter values to the parameter values
 listed in Table 3.4 on page 45 in Haselsteiner, A. F. (2022). Offshore structures
-under extreme loads: A methodology to determine design loads 
+under extreme loads: A methodology to determine design loads
 [University of Bremen]. https://doi.org/10.26092/elib/1615
 """
 

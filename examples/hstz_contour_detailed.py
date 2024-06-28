@@ -5,18 +5,18 @@ A comprehensive example that shows the whole workflow of
 3) Estimating the parameter values of the model ("Fitting")
 4) Computing an environmental contour
 
-This example reproduces the results published in Haselsteiner 
-et al. (2019). The Hs-Tz joint distribution model recommended 
+This example reproduces the results published in Haselsteiner
+et al. (2019). The Hs-Tz joint distribution model recommended
 in DNVGL-RP-C203 (2017) is used.
 
-Haselsteiner, A. F., Coe, R. G., Manuel, L., Nguyen, P. T. T., 
-Martin, N., & Eckert-Gallup, A. (2019). A benchmarking exercise 
-on estimating extreme environmental conditions: Methodology & 
-baseline results. Proc. 38th International Conference on Ocean, 
-Offshore and Arctic Engineering (OMAE 2019). 
+Haselsteiner, A. F., Coe, R. G., Manuel, L., Nguyen, P. T. T.,
+Martin, N., & Eckert-Gallup, A. (2019). A benchmarking exercise
+on estimating extreme environmental conditions: Methodology &
+baseline results. Proc. 38th International Conference on Ocean,
+Offshore and Arctic Engineering (OMAE 2019).
 https://doi.org/10.1115/OMAE2019-96523
 
-DNV GL. (2017). Recommended practice DNVGL-RP-C205: 
+DNV GL. (2017). Recommended practice DNVGL-RP-C205:
 Environmental conditions and environmental loads.
 """
 
