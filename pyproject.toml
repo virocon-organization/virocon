@@ -13,3 +13,6 @@ testpaths = [
     "tests",
     "virocon",
 ]
+
+[tool.ruff]
+target-version = "py311"
