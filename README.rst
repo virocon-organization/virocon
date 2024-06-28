@@ -13,9 +13,10 @@ virocon
    :target: https://virocon.readthedocs.io/en/latest/?badge=latest
    :alt: Documentation Status
 
-.. image:: https://img.shields.io/badge/code%20style-black-000000.svg
-    :target: https://github.com/psf/black
-    :alt: Black
+.. image:: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/charliermarsh/ruff/main/assets/badge/v0.json
+    :target: https://github.com/charliermarsh/ruff
+    :alt: Ruff
+
 
 virocon is a Python package to compute environmental contours (`user guide`_).
 
