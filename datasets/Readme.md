@@ -15,11 +15,11 @@ Additionally there are two datasets that were used in a benchmarking exercise on
  - ec-benchmark_dataset_D.txt contains 25 years of wind speed (V) and significant wave height (Hs)
 
 
-For the 3D environmental contour example, we use a 1-year dataset from coastDat-2 [1]_. The full 50-year environmental 
+For the 3D environmental contour example, we use a 1-year dataset from coastDat-2 [1]_. The full 50-year environmental
 dataset can also be downloaded here https://zenodo.org/record/5013306#.YTXUGi2201I :
 
  - coastDat2_oneyear.csv
 
 
 
-.. [1] Groll, N. and Weisse, R.: A multi-decadal wind-wave hindcast for the North Sea 1949–2014: coastDat2, Earth Syst. Sci. Data, 9, 955–968, https://doi.org/10.5194/essd-9-955-2017, 2017. 
+.. [1] Groll, N. and Weisse, R.: A multi-decadal wind-wave hindcast for the North Sea 1949–2014: coastDat2, Earth Syst. Sci. Data, 9, 955–968, https://doi.org/10.5194/essd-9-955-2017, 2017.

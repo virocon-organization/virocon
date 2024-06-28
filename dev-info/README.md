@@ -36,27 +36,27 @@ conda-forge:
 * Tell kawindme to update version and checksum for conda-forge feedstock.
 
  ## Generating HTML documentation on the local machine
- 
+
  First make sure sphinx is installed:
 
-* `conda install sphinx` or 
+* `conda install sphinx` or
 * `pip install sphinx`
 
 There are two ways to produce the documentation of virocon on a local machine
- 
+
 First approach (Linux/ MacOS/ Windows cmd):
 
 * `cd docs`
 * `make clean`
 * `make html`
- 
+
 -> Then open index.html located in docs/_build/html .
 
-Second approach (Windows powershell): 
+Second approach (Windows powershell):
 
 * `cd docs`
 * `sphinx-build -b html . _build/html`
- 
+
 -> Then open index.html located in docs/_build/html .
 
 # Install virocon from a feature branch

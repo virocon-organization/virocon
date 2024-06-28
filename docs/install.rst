@@ -31,8 +31,8 @@ by typing
 .. code:: console
 
    pip install https://github.com/virocon-organization/virocon/archive/main.zip
-   
-   
+
+
 virocon is also available on `conda-forge`_. We recommend to first create a new environment.
 
 .. code:: console

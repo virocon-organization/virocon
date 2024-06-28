@@ -4,19 +4,19 @@ virocon
 .. image:: https://github.com/virocon-organization/virocon/actions/workflows/continuous_integration.yml/badge.svg
    :target: https://github.com/virocon-organization/virocon/actions/workflows/continuous_integration.yml
    :alt: GitHub Actions - CI
-   
+
 .. image:: https://img.shields.io/codecov/c/gh/virocon-organization/virocon
     :target: https://app.codecov.io/gh/virocon-organization/virocon
     :alt: Codecov
-    
+
 .. image:: https://readthedocs.org/projects/virocon/badge/?version=latest
    :target: https://virocon.readthedocs.io/en/latest/?badge=latest
    :alt: Documentation Status
-    
+
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
     :target: https://github.com/psf/black
     :alt: Black
-    
+
 virocon is a Python package to compute environmental contours (`user guide`_).
 
 About
@@ -68,8 +68,8 @@ by typing
 .. code:: console
 
    pip install https://github.com/virocon-organization/virocon/archive/main.zip
-   
-   
+
+
 virocon is also available on `conda-forge`_. We recommend to first create a new environment.
 
 .. code:: console
@@ -109,7 +109,7 @@ extremes using the environmental contour method." provides a concise
 description of virocon version 1 and our `update paper`_ describes the changes
 introduced in virocon version 2.
 
-**Conference presentation.** In a `WESC 2021 presentation`_, we showed how virocon 
+**Conference presentation.** In a `WESC 2021 presentation`_, we showed how virocon
 can be used to support the design process of offshore wind turbines.
 
 Contributing

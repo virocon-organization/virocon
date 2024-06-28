@@ -25,10 +25,10 @@ In the documentation's `detailed examples`_ section custom joint models are defi
 Parameter estimation
 ~~~~~~~~~~~~~~~~~~~~
 
-By default, marginal distribution parameters are estimated using maximum likelihood estimation and dependence function parameters 
+By default, marginal distribution parameters are estimated using maximum likelihood estimation and dependence function parameters
 are estimated using least squares, however, other fitting methods can be selected by specifying the "fit_description" dictionary.
 
-The following example shows how first, default parameter estimation used and then weighted least squares is used to estimate the 
+The following example shows how first, default parameter estimation used and then weighted least squares is used to estimate the
 parameter values of the wave height's distribution.
 
 .. code block:: python
@@ -36,7 +36,7 @@ parameter values of the wave height's distribution.
         Brief example that computes a sea state contour and compares MLE vs WLSQ fitting.
         """
         import matplotlib.pyplot as plt
-        from virocon import (read_ec_benchmark_dataset, get_OMAE2020_Hs_Tz, 
+        from virocon import (read_ec_benchmark_dataset, get_OMAE2020_Hs_Tz,
             GlobalHierarchicalModel, IFORMContour, plot_2D_contour)
 
         # Load sea state measurements.
