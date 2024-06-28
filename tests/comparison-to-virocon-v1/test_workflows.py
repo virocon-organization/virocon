@@ -2,7 +2,6 @@
 # workflows how virocon is typically used.
 
 # Test a workflow with the DNVGL sea state model (Hs, Tz)
-from os import read
 import pytest
 
 import numpy as np
@@ -121,14 +120,9 @@ def test_DNVGL_Hs_Tz_model(dataset_dnvgl_hstz, refdata_dnvgl_hstz):
 # Test a work flow with the OMAE2020 wind speed - significant wave height model
 import pytest
 
-import numpy as np
-import pandas as pd
 
 from virocon import (
-    GlobalHierarchicalModel,
     ExponentiatedWeibullDistribution,
-    DependenceFunction,
-    WidthOfIntervalSlicer,
 )
 
 
@@ -249,15 +243,9 @@ def test_OMAE2020(dataset_omae2020_vhs, refdata_omae2020_vhs):
 # Test a workflow with the wind speed - turbluence intensity presented in Wind Energy Science
 
 import pytest
-import numpy as np
-import pandas as pd
 
 from virocon import (
-    DependenceFunction,
-    WeibullDistribution,
-    GlobalHierarchicalModel,
     IFORMContour,
-    WidthOfIntervalSlicer,
 )
 
 from virocon.distributions import LogNormalNormFitDistribution

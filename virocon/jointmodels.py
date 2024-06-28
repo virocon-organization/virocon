@@ -435,13 +435,13 @@ class GlobalHierarchicalModel(MultivariateModel):
 
     def _check_dist_descriptions(self, dist_descriptions):
         for i, dist_desc in enumerate(dist_descriptions):
-            if not "distribution" in dist_desc:
+            if "distribution" not in dist_desc:
                 raise ValueError(
                     "Mandatory key 'distribution' missing in "
                     f"dist_description for dimension {i}"
                 )
 
-            if "conditional_on" in dist_desc and not "parameters" in dist_desc:
+            if "conditional_on" in dist_desc and "parameters" not in dist_desc:
                 raise ValueError(
                     "For conditional distributions the "
                     "dist_description key 'parameters' "
@@ -484,12 +484,12 @@ class GlobalHierarchicalModel(MultivariateModel):
                 if fit_descriptions[i] is None:
                     fit_descriptions[i] = default_fit_desc
                 else:
-                    if not "method" in fit_descriptions[i]:
+                    if "method" not in fit_descriptions[i]:
                         raise ValueError(
                             "Mandatory key 'method' missing in "
                             f"fit_description for dimension {i}."
                         )
-                    if not "weights" in fit_descriptions[i]:
+                    if "weights" not in fit_descriptions[i]:
                         fit_descriptions[i]["weights"] = None
 
         return fit_descriptions

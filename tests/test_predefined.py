@@ -7,7 +7,6 @@ from virocon import (
     get_Windmeier_EW_Hs_S,
     get_Nonzero_EW_Hs_S,
     read_ec_benchmark_dataset,
-    factor,
     GlobalHierarchicalModel,
     TransformedModel,
     IFORMContour,

@@ -20,7 +20,7 @@
 import os
 import sys
 
-from os import path, pardir
+from os import path
 import codecs
 
 

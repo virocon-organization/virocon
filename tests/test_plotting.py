@@ -10,7 +10,6 @@ from virocon import (
     WeibullDistribution,
     GlobalHierarchicalModel,
     get_OMAE2020_V_Hs,
-    plot_marginal_quantiles,
     plot_dependence_functions,
     plot_2D_isodensity,
     plot_2D_contour,

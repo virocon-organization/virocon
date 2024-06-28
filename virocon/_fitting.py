@@ -4,7 +4,7 @@ Model fitting (parameter estimation).
 
 import numpy as np
 
-from scipy.optimize import minimize, basinhopping, curve_fit
+from scipy.optimize import minimize, curve_fit
 
 # %% unconstrained fitting
 
