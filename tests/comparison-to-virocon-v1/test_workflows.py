@@ -14,7 +14,11 @@ from virocon import (
     DependenceFunction,
     WidthOfIntervalSlicer,
     read_ec_benchmark_dataset,
+    IFORMContour,
+    ExponentiatedWeibullDistribution,
 )
+
+from virocon.distributions import LogNormalNormFitDistribution
 
 
 @pytest.fixture(scope="module")
@@ -118,12 +122,6 @@ def test_DNVGL_Hs_Tz_model(dataset_dnvgl_hstz, refdata_dnvgl_hstz):
 
 
 # Test a work flow with the OMAE2020 wind speed - significant wave height model
-import pytest
-
-
-from virocon import (
-    ExponentiatedWeibullDistribution,
-)
 
 
 @pytest.fixture(scope="module")
@@ -241,14 +239,6 @@ def test_OMAE2020(dataset_omae2020_vhs, refdata_omae2020_vhs):
 
 
 # Test a workflow with the wind speed - turbluence intensity presented in Wind Energy Science
-
-import pytest
-
-from virocon import (
-    IFORMContour,
-)
-
-from virocon.distributions import LogNormalNormFitDistribution
 
 
 @pytest.fixture(scope="module")

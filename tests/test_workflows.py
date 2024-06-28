@@ -1,4 +1,3 @@
-
 import numpy as np
 
 from virocon import (
@@ -65,9 +64,9 @@ def test_hs_tz_iform_contour():
     model = GlobalHierarchicalModel([dist_description_0, dist_description_1])
     model.fit(data)
 
-    axs = plot_marginal_quantiles(model, data)
-    axs = plot_dependence_functions(model)
-    ax = plot_2D_isodensity(model, data)
+    plot_marginal_quantiles(model, data)
+    plot_dependence_functions(model)
+    plot_2D_isodensity(model, data)
 
     alpha = calculate_alpha(1, 20)
     contour = IFORMContour(model, alpha)
@@ -76,7 +75,7 @@ def test_hs_tz_iform_contour():
     np.testing.assert_allclose(max(coordinates[:, 0]), 5.0, atol=0.5)
     np.testing.assert_allclose(max(coordinates[:, 1]), 16.1, atol=0.5)
 
-    ax = plot_2D_contour(contour, sample=data)
+    plot_2D_contour(contour, sample=data)
 
 
 def test_v_hs_hd_contour():
@@ -142,9 +141,9 @@ def test_v_hs_hd_contour():
 
     model.fit(data, [fit_description_vs, fit_description_hs])
 
-    axs = plot_marginal_quantiles(model, data)
-    axs = plot_dependence_functions(model)
-    ax = plot_2D_isodensity(model, data)
+    plot_marginal_quantiles(model, data)
+    plot_dependence_functions(model)
+    plot_2D_isodensity(model, data)
 
     alpha = calculate_alpha(1, 50)
     limits = [(0, 35), (0, 20)]
@@ -156,4 +155,4 @@ def test_v_hs_hd_contour():
     np.testing.assert_allclose(min(coordinates[:, 0]), 0, atol=0.1)
     np.testing.assert_allclose(min(coordinates[:, 1]), 0, atol=0.1)
 
-    ax = plot_2D_contour(contour, sample=data)
+    plot_2D_contour(contour, sample=data)

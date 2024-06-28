@@ -187,9 +187,7 @@ def test_AndContour_too_small_sample(seastate_model):
     with pytest.warns(UserWarning):
         n = 80  # Not sufficient datapoints to find precise alpha-regions.
         sample = seastate_model.draw_sample(n)
-        contour = AndContour(
-            seastate_model, alpha, deg_step=1, sample=sample, allowed_error=0.01
-        )
+        AndContour(seastate_model, alpha, deg_step=1, sample=sample, allowed_error=0.01)
 
 
 def test_OrContour_correct_coordinates(seastate_model):
@@ -211,6 +209,4 @@ def test_OrContour_too_small_sample(seastate_model):
     with pytest.warns(UserWarning):
         n = 80  # Not sufficient datapoints to find precise alpha-regions.
         sample = seastate_model.draw_sample(n)
-        contour = OrContour(
-            seastate_model, alpha, deg_step=1, sample=sample, allowed_error=0.01
-        )
+        OrContour(seastate_model, alpha, deg_step=1, sample=sample, allowed_error=0.01)

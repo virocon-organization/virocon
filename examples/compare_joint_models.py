@@ -5,10 +5,6 @@ wave height dataset and compare their goodness of fits.
 
 import numpy as np
 
-from virocon.plotting import (
-    plot_2D_isodensity,
-    plot_marginal_quantiles,
-)
 import matplotlib.pyplot as plt
 
 from virocon import (

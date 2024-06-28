@@ -57,10 +57,10 @@ def bounds_to_constraints(bounds):
         lower, upper = bounds[factor]
         lower = -np.inf if lower is None else lower
         upper = np.inf if upper is None else upper
-        l = {"type": "ineq", "fun": lambda x, lb=lower, i=factor: x[i] - lb}
-        u = {"type": "ineq", "fun": lambda x, ub=upper, i=factor: ub - x[i]}
-        cons.append(l)
-        cons.append(u)
+        lo = {"type": "ineq", "fun": lambda x, lb=lower, i=factor: x[i] - lb}
+        up = {"type": "ineq", "fun": lambda x, ub=upper, i=factor: ub - x[i]}
+        cons.append(lo)
+        cons.append(up)
     return cons
 
 

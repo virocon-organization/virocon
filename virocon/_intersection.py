@@ -1,6 +1,13 @@
 """
 Taken from https://github.com/sukhbinder/intersection .
 
+Given, two x,y curves this gives intersection points,
+autor: Sukhbinder
+5 April 2017
+
+
+Based on: http://uk.mathworks.com/matlabcentral/fileexchange/11837-fast-and-robust-curve-intersections
+
 MIT License
 
 Copyright (c) 2017 Sukhbinder Singh
@@ -22,15 +29,6 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-"""
-
-"""
-Give, two x,y curves this gives intersection points,
-autor: Sukhbinder
-5 April 2017
-
-
-Based on: http://uk.mathworks.com/matlabcentral/fileexchange/11837-fast-and-robust-curve-intersections
 """
 
 import numpy as np
@@ -113,8 +111,8 @@ def intersection(x1, y1, x2, y2):
     for i in range(n):
         try:
             T[:, i] = np.linalg.solve(AA[:, :, i], BB[:, i])
-        except:
-            T[:, i] = np.Inf
+        except np.linalg.LinAlgError:
+            T[:, i] = np.inf
 
     in_range = (T[0, :] >= 0) & (T[1, :] >= 0) & (T[0, :] <= 1) & (T[1, :] <= 1)
 

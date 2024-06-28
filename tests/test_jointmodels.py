@@ -43,7 +43,7 @@ def vanem2012_seastate_model():
 
 def test_joint_pdf(vanem2012_seastate_model):
     x = [2.5, 6]  # (hs, tz) in (m, s).
-    f = vanem2012_seastate_model.pdf(x)
+    vanem2012_seastate_model.pdf(x)  # TODO is this needed?
 
     # Second sea state's period is unphysical due to wave breaking.
     xs = [
@@ -57,7 +57,7 @@ def test_joint_pdf(vanem2012_seastate_model):
 def test_joint_cdf(vanem2012_seastate_model):
     # cdf() takes is slow to evaluate (one call ~ 5 s)
     x = [2.5, 6]  # (hs, tz) in (m, s).
-    F = vanem2012_seastate_model.cdf(x)
+    vanem2012_seastate_model.cdf(x)  # TODO is this needed?
     xs = [[2.5, 2], [2.5, 6], [2.5, 10]]
     Fs = vanem2012_seastate_model.cdf(xs)
     assert Fs[1] > Fs[0]

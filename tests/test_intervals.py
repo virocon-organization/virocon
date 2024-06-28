@@ -785,15 +785,11 @@ def test_number_of_interval_slicer_numberpoints3_numberintervals3(test_data):
 
     """
 
-    ref_intervals = [[1.2, 1.5, 2.4], [2.5, 2.6, 3.1, 3.5, 3.6]]
-    ref_width = (5 - 1.2) / 3
-    ref_references = [1.2 + ref_width / 2, 1.2 + 3 * ref_width / 2]
-    ref_boundaries = [(c - ref_width / 2, c + ref_width / 2) for c in ref_references]
     number_slicer = NumberOfIntervalsSlicer(3, min_n_points=3, min_n_intervals=3)
-    try:
-        my_slices, my_references, my_boundaries = number_slicer.slice_(test_data)
-    except RuntimeError:
-        pass  # we expect a RuntimeError if there are less than min_n_intervals intervals
+    with pytest.raises(
+        RuntimeError
+    ):  # we expect a RuntimeError if there are less than min_n_intervals intervals
+        number_slicer.slice_(test_data)
 
 
 def test_width_of_interval_slicer_reference_left_right_open(test_data):
