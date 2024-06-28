@@ -149,7 +149,7 @@ def sort_points_to_form_continuous_line(x, y, search_for_optimal_start=False):
     points = np.c_[x, y]
     clf = NearestNeighbors(n_neighbors=2).fit(points)
     G = clf.kneighbors_graph()
-    T = nx.from_scipy_sparse_matrix(G)
+    T = nx.from_scipy_sparse_array(G)
     order = list(nx.dfs_preorder_nodes(T, 0))
 
     xx = x[order]
