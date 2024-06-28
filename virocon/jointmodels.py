@@ -1,6 +1,7 @@
 """
 Models for the joint probability distribution.
 """
+
 import warnings
 
 from abc import ABC, abstractmethod
@@ -546,9 +547,9 @@ class GlobalHierarchicalModel(MultivariateModel):
                     weights,
                 )
 
-            self.distributions[
-                i
-            ] = dist  # TODO is the writeback necessary? -> probably not
+            self.distributions[i] = (
+                dist  # TODO is the writeback necessary? -> probably not
+            )
 
     def pdf(self, x):
         """

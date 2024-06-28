@@ -2,6 +2,7 @@
 Fit two different joint distribution models to a wind speed - 
 wave height dataset and compare their goodness of fits.
 """
+
 import numpy as np
 
 from virocon.plotting import (

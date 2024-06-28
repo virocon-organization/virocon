@@ -1,6 +1,7 @@
 """
 Brief example that computes a sea state contour.
 """
+
 import matplotlib.pyplot as plt
 from virocon import (
     read_ec_benchmark_dataset,

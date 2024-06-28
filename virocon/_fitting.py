@@ -90,7 +90,7 @@ def fit_constrained_function(func, x, y, p0, method, bounds, constraints, weight
         # constraints=constraints,
         bounds=bounds,
         # tol=1E-15
-        options={"eps": 1e-15}
+        options={"eps": 1e-15},
         # options={'ftol': 1e-15, },#"disp":True},
     )
     # result = minimize(error_func, p0,

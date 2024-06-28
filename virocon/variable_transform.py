@@ -27,8 +27,7 @@ def s_d_to_hs_tz(s, d):
         1
         / 2
         * np.sqrt(
-            (factor * np.sqrt(16 * d**2 * s**2 + factor**2)) / s**2
-            - factor**2 / s**2
+            (factor * np.sqrt(16 * d**2 * s**2 + factor**2)) / s**2 - factor**2 / s**2
         )
     )
     return hs, tz
