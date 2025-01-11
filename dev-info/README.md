@@ -33,7 +33,9 @@ PyPI(old approach, uploads only a wheel):
 
 conda-forge:
 
-* Tell kawindme to update version and checksum for conda-forge feedstock.
+* Update the version in https://github.com/conda-forge/virocon-feedstock.
+  * Either create and merge PR as described in https://github.com/conda-forge/virocon-feedstock?tab=readme-ov-file#updating-virocon-feedstock
+  * or wait for a bot to create that PR and merge it.
 
  ## Generating HTML documentation on the local machine
 
