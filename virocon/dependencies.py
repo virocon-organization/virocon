@@ -116,20 +116,15 @@ class DependenceFunction:
             func = self.func.func
         else:
             func = self.func
-        params = ", ".join(
-            [
-                f"{par_name}={par_value}"
-                for par_name, par_value in self.parameters.items()
-            ]
-        )
-        dep_params = ", ".join(
-            [
-                f"{par_name}={par_value}"
-                for par_name, par_value in self.dependent_parameters.items()
-            ]
-        )
-        combined_params = params + ", " + dep_params
-        combined_params = combined_params.strip(", ")
+        params = [
+            f"{par_name}={par_value}"
+            for par_name, par_value in self.parameters.items()
+        ]
+        dep_params = [
+            f"{par_name}={par_value}"
+            for par_name, par_value in self.dependent_parameters.items()
+        ]
+        combined_params = ", ".join(params + dep_params)
         return f"DependenceFunction(func={func.__name__}, {combined_params})"
 
     def fit(self, x, y):

@@ -84,7 +84,7 @@ class NSphere:
 
         # Define the number osf iterations based on the size of the sample size.
         # At least 10 iterations should be performed. 10 is an empirical value.
-        max_iters = max([10, int(10000 / self.n_samples)])
+        max_iters = max(10, 10000 // self.n_samples)
 
         for iteration in range(1, max_iters):
             # Tau controls the step size of the optimization. With each iteration

@@ -94,7 +94,7 @@ def save_contour_coordinates(contour, file_path, semantics=None):
         semantics = get_default_semantics(n_dim)
 
     header = ";".join(
-        (f"{semantics['names'][d]} ({semantics['units'][d]})" for d in range(n_dim))
+        f"{semantics['names'][d]} ({semantics['units'][d]})" for d in range(n_dim)
     )
 
     np.savetxt(
@@ -467,6 +467,9 @@ class HighestDensityContour(Contour):
         else:
             try:  # Check if deltas is an iterable
                 iter(deltas)
+            except TypeError:  # asserts that deltas is scalar
+                deltas = [deltas] * n_dim
+            else:
                 if len(deltas) != n_dim:
                     raise ValueError(
                         "deltas has do be either scalar, "
@@ -474,8 +477,6 @@ class HighestDensityContour(Contour):
                         f"but was list of length {len(deltas)}"
                     )
                 deltas = list(deltas)
-            except TypeError:  # asserts that deltas is scalar
-                deltas = [deltas] * n_dim
 
         self.deltas = deltas
 
@@ -495,17 +496,17 @@ class HighestDensityContour(Contour):
         for i, lim_tuple in enumerate(limits):
             try:
                 iter(lim_tuple)
-                if len(lim_tuple) != 2:
-                    raise ValueError(
-                        "tuples in limits have to be of length 2 ( = (min, max)), "
-                        f"but tuple with index = {i}, has length = {len(lim_tuple)}."
-                    )
-
             except TypeError:
                 raise ValueError(
                     "tuples in limits have to be of length 2 ( = (min, max)), "
                     f"but tuple with index = {i}, has length = 1."
                 )
+            else:
+                if len(lim_tuple) != 2:
+                    raise ValueError(
+                        "tuples in limits have to be of length 2 ( = (min, max)), "
+                        f"but tuple with index = {i}, has length = {len(lim_tuple)}."
+                    )
 
             min_ = min(lim_tuple)
             max_ = max(lim_tuple)
@@ -517,7 +518,7 @@ class HighestDensityContour(Contour):
 
         if np.isnan(f).any():
             raise ValueError(
-                "Encountered nan in cell averaged probabilty joint pdf. "
+                "Encountered nan in cell averaged probability joint pdf. "
                 "Possibly invalid distribution parameters?"
             )
 
@@ -547,7 +548,7 @@ class HighestDensityContour(Contour):
         for delta in deltas:
             fm /= delta
 
-        structure = np.ones(tuple([3] * n_dim), dtype=bool)
+        structure = np.ones((3,) * n_dim, dtype=bool)
         HDC = HDR - ndi.binary_erosion(HDR, structure=structure)
 
         labeled_array, n_modes = ndi.label(HDC, structure=structure)
@@ -636,7 +637,7 @@ class HighestDensityContour(Contour):
 
         summed_flat_inds = sort_inds[cum_sum <= limit]
 
-        summed_fields = np.zeros(array.shape)
+        summed_fields = np.zeros_like(array)
 
         summed_fields[np.unravel_index(summed_flat_inds, shape=array.shape)] = 1
 
@@ -808,7 +809,7 @@ class DirectSamplingContour(Contour):
         # be based on the exceedance plane with angle 0 deg, with 0 deg being
         # along the x-axis. Angles will increase counterclockwise in a xy-plot.
         # Not enirely sure why the + 2*rad_step is required, but tests show it.
-        rad_step = deg_step * np.pi / 180
+        rad_step = np.radians(deg_step)
         angles = np.arange(
             0.5 * np.pi + 2 * rad_step, -1.5 * np.pi + rad_step, -1 * rad_step
         )
@@ -918,22 +919,21 @@ class AndContour(Contour):
 
         x_marginal = model.marginal_icdf(1 - alpha, 0)
         y_marginal = model.marginal_icdf(1 - alpha, 1)
-        thetas = np.arange(0, 90, deg_step)
+        thetas = np.radians(np.arange(0, 90, deg_step))
         coords_x = np.empty(thetas.size + 1)
         coords_y = np.empty(thetas.size + 1)
 
         # The algorithm works by moving along a line of angle theta relative
         # to the x-axis until the AND exceedance is alpha.
         for i, theta in enumerate(thetas):
-            unity_vector = np.empty((2, 1))
-            unity_vector[0] = np.cos(theta / 180 * np.pi)
-            unity_vector[1] = np.sin(theta / 180 * np.pi)
-            max_distance = np.sqrt(x_marginal**2 + y_marginal**2)
+            unity_vector = np.array([np.cos(theta), np.sin(theta)])
+            max_distance = np.hypot(x_marginal, y_marginal)
             rel_dist = 0.2
             rel_step_size = 0.1
             current_pe = 0  # pe = probability of exceedance.
-            nr_iterations = 0
-            while np.abs((current_pe - alpha)) / alpha > allowed_error:
+            for _ in range(max_iterations):
+                if abs(current_pe - alpha) / alpha <= allowed_error:
+                    break
                 abs_dist = rel_dist * max_distance
                 current_vector = unity_vector * abs_dist
                 both_greater = np.logical_and(
@@ -941,18 +941,16 @@ class AndContour(Contour):
                 )
                 current_pe = both_greater.sum() / both_greater.size
                 if current_pe > alpha:
-                    rel_dist = rel_dist + rel_step_size
+                    rel_dist += rel_step_size
                 else:
-                    rel_step_size = 0.5 * rel_step_size
-                    rel_dist = rel_dist - rel_step_size
-                nr_iterations = nr_iterations + 1
-                if nr_iterations == max_iterations:
-                    warnings.warn(
-                        "Could not achieve the required precision. Stopping "
-                        "because the maximum number of iterations is reached.",
-                        UserWarning,
-                    )
-                    break
+                    rel_step_size /= 2
+                    rel_dist -= rel_step_size
+            else:
+                warnings.warn(
+                    "Could not achieve the required precision. Stopping "
+                    "because the maximum number of iterations is reached.",
+                    UserWarning,
+                )
             coords_x[i] = current_vector[0]
             coords_y[i] = current_vector[1]
         coords_x[-1] = 0
@@ -1067,14 +1065,15 @@ class OrContour(Contour):
         # to the x-axis until the OR exceedance is alpha.
         for theta in thetas:
             unity_vector = np.empty((2, 1))
-            unity_vector[0] = np.cos(theta / 180 * np.pi)
-            unity_vector[1] = np.sin(theta / 180 * np.pi)
-            max_distance = np.sqrt(x_marginal**2 + y_marginal**2)
+            unity_vector[0] = np.cos(np.radians(theta))
+            unity_vector[1] = np.sin(np.radians(theta))
+            max_distance = np.hypot(x_marginal, y_marginal)
             rel_dist = 0.2
             rel_step_size = 0.1
             current_pe = 0  # pe = probability of exceedance.
-            nr_iterations = 0
-            while np.abs((current_pe - alpha)) / alpha > allowed_error:
+            for i in range(max_iterations):
+                if abs(current_pe - alpha) / alpha <= allowed_error:
+                    break
                 abs_dist = rel_dist * max_distance
                 current_vector = unity_vector * abs_dist
                 or_exceeded = np.logical_or(
@@ -1086,25 +1085,19 @@ class OrContour(Contour):
                 else:
                     rel_step_size = 0.5 * rel_step_size
                     rel_dist = rel_dist - rel_step_size
-                nr_iterations = nr_iterations + 1
-                if nr_iterations == max_iterations:
-                    warnings.warn(
-                        "Could not achieve the required precision. Stopping "
-                        "because the maximum number of iterations is reached.",
-                        UserWarning,
-                    )
-                    break
+            else:
+                warnings.warn(
+                    "Could not achieve the required precision. Stopping "
+                    "because the maximum number of iterations is reached.",
+                    UserWarning,
+                )
             if (current_vector[0] < x_max_consider) and (
                 current_vector[1] < y_max_consider
             ):
                 coords_x.append(current_vector[0])
                 coords_y.append(current_vector[1])
-        coords_x.append(0)
-        coords_y.append(coords_y[-1])
-        coords_x.append(0)
-        coords_y.append(0)
-        coords_x.append(coords_x[0])
-        coords_y.append(0)
+        coords_x.extend([0, 0, coords_x[0]])
+        coords_y.extend([coords_y[-1], 0, 0])
 
         coords_x = np.array(coords_x, dtype=object)
         coords_y = np.array(coords_y, dtype=object)

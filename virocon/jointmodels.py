@@ -117,9 +117,9 @@ class MultivariateModel(ABC):
         p_min = np.min(p)
         p_max = np.max(p)
         nr_exceeding_points = 100 * precision_factor
-        p_small = np.min([p_min, 1 - p_max])
+        p_small = min(p_min, 1 - p_max)
         n = int((1 / p_small) * nr_exceeding_points)
-        n = max([n, 100000])
+        n = max(n, 100000)
         sample = self.draw_sample(n)
         x = np.quantile(sample[:, dim], p)
         return x
@@ -160,7 +160,7 @@ class MultivariateModel(ABC):
             # p_small = np.min([p_min, 1 - p_max])
             p_small = p_val if p_val < 0.5 else 1 - p_val
             n = (1 / p_small) * nr_exceeding_points
-            n = min([max([n, 100_000]), 10_000_000])
+            n = min(max(n, 100_000), 10_000_000)
             n = int(n)
             try:
                 sample = self.conditional_sample(
@@ -254,7 +254,7 @@ class MultivariateModel(ABC):
         for i in range(max_iter):
             if n_counter >= n:
                 break
-            tmp_n = max([(n - n_counter) * 10, n])
+            tmp_n = max((n - n_counter) * 10, n)
             x = rng.uniform(x_min, x_max, size=tmp_n)
             y = rng.uniform(f_min, f_max, size=tmp_n)
 
@@ -277,7 +277,7 @@ class MultivariateModel(ABC):
                 f"Max iterations was reached, sample size is only {n_counter}. Acceptance rate was {n_counter / (n_counter + reject_counter)} and x_max was {x_max}.",
                 MaxIterationWarning,
             )
-            if len(partial_samples) == 0:
+            if not partial_samples:
                 raise CouldNotSampleError(
                     "Could not draw sample for the supplied parameters."
                 )

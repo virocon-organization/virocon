@@ -68,11 +68,9 @@ def calculate_design_conditions(
         npt.ArrayLike: design conditions (points for structural analysis calculations).
     """
     if swap_axis:
-        x_idx = 1
-        y_idx = 0
+        x_idx, y_idx = 1, 0
     else:
-        x_idx = 0
-        y_idx = 1
+        x_idx, y_idx = 0, 1
 
     coords = contour.coordinates
 
@@ -82,8 +80,8 @@ def calculate_design_conditions(
     # Define the x-positions where a design condition will be calculated
     # The y-values will be found by calculating the intersections between
     # vertical lines and the contour coordinates.
-    small_spacer = 0.0001 * (
-        np.max(x1) - np.min(x1)
+    small_spacer = 0.0001 * np.ptp(
+        x1
     )  # Required to ensure that conditions on limits are picked up.
     default_lower_limit = np.min(x1) + small_spacer
     default_uppper_limit = np.max(x1) - small_spacer
@@ -122,7 +120,7 @@ def calculate_design_conditions(
 
 def sort_points_to_form_continuous_line(x, y, search_for_optimal_start=False):
     """
-    Sorts contour points to form a a continous line / contour.
+    Sorts contour points to form a a continuous line / contour.
 
     This function simply sorts 2 dimensional points. The points are given
     by x and y coordinates. This function is used to sort the coordinates

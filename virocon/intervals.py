@@ -22,20 +22,9 @@ class IntervalSlicer(ABC):
 
     """
 
-    def __init__(self, **kwargs):
-        # check if there are unknown kwargs
-        kwarg_keys = kwargs.keys()
-        unknown_kwarg_keys = set(kwarg_keys).difference(
-            {"min_n_intervals", "min_n_points"}
-        )
-        if len(unknown_kwarg_keys) != 0:
-            raise TypeError(
-                "__init__() got an unexpected keyword argument "
-                f"'{unknown_kwarg_keys.pop()}'"
-            )
-
-        self.min_n_points = kwargs.get("min_n_points", 50)
-        self.min_n_intervals = kwargs.get("min_n_intervals", 3)
+    def __init__(self, min_n_points=50, min_n_intervals=3):
+        self.min_n_points = min_n_points
+        self.min_n_intervals = min_n_intervals
         self.reference = None
 
     def slice_(self, data):
@@ -381,9 +370,8 @@ class PointsPerIntervalSlicer(IntervalSlicer):
 
     def _slice(self, data):
         sorted_idc = np.argsort(data)
-        n_full_chunks = len(data) // self.n_points
-        remainder = len(data) % self.n_points
-        if remainder != 0:
+        n_full_chunks, remainder = divmod(len(data), self.n_points)
+        if remainder:
             if self.last_full:
                 interval_idc = np.split(sorted_idc[remainder:], n_full_chunks)
                 interval_idc.insert(0, sorted_idc[:remainder])

@@ -2,6 +2,7 @@
 Functions to plot distributions and contours.
 """
 
+import math
 import re
 from functools import partial
 
@@ -279,13 +280,8 @@ def plot_dependence_functions(model, semantics=None, par_rename={}, axes=None):
                 dep_func_label = dep_func.latex
 
                 # Replace 'x' with variable symbol (e.g. 'h_s')
-                splitted_symbol = x_symbol.split("_")
-                if len(splitted_symbol) == 1:  # If there was no underscore.
-                    var_symbol = splitted_symbol[0].lower()
-                else:  # If there was one or many underscores.
-                    var_symbol = (
-                        splitted_symbol[0].lower() + "_" + "_".join(splitted_symbol[1:])
-                    )
+                first, _, rest = x_symbol.partition("_")
+                var_symbol = first.lower() + "_" + rest
 
                 # Replace 'x' if it is not part of '\exp' which is checked by checking whether
                 # 'x' follows '\e'.
@@ -296,7 +292,7 @@ def plot_dependence_functions(model, semantics=None, par_rename={}, axes=None):
                 # Replace symbols of parameters (a, b, ..) with estimated values.
                 for par_name_local, par_value_local in dep_func.parameters.items():
                     dep_func_label = dep_func_label.replace(
-                        par_name_local, "{" + "{:.2f}".format(par_value_local) + "}"
+                        par_name_local, f"{{{par_value_local:.2f}}}"
                     )
             else:
                 if not isinstance(dep_func.func, partial):
@@ -531,10 +527,7 @@ def plot_2D_isodensity(
     )
 
     if limits is not None:
-        x_lower = limits[0][0]
-        x_upper = limits[0][1]
-        y_lower = limits[1][0]
-        y_upper = limits[1][1]
+        (x_lower, x_upper), (y_lower, y_upper) = limits
     else:
         x_range = max(sample[:, 0]) - min((sample[:, 0]))
         expand_factor = 0.05
@@ -551,20 +544,15 @@ def plot_2D_isodensity(
     Z = f.reshape(X.shape)
 
     if swap_axis:
-        tmp = X
-        X = Y
-        Y = tmp
+        X, Y = Y, X
 
     if levels is not None:
-        lvl_labels = ["{:.1E}".format(x) for x in levels]
+        lvl_labels = [f"{x:.1E}" for x in levels]
         n_levels = len(levels)
     else:
         # Define the lowest isodensity level based on the density values on the evaluated grid.
         q = np.quantile(f, q=0.5)
-        if q > 0:
-            min_lvl = int(f"{q:.0e}".split("e")[1])
-        else:
-            min_lvl = -5
+        min_lvl = int(math.log10(q)) if q > 0 else -5
         n_levels = np.abs(min_lvl)
         levels = np.logspace(-1, min_lvl, num=n_levels)[::-1]
         lvl_labels = [f"1E{int(i)}" for i in np.linspace(-1, min_lvl, num=n_levels)][
@@ -649,11 +637,9 @@ def plot_2D_contour(
     # design conditions can be True or array
     n_dim = 2
     if swap_axis:
-        x_idx = 1
-        y_idx = 0
+        x_idx, y_idx = 1, 0
     else:
-        x_idx = 0
-        y_idx = 1
+        x_idx, y_idx = 0, 1
 
     if semantics is None:
         semantics = get_default_semantics(n_dim)

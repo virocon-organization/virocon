@@ -11,21 +11,17 @@ def fit_function(func, x, y, p0, method, bounds, weights=None):
     if bounds is not None:
         bounds = convert_bounds_for_curve_fit(bounds)
 
-    if method == "lsq":
-        if bounds is None:
-            popt, _ = curve_fit(func, x, y, p0)
-        else:
-            popt, _ = curve_fit(func, x, y, p0, bounds=bounds)
-    elif method == "wlsq":
-        if bounds is None:
-            popt, _ = curve_fit(func, x, y, p0, sigma=weights)
-        else:
-            popt, _ = curve_fit(func, x, y, p0, sigma=weights, bounds=bounds)
-    else:
+    kwargs = {}
+    if method == "wlsq":
+        kwargs["sigma"] = weights
+    elif method != "lsq":
         raise ValueError(
             "method must be either lsq for least squares or"
             "wlsq for weighted least squares"
         )
+    if bounds is not None:
+        kwargs["bounds"] = bounds
+    popt, _ = curve_fit(func, x, y, p0, **kwargs)
     return popt
 
 

@@ -121,20 +121,15 @@ class ConditionalDistribution:
 
     def __repr__(self):
         dist = "Conditional" + self.distribution_class.__name__
-        fixed_params = ", ".join(
-            [
-                f"f_{par_name}={par_value}"
-                for par_name, par_value in self.fixed_parameters.items()
-            ]
-        )
-        cond_params = ", ".join(
-            [
-                f"{par_name}={repr(par_value)}"
-                for par_name, par_value in self.conditional_parameters.items()
-            ]
-        )
-        combined_params = fixed_params + ", " + cond_params
-        combined_params = combined_params.strip(", ")
+        fixed_params = [
+            f"f_{par_name}={par_value}"
+            for par_name, par_value in self.fixed_parameters.items()
+        ]
+        cond_params = [
+            f"{par_name}={par_value!r}"
+            for par_name, par_value in self.conditional_parameters.items()
+        ]
+        combined_params = ", ".join(fixed_params + cond_params)
         return f"{dist}({combined_params})"
 
     def _get_param_values(self, given):
@@ -348,7 +343,7 @@ class Distribution(ABC):
                 set_params[par_name] = getattr(self, par_name)
 
         params = ", ".join(
-            [f"{par_name}={par_value}" for par_name, par_value in set_params.items()]
+            f"{par_name}={par_value}" for par_name, par_value in set_params.items()
         )
 
         return f"{dist_name}({params})"
@@ -428,7 +423,7 @@ class Distribution(ABC):
             self._fit_lsq(data, weights)
         else:
             raise ValueError(
-                f"Unknown fit method '{method}'. "
+                f"Unknown fit method {method!r}. "
                 "Only maximum likelihood estimation (keyword: mle) ",
                 "method of moments (keywork: mom)",
                 "and (weighted) least squares (keyword: (w)lsq) are supported.",
@@ -453,18 +448,13 @@ class Distribution(ABC):
         # Returns the size parameter for the scipy rvs method.
         # If there are any iterable pars it is a tuple,
         # otherwise n is returned.
-        at_least_one_iterable = False
-        par_length = 0
         for par in pars:
             try:
                 _ = iter(par)
-                at_least_one_iterable = True
-                par_length = len(par)
             except TypeError:
-                pass
-
-        if at_least_one_iterable:
-            return (n, par_length)
+                continue
+            else:
+                return n, len(par)
         else:
             return n
 
@@ -1600,7 +1590,7 @@ class ScipyDistribution(Distribution):
                 setattr(self, key[2:], arg)
             else:
                 raise TypeError(
-                    f"{self.__class__.__name__} got an unexpected keyword argument '{key}'"
+                    f"{self.__class__.__name__} got an unexpected keyword argument {key!r}"
                 )
 
     #  https://stackoverflow.com/a/53640468
@@ -1673,7 +1663,7 @@ class ScipyDistribution(Distribution):
 
     def _fit_scipy(self, sample, method="MLE"):
         # Split initial parameter values into positional shape parameters and loc and scale.
-        p0 = [v for k, v in self.parameters.items() if k != "loc" and k != "scale"]
+        p0 = [v for k, v in self.parameters.items() if k not in ("loc", "scale")]
         loc0 = self.parameters.get("loc", 0)
         scale0 = self.parameters.get("scale", 1)
 
