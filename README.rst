@@ -125,7 +125,23 @@ work on it.
 repository, then develop the feature in your copy of the repository and
 finally file a pull request to merge it into our repository.
 
-**Conventions.** We use PEP8.
+**Conventions.** We use ruff for code formatting.
+
+Development
+~~~~~~~~~~~
+
+- `Install uv`_
+- Install `pre-commit`_, e.g with
+
+.. code:: console
+
+    uv tool install pre-commit
+
+- Install git hooks
+
+.. code:: console
+
+    pre-commit install
 
 License
 -------
@@ -144,3 +160,5 @@ read the file `LICENSE`_.
 .. _update paper: https://ahaselsteiner.github.io/assets/pdf/SoftwareX2022_ViroCon_2p0.pdf
 .. _conda-forge: https://conda-forge.org/
 .. _WESC 2021 presentation: http://doi.org/10.13140/RG.2.2.35455.53925
+.. _Install uv: https://docs.astral.sh/uv/getting-started/installation/
+.. _pre-commit: https://pre-commit.com/

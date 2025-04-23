@@ -1,8 +1,55 @@
+# https://packaging.python.org/en/latest/specifications/pyproject-toml/
 [build-system]
-# These are the assumed default build requirements from pip:
-# https://pip.pypa.io/en/stable/reference/pip/#pep-517-and-518-support
-requires = ["setuptools>=40.8.0", "wheel"]
+requires = ["setuptools >= 77.0.3"]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "virocon"
+dynamic = ["version"]
+description = "ViroCon is a software to compute environmental contours"
+readme = "README.rst"
+requires-python = ">=3.7"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [
+    { name = "virocon team", email = "virocon@uni-bremen.de" },
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering",
+    "Programming Language :: Python :: 3",
+]
+urls.source = "https://github.com/virocon-organization/virocon"
+urls.documentation = "https://virocon.readthedocs.io"
+dependencies = [
+    "matplotlib>=2.2.0",
+    "networkx",
+    "numpy",
+    "pandas",
+    "scikit-learn",
+    "scipy"
+]
+
+# https://docs.astral.sh/uv/concepts/projects/dependencies/#dependency-groups
+[dependency-groups]
+lint = ["ruff"]
+test = ["pytest", "pytest-cov", "coverage",]
+docs = ["Sphinx"]
+
+
+[tool.uv]
+default-groups = "all"
+
+[[tool.uv.index]]
+name = "testpypi"
+url = "https://test.pypi.org/simple/"
+publish-url = "https://test.pypi.org/legacy/"
+explicit = true
+
+[tool.setuptools]
+packages = ["virocon"]
+dynamic.version = { attr = "virocon.__version__" }
 
 
 [tool.pytest.ini_options]
@@ -14,5 +61,6 @@ testpaths = [
     "virocon",
 ]
 
+
 [tool.ruff]
-target-version = "py311"
+target-version = "py312"

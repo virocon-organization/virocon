@@ -13,23 +13,12 @@ GitHub archive:
 
 PyPI:
 
-* make sure you have build and twine installed:
-    * `python3 -m pip install --upgrade build`
-    * `python3 -m pip install --upgrade twine`
-* OR use a conda env
-    * `conda env create -f dev-info/virocon-pip-build.yml` (create build env, if not done yet)
-    * `conda env update -f dev-info/virocon-pip-build.yml --prune` (update the build env if necessary)
-    * `conda activate virocon-pip-build`
-* `python3 -m build`
-* `python3 -m twine upload --repository testpypi dist/*`
-* `python3 -m twine upload dist/*`
-* in case of errors/questions consult https://packaging.python.org/en/latest/tutorials/packaging-projects/#generating-distribution-archives
-
-PyPI(old approach, uploads only a wheel):
-
-* `python setup.py bdist_wheel`
-* `twine upload dist/* -r pypitest`
-* `twine upload dist/*`
+* testpypi
+  * `uv publish --index testpypi`
+* pypi
+  * `uv publish`
+* The commands with ask for username and password.
+  Use `__token__` as username and your access token as password
 
 conda-forge:
 
@@ -39,25 +28,20 @@ conda-forge:
 
  ## Generating HTML documentation on the local machine
 
- First make sure sphinx is installed:
-
-* `conda install sphinx` or
-* `pip install sphinx`
-
 There are two ways to produce the documentation of virocon on a local machine
 
 First approach (Linux/ MacOS/ Windows cmd):
 
 * `cd docs`
-* `make clean`
-* `make html`
+* `uv run make clean`
+* `uv run make html`
 
 -> Then open index.html located in docs/_build/html .
 
 Second approach (Windows powershell):
 
 * `cd docs`
-* `sphinx-build -b html . _build/html`
+* `uv run sphinx-build -b html . _build/html`
 
 -> Then open index.html located in docs/_build/html .
 

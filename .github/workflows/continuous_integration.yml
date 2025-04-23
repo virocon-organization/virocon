@@ -1,5 +1,3 @@
-# The first version of this file was based on
-# https://jacobtomlinson.dev/posts/2021/testing-and-continuous-integration-for-python-packages-with-github-actions/
 name: Continuous integration
 on:
   pull_request:
@@ -14,26 +12,31 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        os: ["ubuntu-latest", "windows-latest", "macos-latest"]
-        python-version: ["3.11", "3.12"]
+        os: [ "ubuntu-latest", "windows-latest", "macos-latest" ]
+        python-version: [ "3.11", "3.12" ]
 
     steps:
-      - name: Checkout source
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Setup python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-          architecture: x64
 
-      - name: Install
-        run: |
-          pip install -e .
-          pip install -r requirements.txt
+      - name: Install uv and set the python version
+        uses: astral-sh/setup-uv@v5
+        with:
+          # Install a specific version of uv.
+          version: "0.6.16"
+          python-version: ${{ matrix.python-version }}
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+
+      - name: Install the project
+        run: uv sync --locked --all-extras
 
       - name: Run tests
-        run: pytest
+        run: uv run pytest
 
       - name: "Upload coverage to Codecov"
         uses: codecov/codecov-action@v1
