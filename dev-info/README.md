@@ -17,7 +17,7 @@ PyPI:
   * `uv publish --index testpypi`
 * pypi
   * `uv publish`
-* The commands with ask for username and password.
+* The commands will ask for username and password.
   Use `__token__` as username and your access token as password
 
 conda-forge:
