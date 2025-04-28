@@ -18,7 +18,7 @@ PyPI:
 * pypi
   * `uv publish`
 * The commands will ask for username and password.
-  Use `__token__` as username and your access token as password
+  Use `__token__` as username and your [access token](https://pypi.org/help/#apitoken) as password
 
 conda-forge:
 
