@@ -28,7 +28,7 @@ dependencies = [
     "numpy",
     "pandas",
     "scikit-learn",
-    "scipy"
+    "scipy",
 ]
 
 # https://docs.astral.sh/uv/concepts/projects/dependencies/#dependency-groups
@@ -61,7 +61,7 @@ testpaths = [
     "virocon",
 ]
 filterwarnings = [
-    "error",  # raise warnings as errors during test
+    "error", # raise warnings as errors during test
 ]
 
 [tool.ruff]
