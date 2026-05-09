@@ -3,7 +3,7 @@ Installation
 ************
 Requirements
 ~~~~~~~~~~~~
-Make sure you have installed Python `3.11`, `3.12` or `3.13` by typing
+Make sure you have installed Python `3.11`, `3.12`, `3.13` or `3.14`  by typing
 
 .. code:: console
 
@@ -37,7 +37,7 @@ virocon is also available on `conda-forge`_. We recommend to first create a new 
 
 .. code:: console
 
-   conda create --name virocon python=3.13
+   conda create --name virocon python=3.14
 
 And then activate that new environment and install virocon.
 
